@@ -7,6 +7,7 @@ import admin = require('firebase-admin');
  */
 admin.initializeApp();
 // const db = admin.firestore();
+const auth = admin.auth();
 
 /**
  * Helper functions (not called directly)
@@ -16,8 +17,22 @@ admin.initializeApp();
  * Firebase functions to be deployed
  */
 
-export const helloWorld = functions.https.onCall(
-    (data, context) => 'Hello from Firebase!'
+interface CreateUserReq {
+    email: string;
+    password: string;
+    displayName: string;
+}
+
+export const createUser = functions.https.onCall(
+    (data: CreateUserReq, context) => {
+        return auth.createUser({
+            email: data.email,
+            emailVerified: false,
+            password: data.password,
+            displayName: data.displayName,
+            disabled: false,
+        });
+    }
 );
 
 export const testFunc = functions.https.onCall(
