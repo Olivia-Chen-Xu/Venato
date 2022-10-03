@@ -2,7 +2,6 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import icon from '../../assets/icon.svg';
 import './App.css';
-
 import '../config/firebase';
 
 const Hello = () => {
