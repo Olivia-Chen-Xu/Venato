@@ -1,8 +1,9 @@
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import icon from '../../assets/icon.svg';
 import './App.css';
-import '../config/firebase';
+import { auth } from '../config/firebase';
 
 const Hello = () => {
     const signup = () => {
@@ -12,24 +13,19 @@ const Hello = () => {
             password: 'username12345',
             displayName: 'Reid Moffat',
         })
-            .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
+            .then((r) => console.log(`Sign up success: ${JSON.stringify(r)}`))
             .catch((err) => console.log(`Failure: ${err}`));
     };
 
     const signin = () => {
-        const func = httpsCallable(getFunctions(), 'signin');
-        func({
-            email: '18rem8@queensu.ca',
-            password: 'username12345',
-        })
-            .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
+        signInWithEmailAndPassword(auth, '18rem8@queensu.ca', 'username12345')
+            .then((r) => console.log(`Sign in success: ${JSON.stringify(r)}`))
             .catch((err) => console.log(`Failure: ${err}`));
     };
 
     const signout = () => {
-        const func = httpsCallable(getFunctions(), 'signout');
-        func()
-            .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
+        signOut(auth)
+            .then((r) => console.log(`Sign out success: ${JSON.stringify(r)}`))
             .catch((err) => console.log(`Failure: ${err}`));
     };
 
