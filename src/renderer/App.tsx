@@ -1,17 +1,34 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import '../config/firebase';
 
 const Hello = () => {
-    const signUp = () => {
-        const func = httpsCallable(getFunctions(), 'createUser');
+    const signup = () => {
+        const func = httpsCallable(getFunctions(), 'signup');
         func({
             email: '18rem8@queensu.ca',
             password: 'username12345',
             displayName: 'Reid Moffat',
         })
+            .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
+            .catch((err) => console.log(`Failure: ${err}`));
+    };
+
+    const signin = () => {
+        const func = httpsCallable(getFunctions(), 'signin');
+        func({
+            email: '18rem8@queensu.ca',
+            password: 'username12345',
+        })
+            .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
+            .catch((err) => console.log(`Failure: ${err}`));
+    };
+
+    const signout = () => {
+        const func = httpsCallable(getFunctions(), 'signout');
+        func()
             .then((r) => console.log(`Success: ${JSON.stringify(r)}`))
             .catch((err) => console.log(`Failure: ${err}`));
     };
@@ -35,8 +52,14 @@ const Hello = () => {
                         Read our docs
                     </button>
                 </a>
-                <button type="submit" onClick={signUp}>
+                <button type="submit" onClick={signup}>
                     Sign up
+                </button>
+                <button type="submit" onClick={signin}>
+                    Sign in
+                </button>
+                <button type="submit" onClick={signout}>
+                    Sign out
                 </button>
                 <a
                     href="https://github.com/sponsors/electron-react-boilerplate"
