@@ -1,32 +1,74 @@
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+    createUserWithEmailAndPassword,
+    deleteUser,
+    signInWithEmailAndPassword,
+    signOut,
+} from 'firebase/auth';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import { auth } from '../config/firebase';
 
 const Hello = () => {
+    const email = '18rem8@queensu.ca';
+    const password = 'username12345';
+
     const signup = () => {
-        const func = httpsCallable(getFunctions(), 'signup');
-        func({
-            email: '18rem8@queensu.ca',
-            password: 'username12345',
-            displayName: 'Reid Moffat',
-        })
-            .then((r) => console.log(`Sign up success: ${JSON.stringify(r)}`))
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((r) =>
+                console.log(
+                    `Sign up success:\nEmail: ${JSON.stringify(r.user.email)}` +
+                        `\nID: ${JSON.stringify(r.user.uid)}`
+                )
+            )
             .catch((err) => console.log(`Failure: ${err}`));
     };
 
     const signin = () => {
-        signInWithEmailAndPassword(auth, '18rem8@queensu.ca', 'username12345')
-            .then((r) => console.log(`Sign in success: ${JSON.stringify(r)}`))
+        const user = auth.currentUser;
+        if (user?.email === email) {
+            console.log(`User ${user.email} is already signed in`);
+            return;
+        }
+        if (user) {
+            console.log(`Another user is already signed in: ${user.email}`);
+            return;
+        }
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((r) =>
+                console.log(
+                    `Sign in success:\nEmail: ${JSON.stringify(r.user.email)}` +
+                        `\nID: ${JSON.stringify(r.user.uid)}`
+                )
+            )
             .catch((err) => console.log(`Failure: ${err}`));
     };
 
     const signout = () => {
         signOut(auth)
             .then((r) => console.log(`Sign out success: ${JSON.stringify(r)}`))
-            .catch((err) => console.log(`Failure: ${err}`));
+            .catch((err) => console.log(`Failure: ${JSON.stringify(err)}`));
+    };
+
+    const deleteAccount = () => {
+        const user = auth.currentUser;
+
+        if (user) {
+            deleteUser(user)
+                .then(() =>
+                    console.log(`Successfully deleted user ${user.email}`)
+                )
+                .catch((error) =>
+                    console.log(
+                        `Error deleting user ${user.email}: ${JSON.stringify(
+                            error
+                        )}`
+                    )
+                );
+        } else {
+            console.log(`Error: no user logged in`);
+        }
     };
 
     return (
@@ -56,6 +98,9 @@ const Hello = () => {
                 </button>
                 <button type="submit" onClick={signout}>
                     Sign out
+                </button>
+                <button type="submit" onClick={deleteAccount}>
+                    Delete account (must be signed in)
                 </button>
                 <a
                     href="https://github.com/sponsors/electron-react-boilerplate"
