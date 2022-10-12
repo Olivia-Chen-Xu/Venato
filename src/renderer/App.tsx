@@ -9,68 +9,109 @@ import icon from '../../assets/icon.svg';
 import './App.css';
 import { auth } from '../config/firebase';
 
-const Hello = () => {
-    const email = '18rem8@queensu.ca';
-    const password = 'username12345';
+const email = '18rem8@queensu.ca';
+const password = 'Username12345';
 
-    const signup = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((r) =>
-                console.log(
-                    `Sign up success:\nEmail: ${JSON.stringify(r.user.email)}` +
-                        `\nID: ${JSON.stringify(r.user.uid)}`
-                )
+const signup = () => {
+    // Validate email is entered and valid
+    if (!email) {
+        console.log('Error: email is empty');
+        return;
+    }
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        console.log(`Error: email '${email}' is invalid`);
+        return;
+    }
+
+    // Validate password is entered and strong enough
+    if (!password) {
+        console.log('Error: password in empty');
+        return;
+    }
+    if (password.length < 8 || password.length > 40) {
+        console.log('Error: password must be 8-40 characters long');
+    }
+
+    let strength = 0;
+    strength += password.match(/[A-Z]/) ? 1 : 0;
+    strength += password.match(/[a-z]/) ? 1 : 0;
+    strength += password.match(/\d/) ? 1 : 0;
+    strength += password.match(/[~`!@#$%^&*()_\-+={}[\]|\\:;"'<,>.?/]/) ? 1 : 0;
+    if (strength < 3) {
+        console.log(
+            'Error: password is not strong enough. Passwords must contain at least 3 of the following: ' +
+                'a) uppercase letter b) lowercase letter c) number ' +
+                'd) special character (non-alphanumeric character on a regular keyboard)'
+        );
+        return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((r) =>
+            console.log(
+                `Sign up success:\nEmail: ${JSON.stringify(r.user.email)}` +
+                    `\nID: ${JSON.stringify(r.user.uid)}`
             )
-            .catch((err) => console.log(`Failure: ${err}`));
-    };
+        )
+        .catch((err) => console.log(`Failure: ${err}`));
+};
 
-    const signin = () => {
-        const user = auth.currentUser;
-        if (user?.email === email) {
-            console.log(`User ${user.email} is already signed in`);
-            return;
-        }
-        if (user) {
-            console.log(`Another user is already signed in: ${user.email}`);
-            return;
-        }
+const signin = () => {
+    const user = auth.currentUser;
+    if (user?.email === email) {
+        console.log(`User ${user.email} is already signed in`);
+        return;
+    }
+    if (user) {
+        console.log(`Another user is already signed in: ${user.email}`);
+        return;
+    }
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then((r) =>
-                console.log(
-                    `Sign in success:\nEmail: ${JSON.stringify(r.user.email)}` +
-                        `\nID: ${JSON.stringify(r.user.uid)}`
-                )
+    signInWithEmailAndPassword(auth, email, password)
+        .then((r) =>
+            console.log(
+                `Sign in success:\nEmail: ${JSON.stringify(r.user.email)}` +
+                    `\nID: ${JSON.stringify(r.user.uid)}`
             )
-            .catch((err) => console.log(`Failure: ${err}`));
-    };
+        )
+        .catch((err) => console.log(`Failure: ${err}`));
+};
 
-    const signout = () => {
+const signout = () => {
+    const user = auth.currentUser;
+
+    if (user) {
         signOut(auth)
-            .then((r) => console.log(`Sign out success: ${JSON.stringify(r)}`))
-            .catch((err) => console.log(`Failure: ${JSON.stringify(err)}`));
-    };
-
-    const deleteAccount = () => {
-        const user = auth.currentUser;
-
-        if (user) {
-            deleteUser(user)
-                .then(() =>
-                    console.log(`Successfully deleted user ${user.email}`)
+            .then(() => console.log(`Successfully signed out ${user.email}`))
+            .catch((err) =>
+                console.log(
+                    `Failed to sign out ${user.email}: ${JSON.stringify(err)}`
                 )
-                .catch((error) =>
-                    console.log(
-                        `Error deleting user ${user.email}: ${JSON.stringify(
-                            error
-                        )}`
-                    )
-                );
-        } else {
-            console.log(`Error: no user logged in`);
-        }
-    };
+            );
+    } else {
+        console.log(`No user logged in, can't log out`);
+    }
+};
 
+const deleteAccount = () => {
+    const user = auth.currentUser;
+
+    if (user) {
+        deleteUser(user)
+            .then(() => console.log(`Successfully deleted user ${user.email}`))
+            .catch((error) =>
+                console.log(
+                    `Error deleting user ${user.email}: ${JSON.stringify(
+                        error
+                    )}`
+                )
+            );
+    } else {
+        console.log(`Error: no user logged in, cannot delete account`);
+    }
+};
+
+const Hello = () => {
     return (
         <div>
             <div className="Hello">
