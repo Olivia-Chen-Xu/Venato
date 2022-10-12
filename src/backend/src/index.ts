@@ -17,3 +17,12 @@ export const newUserSignUp = functions.auth.user().onCreate((user) => {
 export const userDeleted = functions.auth.user().onDelete((user) => {
     return db.collection('users').doc(user.uid).delete();
 });
+
+// Examples:
+// Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
+// Calling functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/public/js/app.js
+
+// Docs:
+// Calling functions docs: https://firebase.google.com/docs/functions/callable
+// Auth triggers docs: https://firebase.google.com/docs/functions/auth-events
+// Firestore triggers docs: https://firebase.google.com/docs/functions/firestore-events
