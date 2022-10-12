@@ -6,6 +6,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
+// Hard-coded values for now
 const email = '18rem8@queensu.ca';
 const password = 'Username12345';
 
@@ -71,7 +72,18 @@ export const signin = () => {
                     `\nID: ${JSON.stringify(r.user.uid)}`
             )
         )
-        .catch((err) => console.log(`Failure: ${err}`));
+        .catch((err) => {
+            if (
+                err.code === 'auth/user-not-found' ||
+                err.code === 'auth/invalid-password'
+            ) {
+                console.log(
+                    `Error: account ${email} does not exist or password is incorrect`
+                );
+            } else {
+                console.log(`Failed to sign in, error: ${JSON.stringify(err)}`);
+            }
+        });
 };
 
 export const signout = () => {
