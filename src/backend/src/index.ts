@@ -7,33 +7,16 @@ import admin = require('firebase-admin');
  */
 
 admin.initializeApp();
-const adminAuth = admin.auth();
+// const adminAuth = admin.auth();
 // const db = admin.firestore();
 
 /**
  * Helper functions & interfaces
  */
 
-interface CreateUserReq {
-    email: string;
-    password: string;
-    displayName: string;
-}
-
 /**
  * Firebase functions to be deployed
  */
-
-// Signs up a user
-export const signup = functions.https.onCall((data: CreateUserReq, context) => {
-    return adminAuth.createUser({
-        email: data.email,
-        emailVerified: false,
-        password: data.password,
-        displayName: data.displayName,
-        disabled: false
-    });
-});
 
 // On account creation create a db collection for them with default data
 export const newUserSignUp = functions.auth.user().onCreate((user) => {
