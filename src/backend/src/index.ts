@@ -24,14 +24,25 @@ interface CreateUserReq {
  * Firebase functions to be deployed
  */
 
-// eslint-disable-next-line import/prefer-default-export
+// Signs up a user
 export const signup = functions.https.onCall((data: CreateUserReq, context) => {
-    const req = {
+    return adminAuth.createUser({
         email: data.email,
         emailVerified: false,
         password: data.password,
         displayName: data.displayName,
-        disabled: false,
-    };
-    return adminAuth.createUser(req);
+        disabled: false
+    });
+});
+
+// On account creation create a db collection for them with default data
+export const newUserSignUp = functions.auth.user().onCreate((user) => {
+    return admin.firestore().collection('users').doc(user.uid).set({
+        email: user.email,
+    });
+});
+
+// On account deletion, delete user data in db
+export const userDeleted = functions.auth.user().onDelete((user) => {
+    return admin.firestore().collection('users').doc(user.uid).delete();
 });
