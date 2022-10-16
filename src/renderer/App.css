@@ -42,6 +42,12 @@ li {
   list-style: none;
 }
 
+h1 {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+}
+
 a {
   text-decoration: none;
   height: fit-content;
@@ -54,9 +60,16 @@ a:hover {
   text-decoration: none;
 }
 
+.Logo {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+}
+
 .Hello {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+  top: 50px
 }
