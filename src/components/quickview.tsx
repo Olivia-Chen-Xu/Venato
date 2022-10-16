@@ -8,21 +8,34 @@ export const QuickViewUI = () => {
             </div>
             <h1 className="Title">Job Title</h1>
             <h2 className="Company">Company</h2>
+            <form>
+                <fieldset>
+                    <label>
+                        <p>Name</p>
+                        <input name="name" />
+                    </label>
+                </fieldset>
+                <button type="submit">Submit</button>
+            </form>
             <div className="Border">
-                <h2 style={{top: '300', textAlign: 'center', color: 'black', fontWeight: '400'}}>Location</h2>
+                <h2
+                    style={{
+                        top: '300',
+                        textAlign: 'center',
+                        color: 'black',
+                        fontWeight: '400',
+                    }}
+                >
+                    Location
+                </h2>
             </div>
             <div className="Deadline-Divider"></div>
             <div className="Deadline-Tabs">Upcoming Deadlines</div>
-            <div id="next-deadline" className="Deadline-Tabs">Next Deadline</div>
-            <button className="Edit">Edit</button>
-            <div className="Hello">
-                <a href="https://electron-react-boilerplate.js.org/" target="_blank" rel="noreferrer"></a>
-                <a href="https://github.com/sponsors/electron-react-boilerplate" target="_blank" rel="noreferrer">
-                <button className="ViewCal" type="button">
-                        View Calendar
-                </button>
-                </a>
+            <div id="next-deadline" className="Deadline-Tabs">
+                Next Deadline
             </div>
+            <button className="Edit">Edit</button>
+            <button className="ViewCal" type="button">View Calendar</button>
         </div>
     );
 };

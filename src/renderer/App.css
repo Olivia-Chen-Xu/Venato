@@ -19,7 +19,8 @@ body {
   align-items: center;
 }
 
-button {
+
+button, .Border, .Deadline-Tabs {
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -42,12 +43,6 @@ li {
   list-style: none;
 }
 
-h1 {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-}
-
 a {
   text-decoration: none;
   height: fit-content;
@@ -60,16 +55,73 @@ a:hover {
   text-decoration: none;
 }
 
+.Title {
+  position: absolute;
+  font-size: 75px;
+  top: 20px;
+  left: 200px;
+}
+
+.Company {
+  position: absolute;
+  font-size: 30px;
+  top: 155px;
+  left: 205px;
+}
+
+.Border {
+  position: absolute;
+  padding: 5px 5px;
+  border-radius: 10px;
+  top: 90px;
+  left: 600px;
+  font-size: 15px;
+  height: 50px;
+  width: 175px;
+  background-color: #fff;
+}
+
 .Logo {
   position: absolute;
   top: 50px;
-  right: 50px;
+  left: 30px;
 }
 
-.Hello {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
-  top: 50px
+.Edit {
+  position: absolute;
+  top: 100px;
+  right: 80px;
+}
+
+.ViewCal {
+  position: absolute;
+  width: 260px;
+  bottom: 240px;
+  right: 170px;
+}
+
+.Deadline-Divider {
+  position: absolute;
+  width: 394px;
+  height: 0px;
+  left: 800px;
+  top: 375px;
+  border: 1px solid #FFFFFF;
+  transform: rotate(90deg);
+}
+
+.Deadline-Tabs {
+  color: black;
+  position: absolute;
+  text-align: center;
+  top: 180px;
+  right: 175px;
+  width: 173px;
+  height: 60px;
+  
+}
+
+#next-deadline {
+  top: 350px;
+  text-align: center;
 }
