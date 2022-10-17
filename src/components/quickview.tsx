@@ -1,6 +1,69 @@
+import { useState } from 'react';
+import ReactDOM from 'react-dom';
 import icon from '../../assets/icon.svg';
 
-export const QuickViewUI = () => {
+export const QuickView = () => {
+    
+    const [notes, setNotes] = useState('');
+    const [questions, setInterviewQuestions] = useState('');
+    const [interviewer, setInterviewer] = useState('');
+    const [position, setPosition] = useState('');
+    const [validLinkedin, setLinkedin] = useState('');
+    const [password, setPassword] = useState('');
+    const [confPassword, setConfPassword] = useState('');
+
+    // function to update state of notes with user input
+    const handleChange = (e: any) => {
+        setNotes(e.target.value);
+    };
+    // function to update state of questions with user input
+    const handleQuestionsChange = (e: any) => {
+        setInterviewQuestions(e.target.value);
+    };
+    // function to update state of name with user input
+    const handleInterviewerChange = (e: any) => {
+        setInterviewer(e.target.value);
+    };
+    // function to update state of job position with user input
+    const handlePositionChange = (e: any) => {
+        setPosition(e.target.value);
+    };
+    // function to update state of linkedin with user input
+    const handleLinkedinChange = (e: any) => {
+        setLinkedin(e.target.value);
+    };
+
+     const handlePasswordChange = (e: any) => {
+         setPassword(e.target.value);
+     };
+     // function to update state of confirm password
+     // with value enter by user in form
+     const handleConfPasswordChange = (e: any) => {
+         setConfPassword(e.target.value);
+     };
+    
+    // below function will be called when user click on submit button -> user must enter password for security purposes
+    
+    const handleSubmit = (e: any) => {
+        if (password != confPassword) {
+            alert('Passwords do not match. Please try again.');
+        } else {
+            // display alert box with user inputs
+            alert(
+                'A form was submitted with Notes :"' +
+                    notes +
+                    '" ,Questions :"' +
+                    questions +
+                    '" ,Position :"' +
+                    position +
+                    '" ,and a valid Linkedin URL"' +
+                    validLinkedin +
+                    '"'
+                    
+            );
+        }
+        e.preventDefault();
+    };
     return (
         <div>
             <div className="Logo">
@@ -8,14 +71,36 @@ export const QuickViewUI = () => {
             </div>
             <h1 className="Title">Job Title</h1>
             <h2 className="Company">Company</h2>
-            <form>
-                <fieldset>
-                    <label>
-                        <p>Name</p>
-                        <input name="name" />
-                    </label>
-                </fieldset>
-                <button type="submit">Submit</button>
+            <form onSubmit={(e) => {handleSubmit(e);}}>
+                <label>Notes:</label>
+                <br />
+                <input type="text" value={notes} required onChange={(e) => {handleChange(e);}}/>
+                <br />
+                <label>Questions:</label>
+                <br />
+                <input type="text" value={questions} required onChange={(e) => {handleQuestionsChange(e);}}/>
+                <br />
+                <label>Interviewer:</label>
+                <br />
+                <input type="text" value={interviewer} required onChange={(e) => {handleInterviewerChange(e);}}/>
+                <br />
+                <label>Position:</label>
+                <br></br>
+                <input type="text" value={position} required onChange={(e) => {handlePositionChange(e);}}></input>
+                <br />
+                <label>Linkedin:</label>
+                <br />
+                <input type="text" value={validLinkedin} required onChange={(e) => {handleLinkedinChange(e);}}></input>
+                <br />
+                <label>Password:</label>
+                <br />
+                <input type="password" value={password} required onChange={(e) => {handlePasswordChange(e);}}/>
+                <br />
+                <label>Confirm Password:</label>
+                <br />
+                <input type="password" value={confPassword} required onChange={(e) => {handleConfPasswordChange(e);}}/>
+                <br />
+                <input type="submit" value="Submit" />
             </form>
             <div className="Border">
                 <h2
@@ -35,7 +120,9 @@ export const QuickViewUI = () => {
                 Next Deadline
             </div>
             <button className="Edit">Edit</button>
-            <button className="ViewCal" type="button">View Calendar</button>
+            <button className="ViewCal" type="button">
+                View Calendar{' '}
+            </button>
         </div>
     );
 };
