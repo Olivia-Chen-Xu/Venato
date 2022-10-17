@@ -20,7 +20,7 @@ body {
 }
 
 
-button, .Border, .Deadline-Tabs {
+button, input, .Border, .Deadline-Tabs {
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -87,6 +87,7 @@ a:hover {
   left: 30px;
 }
 
+
 .Edit {
   position: absolute;
   top: 100px;
@@ -124,4 +125,14 @@ a:hover {
 #next-deadline {
   top: 350px;
   text-align: center;
+}
+.Form {
+  position: absolute;
+  top: 250px;
+  left: 205px;
+}
+.Submit {
+  position: absolute;
+  top: 480px;
+  left: 0px;
 }
