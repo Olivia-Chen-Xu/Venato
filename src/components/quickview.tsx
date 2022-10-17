@@ -5,7 +5,6 @@ import icon from '../../assets/icon.svg';
 export const QuickView = () => {
     
     // use states to store form data
-
     const [notes, setNotes] = useState('');
     const [questions, setInterviewQuestions] = useState('');
     const [recruiter, setRecruiter] = useState('');
@@ -35,7 +34,7 @@ export const QuickView = () => {
         setLinkedin(e.target.value);
     };
 
-// function to update state of password with user input
+    // function to update state of password with user input
     const handlePasswordChange = (e: any) => {
         setPassword(e.target.value);
     };

@@ -55,6 +55,11 @@ a:hover {
   text-decoration: none;
 }
 
+label {
+  font-weight: 700;
+  color: #FFFFFF
+}
+
 .Title {
   position: absolute;
   font-size: 75px;
