@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import icon from '../../assets/icon.svg';
 
 export const QuickView = () => {
+    
+    // use states to store form data
+
     const [notes, setNotes] = useState('');
     const [questions, setInterviewQuestions] = useState('');
     const [recruiter, setRecruiter] = useState('');
@@ -59,6 +62,14 @@ export const QuickView = () => {
                     validLinkedin +
                     '"'
             );
+            // clears field inputs when submit button is pressed
+            setNotes('')
+            setInterviewQuestions('')
+            setRecruiter('')
+            setPosition('');
+            setLinkedin('')
+            setPassword('')
+            setConfPassword('')
         }
         e.preventDefault();
     };
@@ -69,90 +80,92 @@ export const QuickView = () => {
             </div>
             <h1 className="Title">Job Title</h1>
             <h2 className="Company">Company</h2>
-            <form
-                onSubmit={(e) => {
-                    handleSubmit(e);
-                }}
-            >
-                <label>Notes:</label>
-                <br />
-                <input
-                    type="text"
-                    value={notes}
-                    required
-                    onChange={(e) => {
-                        handleChange(e);
+            <div className="Form">
+                <form
+                    onSubmit={(e) => {
+                        handleSubmit(e);
                     }}
-                />
-                <br />
-                <label>Questions:</label>
-                <br />
-                <input
-                    type="text"
-                    value={questions}
-                    required
-                    onChange={(e) => {
-                        handleQuestionsChange(e);
-                    }}
-                />
-                <br />
-                <label>Recruiter:</label>
-                <br />
-                <input
-                    type="text"
-                    value={recruiter}
-                    required
-                    onChange={(e) => {
-                        handleRecruiterChange(e);
-                    }}
-                />
-                <br />
-                <label>Position:</label>
-                <br></br>
-                <input
-                    type="text"
-                    value={position}
-                    required
-                    onChange={(e) => {
-                        handlePositionChange(e);
-                    }}
-                ></input>
-                <br />
-                <label>Linkedin:</label>
-                <br />
-                <input
-                    type="text"
-                    value={validLinkedin}
-                    required
-                    onChange={(e) => {
-                        handleLinkedinChange(e);
-                    }}
-                ></input>
-                <br />
-                <label>Password:</label>
-                <br />
-                <input
-                    type="password"
-                    value={password}
-                    required
-                    onChange={(e) => {
-                        handlePasswordChange(e);
-                    }}
-                />
-                <br />
-                <label>Confirm Password:</label>
-                <br />
-                <input
-                    type="password"
-                    value={confPassword}
-                    required
-                    onChange={(e) => {
-                        handleConfPasswordChange(e);
-                    }}
-                />
-                <br />
-                <input type="submit" value="Submit" />
-            </form>
+                    >
+                    <label>Notes:</label>
+                    <br />
+                    <input
+                        type="text"
+                        value={notes}
+                        required
+                        onChange={(e) => {
+                            handleChange(e);
+                        }}
+                    />
+                    <br />
+                    <label>Questions:</label>
+                    <br />
+                    <input
+                        type="text"
+                        value={questions}
+                        required
+                        onChange={(e) => {
+                            handleQuestionsChange(e);
+                        }}
+                    />
+                    <br />
+                    <label>Recruiter:</label>
+                    <br />
+                    <input
+                        type="text"
+                        value={recruiter}
+                        required
+                        onChange={(e) => {
+                            handleRecruiterChange(e);
+                        }}
+                    />
+                    <br />
+                    <label>Position:</label>
+                    <br></br>
+                    <input
+                        type="text"
+                        value={position}
+                        required
+                        onChange={(e) => {
+                            handlePositionChange(e);
+                        }}
+                    ></input>
+                    <br />
+                    <label>Linkedin:</label>
+                    <br />
+                    <input
+                        type="text"
+                        value={validLinkedin}
+                        required
+                        onChange={(e) => {
+                            handleLinkedinChange(e);
+                        }}
+                    ></input>
+                    <br />
+                    <label>Password:</label>
+                    <br />
+                    <input
+                        type="password"
+                        value={password}
+                        required
+                        onChange={(e) => {
+                            handlePasswordChange(e);
+                        }}
+                    />
+                    <br />
+                    <label>Confirm Password:</label>
+                    <br />
+                    <input
+                        type="password"
+                        value={confPassword}
+                        required
+                        onChange={(e) => {
+                            handleConfPasswordChange(e);
+                        }}
+                    />
+                    <br />
+                    <input className="Submit" type="submit" value="Submit" />
+                </form>
+            </div>
             <div className="Border">
                 <h2
                     style={{
