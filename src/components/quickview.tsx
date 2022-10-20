@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import ReactDOM from 'react-dom';
 import icon from '../../assets/icon.svg';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 export const QuickView = () => {
-    
     // use states to store form data
     const [notes, setNotes] = useState('');
     const [questions, setInterviewQuestions] = useState('');
@@ -45,11 +44,15 @@ export const QuickView = () => {
 
     // below function will be called when user click on submit button -> user must enter password for security purposes
 
+    // function to send user inputs to firebase
+    const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
+
     const handleSubmit = (e: any) => {
         if (password != confPassword) {
             alert('Passwords do not match. Please try again.');
         } else {
             // display alert box with user inputs
+            onUserInput({notes: notes, questions: questions, position: position, validLinkedin: validLinkedin})
             alert(
                 'A form was submitted with Notes :"' +
                     notes +
@@ -62,16 +65,17 @@ export const QuickView = () => {
                     '"'
             );
             // clears field inputs when submit button is pressed
-            setNotes('')
-            setInterviewQuestions('')
-            setRecruiter('')
+            setNotes('');
+            setInterviewQuestions('');
+            setRecruiter('');
             setPosition('');
-            setLinkedin('')
-            setPassword('')
-            setConfPassword('')
+            setLinkedin('');
+            setPassword('');
+            setConfPassword('');
         }
         e.preventDefault();
     };
+
     return (
         <div>
             <div className="Logo">
@@ -84,7 +88,7 @@ export const QuickView = () => {
                     onSubmit={(e) => {
                         handleSubmit(e);
                     }}
-                    >
+                >
                     <label>Notes:</label>
                     <br />
                     <input
@@ -162,7 +166,11 @@ export const QuickView = () => {
                         }}
                     />
                     <br />
-                    <input className="Submit" type="submit" value="Submit" />
+                    <input
+                        className="Submit"
+                        type="submit"
+                        value="Submit"
+                    />
                 </form>
             </div>
             <div className="Border">
