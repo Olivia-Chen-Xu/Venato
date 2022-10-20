@@ -1,11 +1,13 @@
+// @ts-ignore
 import * as functions from 'firebase-functions';
+// @ts-ignore
 import admin = require('firebase-admin');
-import { sendEmailVerification, User } from 'firebase/auth';
+import { sendEmailVerification } from 'firebase/auth';
 
 admin.initializeApp();
 
 // On account creation create a db collection for them with default data
-export const onUserSignup = functions.auth.user().onCreate((user: User) => {
+export const onUserSignup = functions.auth.user().onCreate((user : any) => {
     const defaultDocData = {
         email: user.email,
         name: user.displayName,
@@ -15,7 +17,7 @@ export const onUserSignup = functions.auth.user().onCreate((user: User) => {
 });
 
 // On account deletion, delete user data in db
-export const onUserDeleted = functions.auth.user().onDelete((user: User) => {
+export const onUserDeleted = functions.auth.user().onDelete((user: any) => {
     return admin.firestore().collection('users').doc(user.uid).delete();
 });
 
