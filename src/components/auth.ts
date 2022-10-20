@@ -3,7 +3,6 @@ import {
     deleteUser,
     signInWithEmailAndPassword,
     signOut,
-    sendEmailVerification,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -48,27 +47,12 @@ export const signup = () => {
     createUserWithEmailAndPassword(auth, email, password)
         .then((r) =>
             console.log(
-                `Sign up success:\nEmail: ${JSON.stringify(r.user.email)}` +
+                `Sign up success (check your email):` +
+                    `\nEmail: ${JSON.stringify(r.user.email)}` +
                     `\nID: ${JSON.stringify(r.user.uid)}`
             )
         )
         .catch((err) => console.log(`Failure: ${err}`));
-};
-
-export const sendVerificationEmail = () => {
-    const user = auth.currentUser;
-    if (!user) {
-        console.log(`Error: no user signed in`);
-        return;
-    }
-
-    sendEmailVerification(user)
-        .then((_) => console.log(`Verification email sent to ${user.email}`))
-        .catch((e) =>
-            console.log(
-                `Error: could not send verification email to ${user.email}: ${e}`
-            )
-        );
 };
 
 export const signin = () => {
