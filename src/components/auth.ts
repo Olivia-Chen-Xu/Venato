@@ -7,10 +7,6 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
-// Hard-coded values for now
-const email = '18rem8@queensu.ca';
-const password = 'Username12345';
-
 export const signup = (email: string, password: string) => {
     // Validate email is entered and valid
     if (!email) {
