@@ -18,6 +18,11 @@ export const onUserDeleted = functions.auth.user().onDelete((user) => {
     return db.collection('users').doc(user.uid).delete();
 });
 
+// On user input, add event data in db
+export const onUserInput = functions.https.onCall((data, context) => {
+    return admin.firestore().collection('events').add(data);
+});
+
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
 // Calling functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/public/js/app.js
