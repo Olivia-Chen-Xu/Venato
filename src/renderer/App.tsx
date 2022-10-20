@@ -38,6 +38,7 @@ const Hello = () => {
         if (currState == 0) {
             setCurrState(3);
         } else {
+            passwordResetEmail();
             setCurrState(0);
         }
     }
