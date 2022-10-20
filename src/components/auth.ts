@@ -97,8 +97,10 @@ export const signout = () => {
                     `Failed to sign out ${user.email}: ${JSON.stringify(err)}`
                 )
             );
+        return 1;
     } else {
         console.log(`No user logged in, can't log out`);
+        return;
     }
 };
 
@@ -115,8 +117,10 @@ export const deleteAccount = () => {
                     )}`
                 )
             );
+        return 1;
     } else {
         console.log(`Error: no user logged in, cannot delete account`);
+        return;
     }
 };
 
