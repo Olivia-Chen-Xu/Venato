@@ -11,7 +11,7 @@ import { auth } from '../config/firebase';
 const email = '18rem8@queensu.ca';
 const password = 'Username12345';
 
-export const signup = () => {
+export const signup = (email: string, password: string) => {
     // Validate email is entered and valid
     if (!email) {
         console.log('Error: email is empty');
@@ -54,9 +54,10 @@ export const signup = () => {
             )
         )
         .catch((err) => console.log(`Failure: ${err}`));
+    return 1;
 };
 
-export const signin = () => {
+export const signin = (email: string, password: string) => {
     const user = auth.currentUser;
     if (user?.email === email) {
         console.log(`User ${user.email} is already signed in`);
@@ -86,6 +87,7 @@ export const signin = () => {
                 console.log(`Failed to sign in, error: ${JSON.stringify(err)}`);
             }
         });
+    return 1;
 };
 
 export const signout = () => {
@@ -140,4 +142,5 @@ export const passwordResetEmail = () => {
                 `Error sending password reset email to ${user.email}: ${e}`
             )
         );
+    return 1;
 };
