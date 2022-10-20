@@ -3,6 +3,7 @@ import {
     deleteUser,
     signInWithEmailAndPassword,
     signOut,
+    sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -119,4 +120,24 @@ export const deleteAccount = () => {
     } else {
         console.log(`Error: no user logged in, cannot delete account`);
     }
+};
+
+export const passwordResetEmail = () => {
+    const user = auth.currentUser;
+    if (!user) {
+        console.log(`Error: no user signed in`);
+        return;
+    }
+    if (!user.email) {
+        console.log(`Error: email does not exist for user`);
+        return;
+    }
+
+    sendPasswordResetEmail(auth, user.email)
+        .then(() => console.log(`Password reset email sent to ${user.email}`))
+        .catch((e) =>
+            console.log(
+                `Error sending password reset email to ${user.email}: ${e}`
+            )
+        );
 };

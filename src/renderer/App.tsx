@@ -1,7 +1,7 @@
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
 import './App.css';
-import { signup, signin, signout, deleteAccount } from '../components/auth';
+import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
 
 const Hello = () => {
     const nameStyle = { textAlign: 'center' as const };
@@ -23,7 +23,10 @@ const Hello = () => {
                     Sign out
                 </button>
                 <button type="submit" onClick={deleteAccount}>
-                    Delete account (must be signed in)
+                    Delete account
+                </button>
+                <button type="submit" onClick={passwordResetEmail}>
+                    Reset password
                 </button>
             </div>
         </div>
