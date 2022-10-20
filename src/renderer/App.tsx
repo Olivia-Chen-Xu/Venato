@@ -7,11 +7,17 @@ import { useState } from "react";
 const Hello = () => {
     const nameStyle = { textAlign: 'center' as const };
 
+    const clearData = () => {
+        setEmail("");
+        setPassword("");
+    }
+
     const handleSignup = () => {
         if (currState == 0) {
             setCurrState(1);
         } else {
             if (signup(email, password) == 1) {
+                clearData();
                 setCurrState(4);
             }
         }
@@ -22,6 +28,7 @@ const Hello = () => {
             setCurrState(2);
         } else {
             if (signin(email, password) == 1) {
+                clearData();
                 setCurrState(4);
             }
         }
@@ -31,9 +38,19 @@ const Hello = () => {
         if (currState == 0) {
             setCurrState(3);
         } else {
-            if (passwordResetEmail() == 1) {
-                setCurrState(0);
-            }
+            setCurrState(0);
+        }
+    }
+
+    const handleSignOut = () => {
+        if (signout() == 1) {
+            setCurrState(0);
+        }
+    }
+
+    const handleDeleteAccount = () => {
+        if (deleteAccount() == 1) {
+            setCurrState(0);
         }
     }
 
@@ -43,8 +60,8 @@ const Hello = () => {
     const buttons = {
         'signup': <button type="submit" onClick={handleSignup}>Sign up</button>,
         'signin': <button type="submit" onClick={handleSignIn}>Sign in</button>,
-        'signout': <button type="submit" onClick={signout}>Sign out</button>,
-        'deleteAccount': <button type="submit" onClick={deleteAccount}>Delete account</button>,
+        'signout': <button type="submit" onClick={handleSignOut}>Sign out</button>,
+        'deleteAccount': <button type="submit" onClick={handleDeleteAccount}>Delete account</button>,
         'passwordResetEmail': <button type="submit" onClick={handlePassReset}>Reset password</button>
     };
     const states = [
