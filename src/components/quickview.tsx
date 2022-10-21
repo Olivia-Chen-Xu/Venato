@@ -47,6 +47,8 @@ export const QuickView = () => {
     // function to send user inputs to firebase
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
 
+    // function to update user inputs in
+
     const handleSubmit = (e: any) => {
         if (password != confPassword) {
             alert('Passwords do not match. Please try again.');
@@ -64,14 +66,6 @@ export const QuickView = () => {
                     validLinkedin +
                     '"'
             );
-            // clears field inputs when submit button is pressed
-            setNotes('');
-            setInterviewQuestions('');
-            setRecruiter('');
-            setPosition('');
-            setLinkedin('');
-            setPassword('');
-            setConfPassword('');
         }
         e.preventDefault();
     };
