@@ -23,6 +23,7 @@ export const onUserInput = functions.https.onCall((data: any, context: any) => {
     return db.collection('events').add(data)
 })
 
+
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
 // Calling functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/public/js/app.js
