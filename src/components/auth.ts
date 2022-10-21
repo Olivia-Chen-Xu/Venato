@@ -8,25 +8,21 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
-export const signup = (email: string, password: string) => {
+export const signup = async (email: string, password: string) => {
     // Validate email is entered and valid
     if (!email) {
-        console.log('Error: email is empty');
-        return false;
+        return 'Email is empty';
     }
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-        console.log(`Error: email '${email}' is invalid`);
-        return false;
+        return `Email '${email}' is invalid`;
     }
 
     // Validate password is entered and strong enough
     if (!password) {
-        console.log('Error: password in empty');
-        return false;
+        return 'Password in empty';
     }
     if (password.length < 8 || password.length > 40) {
-        console.log('Error: password must be 8-40 characters long');
-        return false;
+        return 'Password must be 8-40 (inclusive) characters long';
     }
 
     let strength = 0;
@@ -35,15 +31,14 @@ export const signup = (email: string, password: string) => {
     strength += password.match(/\d/) ? 1 : 0;
     strength += password.match(/[~`!@#$%^&*()_\-+={}[\]|\\:;"'<,>.?/]/) ? 1 : 0;
     if (strength < 3) {
-        console.log(
-            'Error: password is not strong enough. Passwords must contain at least 3 of the following: ' +
-                'a) uppercase letter b) lowercase letter c) number ' +
-                'd) special character (non-alphanumeric character on a regular keyboard)'
+        return (
+            'Password is not strong enough. Passwords must contain at least 3 of the following: ' +
+            'a) uppercase letter b) lowercase letter c) number ' +
+            'd) special character (non-alphanumeric character on a regular keyboard)'
         );
-        return false;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
+    await createUserWithEmailAndPassword(auth, email, password)
         .then((r) => {
             console.log(
                 `Sign up success (check your email):` +
@@ -51,19 +46,15 @@ export const signup = (email: string, password: string) => {
                     `\nID: ${JSON.stringify(r.user.uid)}`
             );
             sendEmailVerification(r.user)
-                .then(() =>
-                    console.log(
-                        `Verification email sent successfully to ${r.user.email}`
-                    )
-                )
+                .then(() => console.log(`Verification email sent successfully to ${r.user.email}`))
                 .catch((e) =>
-                    console.error(
-                        `Error sending verification email to ${r.user.email}: ${e}`
-                    )
+                    console.error(`Error sending verification email to ${r.user.email}: ${e}`)
                 );
         })
-        .catch((err) => console.log(`Failure: ${err}`));
-    return true;
+        .catch((err) => {
+            return 'Failed to create user';
+        });
+    return 'success';
 };
 
 export const signin = (email: string, password: string) => {
@@ -85,13 +76,8 @@ export const signin = (email: string, password: string) => {
             )
         )
         .catch((err) => {
-            if (
-                err.code === 'auth/user-not-found' ||
-                err.code === 'auth/invalid-password'
-            ) {
-                console.log(
-                    `Error: account ${email} does not exist or password is incorrect`
-                );
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-password') {
+                console.log(`Error: account ${email} does not exist or password is incorrect`);
             } else {
                 console.log(`Failed to sign in, error: ${JSON.stringify(err)}`);
             }
@@ -106,9 +92,7 @@ export const signout = () => {
         signOut(auth)
             .then(() => console.log(`Successfully signed out ${user.email}`))
             .catch((err) =>
-                console.log(
-                    `Failed to sign out ${user.email}: ${JSON.stringify(err)}`
-                )
+                console.log(`Failed to sign out ${user.email}: ${JSON.stringify(err)}`)
             );
         return 1;
     }
@@ -122,11 +106,7 @@ export const deleteAccount = () => {
         deleteUser(user)
             .then(() => console.log(`Successfully deleted user ${user.email}`))
             .catch((error) =>
-                console.log(
-                    `Error deleting user ${user.email}: ${JSON.stringify(
-                        error
-                    )}`
-                )
+                console.log(`Error deleting user ${user.email}: ${JSON.stringify(error)}`)
             );
         return 1;
     }
@@ -146,10 +126,6 @@ export const passwordResetEmail = () => {
 
     sendPasswordResetEmail(auth, user.email)
         .then(() => console.log(`Password reset email sent to ${user.email}`))
-        .catch((e) =>
-            console.log(
-                `Error sending password reset email to ${user.email}: ${e}`
-            )
-        );
+        .catch((e) => console.log(`Error sending password reset email to ${user.email}: ${e}`));
     return 1;
 };

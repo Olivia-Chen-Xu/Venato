@@ -23,14 +23,15 @@ const HomeScreen = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Handlers (and some helpers) for auth functions
     const clearData = () => {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
+        setErrMsg('');
     };
 
-    const handleSignup = () => {
+    // Handlers for auth functions
+    const handleSignup = async () => {
         if (currState === AuthState.Home) {
             setCurrState(AuthState.SignUp);
         } else {
@@ -38,9 +39,12 @@ const HomeScreen = () => {
                 setErrMsg('Passwords do not match');
                 return;
             }
-            if (signup(email, password)) {
+            const signupResult = await signup(email, password);
+            if (signupResult === 'success') {
                 clearData();
                 setCurrState(AuthState.Profile);
+            } else {
+                setErrMsg(signupResult);
             }
         }
     };
