@@ -4,7 +4,7 @@ import icon from '../../assets/icon.svg';
 import './App.css';
 import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
 
-const Hello = () => {
+const HomeScreen = () => {
     const nameStyle = { textAlign: 'center' as const }; // For the boilerplate text
 
     // Authentication state (used to flip between what's shown on the screen)
@@ -22,6 +22,7 @@ const Hello = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    // Handlers (and some helpers) for auth functions
     const clearData = () => {
         setEmail('');
         setPassword('');
@@ -29,44 +30,45 @@ const Hello = () => {
     };
 
     const handleSignup = () => {
-        if (currState === 0) {
-            setCurrState(1);
+        if (currState === AuthState.Home) {
+            setCurrState(AuthState.SignUp);
         } else if (signup(email, password)) {
             clearData();
-            setCurrState(4);
+            setCurrState(AuthState.Profile);
         }
     };
 
     const handleSignIn = () => {
-        if (currState === 0) {
+        if (currState === AuthState.Home) {
             setCurrState(2);
         } else if (signin(email, password) === 1) {
             clearData();
-            setCurrState(4);
+            setCurrState(AuthState.Profile);
         }
     };
 
     const handlePassReset = () => {
-        if (currState === 0) {
-            setCurrState(3);
+        if (currState === AuthState.Home) {
+            setCurrState(AuthState.PasswordReset);
         } else {
             passwordResetEmail();
-            setCurrState(0);
+            setCurrState(AuthState.Home);
         }
     };
 
     const handleSignOut = () => {
         if (signout() === 1) {
-            setCurrState(0);
+            setCurrState(AuthState.Home);
         }
     };
 
     const handleDeleteAccount = () => {
         if (deleteAccount() === 1) {
-            setCurrState(0);
+            setCurrState(AuthState.Home);
         }
     };
 
+    // Buttons to be used with auth
     const buttons = {
         signup: (
             <button type="submit" onClick={handleSignup}>
@@ -94,60 +96,70 @@ const Hello = () => {
             </button>
         ),
     };
-    const states = [
-        <>
-            {buttons.signup}
-            {buttons.signin}
-            {buttons.passwordResetEmail}
-        </>,
-        <>
-            <input
-                type="email"
-                value={email}
-                required
-                placeholder="Email"
-                onChange={(e) => {
-                    setEmail(e.target.value);
-                }}
-            />
-            <input
-                type="password"
-                value={password}
-                required
-                placeholder="Password"
-                onChange={(e) => {
-                    setPassword(e.target.value);
-                }}
-            />
-            {buttons.signup}
-        </>,
-        <>
-            <input
-                type="email"
-                value={email}
-                required
-                placeholder="Email"
-                onChange={(e) => {
-                    setEmail(e.target.value);
-                }}
-            />
-            <input
-                type="password"
-                value={password}
-                required
-                placeholder="Password"
-                onChange={(e) => {
-                    setPassword(e.target.value);
-                }}
-            />
-            {buttons.signin}
-        </>,
-        <>{buttons.passwordResetEmail}</>,
-        <>
-            {buttons.signout}
-            {buttons.deleteAccount}
-        </>,
-    ];
+
+    // JSX states
+    const states = {
+        [AuthState.Home]: (
+            <>
+                {buttons.signup}
+                {buttons.signin}
+                {buttons.passwordResetEmail}
+            </>
+        ),
+        [AuthState.SignUp]: (
+            <>
+                <input
+                    type="email"
+                    value={email}
+                    required
+                    placeholder="Email"
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                    }}
+                />
+                <input
+                    type="password"
+                    value={password}
+                    required
+                    placeholder="Password"
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                />
+                {buttons.signup}
+            </>
+        ),
+        [AuthState.SignIn]: (
+            <>
+                <input
+                    type="email"
+                    value={email}
+                    required
+                    placeholder="Email"
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                    }}
+                />
+                <input
+                    type="password"
+                    value={password}
+                    required
+                    placeholder="Password"
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                />
+                {buttons.signin}
+            </>
+        ),
+        [AuthState.PasswordReset]: <>{buttons.passwordResetEmail}</>,
+        [AuthState.Profile]: (
+            <>
+                {buttons.signout}
+                {buttons.deleteAccount}
+            </>
+        ),
+    };
 
     return (
         <div>
@@ -164,7 +176,7 @@ export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Hello />} />
+                <Route path="/" element={<HomeScreen />} />
             </Routes>
         </Router>
     );
