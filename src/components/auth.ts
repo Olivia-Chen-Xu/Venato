@@ -4,6 +4,7 @@ import {
     signInWithEmailAndPassword,
     signOut,
     sendPasswordResetEmail,
+    sendEmailVerification,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -11,20 +12,21 @@ export const signup = (email: string, password: string) => {
     // Validate email is entered and valid
     if (!email) {
         console.log('Error: email is empty');
-        return;
+        return false;
     }
     if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
         console.log(`Error: email '${email}' is invalid`);
-        return;
+        return false;
     }
 
     // Validate password is entered and strong enough
     if (!password) {
         console.log('Error: password in empty');
-        return;
+        return false;
     }
     if (password.length < 8 || password.length > 40) {
         console.log('Error: password must be 8-40 characters long');
+        return false;
     }
 
     let strength = 0;
@@ -38,19 +40,30 @@ export const signup = (email: string, password: string) => {
                 'a) uppercase letter b) lowercase letter c) number ' +
                 'd) special character (non-alphanumeric character on a regular keyboard)'
         );
-        return;
+        return false;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
-        .then((r) =>
+        .then((r) => {
             console.log(
                 `Sign up success (check your email):` +
                     `\nEmail: ${JSON.stringify(r.user.email)}` +
                     `\nID: ${JSON.stringify(r.user.uid)}`
-            )
-        )
+            );
+            sendEmailVerification(r.user)
+                .then(() =>
+                    console.log(
+                        `Verification email sent successfully to ${r.user.email}`
+                    )
+                )
+                .catch((e) =>
+                    console.error(
+                        `Error sending verification email to ${r.user.email}: ${e}`
+                    )
+                );
+        })
         .catch((err) => console.log(`Failure: ${err}`));
-    return 1;
+    return true;
 };
 
 export const signin = (email: string, password: string) => {
@@ -98,10 +111,8 @@ export const signout = () => {
                 )
             );
         return 1;
-    } else {
-        console.log(`No user logged in, can't log out`);
-        return;
     }
+    console.log(`No user logged in, can't log out`);
 };
 
 export const deleteAccount = () => {
@@ -118,10 +129,8 @@ export const deleteAccount = () => {
                 )
             );
         return 1;
-    } else {
-        console.log(`Error: no user logged in, cannot delete account`);
-        return;
     }
+    console.log(`Error: no user logged in, cannot delete account`);
 };
 
 export const passwordResetEmail = () => {
