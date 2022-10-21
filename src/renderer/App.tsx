@@ -16,6 +16,7 @@ const HomeScreen = () => {
         Profile,
     }
     const [currState, setCurrState] = useState(AuthState.Home);
+    const [errMsg, setErrMsg] = useState('');
 
     // For user inputs
     const [email, setEmail] = useState('');
@@ -34,7 +35,7 @@ const HomeScreen = () => {
             setCurrState(AuthState.SignUp);
         } else {
             if (password !== confirmPassword) {
-                console.log('Passwords do not match');
+                setErrMsg('Passwords do not match');
                 return;
             }
             if (signup(email, password)) {
@@ -106,14 +107,14 @@ const HomeScreen = () => {
     // JSX states
     const states = {
         [AuthState.Home]: (
-            <>
+            <div>
                 {buttons.signup}
                 {buttons.signin}
                 {buttons.passwordResetEmail}
-            </>
+            </div>
         ),
         [AuthState.SignUp]: (
-            <>
+            <div>
                 <input
                     type="email"
                     value={email}
@@ -123,6 +124,7 @@ const HomeScreen = () => {
                         setEmail(e.target.value);
                     }}
                 />
+                <br />
                 <input
                     type="password"
                     value={password}
@@ -132,6 +134,7 @@ const HomeScreen = () => {
                         setPassword(e.target.value);
                     }}
                 />
+                <br />
                 <input
                     type="password"
                     value={confirmPassword}
@@ -141,11 +144,14 @@ const HomeScreen = () => {
                         setConfirmPassword(e.target.value);
                     }}
                 />
+                <br />
                 {buttons.signup}
-            </>
+                <br />
+                {errMsg}
+            </div>
         ),
         [AuthState.SignIn]: (
-            <>
+            <div>
                 <input
                     type="email"
                     value={email}
@@ -165,14 +171,24 @@ const HomeScreen = () => {
                     }}
                 />
                 {buttons.signin}
-            </>
+                <br />
+                {errMsg}
+            </div>
         ),
-        [AuthState.PasswordReset]: <>{buttons.passwordResetEmail}</>,
+        [AuthState.PasswordReset]: (
+            <div>
+                {buttons.passwordResetEmail}
+                <br />
+                {errMsg}
+            </div>
+        ),
         [AuthState.Profile]: (
-            <>
+            <div>
                 {buttons.signout}
                 {buttons.deleteAccount}
-            </>
+                <br />
+                {errMsg}
+            </div>
         ),
     };
 
