@@ -2,6 +2,7 @@ import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
+
 export const QuickView = () => {
     // use states to store form data
     const [notes, setNotes] = useState('');
@@ -42,7 +43,6 @@ export const QuickView = () => {
         setConfPassword(e.target.value);
     };
 
-    // below function will be called when user click on submit button -> user must enter password for security purposes
 
     // function to send user inputs to firebase
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
@@ -50,15 +50,18 @@ export const QuickView = () => {
     // function to update user inputs in
     const onFieldRemoval = httpsCallable(getFunctions(), 'onFieldRemoval');
 
+    // below function will be called when user click on submit button -> user must enter password for security purposes
     const handleSubmit = (e: any) => {
         if (password != confPassword) {
             alert('Passwords do not match. Please try again.');
-        if (notes === null || questions === null || position === null || validLinkedin === null) {
-            onFieldRemoval()
-        }
         } else {
             // display alert box with user inputs
-            onUserInput({notes: notes, questions: questions, position: position, validLinkedin: validLinkedin})
+            onUserInput({
+                notes: notes,
+                questions: questions,
+                position: position,
+                validLinkedin: validLinkedin,
+            });
             alert(
                 'A form was submitted with Notes :"' +
                     notes +
@@ -164,11 +167,7 @@ export const QuickView = () => {
                         }}
                     />
                     <br />
-                    <input
-                        className="Submit"
-                        type="submit"
-                        value="Submit"
-                    />
+                    <input className="Submit" type="submit" value="Submit" />
                 </form>
             </div>
             <div className="Border">
@@ -188,9 +187,19 @@ export const QuickView = () => {
             <div id="next-deadline" className="Deadline-Tabs">
                 Next Deadline
             </div>
-            <button className="Edit">Save Edits</button>
+            <button
+                onClick={(e) => {
+                    onFieldRemoval(e);
+                }}
+                className="Edit"
+            >
+                Save Edits
+            </button>
             <button className="ViewCal" type="button">
-                View Calendar{' '}
+                View Calendar
+            </button>
+            <button className="DeleteCollection">
+                Delete Information
             </button>
         </div>
     );
