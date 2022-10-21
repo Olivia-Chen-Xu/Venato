@@ -15,12 +15,10 @@ const Hello = () => {
     const handleSignup = () => {
         if (currState == 0) {
             setCurrState(1);
-        } else {
-            if (signup(email, password) == 1) {
+        } else if (signup(email, password)) {
                 clearData();
                 setCurrState(4);
             }
-        }
     }
 
     const handleSignIn = () => {
