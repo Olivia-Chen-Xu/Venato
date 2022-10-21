@@ -48,10 +48,14 @@ export const QuickView = () => {
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
 
     // function to update user inputs in
+    const onFieldRemoval = httpsCallable(getFunctions(), 'onFieldRemoval');
 
     const handleSubmit = (e: any) => {
         if (password != confPassword) {
             alert('Passwords do not match. Please try again.');
+        if (notes === null || questions === null || position === null || validLinkedin === null) {
+            onFieldRemoval()
+        }
         } else {
             // display alert box with user inputs
             onUserInput({notes: notes, questions: questions, position: position, validLinkedin: validLinkedin})
@@ -184,7 +188,7 @@ export const QuickView = () => {
             <div id="next-deadline" className="Deadline-Tabs">
                 Next Deadline
             </div>
-            <button className="Edit">Edit</button>
+            <button className="Edit">Save Edits</button>
             <button className="ViewCal" type="button">
                 View Calendar{' '}
             </button>
