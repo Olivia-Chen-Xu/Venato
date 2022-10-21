@@ -32,9 +32,15 @@ const HomeScreen = () => {
     const handleSignup = () => {
         if (currState === AuthState.Home) {
             setCurrState(AuthState.SignUp);
-        } else if (signup(email, password)) {
-            clearData();
-            setCurrState(AuthState.Profile);
+        } else {
+            if (password !== confirmPassword) {
+                console.log('Passwords do not match');
+                return;
+            }
+            if (signup(email, password)) {
+                clearData();
+                setCurrState(AuthState.Profile);
+            }
         }
     };
 
@@ -124,6 +130,15 @@ const HomeScreen = () => {
                     placeholder="Password"
                     onChange={(e) => {
                         setPassword(e.target.value);
+                    }}
+                />
+                <input
+                    type="password"
+                    value={confirmPassword}
+                    required
+                    placeholder="Confirm password"
+                    onChange={(e) => {
+                        setConfirmPassword(e.target.value);
                     }}
                 />
                 {buttons.signup}
