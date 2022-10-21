@@ -124,7 +124,12 @@ label {
   right: 175px;
   width: 173px;
   height: 60px;
-  
+}
+
+.DeleteCollection {
+  position: absolute;
+  left: 225px;
+  top: 800px;
 }
 
 #next-deadline {
@@ -141,3 +146,4 @@ label {
   top: 480px;
   left: 0px;
 }
+
