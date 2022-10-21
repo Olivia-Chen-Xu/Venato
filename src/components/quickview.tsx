@@ -48,7 +48,7 @@ export const QuickView = () => {
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
 
     // function to update user inputs in
-    const onFieldRemoval = httpsCallable(getFunctions(), 'onFieldRemoval');
+    const onFieldUpdate = httpsCallable(getFunctions(), 'onFieldRemoval');
 
     // below function will be called when user click on submit button -> user must enter password for security purposes
     const handleSubmit = (e: any) => {
@@ -189,7 +189,7 @@ export const QuickView = () => {
             </div>
             <button
                 onClick={(e) => {
-                    onFieldRemoval(e);
+                    onFieldUpdate(e);
                 }}
                 className="Edit"
             >
