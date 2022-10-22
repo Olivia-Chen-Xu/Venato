@@ -6,7 +6,7 @@ import Month from './components/Month';
 import EventModal from './components/EventModal';
 import GlobalContext from './context/GlobalContext';
 
-export default function Calendar() {
+export function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(getMonth());
   const { monthIndex, showEventModal } = useContext(GlobalContext);
   useEffect(() => {

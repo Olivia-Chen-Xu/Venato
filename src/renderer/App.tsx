@@ -1,16 +1,45 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
-import Calendar from './calendar/main';
+import './calendar/main';
+import { Calendar } from './calendar/main';
+import Homepage from './homepage/Homepage';
+import Job from './job/Job';
+import Kanban from './kanban/Kanban';
 import ContextWrapper from './calendar/context/ContextWrapper';
 
 export default function App() {
+  const nav = useNavigate();
+
+  const goHome = () => {
+    nav('/');
+  };
+
+  const goKanban = () => {
+    nav('/kanban');
+  };
+
+  const goJob = () => {
+    nav('/job');
+  };
+
+  const goCal = () => {
+    nav('/calendar');
+  };
+
   return (
-    <Router>
-      <ContextWrapper>
-        <Routes>
-          <Route path="/" element={<Calendar />} />
-        </Routes>
-      </ContextWrapper>
-    </Router>
+    <ContextWrapper>
+      <div className="space-x-5">
+        <button onClick={goHome}>Home</button>
+        <button onClick={goKanban}>Kanban</button>
+        <button onClick={goJob}>Job</button>
+        <button onClick={goCal}>Cal</button>
+      </div>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/job" element={<Job />} />
+        <Route path="/kanban" element={<Kanban />} />
+        <Route path="/calendar" element={<Calendar />} />
+      </Routes>
+    </ContextWrapper>
   );
 }
