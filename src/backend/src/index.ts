@@ -23,14 +23,15 @@ export const onUserInput = functions.https.onCall((data: any, context: any) => {
     return db.collection('events').add(data)
 })
 
-// On field removal, update field in db
-export const onFieldUpdate = functions.https.onCall((value: string, context: any) => {
-    return db.collection('events').doc().set({
-        key: value
-    })
+// On user edit, update field in db
+export const onFieldUpdate = functions.https.onCall((data: any, context: any) => {
+    return db.collection('events').doc().update(data)
 });
 
-// On press, delete fields
+// On user delete, delete field in db
+export const onFieldDelete = functions.https.onCall((data: any, context: any) => {
+    return db.collection('events').doc().delete(data);
+});
 
 
 // Examples:

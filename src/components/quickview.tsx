@@ -47,8 +47,11 @@ export const QuickView = () => {
     // function to send user inputs to firebase
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
 
-    // function to update user inputs in
-    const onFieldUpdate = httpsCallable(getFunctions(), 'onFieldRemoval');
+    // function to update user inputs in firebase
+    const onFieldUpdate = httpsCallable(getFunctions(), 'onFieldUpdate');
+
+    // function to delete user inputs in firebase
+    const onFieldDelete = httpsCallable(getFunctions(), 'onFieldDelete');
 
     // below function will be called when user click on submit button -> user must enter password for security purposes
     const handleSubmit = (e: any) => {
@@ -198,7 +201,12 @@ export const QuickView = () => {
             <button className="ViewCal" type="button">
                 View Calendar
             </button>
-            <button className="DeleteCollection">
+            <button
+                onClick={(e) => {
+                    onFieldDelete(e);
+                }}
+                className="DeleteCollection"
+            >
                 Delete Information
             </button>
         </div>
