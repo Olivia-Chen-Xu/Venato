@@ -226,6 +226,7 @@ const HomeScreen = () => {
                         setEmail(e.target.value);
                     }}
                 />
+                <br />
                 <input
                     type="password"
                     value={password}
@@ -235,6 +236,7 @@ const HomeScreen = () => {
                         setPassword(e.target.value);
                     }}
                 />
+                <br />
                 {buttons.signin}
                 <br />
                 {errMsg}
