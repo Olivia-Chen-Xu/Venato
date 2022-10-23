@@ -1,9 +1,9 @@
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
+import { sendEmailVerification, signOut } from 'firebase/auth';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
-import { sendEmailVerification, signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
 const HomeScreen = () => {
@@ -49,13 +49,16 @@ const HomeScreen = () => {
             }
 
             signupResult
+                // eslint-disable-next-line promise/always-return
                 .then((r) => {
                     console.log(
                         `Sign up success (check your email):` +
                             `\nEmail: ${JSON.stringify(r.user.email)}` +
                             `\nID: ${JSON.stringify(r.user.uid)}`
                     );
+                    // eslint-disable-next-line promise/no-nesting
                     sendEmailVerification(r.user)
+                        // eslint-disable-next-line promise/always-return
                         .then(() => {
                             console.log(`Verification email sent successfully to ${r.user.email}`);
                             // This isn't an error, but I need to show the message
@@ -94,6 +97,7 @@ const HomeScreen = () => {
 
             signInResult
                 .then((r) => {
+                    // eslint-disable-next-line promise/always-return
                     if (!r.user.emailVerified) {
                         setErrMsg('You need to verify your email first');
                         signOut(auth);
@@ -131,6 +135,7 @@ const HomeScreen = () => {
             }
 
             passResetResult
+                // eslint-disable-next-line promise/always-return
                 .then(() => {
                     console.log(`Password reset email sent to ${email}`);
 
@@ -157,6 +162,7 @@ const HomeScreen = () => {
             return;
         }
         signoutResult
+            // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Successfully signed out`);
                 setCurrState(AuthState.Home);
@@ -171,6 +177,7 @@ const HomeScreen = () => {
             return;
         }
         deleteAccountResult
+            // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Current user successfully deleted`);
                 setCurrState(AuthState.Home);
