@@ -140,6 +140,10 @@ const HomeScreen = () => {
         }
     };
 
+    const handleGoBack = () => {
+        setCurrState(AuthState.Home);
+    };
+
     // Buttons to be used with auth
     const buttons = {
         signup: (
@@ -165,6 +169,11 @@ const HomeScreen = () => {
         passwordResetEmail: (
             <button type="submit" onClick={handlePassReset}>
                 Reset password
+            </button>
+        ),
+        back: (
+            <button type="submit" onClick={handleGoBack}>
+                Go back
             </button>
         ),
     };
@@ -211,6 +220,7 @@ const HomeScreen = () => {
                 />
                 <br />
                 {buttons.signup}
+                {buttons.back}
                 <br />
                 {errMsg}
             </div>
@@ -238,13 +248,25 @@ const HomeScreen = () => {
                 />
                 <br />
                 {buttons.signin}
+                {buttons.back}
                 <br />
                 {errMsg}
             </div>
         ),
         [AuthState.PasswordReset]: (
             <div>
+                <input
+                    type="email"
+                    value={email}
+                    required
+                    placeholder="Email"
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                    }}
+                />
+                <br />
                 {buttons.passwordResetEmail}
+                {buttons.back}
                 <br />
                 {errMsg}
             </div>
