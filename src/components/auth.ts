@@ -4,11 +4,10 @@ import {
     signInWithEmailAndPassword,
     signOut,
     sendPasswordResetEmail,
-    sendEmailVerification,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
-export const signup = async (email: string, password: string) => {
+export const signup = (email: string, password: string) => {
     // Validate email is entered and valid
     if (!email) {
         return 'Email is empty';
@@ -38,23 +37,7 @@ export const signup = async (email: string, password: string) => {
         );
     }
 
-    await createUserWithEmailAndPassword(auth, email, password)
-        .then((r) => {
-            console.log(
-                `Sign up success (check your email):` +
-                    `\nEmail: ${JSON.stringify(r.user.email)}` +
-                    `\nID: ${JSON.stringify(r.user.uid)}`
-            );
-            sendEmailVerification(r.user)
-                .then(() => console.log(`Verification email sent successfully to ${r.user.email}`))
-                .catch((e) =>
-                    console.error(`Error sending verification email to ${r.user.email}: ${e}`)
-                );
-        })
-        .catch((err) => {
-            return 'Failed to create user';
-        });
-    return 'success';
+    return createUserWithEmailAndPassword(auth, email, password);
 };
 
 export const signin = (email: string, password: string) => {

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
+import { sendEmailVerification } from 'firebase/auth';
 
 const HomeScreen = () => {
     const nameStyle = { textAlign: 'center' as const }; // For the boilerplate text
@@ -39,12 +40,42 @@ const HomeScreen = () => {
                 setErrMsg('Passwords do not match');
                 return;
             }
-            const signupResult = await signup(email, password);
-            if (signupResult === 'success') {
-                clearData();
-                setCurrState(AuthState.Profile);
-            } else {
+
+            const signupResult = signup(email, password);
+            if (typeof signupResult === 'string') {
                 setErrMsg(signupResult);
+            } else {
+                signupResult
+                    .then((r) => {
+                        console.log(
+                            `Sign up success (check your email):` +
+                                `\nEmail: ${JSON.stringify(r.user.email)}` +
+                                `\nID: ${JSON.stringify(r.user.uid)}`
+                        );
+                        sendEmailVerification(r.user)
+                            .then(() =>
+                                console.log(
+                                    `Verification email sent successfully to ${r.user.email}`
+                                )
+                            )
+                            .catch((e) =>
+                                console.error(
+                                    `Error sending verification email to ${r.user.email}: ${e}`
+                                )
+                            );
+                        clearData();
+                        setCurrState(AuthState.Profile);
+                    })
+                    .catch((err) => {
+                        console.log(`Error creating user: ${err}`);
+                        if (err.code === 'auth/email-already-in-use') {
+                            setErrMsg(
+                                'The email you entered is already in use; please enter another one'
+                            );
+                        } else {
+                            setErrMsg('Failed to create user');
+                        }
+                    });
             }
         }
     };
