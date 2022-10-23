@@ -45,39 +45,38 @@ const HomeScreen = () => {
             const signupResult = signup(email, password);
             if (typeof signupResult === 'string') {
                 setErrMsg(signupResult);
-            } else {
-                signupResult
-                    .then((r) => {
-                        console.log(
-                            `Sign up success (check your email):` +
-                                `\nEmail: ${JSON.stringify(r.user.email)}` +
-                                `\nID: ${JSON.stringify(r.user.uid)}`
-                        );
-                        sendEmailVerification(r.user)
-                            .then(() =>
-                                console.log(
-                                    `Verification email sent successfully to ${r.user.email}`
-                                )
-                            )
-                            .catch((e) =>
-                                console.error(
-                                    `Error sending verification email to ${r.user.email}: ${e}`
-                                )
-                            );
-                        clearData();
-                        setCurrState(AuthState.Profile);
-                    })
-                    .catch((err) => {
-                        console.log(`Error creating user: ${err}`);
-                        if (err.code === 'auth/email-already-in-use') {
-                            setErrMsg(
-                                'The email you entered is already in use; please enter another one'
-                            );
-                        } else {
-                            setErrMsg('Failed to create user');
-                        }
-                    });
+                return;
             }
+
+            signupResult
+                .then((r) => {
+                    console.log(
+                        `Sign up success (check your email):` +
+                            `\nEmail: ${JSON.stringify(r.user.email)}` +
+                            `\nID: ${JSON.stringify(r.user.uid)} \nAll: ${JSON.stringify(r)}`
+                    );
+                    sendEmailVerification(r.user)
+                        .then(() =>
+                            console.log(`Verification email sent successfully to ${r.user.email}`)
+                        )
+                        .catch((e) =>
+                            console.error(
+                                `Error sending verification email to ${r.user.email}: ${e}`
+                            )
+                        );
+                    clearData();
+                    setCurrState(AuthState.Profile);
+                })
+                .catch((err) => {
+                    console.log(`Error creating user: ${err}`);
+                    if (err.code === 'auth/email-already-in-use') {
+                        setErrMsg(
+                            'The email you entered is already in use; please enter another one'
+                        );
+                    } else {
+                        setErrMsg('Failed to create user');
+                    }
+                });
         }
     };
 
@@ -98,7 +97,7 @@ const HomeScreen = () => {
             }
 
             signInResult
-                .then((r) => {
+                .then(() => {
                     console.log(`Successfully signed in user: ${email}, ${password}`);
                     clearData();
                     setCurrState(AuthState.Profile);
