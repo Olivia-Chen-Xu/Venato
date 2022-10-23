@@ -83,16 +83,11 @@ export const signout = () => {
 
 export const deleteAccount = () => {
     const user = auth.currentUser;
-
-    if (user) {
-        deleteUser(user)
-            .then(() => console.log(`Successfully deleted user ${user.email}`))
-            .catch((error) =>
-                console.log(`Error deleting user ${user.email}: ${JSON.stringify(error)}`)
-            );
-        return 1;
+    if (!user) {
+        return `Error: no user logged in, cannot delete account`;
     }
-    console.log(`Error: no user logged in, cannot delete account`);
+
+    return deleteUser(user);
 };
 
 export const passwordResetEmail = (email: string) => {

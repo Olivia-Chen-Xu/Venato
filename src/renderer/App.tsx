@@ -157,7 +157,18 @@ const HomeScreen = () => {
     };
 
     const handleDeleteAccount = () => {
-        if (deleteAccount() === 1) {
+        const deleteAccountResult = deleteAccount();
+        if (typeof deleteAccountResult === 'string') {
+            setErrMsg(deleteAccountResult);
+        } else {
+            deleteAccountResult
+                .then(() => {
+                    console.log(`Current user successfully deleted`)
+                    setCurrState(AuthState.Home);
+                })
+                .catch((error) =>
+                    console.log(`Error deleting current user: ${JSON.stringify(error)}`)
+                );
             setCurrState(AuthState.Home);
         }
     };
