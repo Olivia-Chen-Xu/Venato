@@ -41,15 +41,6 @@ export const signup = (email: string, password: string) => {
 };
 
 export const signin = (email: string, password: string) => {
-    // Make sure there isn't someone signed in already
-    const user = auth.currentUser;
-    if (user?.email === email) {
-        return `User ${user.email} is already signed in`;
-    }
-    if (user) {
-        return `Another user is already signed in: ${user.email}`;
-    }
-
     // Pre-verify the data entered
     if (!email) {
         return 'Email is empty';

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
 import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
-import { sendEmailVerification } from 'firebase/auth';
+import { sendEmailVerification, signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
 const HomeScreen = () => {
@@ -53,19 +53,20 @@ const HomeScreen = () => {
                     console.log(
                         `Sign up success (check your email):` +
                             `\nEmail: ${JSON.stringify(r.user.email)}` +
-                            `\nID: ${JSON.stringify(r.user.uid)} \nAll: ${JSON.stringify(r)}`
+                            `\nID: ${JSON.stringify(r.user.uid)}`
                     );
                     sendEmailVerification(r.user)
-                        .then(() =>
-                            console.log(`Verification email sent successfully to ${r.user.email}`)
-                        )
+                        .then(() => {
+                            console.log(`Verification email sent successfully to ${r.user.email}`);
+                            // This isn't an error, but I need to show the message
+                            setErrMsg(`Please check your email`);
+                            setCurrState(AuthState.Home);
+                        })
                         .catch((e) =>
                             console.error(
                                 `Error sending verification email to ${r.user.email}: ${e}`
                             )
                         );
-                    clearData();
-                    setCurrState(AuthState.Profile);
                 })
                 .catch((err) => {
                     console.log(`Error creating user: ${err}`);
@@ -81,11 +82,6 @@ const HomeScreen = () => {
     };
 
     const handleSignIn = () => {
-        // If you're already signed in, go straight to profile
-        if (auth.currentUser) {
-            setCurrState(AuthState.Profile);
-        }
-
         if (currState === AuthState.Home || currState === AuthState.PasswordReset) {
             clearData();
             setCurrState(AuthState.SignIn);
@@ -97,13 +93,18 @@ const HomeScreen = () => {
             }
 
             signInResult
-                .then(() => {
-                    console.log(`Successfully signed in user: ${email}, ${password}`);
-                    clearData();
-                    setCurrState(AuthState.Profile);
+                .then((r) => {
+                    if (!r.user.emailVerified) {
+                        setErrMsg('You need to verify your email first');
+                        signOut(auth);
+                    } else {
+                        console.log(`Successfully signed in user: ${email}, ${password}`);
+                        clearData();
+                        setCurrState(AuthState.Profile);
+                    }
                 })
                 .catch((err) => {
-                    console.log(`Error creating user: ${JSON.stringify(err)}`);
+                    console.log(`Error signing in: ${JSON.stringify(err)}`);
                     if (
                         err.code === 'auth/user-not-found' ||
                         err.code === 'auth/invalid-password' ||
@@ -223,6 +224,8 @@ const HomeScreen = () => {
                 {buttons.signup}
                 {buttons.signin}
                 {buttons.passwordResetEmail}
+                <br />
+                {errMsg}
             </div>
         ),
         [AuthState.SignUp]: (
