@@ -95,7 +95,7 @@ export const deleteAccount = () => {
     console.log(`Error: no user logged in, cannot delete account`);
 };
 
-export const passwordResetEmail = () => {
+export const passwordResetEmail = (email: string) => {
     const user = auth.currentUser;
     if (!user) {
         console.log(`Error: no user signed in`);
@@ -106,7 +106,7 @@ export const passwordResetEmail = () => {
         return;
     }
 
-    sendPasswordResetEmail(auth, user.email)
+    sendPasswordResetEmail(auth, email)
         .then(() => console.log(`Password reset email sent to ${user.email}`))
         .catch((e) => console.log(`Error sending password reset email to ${user.email}: ${e}`));
     return 1;

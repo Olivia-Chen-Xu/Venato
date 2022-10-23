@@ -123,7 +123,7 @@ const HomeScreen = () => {
         if (currState === AuthState.Home) {
             setCurrState(AuthState.PasswordReset);
         } else {
-            passwordResetEmail();
+            passwordResetEmail(email);
             setCurrState(AuthState.Home);
         }
     };
