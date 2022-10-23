@@ -4,6 +4,7 @@ import icon from '../../assets/icon.svg';
 import './App.css';
 import { signup, signin, signout, deleteAccount, passwordResetEmail } from '../components/auth';
 import { sendEmailVerification } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const HomeScreen = () => {
     const nameStyle = { textAlign: 'center' as const }; // For the boilerplate text
@@ -81,11 +82,40 @@ const HomeScreen = () => {
     };
 
     const handleSignIn = () => {
-        if (currState === AuthState.Home) {
-            setCurrState(2);
-        } else if (signin(email, password) === 1) {
-            clearData();
+        // If you're already signed in, go straight to profile
+        if (auth.currentUser) {
             setCurrState(AuthState.Profile);
+        }
+
+        if (currState === AuthState.Home) {
+            setCurrState(AuthState.SignIn);
+        } else {
+            const signInResult = signin(email, password);
+            if (typeof signInResult === 'string') {
+                setErrMsg(signInResult);
+                return;
+            }
+
+            signInResult
+                .then((r) => {
+                    console.log(`Successfully signed in user: ${email}, ${password}`);
+                    clearData();
+                    setCurrState(AuthState.Profile);
+                })
+                .catch((err) => {
+                    console.log(`Error creating user: ${JSON.stringify(err)}`);
+                    if (
+                        err.code === 'auth/user-not-found' ||
+                        err.code === 'auth/invalid-password' ||
+                        err.code === 'auth/wrong-password'
+                    ) {
+                        setErrMsg(
+                            `Error: account ${email} does not exist or password is incorrect`
+                        );
+                    } else {
+                        setErrMsg(`Failed to sign in, error: ${JSON.stringify(err)}`);
+                    }
+                });
         }
     };
 

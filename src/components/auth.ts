@@ -41,31 +41,30 @@ export const signup = (email: string, password: string) => {
 };
 
 export const signin = (email: string, password: string) => {
+    // Make sure there isn't someone signed in already
     const user = auth.currentUser;
     if (user?.email === email) {
-        console.log(`User ${user.email} is already signed in`);
-        return;
+        return `User ${user.email} is already signed in`;
     }
     if (user) {
-        console.log(`Another user is already signed in: ${user.email}`);
-        return;
+        return `Another user is already signed in: ${user.email}`;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((r) =>
-            console.log(
-                `Sign in success:\nEmail: ${JSON.stringify(r.user.email)}` +
-                    `\nID: ${JSON.stringify(r.user.uid)}`
-            )
-        )
-        .catch((err) => {
-            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-password') {
-                console.log(`Error: account ${email} does not exist or password is incorrect`);
-            } else {
-                console.log(`Failed to sign in, error: ${JSON.stringify(err)}`);
-            }
-        });
-    return 1;
+    // Pre-verify the data entered
+    if (!email) {
+        return 'Email is empty';
+    }
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return `Email '${email}' is invalid; check that you entered it correctly`;
+    }
+    if (!password) {
+        return 'Password is empty';
+    }
+    if (password.length < 8 || password.length > 40) {
+        return 'Password is invalid (must be 8-40 characters long); check that you entered it correctly';
+    }
+
+    return signInWithEmailAndPassword(auth, email, password);
 };
 
 export const signout = () => {
