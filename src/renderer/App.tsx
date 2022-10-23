@@ -151,26 +151,31 @@ const HomeScreen = () => {
     };
 
     const handleSignOut = () => {
-        if (signout() === 1) {
-            setCurrState(AuthState.Home);
+        const signoutResult = signout();
+        if (typeof signoutResult === 'string') {
+            setErrMsg(signoutResult);
+            return;
         }
+        signoutResult
+            .then(() => {
+                console.log(`Successfully signed out`);
+                setCurrState(AuthState.Home);
+            })
+            .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
     };
 
     const handleDeleteAccount = () => {
         const deleteAccountResult = deleteAccount();
         if (typeof deleteAccountResult === 'string') {
             setErrMsg(deleteAccountResult);
-        } else {
-            deleteAccountResult
-                .then(() => {
-                    console.log(`Current user successfully deleted`)
-                    setCurrState(AuthState.Home);
-                })
-                .catch((error) =>
-                    console.log(`Error deleting current user: ${JSON.stringify(error)}`)
-                );
-            setCurrState(AuthState.Home);
+            return;
         }
+        deleteAccountResult
+            .then(() => {
+                console.log(`Current user successfully deleted`);
+                setCurrState(AuthState.Home);
+            })
+            .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
     };
 
     const handleGoBack = () => {

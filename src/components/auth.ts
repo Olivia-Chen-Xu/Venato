@@ -69,16 +69,11 @@ export const signin = (email: string, password: string) => {
 
 export const signout = () => {
     const user = auth.currentUser;
-
-    if (user) {
-        signOut(auth)
-            .then(() => console.log(`Successfully signed out ${user.email}`))
-            .catch((err) =>
-                console.log(`Failed to sign out ${user.email}: ${JSON.stringify(err)}`)
-            );
-        return 1;
+    if (!user) {
+        return `No user logged in, can't log out`;
     }
-    console.log(`No user logged in, can't log out`);
+
+    return signOut(auth);
 };
 
 export const deleteAccount = () => {
