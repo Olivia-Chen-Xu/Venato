@@ -1,5 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+// import firebase, { initializeApp } from 'firebase/app';
+// import { getAuth } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 // Venato Firebase configuration
 const firebaseConfig = {
@@ -12,5 +15,7 @@ const firebaseConfig = {
     measurementId: 'G-RGF0GESP9P',
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+export { app, auth };

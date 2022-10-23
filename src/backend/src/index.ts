@@ -1,22 +1,38 @@
 import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
+import { auth } from 'firebase-admin';
 
 admin.initializeApp();
-const db = admin.firestore();
 
 // On account creation create a db collection for them with default data
-export const onUserSignup = functions.auth.user().onCreate((user) => {
-    const defaultDoc = {
+const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
+    const defaultDocData = {
         email: user.email,
         name: user.displayName,
     };
-    return db.collection('users').doc(user.uid).set(defaultDoc);
+    return admin.firestore().doc(`users/${user.uid}`).set(defaultDocData);
 });
 
 // On account deletion, delete user data in db
-export const onUserDeleted = functions.auth.user().onDelete((user) => {
-    return db.collection('users').doc(user.uid).delete();
+const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
+    return admin.firestore().collection('users').doc(user.uid).delete();
 });
+
+// On user input, add event data in db
+const onUserInput = functions.https.onCall((data: object, context: any) => {
+    if (!context.auth) {
+        // TODO @krishaan: Once you integrate authentication, uncomment the following code
+        /*
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'You must be logged in to add events'
+        );
+        */
+    }
+    return admin.firestore().collection('events').add(data);
+});
+
+export { onUserSignup, onUserDeleted, onUserInput };
 
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
