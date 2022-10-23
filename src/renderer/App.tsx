@@ -88,6 +88,7 @@ const HomeScreen = () => {
         }
 
         if (currState === AuthState.Home || currState === AuthState.PasswordReset) {
+            clearData();
             setCurrState(AuthState.SignIn);
         } else {
             const signInResult = signin(email, password);
@@ -132,13 +133,19 @@ const HomeScreen = () => {
             passResetResult
                 .then(() => {
                     console.log(`Password reset email sent to ${email}`);
-                    setErrMsg(`Password reset email sent!`); // This isn't an error, but I need to show the message
-                    clearData();
-                    setCurrState(AuthState.Home);
+
+                    // This isn't an error, but I need to show the message
+                    setErrMsg(`Password reset email sent!`);
                 })
                 .catch((e) => {
-                    console.log(`Error sending password reset email to ${email}: ${e}`);
-                    setErrMsg(`Error sending password reset email to ${email}`);
+                    if (e.code === 'auth/user-not-found') {
+                        // When signing up, we have to tell the user if the email is in use
+                        // so there is no point in hiding it here (also makes it harder)
+                        setErrMsg(`No email found, make sure you typed it in correctly`);
+                    } else {
+                        console.log(`Error sending password reset email to ${email}: ${e}`);
+                        setErrMsg(`Error sending password reset email to ${email}`);
+                    }
                 });
         }
     };
@@ -156,6 +163,7 @@ const HomeScreen = () => {
     };
 
     const handleGoBack = () => {
+        clearData();
         setCurrState(AuthState.Home);
     };
 
