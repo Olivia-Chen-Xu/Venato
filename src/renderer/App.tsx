@@ -87,7 +87,7 @@ const HomeScreen = () => {
             setCurrState(AuthState.Profile);
         }
 
-        if (currState === AuthState.Home) {
+        if (currState === AuthState.Home || currState === AuthState.PasswordReset) {
             setCurrState(AuthState.SignIn);
         } else {
             const signInResult = signin(email, password);
@@ -280,6 +280,8 @@ const HomeScreen = () => {
                 />
                 <br />
                 {buttons.passwordResetEmail}
+                <br />
+                {buttons.signin}
                 {buttons.back}
                 <br />
                 {errMsg}
