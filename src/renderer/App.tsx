@@ -123,7 +123,21 @@ const HomeScreen = () => {
         if (currState === AuthState.Home) {
             setCurrState(AuthState.PasswordReset);
         } else {
-            passwordResetEmail(email);
+            const passResetResult = passwordResetEmail(email);
+            if (typeof passResetResult === 'string') {
+                setErrMsg(passResetResult);
+                return;
+            }
+
+            passResetResult
+                .then(() => {
+                    console.log(`Password reset email sent to ${email}`);
+                    setErrMsg(`Password reset email sent!`); // This isn't an error, but I need to show the message
+                })
+                .catch((e) => {
+                    console.log(`Error sending password reset email to ${email}: ${e}`);
+                    setErrMsg(`Error sending password reset email to ${email}`);
+                });
             setCurrState(AuthState.Home);
         }
     };

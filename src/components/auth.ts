@@ -96,18 +96,13 @@ export const deleteAccount = () => {
 };
 
 export const passwordResetEmail = (email: string) => {
-    const user = auth.currentUser;
-    if (!user) {
-        console.log(`Error: no user signed in`);
-        return;
+    // Pre-verify the data entered
+    if (!email) {
+        return 'Email is empty';
     }
-    if (!user.email) {
-        console.log(`Error: email does not exist for user`);
-        return;
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return `Email '${email}' is invalid; check that you entered it correctly`;
     }
 
-    sendPasswordResetEmail(auth, email)
-        .then(() => console.log(`Password reset email sent to ${user.email}`))
-        .catch((e) => console.log(`Error sending password reset email to ${user.email}: ${e}`));
-    return 1;
+    return sendPasswordResetEmail(auth, email);
 };
