@@ -70,6 +70,7 @@ const HomeScreen = () => {
                                 `Error sending verification email to ${r.user.email}: ${e}`
                             )
                         );
+                    clearData();
                 })
                 .catch((err) => {
                     console.log(`Error creating user: ${err}`);
