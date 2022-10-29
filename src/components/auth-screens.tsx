@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { sendEmailVerification, signOut } from 'firebase/auth';
 import { deleteAccount, passwordResetEmail, signin, signout, signup } from './auth-functions';
 import { auth } from '../config/firebase';
-import icon from '../../assets/icon.svg';
+import './auth.css';
 
 const AuthScreens = () => {
-    const nameStyle = { textAlign: 'center' as const }; // For the boilerplate text
-
     // Authentication state (used to flip between what's shown on the screen)
     enum AuthState {
         Home,
@@ -216,7 +214,7 @@ const AuthScreens = () => {
         ),
         passwordResetEmail: (
             <button type="submit" onClick={handlePassReset}>
-                Reset; password
+                Reset password
             </button>
         ),
         back: (
@@ -331,15 +329,8 @@ const AuthScreens = () => {
             </div>
         ),
     };
-    return (
-        <div>
-            <div className="Hello">
-                <img width="200" alt="icon" src={icon} />
-            </div>
-            <h1 style={nameStyle}> electron - react - boilerplate </h1>
-            <div className="Hello">{states[currState]}</div>;
-        </div>
-    );
+
+    return <div>{states[currState]}</div>;
 };
 
 export default AuthScreens;
