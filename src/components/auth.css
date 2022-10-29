@@ -1,7 +1,6 @@
 body {
     position: relative;
     color: black;
-    height: 100vh;
     background: white;
     font-family: sans-serif;
     overflow-y: hidden;
@@ -11,9 +10,11 @@ body {
 }
 
 button {
-    background-color: white;
+    background-color: #c19218;
+    color: #ffffff;
+    border-radius: 5%;
+
     padding: 10px 20px;
-    border-radius: 10px;
     border: none;
     appearance: none;
     font-size: 1.3rem;
@@ -21,4 +22,53 @@ button {
     transition: all ease-in 0.1s;
     cursor: pointer;
     opacity: 0.9;
+}
+
+.TopText {
+    font-family: 'DM Serif Display', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 55px;
+
+    color: #000000;
+}
+
+.WelcomeText {
+    font-family: 'Roboto', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+
+    color: #a0a0a0;
+}
+
+.SwapAuthTextLeft {
+    font-family: 'Roboto', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 21px;
+
+    color: #676767;
+}
+
+.SwapAuthTextLink {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 21px;
+    /* identical to box height */
+
+    text-decoration-line: underline;
+
+    color: #c19218;
+}
+
+input,
+label {
+    display: block;
 }

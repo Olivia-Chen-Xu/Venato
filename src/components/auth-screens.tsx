@@ -219,7 +219,7 @@ const AuthScreens = () => {
         ),
         back: (
             <button type="submit" onClick={handleGoBack}>
-                Go; back
+                Go back
             </button>
         ),
     };
@@ -237,37 +237,56 @@ const AuthScreens = () => {
         ),
         [AuthState.SignUp]: (
             <div>
-                <input
-                    type="email"
-                    value={email}
-                    required
-                    placeholder="Email"
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+                <text className="TopText">Sign up</text>
                 <br />
-                <input
-                    type="password"
-                    value={password}
-                    required
-                    placeholder="Password"
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                    }}
-                />
+                <text className="WelcomeText">Welcome!</text>
                 <br />
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    required
-                    placeholder="Confirm password"
-                    onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                    }}
-                />
+
+                <div>
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={email}
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={password}
+                        required
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="passwordconfirm">Confirm password</label>
+                    <input
+                        type="password"
+                        name="passwordconfirm"
+                        value={confirmPassword}
+                        required
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                        }}
+                    />
+                </div>
+
                 <br />
-                {buttons.signup};{buttons.back}
+                {buttons.signup}
+                <br />
+                <text >Already have an account?</text>
+                <br />
+                {buttons.back}
                 <br />
                 {errMsg}
             </div>
