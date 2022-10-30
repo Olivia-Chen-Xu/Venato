@@ -236,15 +236,18 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.SignUp]: (
-            <div>
-                <text className="TopText">Sign up</text>
+            <div className="AuthMainDiv">
+                <text className="TopText">
+                    <strong>Sign up</strong>
+                </text>
                 <br />
                 <text className="WelcomeText">Welcome!</text>
                 <br />
 
-                <div>
+                <div style={{ marginTop: '20px' }}>
                     <label htmlFor="email">Email</label>
                     <input
+                        className="InputForms"
                         type="email"
                         name="email"
                         value={email}
@@ -258,6 +261,7 @@ const AuthScreens = () => {
                 <div>
                     <label htmlFor="password">Password</label>
                     <input
+                        className="InputForms"
                         type="password"
                         name="password"
                         value={password}
@@ -271,6 +275,7 @@ const AuthScreens = () => {
                 <div>
                     <label htmlFor="passwordconfirm">Confirm password</label>
                     <input
+                        className="InputForms"
                         type="password"
                         name="passwordconfirm"
                         value={confirmPassword}
@@ -284,7 +289,10 @@ const AuthScreens = () => {
                 <br />
                 {buttons.signup}
                 <br />
-                <text >Already have an account?</text>
+                <p className="SwapAuthTextLeft">
+                    Already have an account?
+                    <span className="SwapAuthTextLink">Sign in</span>
+                </p>
                 <br />
                 {buttons.back}
                 <br />

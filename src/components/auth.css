@@ -1,12 +1,9 @@
 body {
-    position: relative;
     color: black;
     background: white;
     font-family: sans-serif;
-    overflow-y: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+    position: relative;
 }
 
 button {
@@ -22,6 +19,13 @@ button {
     transition: all ease-in 0.1s;
     cursor: pointer;
     opacity: 0.9;
+
+    width: 100%;
+}
+
+.AuthMainDiv {
+    margin: 10% auto 0;
+    width: 30%;
 }
 
 .TopText {
@@ -37,10 +41,9 @@ button {
 .WelcomeText {
     font-family: 'Roboto', serif;
     font-style: normal;
-    font-weight: 400;
     font-size: 18px;
     line-height: 150%;
-    text-align: center;
+    margin-bottom: 100px;
 
     color: #a0a0a0;
 }
@@ -56,19 +59,34 @@ button {
 }
 
 .SwapAuthTextLink {
-    font-family: 'Roboto';
+    font-family: 'Roboto', serif;
     font-style: italic;
     font-weight: 700;
     font-size: 18px;
     line-height: 21px;
-    /* identical to box height */
 
     text-decoration-line: underline;
-
+    float: right;
     color: #c19218;
+}
+
+.InputForms {
+    box-sizing: border-box;
+
+    border: 1px solid #b5b5b5;
+    border-radius: 3px;
+    padding: 10px;
 }
 
 input,
 label {
     display: block;
+    width: 100%;
+}
+
+label {
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    font-family: 'araboto', sans-serif;
 }
