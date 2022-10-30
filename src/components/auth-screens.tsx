@@ -370,6 +370,14 @@ const AuthScreens = () => {
 
                 <br />
                 {buttons.passwordResetEmail}
+                <p>
+                    <text
+                        className="SwapAuthTextLink"
+                        onClick={() => setCurrState(AuthState.SignIn)}
+                    >
+                        Sign in
+                    </text>
+                </p>
                 <br />
                 {errMsg}
             </div>
