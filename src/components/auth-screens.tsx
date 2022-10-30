@@ -311,6 +311,24 @@ const AuthScreens = () => {
                     />
                 </div>
 
+                <p
+                    style={{
+                        textAlign: 'right',
+                        fontSize: '12px',
+                        float: 'right',
+                        textDecorationLine: 'underline',
+                        fontStyle: 'italic',
+                        color: '#676767',
+                    }}
+                >
+                    <text
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setCurrState(AuthState.PasswordReset)}
+                    >
+                        Forgot your password?
+                    </text>
+                </p>
+
                 <br />
                 {buttons.signup}
                 <br />
