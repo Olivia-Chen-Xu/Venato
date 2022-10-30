@@ -218,7 +218,7 @@ const AuthScreens = () => {
                         type="email"
                         name="email"
                         value={email}
-                        placeholder="test@test.com"
+                        placeholder="john.smith@gmail.com"
                         required
                         onChange={(e) => {
                             setEmail(e.target.value);
