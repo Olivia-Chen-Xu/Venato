@@ -180,12 +180,12 @@ const AuthScreens = () => {
         ),
         signout: (
             <button type="submit" onClick={handleSignOut}>
-                Sign; out
+                Sign out
             </button>
         ),
         deleteAccount: (
             <button type="submit" onClick={handleDeleteAccount}>
-                Delete; account
+                Delete account
             </button>
         ),
         passwordResetEmail: (
@@ -204,9 +204,7 @@ const AuthScreens = () => {
         ),
         [AuthState.SignUp]: (
             <div className="AuthMainDiv">
-                <text className="TopText">
-                    <strong>Sign up</strong>
-                </text>
+                <text className="TopText">Sign up</text>
                 <br />
                 <text className="WelcomeText">Welcome!</text>
                 <br />
@@ -274,9 +272,7 @@ const AuthScreens = () => {
         ),
         [AuthState.SignIn]: (
             <div className="AuthMainDiv">
-                <text className="TopText">
-                    <strong>Sign in</strong>
-                </text>
+                <text className="TopText">Sign in</text>
                 <br />
                 <text className="WelcomeText">Welcome back.</text>
                 <br />
@@ -347,9 +343,7 @@ const AuthScreens = () => {
         ),
         [AuthState.PasswordReset]: (
             <div className="AuthMainDiv">
-                <text className="TopText">
-                    <strong>Password reset</strong>
-                </text>
+                <text className="TopText">Password reset</text>
                 <br />
                 <br />
 
@@ -383,8 +377,13 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.Profile]: (
-            <div>
+            <div className="AuthMainDiv">
+                <text className="TopText">Venato profile</text>
+                <br />
+                <br />
                 {buttons.signout}
+                <br />
+                <br />
                 {buttons.deleteAccount}
                 <br />
                 {errMsg}
