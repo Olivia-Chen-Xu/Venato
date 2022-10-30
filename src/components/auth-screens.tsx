@@ -14,7 +14,7 @@ const AuthScreens = () => {
         Profile,
     }
 
-    const [currState, setCurrState] = useState(AuthState.Home);
+    const [currState, setCurrState] = useState(AuthState.SignUp);
     const [errMsg, setErrMsg] = useState('');
 
     // For user inputs
@@ -31,128 +31,109 @@ const AuthScreens = () => {
 
     // Handlers for auth functions
     const handleSignup = async () => {
-        if (currState === AuthState.Home) {
-            setCurrState(AuthState.SignUp);
-        } else {
-            if (password !== confirmPassword) {
-                setErrMsg('Passwords do not match');
-                return;
-            }
-
-            const signupResult = signup(email, password);
-            if (typeof signupResult === 'string') {
-                setErrMsg(signupResult);
-                return;
-            }
-
-            signupResult
-                // eslint-disable-next-line promise/always-return
-                .then((r) => {
-                    console.log(
-                        `Sign up success (check your email):` +
-                            `\nEmail: ${JSON.stringify(r.user.email)}` +
-                            `\nID: ${JSON.stringify(r.user.uid)}`
-                    );
-                    console.log(JSON.stringify(r));
-                    // eslint-disable-next-line promise/no-nesting
-                    sendEmailVerification(r.user)
-                        // eslint-disable-next-line promise/always-return
-                        .then(() => {
-                            console.log(`Verification email sent successfully to ${r.user.email}`);
-                            // This isn't an error, but I need to show the message
-                            setErrMsg(`Please check your email`);
-                            setCurrState(AuthState.Home);
-                        })
-                        .catch((e) =>
-                            console.error(
-                                `Error sending verification email to ${r.user.email}: ${e}`
-                            )
-                        );
-                    clearData();
-                })
-                .catch((err) => {
-                    console.log(`Error creating user: ${err}`);
-                    if (err.code === 'auth/email-already-in-use') {
-                        setErrMsg(
-                            'The email you entered is already in use; please enter another one'
-                        );
-                    } else {
-                        setErrMsg('Failed to create user');
-                    }
-                });
+        if (password !== confirmPassword) {
+            setErrMsg('Passwords do not match');
+            return;
         }
+
+        const signupResult = signup(email, password);
+        if (typeof signupResult === 'string') {
+            setErrMsg(signupResult);
+            return;
+        }
+
+        signupResult
+            // eslint-disable-next-line promise/always-return
+            .then((r) => {
+                console.log(
+                    `Sign up success (check your email):` +
+                        `\nEmail: ${JSON.stringify(r.user.email)}` +
+                        `\nID: ${JSON.stringify(r.user.uid)}`
+                );
+                console.log(JSON.stringify(r));
+                // eslint-disable-next-line promise/no-nesting
+                sendEmailVerification(r.user)
+                    // eslint-disable-next-line promise/always-return
+                    .then(() => {
+                        console.log(`Verification email sent successfully to ${r.user.email}`);
+                        // This isn't an error, but I need to show the message
+                        setErrMsg(`Please check your email`);
+                        setCurrState(AuthState.SignIn);
+                    })
+                    .catch((e) =>
+                        console.error(`Error sending verification email to ${r.user.email}: ${e}`)
+                    );
+                clearData();
+            })
+            .catch((err) => {
+                console.log(`Error creating user: ${err}`);
+                if (err.code === 'auth/email-already-in-use') {
+                    setErrMsg('The email you entered is already in use; please enter another one');
+                } else {
+                    setErrMsg('Failed to create user');
+                }
+            });
     };
 
     const handleSignIn = () => {
-        if (currState === AuthState.Home || currState === AuthState.PasswordReset) {
-            clearData();
-            setCurrState(AuthState.SignIn);
-        } else {
-            const signInResult = signin(email, password);
-            if (typeof signInResult === 'string') {
-                setErrMsg(signInResult);
-                return;
-            }
-
-            signInResult
-                .then((r) => {
-                    console.log(JSON.stringify(r));
-                    // eslint-disable-next-line promise/always-return
-                    if (!r.user.emailVerified) {
-                        setErrMsg('You need to verify your email first');
-                        signOut(auth);
-                    } else {
-                        console.log(`Successfully signed in user: ${email}, ${password}`);
-                        clearData();
-                        setCurrState(AuthState.Profile);
-                    }
-                })
-                .catch((err) => {
-                    console.log(`Error signing in: ${JSON.stringify(err)}`);
-                    if (
-                        err.code === 'auth/user-not-found' ||
-                        err.code === 'auth/invalid-password' ||
-                        err.code === 'auth/wrong-password'
-                    ) {
-                        setErrMsg(
-                            `Error: account ${email} does not exist or password is incorrect`
-                        );
-                    } else {
-                        setErrMsg(`Failed to sign in, error: ${JSON.stringify(err)}`);
-                    }
-                });
+        const signInResult = signin(email, password);
+        if (typeof signInResult === 'string') {
+            setErrMsg(signInResult);
+            return;
         }
+
+        signInResult
+            .then((r) => {
+                console.log(JSON.stringify(r));
+                // eslint-disable-next-line promise/always-return
+                if (!r.user.emailVerified) {
+                    setErrMsg('You need to verify your email first');
+                    signOut(auth);
+                } else {
+                    console.log(`Successfully signed in user: ${email}, ${password}`);
+                    clearData();
+                    setCurrState(AuthState.Profile);
+                }
+            })
+            .catch((err) => {
+                console.log(`Error signing in: ${JSON.stringify(err)}`);
+                if (
+                    err.code === 'auth/user-not-found' ||
+                    err.code === 'auth/invalid-password' ||
+                    err.code === 'auth/wrong-password'
+                ) {
+                    setErrMsg(`Error: account ${email} does not exist or password is incorrect`);
+                } else {
+                    setErrMsg(`Failed to sign in, error: ${JSON.stringify(err)}`);
+                }
+            });
     };
 
     const handlePassReset = () => {
-        if (currState === AuthState.Home) {
-            setCurrState(AuthState.PasswordReset);
-        } else {
-            const passResetResult = passwordResetEmail(email);
-            if (typeof passResetResult === 'string') {
-                setErrMsg(passResetResult);
-                return;
-            }
-
-            passResetResult
-                // eslint-disable-next-line promise/always-return
-                .then(() => {
-                    console.log(`Password reset email sent to ${email}`);
-
-                    // This isn't an error, but I need to show the message
-                    setErrMsg(`Password reset email sent!`);
-                })
-                .catch((e) => {
-                    if (e.code === 'auth/user-not-found') {
-                        // When signing up, we have to tell the user if the email is in use
-                        // so there is no point in hiding it here (also makes it harder)
-                        setErrMsg(`No email found, make sure you typed it in correctly`);
-                    } else {
-                        console.log(`Error sending password reset email to ${email}: ${e}`);
-                        setErrMsg(`Error sending password reset email to ${email}`);
-                    }
-                });
+        const passResetResult = passwordResetEmail(email);
+        if (typeof passResetResult === 'string') {
+            setErrMsg(passResetResult);
+            return;
         }
+
+        passResetResult
+            // eslint-disable-next-line promise/always-return
+            .then(() => {
+                console.log(`Password reset email sent to ${email}`);
+
+                // This isn't an error, but I need to show the message
+                setErrMsg(`Password reset email sent!`);
+            })
+            .catch((e) => {
+                if (e.code === 'auth/user-not-found') {
+                    // When signing up, we have to tell the user if the email is in use
+                    // so there is no point in hiding it here (also makes it harder)
+                    setErrMsg(`No email found, make sure you typed it in correctly`);
+                } else {
+                    console.log(`Error sending password reset email to ${email}: ${e}`);
+                    setErrMsg(`Error sending password reset email to ${email}`);
+                }
+            });
     };
 
     const handleSignOut = () => {
@@ -165,7 +146,7 @@ const AuthScreens = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Successfully signed out`);
-                setCurrState(AuthState.Home);
+                setCurrState(AuthState.SignIn);
             })
             .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
     };
@@ -180,14 +161,9 @@ const AuthScreens = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Current user successfully deleted`);
-                setCurrState(AuthState.Home);
+                setCurrState(AuthState.SignUp);
             })
             .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
-    };
-
-    const handleGoBack = () => {
-        clearData();
-        setCurrState(AuthState.Home);
     };
 
     // Buttons to be used with auth
@@ -217,22 +193,13 @@ const AuthScreens = () => {
                 Reset password
             </button>
         ),
-        back: (
-            <button type="submit" onClick={handleGoBack}>
-                Go back
-            </button>
-        ),
     };
 
     // JSX states
     const states = {
         [AuthState.Home]: (
             <div>
-                {buttons.signup}
-                {buttons.signin}
-                {buttons.passwordResetEmail}
-                <br />
-                {errMsg}
+                <h1>Homepage (not implemented yet)</h1>
             </div>
         ),
         [AuthState.SignUp]: (
@@ -297,8 +264,6 @@ const AuthScreens = () => {
                     <span className="SwapAuthTextLink">Sign in</span>
                 </p>
                 <br />
-                {buttons.back}
-                <br />
                 {errMsg}
             </div>
         ),
@@ -325,7 +290,6 @@ const AuthScreens = () => {
                 />
                 <br />
                 {buttons.signin}
-                {buttons.back}
                 <br />
                 {errMsg}
             </div>
@@ -345,7 +309,6 @@ const AuthScreens = () => {
                 {buttons.passwordResetEmail}
                 <br />
                 {buttons.signin}
-                {buttons.back}
                 <br />
                 {errMsg}
             </div>
