@@ -330,7 +330,7 @@ const AuthScreens = () => {
                 </p>
 
                 <br />
-                {buttons.signup}
+                {buttons.signin}
                 <br />
                 <p className="SwapAuthTextLeft">
                     Don't have an account?
