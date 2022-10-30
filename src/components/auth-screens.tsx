@@ -346,20 +346,30 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.PasswordReset]: (
-            <div>
-                <input
-                    type="email"
-                    value={email}
-                    required
-                    placeholder="Email"
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+            <div className="AuthMainDiv">
+                <text className="TopText">
+                    <strong>Password reset</strong>
+                </text>
+                <br />
+                <br />
+
+                <div>
+                    <label htmlFor="email">Email</label>
+                    <input
+                        className="InputForms"
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="john.smith@gmail.com"
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </div>
+
                 <br />
                 {buttons.passwordResetEmail}
-                <br />
-                {buttons.signin}
                 <br />
                 {errMsg}
             </div>
