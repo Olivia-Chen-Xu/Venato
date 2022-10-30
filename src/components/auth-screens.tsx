@@ -251,6 +251,7 @@ const AuthScreens = () => {
                         type="email"
                         name="email"
                         value={email}
+                        placeholder="test@test.com"
                         required
                         onChange={(e) => {
                             setEmail(e.target.value);
@@ -265,6 +266,7 @@ const AuthScreens = () => {
                         type="password"
                         name="password"
                         value={password}
+                        placeholder="••••••••••"
                         required
                         onChange={(e) => {
                             setPassword(e.target.value);
@@ -279,6 +281,7 @@ const AuthScreens = () => {
                         type="password"
                         name="passwordconfirm"
                         value={confirmPassword}
+                        placeholder="••••••••••"
                         required
                         onChange={(e) => {
                             setConfirmPassword(e.target.value);
