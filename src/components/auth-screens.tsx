@@ -274,37 +274,11 @@ const AuthScreens = () => {
         ),
         [AuthState.SignIn]: (
             <div className="AuthMainDiv">
-                <div>
-                    <input
-                        type="email"
-                        value={email}
-                        required
-                        placeholder="Email"
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        value={password}
-                        required
-                        placeholder="Password"
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                        }}
-                    />
-                    <br />
-                    {buttons.signin}
-                    <br />
-                    {errMsg}
-                </div>
-
                 <text className="TopText">
                     <strong>Sign in</strong>
                 </text>
                 <br />
-                <text className="WelcomeText">Welcome back</text>
+                <text className="WelcomeText">Welcome back.</text>
                 <br />
 
                 <div style={{ marginTop: '20px' }}>
@@ -337,21 +311,6 @@ const AuthScreens = () => {
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="passwordconfirm">Confirm password</label>
-                    <input
-                        className="InputForms"
-                        type="password"
-                        name="passwordconfirm"
-                        value={confirmPassword}
-                        placeholder="••••••••••"
-                        required
-                        onChange={(e) => {
-                            setConfirmPassword(e.target.value);
-                        }}
-                    />
-                </div>
-
                 <br />
                 {buttons.signup}
                 <br />
@@ -361,7 +320,7 @@ const AuthScreens = () => {
                         className="SwapAuthTextLink"
                         onClick={() => setCurrState(AuthState.SignUp)}
                     >
-                        Sign in
+                        Sign up
                     </text>
                 </p>
                 <br />
