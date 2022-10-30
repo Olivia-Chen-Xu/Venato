@@ -3,6 +3,7 @@ import { sendEmailVerification, signOut } from 'firebase/auth';
 import { deleteAccount, passwordResetEmail, signin, signout, signup } from './auth-functions';
 import { auth } from '../config/firebase';
 import './auth.css';
+import checkMark from '../../assets/checkMark.png';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
@@ -374,6 +375,8 @@ const AuthScreens = () => {
                 </p>
                 <br />
                 {errMsg}
+                <br />
+
             </div>
         ),
         [AuthState.Profile]: (
