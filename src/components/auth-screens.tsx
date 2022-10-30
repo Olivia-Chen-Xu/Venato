@@ -195,7 +195,7 @@ const AuthScreens = () => {
         ),
     };
 
-    // JSX states
+    // Auth pages
     const states = {
         [AuthState.Home]: (
             <div>
@@ -212,7 +212,7 @@ const AuthScreens = () => {
                 <br />
 
                 <div style={{ marginTop: '20px' }}>
-                    <label htmlFor="email">Email</label>
+                    <label>Email</label>
                     <input
                         className="InputForms"
                         type="email"
@@ -261,35 +261,109 @@ const AuthScreens = () => {
                 <br />
                 <p className="SwapAuthTextLeft">
                     Already have an account?
-                    <span className="SwapAuthTextLink">Sign in</span>
+                    <text
+                        className="SwapAuthTextLink"
+                        onClick={() => setCurrState(AuthState.SignIn)}
+                    >
+                        Sign in
+                    </text>
                 </p>
                 <br />
                 {errMsg}
             </div>
         ),
         [AuthState.SignIn]: (
-            <div>
-                <input
-                    type="email"
-                    value={email}
-                    required
-                    placeholder="Email"
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+            <div className="AuthMainDiv">
+                <div>
+                    <input
+                        type="email"
+                        value={email}
+                        required
+                        placeholder="Email"
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                    <br />
+                    <input
+                        type="password"
+                        value={password}
+                        required
+                        placeholder="Password"
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
+                    <br />
+                    {buttons.signin}
+                    <br />
+                    {errMsg}
+                </div>
+
+                <text className="TopText">
+                    <strong>Sign in</strong>
+                </text>
                 <br />
-                <input
-                    type="password"
-                    value={password}
-                    required
-                    placeholder="Password"
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                    }}
-                />
+                <text className="WelcomeText">Welcome back</text>
                 <br />
-                {buttons.signin}
+
+                <div style={{ marginTop: '20px' }}>
+                    <label>Email</label>
+                    <input
+                        className="InputForms"
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="john.smith@gmail.com"
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="password">Password</label>
+                    <input
+                        className="InputForms"
+                        type="password"
+                        name="password"
+                        value={password}
+                        placeholder="••••••••••"
+                        required
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="passwordconfirm">Confirm password</label>
+                    <input
+                        className="InputForms"
+                        type="password"
+                        name="passwordconfirm"
+                        value={confirmPassword}
+                        placeholder="••••••••••"
+                        required
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                        }}
+                    />
+                </div>
+
+                <br />
+                {buttons.signup}
+                <br />
+                <p className="SwapAuthTextLeft">
+                    Don't have an account?
+                    <text
+                        className="SwapAuthTextLink"
+                        onClick={() => setCurrState(AuthState.SignUp)}
+                    >
+                        Sign in
+                    </text>
+                </p>
                 <br />
                 {errMsg}
             </div>
