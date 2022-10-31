@@ -24,14 +24,14 @@ export default function Homepage() {
         </div>
         <div className="float-right cursor-pointer bg-gray-200">
           <button className='py-2 px-3 text-2xl'>
-              Premium
+              Find Jobs
           </button>
         </div>
       </header>
       
 
 
-      <h1 className="text-center text-3xl mt-20">Welcome Back ____________</h1>
+      <h1 className="text-center text-3xl mt-20">Welcome Back _________</h1>
 
 
       <div className="mt-20 grid grid-rows-3 gap-y-8 text-3xl">
