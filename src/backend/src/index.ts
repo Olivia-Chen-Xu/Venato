@@ -4,6 +4,7 @@ import admin = require('firebase-admin');
 admin.initializeApp();
 const db = admin.firestore();
 
+
 // On account creation create a db collection for them with default data
 export const onUserSignup = functions.auth.user().onCreate((user: any) => {
     const defaultDoc = {
@@ -23,15 +24,6 @@ export const onUserInput = functions.https.onCall((data: any, context: any) => {
     return db.collection('events').add(data)
 })
 
-// On user edit, update field in db
-export const onFieldUpdate = functions.https.onCall((data: any, context: any) => {
-    return db.collection('events').doc().update(data)
-});
-
-// On user delete, delete field in db
-export const onFieldDelete = functions.https.onCall((data: any, context: any) => {
-    return db.collection('events').doc().delete(data);
-});
 
 
 // Examples:

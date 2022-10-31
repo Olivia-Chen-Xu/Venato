@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import icon from '../../assets/icon.svg';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { db } from 'config/firebase';
+import {collection, getDocs, updateDoc, deleteDoc, doc} from 'firebase/firestore'
 
 
 export const QuickView = () => {
+    
     // use states to store form data
     const [notes, setNotes] = useState('');
     const [questions, setInterviewQuestions] = useState('');
@@ -12,6 +15,40 @@ export const QuickView = () => {
     const [validLinkedin, setLinkedin] = useState('');
     const [password, setPassword] = useState('');
     const [confPassword, setConfPassword] = useState('');
+
+    // creates reference point for form data
+    const [events, setEvents] = useState([])
+
+
+
+    // reads the collections contained inside the document
+    useEffect(() => {
+        db.collection('events')
+            .get()
+            .then((querySnapshot: any) => {
+                querySnapshot.forEach((doc: any) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, ' => ', doc.data());
+                });
+            });
+
+
+    }, []);
+
+
+    // updates the events
+    const updateEvents = async (id: any, notes: any) => {
+        const eventDoc = doc(db, "events", id)
+        const newFields = {notes: notes}
+        await updateDoc(eventDoc, newFields)
+
+    }
+
+    // deletes the events
+    const deleteEvents = async (id: any) => {
+        const eventDoc = doc(db, 'events', id);
+        await deleteDoc(eventDoc);
+    };
 
     // function to update state of notes with user input
     const handleChange = (e: any) => {
@@ -43,15 +80,9 @@ export const QuickView = () => {
         setConfPassword(e.target.value);
     };
 
-
     // function to send user inputs to firebase
     const onUserInput = httpsCallable(getFunctions(), 'onUserInput');
 
-    // function to update user inputs in firebase
-    const onFieldUpdate = httpsCallable(getFunctions(), 'onFieldUpdate');
-
-    // function to delete user inputs in firebase
-    const onFieldDelete = httpsCallable(getFunctions(), 'onFieldDelete');
 
     // below function will be called when user click on submit button -> user must enter password for security purposes
     const handleSubmit = (e: any) => {
@@ -79,7 +110,6 @@ export const QuickView = () => {
         }
         e.preventDefault();
     };
-
     return (
         <div>
             <div className="Logo">
@@ -172,6 +202,18 @@ export const QuickView = () => {
                     <br />
                     <input className="Submit" type="submit" value="Submit" />
                 </form>
+                {events.map((event) => {
+                    return (
+                        <div>
+                            <h1>Notes: {event.notes}</h1>
+                            <h1>Questions: {event.questions}</h1>
+                            <h1>Position: {event.position}</h1>
+                            <h1>Linkedin: {event.validLinkedin}</h1>
+                            <button onClick={() => {updateEvents(event.id, event.notes);}}>Change Notes</button>
+                            <button onClick={() => {deleteEvents(event.id);}}>{' '}Delete User</button>
+                        </div>
+                    );
+                })}
             </div>
             <div className="Border">
                 <h2
@@ -190,25 +232,6 @@ export const QuickView = () => {
             <div id="next-deadline" className="Deadline-Tabs">
                 Next Deadline
             </div>
-            <button
-                onClick={(e) => {
-                    onFieldUpdate(e);
-                }}
-                className="Edit"
-            >
-                Save Edits
-            </button>
-            <button className="ViewCal" type="button">
-                View Calendar
-            </button>
-            <button
-                onClick={(e) => {
-                    onFieldDelete(e);
-                }}
-                className="DeleteCollection"
-            >
-                Delete Information
-            </button>
         </div>
     );
 };
