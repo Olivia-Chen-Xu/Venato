@@ -22,12 +22,33 @@ const AuthScreens = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const clearData = () => {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
         setErrMsg('');
+    };
+
+    const renderEmailSent = () => {
+        if (!isSubmitted) {
+            return <></>;
+        }
+
+        return (
+            <div
+                style={{
+                    borderRadius: '5%',
+                    outline: '2px solid lime',
+                    padding: '5px',
+                    verticalAlign: 'middle',
+                }}
+            >
+                {/* The LRM is an invisible character to get the spacing right */}
+                <img width="20" src={checkMark} alt="Green check mark" />‎ Email verification sent!
+            </div>
+        );
     };
 
     // Handlers for auth functions
@@ -376,7 +397,7 @@ const AuthScreens = () => {
                 <br />
                 {errMsg}
                 <br />
-
+                {renderEmailSent()}
             </div>
         ),
         [AuthState.Profile]: (
