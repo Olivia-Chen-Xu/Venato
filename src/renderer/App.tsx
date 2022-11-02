@@ -1,5 +1,5 @@
 import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
-import AuthScreens from '../components/auth-screens';
+import AuthScreens from './auth/auth-screens';
 
 export default function App() {
     return (
