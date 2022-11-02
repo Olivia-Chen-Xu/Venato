@@ -5,7 +5,7 @@ import {
     signOut,
     sendPasswordResetEmail,
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth } from '../../config/firebase';
 
 export const signup = (email: string, password: string) => {
     // Validate email is entered and valid

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { sendEmailVerification, signOut } from 'firebase/auth';
 import { deleteAccount, passwordResetEmail, signin, signout, signup } from './auth-functions';
-import { auth } from '../config/firebase';
+import { auth } from '../../config/firebase';
 import './auth.css';
-import checkMark from '../../assets/checkMark.png';
+import checkMark from '../../../assets/checkMark.png';
+import AppRoutes from 'renderer/routes';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
@@ -401,17 +402,15 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.Profile]: (
-            <div className="AuthMainDiv">
-                <text className="TopText">Venato profile</text>
-                <br />
-                <br />
-                {buttons.signout}
-                <br />
-                <br />
-                {buttons.deleteAccount}
-                <br />
-                {errMsg}
-            </div>
+            <>
+                <div className="AuthMainDiv">
+                    <text className="TopText">Venato profile</text>
+                    {buttons.signout}
+                    {buttons.deleteAccount}
+                    {errMsg}
+                </div>
+                <AppRoutes></AppRoutes>
+            </>
         ),
     };
 
