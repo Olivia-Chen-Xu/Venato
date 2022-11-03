@@ -42,7 +42,18 @@ const addEvent = functions.https.onCall((data: object, context: any) => {
 
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
-    return admin.firestore().collection('events').get();
+    return admin
+        .firestore()
+        .collection('events')
+        .get()
+        .then((events) => {
+            const eventList: any = [];
+            events.forEach((event) => {
+                eventList.push(event.data());
+            });
+            return eventList;
+        })
+        .catch((err) => err);
 });
 
 // Updates an event in the database with a new object
