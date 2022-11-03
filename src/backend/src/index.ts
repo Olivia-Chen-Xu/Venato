@@ -32,7 +32,21 @@ const onUserInput = functions.https.onCall((data: object, context: any) => {
     return admin.firestore().collection('events').add(data);
 });
 
-export { onUserSignup, onUserDeleted, onUserInput };
+const getUserEvents = functions.https.onCall((data: object, context: any) => {
+    return admin.firestore().collection('events').get();
+});
+
+const deleteNote = functions.https.onCall((data: { id: string }, context: any) => {
+    return admin.firestore().doc(`events/${data.id}`).update({ isActive: false });
+});
+
+const updateNote = functions.https.onCall(
+    (data: { id: string; newObject: object }, context: any) => {
+        return admin.firestore().doc(`events/${data.id}`).set(data.newObject);
+    }
+);
+
+export { onUserSignup, onUserDeleted, onUserInput, getUserEvents, deleteNote, updateNote };
 
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
