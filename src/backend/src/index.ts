@@ -4,6 +4,10 @@ import { auth } from 'firebase-admin';
 
 admin.initializeApp();
 
+/**
+ * Auth triggers - automatically triggered when a user is created/deleted
+ */
+
 // On account creation create a db collection for them with default data
 const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
     const defaultDocData = {
@@ -18,8 +22,12 @@ const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => 
     return admin.firestore().collection('users').doc(user.uid).delete();
 });
 
-// On user input, add event data in db
-const onUserInput = functions.https.onCall((data: object, context: any) => {
+/**
+ * Callable functions - must be invoked from within the app
+ */
+
+// Adds an event to the database
+const addEvent = functions.https.onCall((data: object, context: any) => {
     if (!context.auth) {
         // TODO @krishaan: Once you integrate authentication, uncomment the following code
         /*
@@ -32,7 +40,57 @@ const onUserInput = functions.https.onCall((data: object, context: any) => {
     return admin.firestore().collection('events').add(data);
 });
 
-export { onUserSignup, onUserDeleted, onUserInput };
+// Gets events from the database
+const getEvents = functions.https.onCall((data: object, context: any) => {
+    return admin
+        .firestore()
+        .collection('events')
+        .get()
+        .then((events) => {
+            const eventList: any = [];
+            events.forEach((event) => {
+                eventList.push(event.data());
+            });
+            return eventList;
+        })
+        .catch((err) => err);
+});
+
+// Updates an event in the database with a new object
+const updateEvents = functions.https.onCall(
+    (data: { id: string; newObject: object }, context: any) => {
+        return admin.firestore().doc(`events/${data.id}`).set(data.newObject);
+    }
+);
+
+// Deactivates an event in the database (a trigger will delete it after)
+const deleteEvent = functions.https.onCall((data: { id: string }, context: any) => {
+    return admin.firestore().doc(`events/${data.id}`).update({ toDelete: true });
+});
+
+/**
+ * Firestore triggers - do sensitive operations automatically when the database changes
+ */
+
+// Removes any event from the db when toDelete is set to true
+const purgeDeletedEvent = functions.firestore
+    .document('events/{eventId}')
+    .onUpdate((change, context) => {
+        if (change.after.data().toDelete) {
+            return change.after.ref.delete();
+        }
+        return null;
+    });
+
+export {
+    onUserSignup,
+    onUserDeleted,
+    addEvent,
+    getEvents,
+    updateEvents,
+    deleteEvent,
+    purgeDeletedEvent,
+};
 
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js

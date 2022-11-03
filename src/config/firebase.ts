@@ -1,10 +1,8 @@
-// import firebase, { initializeApp } from 'firebase/app';
-// import { getAuth } from 'firebase/auth';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-// Venato Firebase configuration
+// Venato Firebase configuration (firebase API keys need to be public, it's not a security issue)
 const firebaseConfig = {
     apiKey: 'AIzaSyBouNrZMqdS_WX9Hyi-e7X69bxbvxEZZsY',
     authDomain: 'venato-ae74d.firebaseapp.com',
