@@ -35,7 +35,7 @@ export default function AppRoutes() {
                 <button onClick={goCal}>Cal</button>
             </div>
             <Routes>
-                <Route path="/" element={<Homepage />} />
+                <Route path="/home" element={<Homepage />} />
                 <Route path="/job" element={<Job />} />
                 <Route path="/kanban" element={<Kanban />} />
                 <Route path="/calendar" element={<Calendar />} />

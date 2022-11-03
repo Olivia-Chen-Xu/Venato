@@ -5,7 +5,7 @@ export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<AuthScreens />} />
+                <Route path="/*" element={<AuthScreens />} />
             </Routes>
         </Router>
     );
