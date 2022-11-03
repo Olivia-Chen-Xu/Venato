@@ -5,7 +5,7 @@ import { auth } from 'firebase-admin';
 admin.initializeApp();
 
 /**
- * Auth triggers- automatically triggered when a user is created/deleted
+ * Auth triggers - automatically triggered when a user is created/deleted
  */
 
 // On account creation create a db collection for them with default data
@@ -23,7 +23,7 @@ const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => 
 });
 
 /**
- * Callable functions- must be invoked from within the app
+ * Callable functions - must be invoked from within the app
  */
 
 // Adds an event to the database
@@ -52,12 +52,34 @@ const updateEvents = functions.https.onCall(
     }
 );
 
-// Deactivates an event in the database (note: it's not removed yet, but will be cleaned up periodically)
+// Deactivates an event in the database (a trigger will delete it after)
 const deleteEvent = functions.https.onCall((data: { id: string }, context: any) => {
-    return admin.firestore().doc(`events/${data.id}`).update({ isActive: false });
+    return admin.firestore().doc(`events/${data.id}`).update({ toDelete: true });
 });
 
-export { onUserSignup, onUserDeleted, addEvent, getEvents, updateEvents, deleteEvent };
+/**
+ * Firestore triggers - do sensitive operations automatically when the database changes
+ */
+
+// Removes deleted events from the database every day at midnight UTC (8pm PST)
+const purgeDeletedEvent = functions.firestore
+    .document('events/{eventId}')
+    .onUpdate((change, context) => {
+        if (change.after.data().toDelete) {
+            return change.after.ref.delete();
+        }
+        return null;
+    });
+
+export {
+    onUserSignup,
+    onUserDeleted,
+    addEvent,
+    getEvents,
+    updateEvents,
+    deleteEvent,
+    purgeDeletedEvent,
+};
 
 // Examples:
 // Functions examples: https://github.com/iamshaunjp/firebase-functions/blob/lesson-18/functions/index.js
