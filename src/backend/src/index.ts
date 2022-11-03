@@ -72,7 +72,7 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
  * Firestore triggers - do sensitive operations automatically when the database changes
  */
 
-// Removes deleted events from the database every day at midnight UTC (8pm PST)
+// Removes any event from the db when toDelete is set to true
 const purgeDeletedEvent = functions.firestore
     .document('events/{eventId}')
     .onUpdate((change, context) => {
