@@ -120,36 +120,9 @@ const AuthScreens = () => {
             });
     };
 
-    const handleSignOut = () => {
-        const signoutResult = signout();
-        if (typeof signoutResult === 'string') {
-            setErrMsg(signoutResult);
-            return;
-        }
-        signoutResult
-            // eslint-disable-next-line promise/always-return
-            .then(() => {
-                console.log(`Successfully signed out`);
-                setCurrState(AuthState.SignIn);
-            })
-            .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
-    };
 
-    const handleDeleteAccount = () => {
-        const deleteAccountResult = deleteAccount();
-        if (typeof deleteAccountResult === 'string') {
-            setErrMsg(deleteAccountResult);
-            return;
-        }
 
-        deleteAccountResult
-            // eslint-disable-next-line promise/always-return
-            .then(() => {
-                console.log(`Current user successfully deleted`);
-                setCurrState(AuthState.SignUp);
-            })
-            .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
-    };
+
 
     // Buttons to be used with auth
     const buttons = {
