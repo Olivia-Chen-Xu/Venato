@@ -5,6 +5,7 @@ import { deleteAccount, passwordResetEmail, signin, signout, signup } from './au
 import { auth } from '../../config/firebase';
 import './auth.css';
 import checkMark from '../../../assets/checkMark.png';
+import warning from '../../../assets/warning.png';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
@@ -145,6 +146,7 @@ const AuthScreens = () => {
                 console.log(`Password reset email sent to ${email}`);
 
                 // This isn't an error, but I need to show the message
+                setIsSubmitted(true);
                 setErrMsg(`Password reset email sent!`);
             })
             .catch((e) => {
@@ -180,6 +182,7 @@ const AuthScreens = () => {
             setErrMsg(deleteAccountResult);
             return;
         }
+
         deleteAccountResult
             // eslint-disable-next-line promise/always-return
             .then(() => {
@@ -409,7 +412,7 @@ const AuthScreens = () => {
                     {buttons.deleteAccount}
                     {errMsg}
                 </div>
-                <AppRoutes></AppRoutes>
+                <AppRoutes />
             </>
         ),
     };
