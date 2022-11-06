@@ -1,12 +1,4 @@
-/* body {
-    color: black;
-    background: white;
-    font-family: sans-serif;
-
-    position: relative;
-}
-
-button {
+.auth-button {
     background-color: #c19218;
     color: #ffffff;
     border-radius: 5%;
@@ -21,12 +13,18 @@ button {
     opacity: 0.9;
 
     width: 100%;
-} */
+}
 
 .AuthMainDiv {
     /* margin: 13% auto 0; */
     margin-inline: auto;
     width: 30%;
+
+    color: black;
+    background: white;
+    font-family: sans-serif;
+
+    position: relative;
 }
 
 .TopText {

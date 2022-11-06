@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { sendEmailVerification, signOut } from 'firebase/auth';
+import AppRoutes from 'renderer/routes';
 import { deleteAccount, passwordResetEmail, signin, signout, signup } from './auth-functions';
 import { auth } from '../../config/firebase';
 import './auth.css';
 import checkMark from '../../../assets/checkMark.png';
-import AppRoutes from 'renderer/routes';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
@@ -226,7 +226,7 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.SignUp]: (
-            <div className="AuthMainDiv">
+            <div>
                 <text className="TopText">Sign up</text>
                 <br />
                 <text className="WelcomeText">Welcome!</text>
@@ -294,7 +294,7 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.SignIn]: (
-            <div className="AuthMainDiv">
+            <div>
                 <text className="TopText">Sign in</text>
                 <br />
                 <text className="WelcomeText">Welcome back.</text>
@@ -365,7 +365,7 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.PasswordReset]: (
-            <div className="AuthMainDiv">
+            <div>
                 <text className="TopText">Password reset</text>
                 <br />
                 <br />
@@ -403,7 +403,7 @@ const AuthScreens = () => {
         ),
         [AuthState.Profile]: (
             <>
-                <div className="AuthMainDiv">
+                <div>
                     <text className="TopText">Venato profile</text>
                     {buttons.signout}
                     {buttons.deleteAccount}
@@ -414,7 +414,7 @@ const AuthScreens = () => {
         ),
     };
 
-    return <div>{states[currState]}</div>;
+    return <div className="AuthMainDiv">{states[currState]}</div>;
 };
 
 export default AuthScreens;
