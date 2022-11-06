@@ -6,7 +6,7 @@ import { auth } from '../../config/firebase';
 import './auth.css';
 import checkMark from '../../../assets/checkMark.png';
 import warning from '../../../assets/warning.png';
-import SignUp from './signUp';
+import SignUp from './SignUp';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
