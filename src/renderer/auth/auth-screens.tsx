@@ -183,15 +183,9 @@ const AuthScreens = () => {
             </div>
         ),
         [AuthState.SignUp]: <SignUp />,
-        [AuthState.SignIn]: (
-            <SignIn />
-        ),
-        [AuthState.PasswordReset]: (
-            <PasswordReset />
-        ),
-        [AuthState.Profile]: (
-            <Profile />
-        ),
+        [AuthState.SignIn]: <SignIn />,
+        [AuthState.PasswordReset]: <PasswordReset />,
+        [AuthState.Profile]: <Profile />,
     };
 
     return <div className="AuthMainDiv">{states[currState]}</div>;

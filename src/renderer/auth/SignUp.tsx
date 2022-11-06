@@ -61,48 +61,54 @@ const SignUp = () => {
             <br />
 
             <div style={{ marginTop: '20px' }}>
-                <label>Email</label>
-                <input
-                    className="InputForms"
-                    type="email"
-                    name="email"
-                    value={email}
-                    placeholder="john.smith@gmail.com"
-                    required
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+                <label htmlFor="email">
+                    Email
+                    <input
+                        className="InputForms"
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="john.smith@gmail.com"
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <div>
-                <label htmlFor="password">Password</label>
-                <input
-                    className="InputForms"
-                    type="password"
-                    name="password"
-                    value={password}
-                    placeholder="••••••••••"
-                    required
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                    }}
-                />
+                <label htmlFor="password">
+                    Password
+                    <input
+                        className="InputForms"
+                        type="password"
+                        name="password"
+                        value={password}
+                        placeholder="••••••••••"
+                        required
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <div>
-                <label htmlFor="passwordconfirm">Confirm password</label>
-                <input
-                    className="InputForms"
-                    type="password"
-                    name="passwordconfirm"
-                    value={confirmPassword}
-                    placeholder="••••••••••"
-                    required
-                    onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                    }}
-                />
+                <label htmlFor="passwordconfirm">
+                    Confirm password
+                    <input
+                        className="InputForms"
+                        type="password"
+                        name="passwordconfirm"
+                        value={confirmPassword}
+                        placeholder="••••••••••"
+                        required
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <br />
