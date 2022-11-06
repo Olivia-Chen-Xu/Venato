@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import AppRoutes from '../routes';
 import { deleteAccount, signout } from './auth-functions';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import './auth.css';
 
 const Profile = () => {
     const nav = useNavigate();

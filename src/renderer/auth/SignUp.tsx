@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { sendEmailVerification } from 'firebase/auth';
-import { signup } from './auth-functions';
 import { useNavigate } from 'react-router-dom';
+import { signup } from './auth-functions';
+import './auth.css';
 
 const SignUp = () => {
-    const nav = useNavigate();
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -40,7 +41,7 @@ const SignUp = () => {
                         console.log(`Verification email sent successfully to ${r.user.email}`);
                         // This isn't an error, but I need to show the message
                         setErrMsg(`Please check your email`);
-                        nav('/signin');
+                        navigate('/signin');
                     })
                     .catch((e) =>
                         console.error(`Error sending verification email to ${r.user.email}: ${e}`)
@@ -57,7 +58,7 @@ const SignUp = () => {
     };
 
     return (
-        <div>
+        <div className="AuthMainDiv">
             <text className="TopText">Sign up</text>
             <br />
             <text className="WelcomeText">Welcome!</text>
@@ -121,7 +122,7 @@ const SignUp = () => {
             <br />
             <p className="SwapAuthTextLeft">
                 Already have an account?
-                <text className="SwapAuthTextLink" onClick={() => {}}> // TODO
+                <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
                     Sign in
                 </text>
             </p>
