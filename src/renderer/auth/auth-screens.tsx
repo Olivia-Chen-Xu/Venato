@@ -7,6 +7,9 @@ import './auth.css';
 import checkMark from '../../../assets/checkMark.png';
 import warning from '../../../assets/warning.png';
 import SignUp from './SignUp';
+import SignIn from './SignIn';
+import PasswordReset from './PasswordReset';
+import Profile from './Profile';
 
 const AuthScreens = () => {
     // Authentication state (used to flip between what's shown on the screen)
@@ -181,123 +184,13 @@ const AuthScreens = () => {
         ),
         [AuthState.SignUp]: <SignUp />,
         [AuthState.SignIn]: (
-            <div>
-                <text className="TopText">Sign in</text>
-                <br />
-                <text className="WelcomeText">Welcome back.</text>
-                <br />
-
-                <div style={{ marginTop: '20px' }}>
-                    <label>Email</label>
-                    <input
-                        className="InputForms"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="john.smith@gmail.com"
-                        required
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        className="InputForms"
-                        type="password"
-                        name="password"
-                        value={password}
-                        placeholder="••••••••••"
-                        required
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                        }}
-                    />
-                </div>
-
-                <p
-                    style={{
-                        textAlign: 'right',
-                        fontSize: '12px',
-                        float: 'right',
-                        textDecorationLine: 'underline',
-                        fontStyle: 'italic',
-                        color: '#676767',
-                    }}
-                >
-                    <text
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setCurrState(AuthState.PasswordReset)}
-                    >
-                        Forgot your password?
-                    </text>
-                </p>
-
-                <br />
-                {buttons.signin}
-                <br />
-                <p className="SwapAuthTextLeft">
-                    Don't have an account?
-                    <text
-                        className="SwapAuthTextLink"
-                        onClick={() => setCurrState(AuthState.SignUp)}
-                    >
-                        Sign up
-                    </text>
-                </p>
-                <br />
-                {errMsg}
-            </div>
+            <SignIn />
         ),
         [AuthState.PasswordReset]: (
-            <div>
-                <text className="TopText">Password reset</text>
-                <br />
-                <br />
-
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input
-                        className="InputForms"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="john.smith@gmail.com"
-                        required
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                </div>
-
-                <br />
-                {buttons.passwordResetEmail}
-                <p>
-                    <text
-                        className="SwapAuthTextLink"
-                        onClick={() => setCurrState(AuthState.SignIn)}
-                    >
-                        Sign in
-                    </text>
-                </p>
-                <br />
-                {errMsg}
-                <br />
-                {renderEmailSent()}
-            </div>
+            <PasswordReset />
         ),
         [AuthState.Profile]: (
-            <>
-                <div>
-                    <text className="TopText">Venato profile</text>
-                    {buttons.signout}
-                    {buttons.deleteAccount}
-                    {errMsg}
-                </div>
-                <AppRoutes />
-            </>
+            <Profile />
         ),
     };
 
