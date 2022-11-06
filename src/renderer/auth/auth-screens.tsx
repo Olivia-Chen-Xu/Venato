@@ -192,27 +192,27 @@ const AuthScreens = () => {
     // Buttons to be used with auth
     const buttons = {
         signup: (
-            <button type="submit" onClick={handleSignup}>
+            <button type="submit" className="auth-button" onClick={handleSignup}>
                 Sign up
             </button>
         ),
         signin: (
-            <button type="submit" onClick={handleSignIn}>
+            <button type="submit" className="auth-button" onClick={handleSignIn}>
                 Sign in
             </button>
         ),
         signout: (
-            <button type="submit" onClick={handleSignOut}>
+            <button type="submit" className="auth-button" onClick={handleSignOut}>
                 Sign out
             </button>
         ),
         deleteAccount: (
-            <button type="submit" onClick={handleDeleteAccount}>
+            <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
                 Delete account
             </button>
         ),
         passwordResetEmail: (
-            <button type="submit" onClick={handlePassReset}>
+            <button type="submit" className="auth-button" onClick={handlePassReset}>
                 Reset password
             </button>
         ),
