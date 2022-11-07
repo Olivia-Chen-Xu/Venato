@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { deleteAccount, signout } from './auth-functions';
 import './auth.css';
 
+// Not in use yet
 const Profile = () => {
     const navigate = useNavigate();
     const [errMsg, setErrMsg] = useState('');
