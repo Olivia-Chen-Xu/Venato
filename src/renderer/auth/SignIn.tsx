@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import './auth.css';
 import { useState } from 'react';
-import { signin } from './auth-functions';
 import { signOut } from 'firebase/auth';
+import { signin } from './auth-functions';
 import { auth } from '../../config/firebase';
 
 const SignIn = () => {
@@ -54,33 +54,37 @@ const SignIn = () => {
             <br />
 
             <div style={{ marginTop: '20px' }}>
-                <label>Email</label>
-                <input
-                    className="InputForms"
-                    type="email"
-                    name="email"
-                    value={email}
-                    placeholder="john.smith@gmail.com"
-                    required
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+                <label htmlFor="email">
+                    Email
+                    <input
+                        className="InputForms"
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="john.smith@gmail.com"
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <div>
-                <label htmlFor="password">Password</label>
-                <input
-                    className="InputForms"
-                    type="password"
-                    name="password"
-                    value={password}
-                    placeholder="••••••••••"
-                    required
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                    }}
-                />
+                <label htmlFor="password">
+                    Password
+                    <input
+                        className="InputForms"
+                        type="password"
+                        name="password"
+                        value={password}
+                        placeholder="••••••••••"
+                        required
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <p
@@ -93,10 +97,7 @@ const SignIn = () => {
                     color: '#676767',
                 }}
             >
-                <text
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => navigate('/password-reset')}
-                >
+                <text style={{ cursor: 'pointer' }} onClick={() => navigate('/password-reset')}>
                     Forgot your password?
                 </text>
             </p>
@@ -108,17 +109,14 @@ const SignIn = () => {
             <br />
             <p className="SwapAuthTextLeft">
                 Don't have an account?
-                <text
-                    className="SwapAuthTextLink"
-                    onClick={() => navigate('/sign-up')}
-                >
+                <text className="SwapAuthTextLink" onClick={() => navigate('/sign-up')}>
                     Sign up
                 </text>
             </p>
             <br />
             {errMsg}
         </div>
-    )
-}
+    );
+};
 
 export default SignIn;

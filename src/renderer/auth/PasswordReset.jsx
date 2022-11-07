@@ -68,18 +68,20 @@ const PasswordReset = () => {
             <br />
 
             <div>
-                <label htmlFor="email">Email</label>
-                <input
-                    className="InputForms"
-                    type="email"
-                    name="email"
-                    value={email}
-                    placeholder="john.smith@gmail.com"
-                    required
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                    }}
-                />
+                <label htmlFor="email">
+                    Email
+                    <input
+                        className="InputForms"
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="john.smith@gmail.com"
+                        required
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
 
             <br />
