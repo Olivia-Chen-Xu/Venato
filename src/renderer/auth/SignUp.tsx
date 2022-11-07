@@ -41,7 +41,7 @@ const SignUp = () => {
                         console.log(`Verification email sent successfully to ${r.user.email}`);
                         // This isn't an error, but I need to show the message
                         setErrMsg(`Please check your email`);
-                        navigate('/signin');
+                        navigate('/sign-in');
                     })
                     .catch((e) =>
                         console.error(`Error sending verification email to ${r.user.email}: ${e}`)

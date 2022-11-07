@@ -28,8 +28,8 @@ const SignIn = () => {
                     signOut(auth);
                 } else {
                     console.log(`Successfully signed in user: ${email}, ${password}`);
-                    clearData();
-                    setCurrState(AuthState.Profile);
+                    // clearData();
+                    navigate('/home');
                 }
             })
             .catch((err) => {

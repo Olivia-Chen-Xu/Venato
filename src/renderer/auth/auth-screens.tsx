@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { sendEmailVerification, signOut } from 'firebase/auth';
-import AppRoutes from 'renderer/routes';
 import { deleteAccount, passwordResetEmail, signin, signout, signup } from './auth-functions';
 import { auth } from '../../config/firebase';
 import './auth.css';
@@ -36,14 +35,6 @@ const AuthScreens = () => {
         setConfirmPassword('');
         setErrMsg('');
     };
-
-
-
-    // Handlers for auth functions
-
-
-
-
 
 
 

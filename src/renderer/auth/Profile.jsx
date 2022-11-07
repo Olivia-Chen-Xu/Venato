@@ -1,11 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import AppRoutes from '../routes';
 import { deleteAccount, signout } from './auth-functions';
 import './auth.css';
 
 const Profile = () => {
-    const nav = useNavigate();
+    const navigate = useNavigate();
     const [errMsg, setErrMsg] = useState('');
 
     const handleSignOut = () => {
@@ -18,7 +17,7 @@ const Profile = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Successfully signed out`);
-                nav('/signin');
+                navigate('/sign-in');
             })
             .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
     };
@@ -34,7 +33,7 @@ const Profile = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Current user successfully deleted`);
-                setCurrState(AuthState.SignUp);
+                navigate('/sign-up');
             })
             .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
     };
@@ -51,7 +50,6 @@ const Profile = () => {
                 </button>
                 {errMsg}
             </div>
-            <AppRoutes />
         </>
     );
 };

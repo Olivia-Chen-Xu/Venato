@@ -17,6 +17,11 @@ const Welcome = () => {
             <button type="submit" className="auth-button" onClick={() => navigate('/sign-up')}>
                 Sign Up
             </button>
+
+            <button type="submit" className="auth-button" onClick={() => navigate('/home')}>
+                Bypass sign-in
+            </button>
+            <br />
         </div>
     );
 };
