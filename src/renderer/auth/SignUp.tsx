@@ -13,7 +13,7 @@ const SignUp = () => {
 
     const [errMsg, setErrMsg] = useState('');
 
-    const handleSignup = async () => {
+    const handleSignup = () => {
         if (password !== confirmPassword) {
             setErrMsg('Passwords do not match');
             return;
