@@ -109,6 +109,9 @@
   },
   "dependencies": {
     "@craco/craco": "^6.4.5",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.13",
     "@tailwindcss/forms": "^0.5.3",
     "dayjs": "^1.11.5",
     "electron-debug": "^3.2.0",
