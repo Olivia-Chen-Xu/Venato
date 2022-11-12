@@ -51,9 +51,6 @@ export const signin = (email: string, password: string) => {
     if (!password) {
         return 'Password is empty';
     }
-    if (password.length < 8 || password.length > 40) {
-        return 'Password is invalid (must be 8-40 characters long); check that you entered it correctly';
-    }
 
     return signInWithEmailAndPassword(auth, email, password);
 };
