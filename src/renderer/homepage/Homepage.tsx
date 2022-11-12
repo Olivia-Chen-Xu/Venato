@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import generateJobs from '../search/generateJobs';
 
 export default function Homepage() {
     const nav = useNavigate();
@@ -45,6 +46,14 @@ export default function Homepage() {
                     </button>
                 </div>
             </div>
+
+            <button
+                onClick={() => {
+                    generateJobs(20);
+                }}
+            >
+                Generate jobs
+            </button>
         </div>
     );
 }

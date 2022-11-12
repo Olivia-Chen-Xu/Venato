@@ -217,3 +217,5 @@ const generateJobs = async (num: number) => {
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };
+
+export default generateJobs;
