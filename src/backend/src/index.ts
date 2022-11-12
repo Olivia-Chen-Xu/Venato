@@ -40,6 +40,15 @@ const addEvent = functions.https.onCall((data: object, context: any) => {
     return admin.firestore().collection('events').add(data);
 });
 
+const addJobs = functions.https.onCall((data: [], context: any) => {
+    const db = admin.firestore();
+    const batch = db.batch();
+    data.forEach((job: any) => {
+        batch.set(db.collection('jobs').doc(), job);
+    });
+    return batch.commit();
+});
+
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
     return admin
@@ -63,6 +72,12 @@ const updateEvents = functions.https.onCall(
     }
 );
 
+const updateEventField = functions.https.onCall(
+    (data: { id: string; newFields: object }, context: any) => {
+        return admin.firestore().doc(`events/${data.id}`).update(data.newFields);
+    }
+);
+
 // Deactivates an event in the database (a trigger will delete it after)
 const deleteEvent = functions.https.onCall((data: { id: string }, context: any) => {
     return admin.firestore().doc(`events/${data.id}`).update({ toDelete: true });
@@ -82,14 +97,33 @@ const purgeDeletedEvent = functions.firestore
         return null;
     });
 
+// Makes searchable fields for the jobs on create
+const makeSearchableFields = functions.firestore
+    .document('jobs/{jobId}')
+    .onCreate((snap, context) => {
+        const data = snap.data();
+        const makeSearchable = (str: string) => {
+            return str.replace('/[!@#$%^&*()_-+=,:.]/g', '').toLowerCase().split(' ');
+        };
+
+        return snap.ref.update({
+            companySearchable: makeSearchable(data.company),
+            titleSearchable: makeSearchable(data.title),
+            locationSearchable: makeSearchable(data.location),
+        });
+    });
+
 export {
     onUserSignup,
     onUserDeleted,
     addEvent,
+    addJobs,
     getEvents,
     updateEvents,
+    updateEventField,
     deleteEvent,
     purgeDeletedEvent,
+    makeSearchableFields,
 };
 
 // Examples:
