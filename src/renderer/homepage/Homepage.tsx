@@ -8,10 +8,8 @@ export default function Homepage() {
     return (
         <React.Fragment>
             <ReusableHeader />
-
             <div className="flex flex-1">
                 <ReusableSideBar />
-
                 <div className="w-full">
                     <h1 className="text-center text-3xl mt-10">Welcome Back _________</h1>
 

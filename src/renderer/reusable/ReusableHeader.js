@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Drawer } from '@mui/material';
-import AuthScreens from 'renderer/auth/auth-screens';
+import Profile from 'renderer/auth/Profile';
 
 export default function ReusableHeader() {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <React.Fragment>
             <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
-                <AuthScreens />
+                <Profile />
             </Drawer>
             <header className="w-full mt-5">
                 <button className="material-icons-outlined text-4xl ml-3 mr-5">panorama</button>
