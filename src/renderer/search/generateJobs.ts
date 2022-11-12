@@ -145,7 +145,7 @@ const jobTitles = [
 ];
 
 // Add example jobs
-const generateJobs = async () => {
+const generateJobs = async (num: number) => {
     const generateDeadlines = () => {
         const deadlines = [];
         const month = Math.random() < 0.5 ? 'November' : 'December';
@@ -189,7 +189,7 @@ const generateJobs = async () => {
         return deadlines;
     };
 
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < num; i += 1) {
         const company = Math.floor(Math.random() * companies.length);
         jobs.push({
             company: companies[company],
@@ -216,4 +216,4 @@ const generateJobs = async () => {
     addJobs(jobs)
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
-}
+};
