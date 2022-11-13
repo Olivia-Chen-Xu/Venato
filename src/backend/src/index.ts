@@ -90,7 +90,7 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
                 const jobData = job.data();
                 delete jobData.companySearchable;
                 delete jobData.locationSearchable;
-                delete jobData.titleSearchable;
+                delete jobData.positionSearchable;
                 jobData.id = job.id;
 
                 jobList.push(jobData);
@@ -148,10 +148,34 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
 
 const interviewQuestionSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {
-        return getCollection('jobs')
-            .where('title', 'array-contains-any', data.company.toLowerCase().split(' '))
-            .where('company', '==', data.company)
-            .where('location', '==', data.location)
+        // Check which of the three inputs are given
+        const queries: { position: boolean; company: boolean; location: boolean } = {
+            position: (data.position?.trim()?.length || 0) !== 0,
+            company: (data.company?.trim()?.length || 0) !== 0,
+            location: (data.location?.trim()?.length || 0) !== 0,
+        };
+        if (!queries.position && !queries.company && !queries.location) {
+            return 'No query specified';
+        }
+
+        // Build the query
+        let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = getCollection('jobs');
+        if (queries.position) {
+            query = query.where(
+                'position',
+                'array-contains-any',
+                data.position.toLowerCase().split(' ')
+            );
+        }
+        if (queries.company) {
+            query = query.where('company', '==', data.company);
+        }
+        if (queries.location) {
+            query = query.where('location', '==', data.location);
+        }
+
+        // Execute and return the query
+        return query
             .get()
             .then((jobs) => {
                 const jobList: object[] = [];
@@ -159,7 +183,8 @@ const interviewQuestionSearch = functions.https.onCall(
                     const job = doc.data();
                     delete job.companySearchable;
                     delete job.locationSearchable;
-                    delete job.titleSearchable;
+                    delete job.positionSearchable;
+
                     jobList.push(job);
                 });
                 return jobList;
@@ -187,20 +212,16 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     const data = snap.data();
     const promises = [];
 
-    // Add searchable fields
-    const makeSearchable = (str: string) => {
-        return str.replace('/[!@#$%^&*()_-+=,:.]/g', '').toLowerCase().split(' ');
-    };
+    // Add searchable job position field and the company + location to db
     promises.push(
         snap.ref.update({
-            titleSearchable: makeSearchable(data.title),
+            positionSearchable: data.position
+                .replace('/[!@#$%^&*()_-+=,:.]/g', '')
+                .toLowerCase()
+                .split(' '),
         })
     );
-
-    // Add company to db if it doesn't exist
     promises.push(getDoc(`companies/${data.company}`).set({}));
-
-    // Add location to db if it doesn't exist
     promises.push(getDoc(`locations/${data.location}`).set({}));
 
     return Promise.all(promises);

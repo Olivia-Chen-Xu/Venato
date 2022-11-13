@@ -12,7 +12,7 @@ interface Job {
     location: string;
     notes: string;
     stage: number;
-    title: string;
+    position: string;
 }
 
 const jobs: Job[] = [
@@ -41,7 +41,7 @@ const jobs: Job[] = [
         location: 'San Francisco, California',
         notes: 'I REALLY want this job',
         stage: 0,
-        title: 'Software Engineer Intern',
+        position: 'Software Engineer Intern',
     },
 ];
 
@@ -131,7 +131,7 @@ const jobNotes = [
     "I'll probably get rejected",
     'I hope bezos sees this',
 ];
-const jobTitles = [
+const jobPositions = [
     'Software Engineer Intern',
     'Software Engineer',
     'Software Developer',
@@ -155,31 +155,31 @@ const generateJobs = async (num: number) => {
             case 1:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 30)}, 2022`,
-                    title: 'Job interview',
+                    position: 'Job interview',
                 });
                 break;
             case 2:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 15)}, 2022`,
-                    title: 'Submit resume + cover letter',
+                    position: 'Submit resume + cover letter',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 15) + 15}, 2022`,
-                    title: 'Interview',
+                    position: 'Interview',
                 });
                 break;
             case 3:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10)}, 2022`,
-                    title: 'Initial application due',
+                    position: 'Initial application due',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10) + 10}, 2022`,
-                    title: 'First round interview',
+                    position: 'First round interview',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10) + 20}, 2022`,
-                    title: 'Final interview',
+                    position: 'Final interview',
                 });
                 break;
             default:
@@ -207,7 +207,7 @@ const generateJobs = async (num: number) => {
             location: locations[~~(Math.random() * locations.length)],
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
             stage: Math.floor(Math.random() * 4),
-            title: jobTitles[~~(Math.random() * jobTitles.length)],
+            position: jobPositions[~~(Math.random() * jobPositions.length)],
         });
     }
 
