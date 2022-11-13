@@ -7,6 +7,7 @@ import Welcome from './auth/Welcome';
 import SignIn from './auth/SignIn';
 import SignUp from './auth/SignUp';
 import PasswordReset from './auth/PasswordReset';
+import './App.css';
 
 export default function App() {
     return (
