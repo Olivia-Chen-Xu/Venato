@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import generateJobs from '../search/generateJobs';
 import SearchBar from '../search/SearchBar';
 
