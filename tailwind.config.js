@@ -1,4 +1,7 @@
 module.exports = {
+  content: [
+    './src/renderer/**/*.{html,js,jsx,tsx,ts}',
+  ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
