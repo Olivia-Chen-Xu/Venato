@@ -116,6 +116,21 @@ const jobSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {}
 );
 
+const getAllCompanies = functions.https.onCall((data: object, context: any) => {
+    return admin
+        .firestore()
+        .collection('companies')
+        .get()
+        .then((companies) => {
+            const companyList: any = [];
+            companies.forEach((company) => {
+                companyList.push(company.id);
+            });
+            return companyList;
+        })
+        .catch((err) => err);
+});
+
 const interviewQuestionSearch = functions.https.onCall(
     (data: { company: string; position: string }, context: any) => {
         const companyQuery = data.company.toLowerCase().split(' ');
@@ -214,6 +229,7 @@ export {
     updateJobs,
     deleteEvent,
     jobSearch,
+    getAllCompanies,
     interviewQuestionSearch,
     purgeDeletedEvent,
     onJobCreate,

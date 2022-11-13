@@ -79,6 +79,24 @@ export default function Homepage() {
             >
                 Get jobs
             </button>
+
+            <button
+                onClick={async () => {
+                    const result = httpsCallable(getFunctions(), 'getAllCompanies');
+                    console.log(JSON.stringify(await result(), null, 4));
+                }}
+            >
+                Get all companies
+            </button>
+
+            <button
+                onClick={async () => {
+                    const result = httpsCallable(getFunctions(), 'getJob');
+                    console.log(JSON.stringify(await result(), null, 4));
+                }}
+            >
+                Get all locations
+            </button>
         </div>
     );
 }
