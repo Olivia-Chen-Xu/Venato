@@ -71,14 +71,17 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
         .firestore()
         .collection('jobs')
         .get()
-        .then((events) => {
+        .then((jobs) => {
             const jobList: any = [];
-            events.forEach((event) => {
-                const job = event.data();
-                delete job.companySearchable;
-                delete job.locationSearchable;
-                delete job.titleSearchable;
-                jobList.push(job);
+            jobs.forEach((job) => {
+                // Remove the searchable fields (not required) and add the id
+                const jobData = job.data();
+                delete jobData.companySearchable;
+                delete jobData.locationSearchable;
+                delete jobData.titleSearchable;
+                jobData.id = job.id;
+
+                jobList.push(jobData);
             });
             return jobList;
         })
@@ -95,6 +98,12 @@ const updateEvents = functions.https.onCall(
 const updateEventField = functions.https.onCall(
     (data: { id: string; newFields: object }, context: any) => {
         return admin.firestore().doc(`events/${data.id}`).update(data.newFields);
+    }
+);
+
+const updateJobs = functions.https.onCall(
+    (data: { id: string; newFields: object }, context: any) => {
+        return admin.firestore().doc(`jobs/${data.id}`).update(data.newFields);
     }
 );
 
@@ -152,15 +161,47 @@ const purgeDeletedEvent = functions.firestore
 // Makes searchable fields for the jobs on create and add company/location to db
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
+    const promises = [];
+
+    // Add searchable fields
     const makeSearchable = (str: string) => {
         return str.replace('/[!@#$%^&*()_-+=,:.]/g', '').toLowerCase().split(' ');
     };
+    promises.push(
+        snap.ref.update({
+            companySearchable: makeSearchable(data.company),
+            titleSearchable: makeSearchable(data.title),
+            locationSearchable: makeSearchable(data.location),
+        })
+    );
 
-    return snap.ref.update({
-        companySearchable: makeSearchable(data.company),
-        titleSearchable: makeSearchable(data.title),
-        locationSearchable: makeSearchable(data.location),
-    });
+    // Add company to db if it doesn't exist
+    promises.push(admin.firestore().doc(`companies/${data.company}`).set({}));
+    // const companyExists = admin
+    //     .firestore()
+    //     .collection('companies')
+    //     .where('name', '==', data.company)
+    //     .get()
+    //     .then((snapshot) => !snapshot.empty)
+    //     .catch((err) => `Error checking if company exists: ${err}`);
+    // if (!companyExists) {
+    //     promises.push(admin.firestore().collection('companies').add({ name: data.company }));
+    // }
+
+    // Add location to db if it doesn't exist
+    promises.push(admin.firestore().doc(`locations/${data.location}`).set({}));
+    // const locationExists = admin
+    //     .firestore()
+    //     .collection('locations')
+    //     .where('name', '==', data.location)
+    //     .get()
+    //     .then((snapshot) => !snapshot.empty)
+    //     .catch((err) => `Error checking if location exists: ${err}`);
+    // if (!locationExists) {
+    //     promises.push(admin.firestore().collection('locations').add({ name: data.location }));
+    // }
+
+    return Promise.all(promises);
 });
 
 export {
@@ -172,6 +213,7 @@ export {
     getJobs,
     updateEvents,
     updateEventField,
+    updateJobs,
     deleteEvent,
     jobSearch,
     interviewQuestionSearch,
