@@ -155,31 +155,31 @@ const generateJobs = async (num: number) => {
             case 1:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 30)}, 2022`,
-                    position: 'Job interview',
+                    title: 'Job interview',
                 });
                 break;
             case 2:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 15)}, 2022`,
-                    position: 'Submit resume + cover letter',
+                    title: 'Submit resume + cover letter',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 15) + 15}, 2022`,
-                    position: 'Interview',
+                    title: 'Interview',
                 });
                 break;
             case 3:
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10)}, 2022`,
-                    position: 'Initial application due',
+                    title: 'Initial application due',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10) + 10}, 2022`,
-                    position: 'First round interview',
+                    title: 'First round interview',
                 });
                 deadlines.push({
                     date: `${month} ${Math.floor(Math.random() * 10) + 20}, 2022`,
-                    position: 'Final interview',
+                    title: 'Final interview',
                 });
                 break;
             default:
