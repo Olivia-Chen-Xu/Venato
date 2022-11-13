@@ -169,9 +169,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     };
     promises.push(
         snap.ref.update({
-            companySearchable: makeSearchable(data.company),
             titleSearchable: makeSearchable(data.title),
-            locationSearchable: makeSearchable(data.location),
         })
     );
 
