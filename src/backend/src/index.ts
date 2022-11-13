@@ -5,6 +5,18 @@ import { auth } from 'firebase-admin';
 admin.initializeApp();
 
 /**
+ * Helper functions
+ */
+
+const getDoc = (doc: string) => {
+    return admin.firestore().doc(doc);
+};
+
+const getCollection = (collection: string) => {
+    return admin.firestore().collection(collection);
+};
+
+/**
  * Auth triggers - automatically triggered when a user is created/deleted
  */
 
@@ -14,12 +26,12 @@ const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
         email: user.email,
         name: user.displayName,
     };
-    return admin.firestore().doc(`users/${user.uid}`).set(defaultDocData);
+    return getDoc(`users/${user.uid}`).set(defaultDocData);
 });
 
 // On account deletion, delete user data in db
 const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
-    return admin.firestore().collection('users').doc(user.uid).delete();
+    return getDoc(`users${user.uid}`).delete();
 });
 
 /**
@@ -28,16 +40,7 @@ const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => 
 
 // Adds an event to the database
 const addEvent = functions.https.onCall((data: object, context: any) => {
-    if (!context.auth) {
-        // TODO @krishaan: Once you integrate authentication, uncomment the following code
-        /*
-        throw new functions.https.HttpsError(
-            'unauthenticated',
-            'You must be logged in to add events'
-        );
-        */
-    }
-    return admin.firestore().collection('events').add(data);
+    return getCollection('events').add(data);
 });
 
 const addJobs = functions.https.onCall((data: [], context: any) => {
@@ -100,25 +103,25 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
 // Updates an event in the database with a new object
 const updateEvents = functions.https.onCall(
     (data: { id: string; newObject: object }, context: any) => {
-        return admin.firestore().doc(`events/${data.id}`).set(data.newObject);
+        return getDoc(`events/${data.id}`).set(data.newObject);
     }
 );
 
 const updateEventField = functions.https.onCall(
     (data: { id: string; newFields: object }, context: any) => {
-        return admin.firestore().doc(`events/${data.id}`).update(data.newFields);
+        return getDoc(`events/${data.id}`).update(data.newFields);
     }
 );
 
 const updateJobs = functions.https.onCall(
     (data: { id: string; newFields: object }, context: any) => {
-        return admin.firestore().doc(`jobs/${data.id}`).update(data.newFields);
+        return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
 
 // Deactivates an event in the database (a trigger will delete it after)
 const deleteEvent = functions.https.onCall((data: { id: string }, context: any) => {
-    return admin.firestore().doc(`events/${data.id}`).update({ toDelete: true });
+    return getDoc(`events/${data.id}`).update({ toDelete: true });
 });
 
 const jobSearch = functions.https.onCall(
@@ -144,20 +147,14 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
 });
 
 const interviewQuestionSearch = functions.https.onCall(
-    (data: { company: string; position: string }, context: any) => {
-        const companyQuery = data.company.toLowerCase().split(' ');
-        // const positionQuery = data.position.toLowerCase().split(' ');
-        // .where('titleSearchable', 'array-contains-any', positionQuery)
-
-        return admin
-            .firestore()
-            .collection('jobs')
-            .where('companySearchable', 'array-contains-any', companyQuery)
-            .where('location', '==', 'San Jose, California')
-            .where('title', '==', 'Software Engineer Intern')
+    (data: { company: string; position: string; location: string }, context: any) => {
+        return getCollection('jobs')
+            .where('title', 'array-contains-any', data.company.toLowerCase().split(' '))
+            .where('company', '==', data.company)
+            .where('location', '==', data.location)
             .get()
             .then((jobs) => {
-                const jobList: any = [];
+                const jobList: object[] = [];
                 jobs.forEach((doc) => {
                     const job = doc.data();
                     delete job.companySearchable;
@@ -201,30 +198,10 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     );
 
     // Add company to db if it doesn't exist
-    promises.push(admin.firestore().doc(`companies/${data.company}`).set({}));
-    // const companyExists = admin
-    //     .firestore()
-    //     .collection('companies')
-    //     .where('name', '==', data.company)
-    //     .get()
-    //     .then((snapshot) => !snapshot.empty)
-    //     .catch((err) => `Error checking if company exists: ${err}`);
-    // if (!companyExists) {
-    //     promises.push(admin.firestore().collection('companies').add({ name: data.company }));
-    // }
+    promises.push(getDoc(`companies/${data.company}`).set({}));
 
     // Add location to db if it doesn't exist
-    promises.push(admin.firestore().doc(`locations/${data.location}`).set({}));
-    // const locationExists = admin
-    //     .firestore()
-    //     .collection('locations')
-    //     .where('name', '==', data.location)
-    //     .get()
-    //     .then((snapshot) => !snapshot.empty)
-    //     .catch((err) => `Error checking if location exists: ${err}`);
-    // if (!locationExists) {
-    //     promises.push(admin.firestore().collection('locations').add({ name: data.location }));
-    // }
+    promises.push(getDoc(`locations/${data.location}`).set({}));
 
     return Promise.all(promises);
 });
