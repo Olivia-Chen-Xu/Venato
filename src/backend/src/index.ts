@@ -88,8 +88,6 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
             jobs.forEach((job) => {
                 // Remove the searchable fields (not required) and add the id
                 const jobData = job.data();
-                delete jobData.companySearchable;
-                delete jobData.locationSearchable;
                 delete jobData.positionSearchable;
                 jobData.id = job.id;
 
@@ -124,10 +122,6 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
     return getDoc(`events/${data.id}`).update({ toDelete: true });
 });
 
-const jobSearch = functions.https.onCall(
-    (data: { company: string; position: string; location: string }, context: any) => {}
-);
-
 const getAllCompanies = functions.https.onCall((data: object, context: any) => {
     return admin
         .firestore()
@@ -146,7 +140,7 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
         .catch((err) => err);
 });
 
-const interviewQuestionSearch = functions.https.onCall(
+const jobSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {
         // Check which of the three inputs are given
         const queries: { position: boolean; company: boolean; location: boolean } = {
@@ -162,7 +156,7 @@ const interviewQuestionSearch = functions.https.onCall(
         let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = getCollection('jobs');
         if (queries.position) {
             query = query.where(
-                'position',
+                'positionSearchable',
                 'array-contains-any',
                 data.position.toLowerCase().split(' ')
             );
@@ -181,8 +175,6 @@ const interviewQuestionSearch = functions.https.onCall(
                 const jobList: object[] = [];
                 jobs.forEach((doc) => {
                     const job = doc.data();
-                    delete job.companySearchable;
-                    delete job.locationSearchable;
                     delete job.positionSearchable;
 
                     jobList.push(job);
@@ -242,7 +234,6 @@ export {
     jobSearch,
     getAllCompanies,
     getAllLocations,
-    interviewQuestionSearch,
     purgeDeletedEvent,
     onJobCreate,
 };
