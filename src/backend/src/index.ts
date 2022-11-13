@@ -49,6 +49,15 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
     return batch.commit();
 });
 
+const addJob = functions.https.onCall((data: object, context: any) => {
+    return admin
+        .firestore()
+        .collection('jobs')
+        .add(data)
+        .then((docRef) => docRef.id)
+        .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
+});
+
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
     return admin
@@ -225,6 +234,7 @@ export {
     onUserDeleted,
     addEvent,
     addJobs,
+    addJob,
     getEvents,
     getJobs,
     updateEvents,
