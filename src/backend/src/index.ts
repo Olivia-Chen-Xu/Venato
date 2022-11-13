@@ -44,7 +44,7 @@ const addEvent = functions.https.onCall((data: object, context: any) => {
 const getEvents = functions.https.onCall((data: object, context: any) => {
     return admin
         .firestore()
-        .collection('events')
+        .collection('jobs')
         .get()
         .then((events) => {
             const eventList: any = [];

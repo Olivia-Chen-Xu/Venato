@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getEvents } from 'backend/src';
+import { ControlPoint } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 
-const getJobs = (count, offset = 0) =>
+const colTitles = ['Applciations', 'Interviews', 'Offers', 'Rejections'];
+
+const getJobs = (count) =>
     Array.from({ length: count }, (v, k) => k).map((k) => ({
-        id: `job-${k + offset}-${new Date().getTime()}`,
-        content: `job ${k + offset}`,
+        id: `${Math.random()}`,
+        job_title: 'Job Title',
+        company: 'company',
     }));
 
 const reorder = (list, startIndex, endIndex) => {
@@ -43,11 +50,18 @@ const getJobStyle = (isDragging, draggableStyle) => ({
 const getListStyle = (isDraggingOver) => ({
     background: isDraggingOver ? 'lightblue' : 'lightgrey',
     padding: grid,
-    width: 250,
+    width: (window.innerWidth - 100) / 4,
 });
 
 export default function Kanban() {
-    const [state, setState] = useState([getJobs(10), getJobs(5, 10)]);
+    const [state, setState] = useState([getJobs(10), getJobs(5), [], []]);
+    const [jobs, setJobs] = useState([]);
+
+    const addJob = (index) => {
+        const newState = [...state];
+        newState[index] = [...state[index], ...getJobs(1)];
+        setState(newState);
+    };
 
     function onDragEnd(result) {
         const { source, destination } = result;
@@ -70,80 +84,113 @@ export default function Kanban() {
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
 
-            setState(newState.filter((group) => group.length));
+            setState(newState);
         }
     }
 
+    useEffect(() => {
+        const fetchJobs = async () => {
+            const jobs = await httpsCallable(getFunctions(), 'getEvents')();
+            setJobs(jobs.data);
+        };
+        fetchJobs();
+    }, []);
+
     return (
         <div>
-            <button
+            {/* <button
                 type="button"
                 onClick={() => {
                     setState([...state, []]);
                 }}
             >
                 Add new group
-            </button>
-            <button
+            </button> */}
+            {/* <button
                 type="button"
                 onClick={() => {
                     setState([...state, getJobs(1)]);
                 }}
             >
                 Add new job
-            </button>
-            <div style={{ display: 'flex' }}>
+            </button> */}
+
+            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                {/* {jobs.map((job) => (
+                    <div>{JSON.stringify(job)}</div>
+                ))} */}
                 <DragDropContext onDragEnd={onDragEnd}>
                     {state.map((el, ind) => (
-                        <Droppable key={ind} droppableId={`${ind}`}>
-                            {(provided, snapshot) => (
-                                <div
-                                    ref={provided.innerRef}
-                                    style={getListStyle(snapshot.isDraggingOver)}
-                                    {...provided.droppableProps}
-                                >
-                                    {el.map((job, index) => (
-                                        <Draggable key={job.id} draggableId={job.id} index={index}>
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    style={getJobStyle(
-                                                        snapshot.isDragging,
-                                                        provided.draggableProps.style
-                                                    )}
-                                                >
+                        <div
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                display: 'flex',
+                            }}
+                        >
+                            <p>{colTitles[ind]}</p>
+                            <IconButton onClick={() => addJob(ind)}>
+                                <ControlPoint />
+                            </IconButton>
+                            <Droppable key={ind} droppableId={`${ind}`}>
+                                {(provided, snapshot) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        style={getListStyle(snapshot.isDraggingOver)}
+                                        {...provided.droppableProps}
+                                    >
+                                        {el.map((job, index) => (
+                                            <Draggable
+                                                key={job.id}
+                                                draggableId={job.id}
+                                                index={index}
+                                            >
+                                                {(provided, snapshot) => (
                                                     <div
-                                                        style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-around',
-                                                        }}
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        style={getJobStyle(
+                                                            snapshot.isDragging,
+                                                            provided.draggableProps.style
+                                                        )}
                                                     >
-                                                        {job.content}
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-around',
+                                                            }}
+                                                        >
+                                                            {job.job_title}
+                                                        </div>
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-around',
+                                                            }}
+                                                        >
+                                                            {job.company}
+                                                        </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => {
                                                                 const newState = [...state];
                                                                 newState[ind].splice(index, 1);
-                                                                setState(
-                                                                    newState.filter(
-                                                                        (group) => group.length
-                                                                    )
-                                                                );
+                                                                setState(newState);
                                                             }}
                                                         >
                                                             delete
                                                         </button>
                                                     </div>
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </div>
                     ))}
                 </DragDropContext>
             </div>
