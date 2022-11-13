@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import generateJobs from '../search/generateJobs';
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 export default function Homepage() {
     const nav = useNavigate();
@@ -53,6 +54,21 @@ export default function Homepage() {
                 }}
             >
                 Generate jobs
+            </button>
+
+            <button
+                onClick={async () => {
+                    const result = httpsCallable(getFunctions(), 'interviewQuestionSearch');
+                    console.log(
+                        JSON.stringify(
+                            await result({ company: 'Airbnb', position: 'Software developer' }),
+                            null,
+                            4
+                        )
+                    );
+                }}
+            >
+                Search interview questions
             </button>
         </div>
     );
