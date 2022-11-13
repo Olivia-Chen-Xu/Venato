@@ -122,11 +122,18 @@ const getAllCompanies = functions.https.onCall((data: object, context: any) => {
         .collection('companies')
         .get()
         .then((companies) => {
-            const companyList: any = [];
-            companies.forEach((company) => {
-                companyList.push(company.id);
-            });
-            return companyList;
+            return companies.docs.map((company) => company.id);
+        })
+        .catch((err) => err);
+});
+
+const getAllLocations = functions.https.onCall((data: object, context: any) => {
+    return admin
+        .firestore()
+        .collection('locations')
+        .get()
+        .then((locations) => {
+            return locations.docs.map((location) => location.id);
         })
         .catch((err) => err);
 });
@@ -230,6 +237,7 @@ export {
     deleteEvent,
     jobSearch,
     getAllCompanies,
+    getAllLocations,
     interviewQuestionSearch,
     purgeDeletedEvent,
     onJobCreate,
