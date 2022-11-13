@@ -65,6 +65,26 @@ const getEvents = functions.https.onCall((data: object, context: any) => {
         .catch((err) => err);
 });
 
+// Returns all the jobs in the database
+const getJobs = functions.https.onCall((data: object, context: any) => {
+    return admin
+        .firestore()
+        .collection('jobs')
+        .get()
+        .then((events) => {
+            const jobList: any = [];
+            events.forEach((event) => {
+                const job = event.data();
+                delete job.companySearchable;
+                delete job.locationSearchable;
+                delete job.titleSearchable;
+                jobList.push(job);
+            });
+            return jobList;
+        })
+        .catch((err) => err);
+});
+
 // Updates an event in the database with a new object
 const updateEvents = functions.https.onCall(
     (data: { id: string; newObject: object }, context: any) => {
@@ -83,6 +103,38 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
     return admin.firestore().doc(`events/${data.id}`).update({ toDelete: true });
 });
 
+const jobSearch = functions.https.onCall(
+    (data: { company: string; position: string; location: string }, context: any) => {}
+);
+
+const interviewQuestionSearch = functions.https.onCall(
+    (data: { company: string; position: string }, context: any) => {
+        const companyQuery = data.company.toLowerCase().split(' ');
+        // const positionQuery = data.position.toLowerCase().split(' ');
+        // .where('titleSearchable', 'array-contains-any', positionQuery)
+
+        return admin
+            .firestore()
+            .collection('jobs')
+            .where('companySearchable', 'array-contains-any', companyQuery)
+            .where('location', '==', 'San Jose, California')
+            .where('title', '==', 'Software Engineer Intern')
+            .get()
+            .then((jobs) => {
+                const jobList: any = [];
+                jobs.forEach((doc) => {
+                    const job = doc.data();
+                    delete job.companySearchable;
+                    delete job.locationSearchable;
+                    delete job.titleSearchable;
+                    jobList.push(job);
+                });
+                return jobList;
+            })
+            .catch((err) => `Error querying interview questions: ${err}`);
+    }
+);
+
 /**
  * Firestore triggers - do sensitive operations automatically when the database changes
  */
@@ -97,21 +149,19 @@ const purgeDeletedEvent = functions.firestore
         return null;
     });
 
-// Makes searchable fields for the jobs on create
-const makeSearchableFields = functions.firestore
-    .document('jobs/{jobId}')
-    .onCreate((snap, context) => {
-        const data = snap.data();
-        const makeSearchable = (str: string) => {
-            return str.replace('/[!@#$%^&*()_-+=,:.]/g', '').toLowerCase().split(' ');
-        };
+// Makes searchable fields for the jobs on create and add company/location to db
+const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
+    const data = snap.data();
+    const makeSearchable = (str: string) => {
+        return str.replace('/[!@#$%^&*()_-+=,:.]/g', '').toLowerCase().split(' ');
+    };
 
-        return snap.ref.update({
-            companySearchable: makeSearchable(data.company),
-            titleSearchable: makeSearchable(data.title),
-            locationSearchable: makeSearchable(data.location),
-        });
+    return snap.ref.update({
+        companySearchable: makeSearchable(data.company),
+        titleSearchable: makeSearchable(data.title),
+        locationSearchable: makeSearchable(data.location),
     });
+});
 
 export {
     onUserSignup,
@@ -119,11 +169,14 @@ export {
     addEvent,
     addJobs,
     getEvents,
+    getJobs,
     updateEvents,
     updateEventField,
     deleteEvent,
+    jobSearch,
+    interviewQuestionSearch,
     purgeDeletedEvent,
-    makeSearchableFields,
+    onJobCreate,
 };
 
 // Examples:
