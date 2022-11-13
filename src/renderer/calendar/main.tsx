@@ -26,9 +26,7 @@ export function Calendar() {
         <React.Fragment>
             {showEventModal && <EventModal />}
             <div className="h-screen flex flex-col">
-                <ReusableHeader />
                 <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
-
                 <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
                     <div className="grid place-content-center bg-gray-200">
                         <span className="text-3xl">Task</span>
@@ -44,7 +42,7 @@ export function Calendar() {
                 <h2 className="ml-20 text-2xl">
                     {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
                 </h2>
-                <div className="flex flex-1">
+                <div className="flex flex-1 mb-10">
                     <button onClick={handlePrevMonth}>
                         <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                             chevron_left
@@ -57,7 +55,6 @@ export function Calendar() {
                         </span>
                     </button>
                 </div>
-                <div className="mb-5"></div>
             </div>
         </React.Fragment>
     );

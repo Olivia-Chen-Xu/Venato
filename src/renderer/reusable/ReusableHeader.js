@@ -27,7 +27,7 @@ export default function ReusableHeader() {
                         notifications
                     </span>
                 </button>
-                <div className="float-right cursor-pointer ml-5 border-2 border-black rounded-full">
+                <div className="float-right cursor-pointer bg-gradient-to-tr from-[#C8ADD8] to-[#ADADD8] text-white ml-5 drop-shadow-xl rounded-full">
                     <button className="py-1 px-5 text-xl">Upgrade</button>
                 </div>
             </header>
