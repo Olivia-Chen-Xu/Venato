@@ -8,17 +8,25 @@ const SearchBar = () => {
     const [location, setLocation] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
     const [isJobSearch, setIsJobSearch] = useState<boolean>(true);
+    const [errMsg, setErrMsg] = useState<string>('');
 
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
 
     const handleSearch = async () => {
+        if ((position?.trim()?.length || 0) === 0 && company === '' && (!isJobSearch || (isJobSearch && location === ''))) {
+            setErrMsg('Please enter a position, company, or location');
+            return;
+        }
+
         const result = await httpsCallable(
             getFunctions(),
             'jobSearch'
-        )({ company, position, location });
+        )(isJobSearch ? { company, position, location } : { company, position });
 
         setJobs(result.data);
+        setErrMsg('');
+        console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
     };
 
     const handleSwapSearchType = () => {
@@ -55,7 +63,7 @@ const SearchBar = () => {
                     <label htmlFor="company">
                         Company:
                         <select name="company" onChange={(e) => setCompany(e.target.value)}>
-                            <option />
+                            <option value="" />
                             {companies.result.data.map((c) => (
                                 <option value={c}>{c}</option>
                             ))}
@@ -66,7 +74,7 @@ const SearchBar = () => {
                         <label htmlFor="location">
                             Location:
                             <select name="location" onChange={(e) => setLocation(e.target.value)}>
-                                <option />
+                                <option value="" />
                                 {locations.result.data.map((c) => (
                                     <option value={c}>{c}</option>
                                 ))}
@@ -77,6 +85,8 @@ const SearchBar = () => {
                     <button type="submit" onClick={handleSearch}>
                         Search
                     </button>
+                    <br />
+                    {errMsg}
                     <br />
 
                     {isJobSearch
@@ -115,16 +125,6 @@ const SearchBar = () => {
                                       {`Position: ${job.position}`}
                                       <br />
                                       {`Description: ${job.details.description}`}
-                                      <br />
-                                      URL: <a href={job.details.url}>{job.details.url}</a>
-                                      <br />
-                                      Contacts:{' '}
-                                      {job.contacts.map((contact) => (
-                                          <div>
-                                              <a href={contact}>{contact}</a>
-                                              <br />
-                                          </div>
-                                      ))}
                                       <br />
                                       Interview questions:{' '}
                                       <ul>
