@@ -7,12 +7,34 @@ import { IconButton } from '@mui/material';
 
 const colTitles = ['Applciations', 'Interviews', 'Offers', 'Rejections'];
 
-const getJobs = (count) =>
-    Array.from({ length: count }, (v, k) => k).map((k) => ({
-        id: `${Math.random()}`,
-        job_title: 'Job Title',
-        company: 'company',
-    }));
+const newJob = (idx) => {
+    return {
+        details: {
+            description: 'Will be working on the Facebook Cloud Platform team',
+            url: 'https://www.facebook.com/jobs/949752',
+        },
+        company: 'Facebook',
+        stage: idx,
+        location: 'San Jose, California',
+        interviewQuestions: ['Binary search', 'Merge sort', 'Greedy algorithm', 'Prim algorithm'],
+        contacts: [
+            'https://www.linkedin.com/in/reid-moffat/',
+            'https://www.linkedin.com/in/krishaan-thyagarajan/',
+        ],
+        notes: 'Have to travel to the US for this one',
+        position: 'Data Engineer',
+        deadlines: [
+            {
+                title: 'Submit resume + cover letter',
+                date: 'December 14, 2022',
+            },
+            {
+                title: 'Interview',
+                date: 'December 29, 2022',
+            },
+        ],
+    };
+};
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -29,6 +51,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
+    removed.stage = droppableDestination.droppableId;
 
     destClone.splice(droppableDestination.index, 0, removed);
 
@@ -36,7 +59,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
     result[droppableSource.droppableId] = sourceClone;
     result[droppableDestination.droppableId] = destClone;
 
-    return result;
+    return [result, removed];
 };
 const grid = 8;
 
@@ -54,16 +77,21 @@ const getListStyle = (isDraggingOver) => ({
 });
 
 export default function Kanban() {
-    const [state, setState] = useState([getJobs(10), getJobs(5), [], []]);
-    const [jobs, setJobs] = useState([]);
+    const [state, setState] = useState([[], [], [], []]);
 
-    const addJob = (index) => {
+    const addJob = async (index) => {
         const newState = [...state];
-        newState[index] = [...state[index], ...getJobs(1)];
-        setState(newState);
+        const job = newJob(index);
+        await httpsCallable(
+            getFunctions(),
+            'addJob'
+        )(job).then((res) => {
+            newState[index] = [{ ...job, id: res.data }, ...state[index]];
+            setState(newState);
+        });
     };
 
-    function onDragEnd(result) {
+    async function onDragEnd(result) {
         const { source, destination } = result;
 
         // dropped outside the list
@@ -79,21 +107,45 @@ export default function Kanban() {
             newState[sInd] = jobs;
             setState(newState);
         } else {
-            const result = move(state[sInd], state[dInd], source, destination);
+            const [result, removed] = move(state[sInd], state[dInd], source, destination);
             const newState = [...state];
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
 
             setState(newState);
+            // await move(state[sInd], state[dInd], source, destination).then((res) => {
+            //     const newState = [...state];
+            //     newState[sInd] = res[sInd];
+            //     newState[dInd] = res[dInd];
+
+            //     setState(newState);
+            // });
+            await httpsCallable(
+                getFunctions(),
+                'updateJobs'
+            )({
+                id: removed.id,
+                newFields: {
+                    stage: dInd,
+                },
+            });
         }
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         const fetchJobs = async () => {
-            const jobs = await httpsCallable(getFunctions(), 'getEvents')();
-            setJobs(jobs.data);
+            const newState = [[], [], [], []];
+            await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
+                //console.log(res.data);
+                for (const job of res.data) {
+                    newState[job.stage].push(job);
+                }
+                setState(newState);
+            });
+
+            return newState;
         };
-        fetchJobs();
+        await fetchJobs();
     }, []);
 
     return (
@@ -162,7 +214,7 @@ export default function Kanban() {
                                                                 justifyContent: 'space-around',
                                                             }}
                                                         >
-                                                            {job.job_title}
+                                                            {job.position}
                                                         </div>
                                                         <div
                                                             style={{
@@ -171,6 +223,14 @@ export default function Kanban() {
                                                             }}
                                                         >
                                                             {job.company}
+                                                        </div>
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-around',
+                                                            }}
+                                                        >
+                                                            {colTitles[job.stage]}
                                                         </div>
                                                         <button
                                                             type="button"
