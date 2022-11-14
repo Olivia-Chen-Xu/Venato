@@ -27,6 +27,7 @@ const Profile = () => {
     const handleDeleteAccount = () => {
         if (auth.currentUser.email === '18rem8@queensu.ca') {
             handleSignOut(); // Don't delete the admin account
+            return;
         }
         const deleteAccountResult = deleteAccount();
         if (typeof deleteAccountResult === 'string') {
