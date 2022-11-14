@@ -53,9 +53,7 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
 });
 
 const addJob = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('jobs')
+    return getCollection('jobs')
         .add(data)
         .then((docRef) => docRef.id)
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
@@ -63,9 +61,7 @@ const addJob = functions.https.onCall((data: object, context: any) => {
 
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('events')
+    return getCollection('events')
         .get()
         .then((events) => {
             const eventList: any = [];
@@ -79,9 +75,7 @@ const getEvents = functions.https.onCall((data: object, context: any) => {
 
 // Returns all the jobs in the database
 const getJobs = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('jobs')
+    return getCollection('jobs')
         .get()
         .then((jobs) => {
             const jobList: any = [];
@@ -123,18 +117,14 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
 });
 
 const getAllCompanies = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('companies')
+    return getCollection('companies')
         .get()
         .then((companies) => companies.docs.map((company) => company.id))
         .catch((err) => err);
 });
 
 const getAllLocations = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('locations')
+    return getCollection('locations')
         .get()
         .then((locations) => locations.docs.map((location) => location.id))
         .catch((err) => err);
