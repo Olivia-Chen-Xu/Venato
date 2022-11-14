@@ -61,7 +61,9 @@ const addJob = functions.https.onCall((data: object, context: any) => {
 
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
-    return getCollection('events')
+    return admin
+        .firestore()
+        .collection('events')
         .get()
         .then((events) => {
             const eventList: any = [];
