@@ -108,7 +108,9 @@
     "@craco/craco": "^6.4.5",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.13",
+    "@mui/styled-engine-sc": "^5.10.6",
     "@tailwindcss/forms": "^0.5.3",
     "dayjs": "^1.11.5",
     "electron-debug": "^3.2.0",
@@ -116,9 +118,11 @@
     "electron-updater": "^5.2.3",
     "firebase": "^9.10.0",
     "react": "^18.2.0",
+    "react-async-hook": "^4.0.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",

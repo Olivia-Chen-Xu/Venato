@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import generateJobs from '../search/generateJobs';
+import SearchBar from '../search/SearchBar';
 
 export default function Homepage() {
     const nav = useNavigate();
