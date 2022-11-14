@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { deleteAccount, signout } from './auth-functions';
+import { auth } from '../../config/firebase';
 import './auth.css';
 
 // Not in use yet
@@ -24,6 +25,10 @@ const Profile = () => {
     };
 
     const handleDeleteAccount = () => {
+        if (auth.currentUser.email === '18rem8@queensu.ca') {
+            handleSignOut(); // Don't delete the admin account
+            return;
+        }
         const deleteAccountResult = deleteAccount();
         if (typeof deleteAccountResult === 'string') {
             setErrMsg(deleteAccountResult);
