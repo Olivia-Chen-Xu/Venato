@@ -6,13 +6,19 @@ const SearchBar = () => {
     const [company, setCompany] = useState('');
     const [position, setPosition] = useState('');
     const [location, setLocation] = useState('');
+    const [jobs, setJobs] = useState<object[]>([]);
 
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
 
     const handleSearch = async () => {
-        const result = httpsCallable(getFunctions(), 'jobSearch');
-        console.log(JSON.stringify(await result({ company, position, location }), null, 4));
+        const result = await httpsCallable(
+            getFunctions(),
+            'jobSearch'
+        )({ company, position, location });
+
+        console.log(JSON.stringify(result, null, 4));
+        setJobs(result.data);
     };
 
     return (
@@ -22,15 +28,6 @@ const SearchBar = () => {
             )}
             {companies.result && locations.result && (
                 <div>
-                    <label htmlFor="company">
-                        Company:
-                        <select name="company" onChange={(e) => setCompany(e.target.value)}>
-                            {companies.result.data.map((c) => (
-                                <option value={c}>{c}</option>
-                            ))}
-                        </select>
-                    </label>
-
                     <label htmlFor="position">
                         Position
                         <input
@@ -44,22 +41,58 @@ const SearchBar = () => {
                         />
                     </label>
 
+                    <label htmlFor="company">
+                        Company:
+                        <select name="company" onChange={(e) => setCompany(e.target.value)}>
+                            <option />
+                            {companies.result.data.map((c) => (
+                                <option value={c}>{c}</option>
+                            ))}
+                        </select>
+                    </label>
+
                     <label htmlFor="location">
-                        Location
-                        <input
-                            type="email"
-                            name="location"
-                            value={location}
-                            placeholder=""
-                            onChange={(e) => {
-                                setLocation(e.target.value);
-                            }}
-                        />
+                        Location:
+                        <select name="location" onChange={(e) => setLocation(e.target.value)}>
+                            <option />
+                            {locations.result.data.map((c) => (
+                                <option value={c}>{c}</option>
+                            ))}
+                        </select>
                     </label>
 
                     <button type="submit" onClick={handleSearch}>
                         Search
                     </button>
+                    <br />
+
+                    {jobs.map((job: object, index: number) => {
+                        return (
+                            <div>
+                                {`Job #${index + 1}:`}
+                                <br />
+                                {`Company: ${job.company}`}
+                                <br />
+                                {`Position: ${job.position}`}
+                                <br />
+                                {`Location: ${job.location}`}
+                                <br />
+                                {`Description: ${job.details.description}`}
+                                <br />
+                                Url: <a href={job.details.url}>{job.details.url}</a>
+                                <br />
+                                Contacts:{' '}
+                                {job.contacts.map((contact) => (
+                                    <div>
+                                        <a href={contact}>{contact}</a>
+                                        <br />
+                                    </div>
+                                ))}
+                                <br />
+                                <br />
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>
