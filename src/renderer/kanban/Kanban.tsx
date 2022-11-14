@@ -132,7 +132,7 @@ export default function Kanban() {
         }
     }
 
-    useEffect(async () => {
+    useEffect(() => {
         const fetchJobs = async () => {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
@@ -145,7 +145,7 @@ export default function Kanban() {
 
             return newState;
         };
-        await fetchJobs();
+        fetchJobs();
     }, []);
 
     return (

@@ -5,58 +5,57 @@ import SearchBar from '../search/SearchBar';
 
 export default function Homepage() {
     const nav = useNavigate();
-
-    const goKanban = () => {
-        nav('/kanban');
-    };
-
     return (
-        <div className=''>
-            <header className='w-full mt-5'>
-                <input className="h-65 w-357 text-2xl ml-5" type="text" placeholder="Search" />
-                <button className="float-right">
-          <span className="material-icons-outlined cursor-pointer text-5xl mx-3">
-            settings
-          </span>
-                </button>
-                <div className="float-right cursor-pointer ml-5 bg-gray-200">
-                    <button className='py-2 px-3 text-2xl'>
-                        Premium
-                    </button>
+        <React.Fragment>
+            <h1 className="text-3xl mt-10">Welcome Back!</h1>
+
+            <h1 className="text-2xl mt-10 grid place-content-center ">Upcoming Tasks</h1>
+            <div className="grid grid-cols-3 gap-20 mx-20 h-40 mt-5 ">
+                <div className="grid place-content-center bg-gray-200 rounded-2xl">
+                    <span className="text-3xl">Task</span>
                 </div>
-                <div className="float-right cursor-pointer bg-gray-200">
-                    <button className='py-2 px-3 text-2xl'>
-                        Find Jobs
-                    </button>
+                <div className="grid place-content-center bg-gray-200 rounded-2xl">
+                    <span className="text-3xl">Task</span>
                 </div>
-            </header>
-
-
-
-            <h1 className="text-center text-3xl mt-20">Welcome Back _________</h1>
-
-
-            <div className="mt-20 grid grid-rows-3 gap-y-8 text-3xl">
-                <div className='grid place-content-center'>
-                    <button className="px-80 h-32 bg-gray-200" onClick={goKanban}>View Board 1</button>
-                </div>
-                <div className='grid place-content-center'>
-                    <button className="px-80 h-32 bg-gray-200" onClick={goKanban}> View Board 2 </button>
-                </div>
-                <div className='grid place-content-center'>
-                    <button className="px-80 h-32 bg-gray-200" onClick={goKanban} ><span className='material-icons-outlined'>add_circle</span> Create Board</button>
+                <div className="grid place-content-center bg-gray-200 rounded-2xl">
+                    <span className="text-3xl">Task</span>
                 </div>
             </div>
 
-            <button
-                onClick={() => {
-                    generateJobs(20);
-                }}
-            >
-                Generate jobs
-            </button>
-
-            <SearchBar />
-        </div>
+            <h1 className="text-2xl mt-10 grid place-content-center">Recent Boards</h1>
+            <div className="mt-5 grid grid-rows-3 gap-y-8 text-3xl">
+                <div className="grid place-content-center">
+                    <button
+                        className="px-80 h-32 bg-gray-200"
+                        onClick={() => {
+                            nav('/kanban');
+                        }}
+                    >
+                        View Board 1
+                    </button>
+                </div>
+                <div className="grid place-content-center">
+                    <button
+                        className="px-80 h-32 bg-gray-200"
+                        onClick={() => {
+                            nav('/kanban');
+                        }}
+                    >
+                        {' '}
+                        View Board 2{' '}
+                    </button>
+                </div>
+                <div className="grid place-content-center">
+                    <button
+                        className="px-80 h-32 bg-gray-200"
+                        onClick={() => {
+                            nav('/kanban');
+                        }}
+                    >
+                        <span className="material-icons-outlined">add_circle</span> Create Board
+                    </button>
+                </div>
+            </div>
+        </React.Fragment>
     );
 }

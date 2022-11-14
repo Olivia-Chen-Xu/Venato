@@ -19,7 +19,7 @@ const Profile = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Successfully signed out`);
-                navigate('/sign-in');
+                navigate('/');
             })
             .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
     };
@@ -39,7 +39,7 @@ const Profile = () => {
             // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Current user successfully deleted`);
-                navigate('/sign-up');
+                navigate('/');
             })
             .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
     };
@@ -51,7 +51,14 @@ const Profile = () => {
                 <button type="submit" className="auth-button" onClick={handleSignOut}>
                     Sign out
                 </button>
-                <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
+
+                {/* <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
+                    Delete account
+                </button> */}
+
+                
+                {/* TEMPORARY */}
+                <button type="submit" className="auth-button" onClick={handleSignOut}>
                     Delete account
                 </button>
                 {errMsg}
