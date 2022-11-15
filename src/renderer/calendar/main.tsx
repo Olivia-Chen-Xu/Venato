@@ -8,7 +8,7 @@ import EventModal from './components/EventModal';
 import GlobalContext from './context/GlobalContext';
 import ReusableHeader from 'renderer/reusable/ReusableHeader';
 
-export function Calendar() {
+const Calendar = () => {
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const { monthIndex, setMonthIndex, showEventModal } = useContext(GlobalContext);
     useEffect(() => {
@@ -23,7 +23,7 @@ export function Calendar() {
     }
 
     return (
-        <React.Fragment>
+        <>
             {showEventModal && <EventModal />}
             <div className="h-screen flex flex-col">
                 <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
@@ -43,19 +43,21 @@ export function Calendar() {
                     {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
                 </h2>
                 <div className="flex flex-1 mb-10">
-                    <button onClick={handlePrevMonth}>
+                    <button type="button" onClick={handlePrevMonth}>
                         <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                             chevron_left
                         </span>
                     </button>
                     <Month month={currentMonth} />
-                    <button onClick={handleNextMonth}>
+                    <button type="button" onClick={handleNextMonth}>
                         <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                             chevron_right
                         </span>
                     </button>
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
-}
+};
+
+export default Calendar;
