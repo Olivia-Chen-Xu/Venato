@@ -1,7 +1,6 @@
 import React from 'react';
 import { Calendar } from 'renderer/calendar/main';
 import Homepage from 'renderer/homepage/Homepage';
-import Job from 'renderer/job/Job';
 import Kanban from 'renderer/kanban/Kanban';
 import SearchBar from 'renderer/search/SearchBar';
 import ReusableHeader from './ReusableHeader';

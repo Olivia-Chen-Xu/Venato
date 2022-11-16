@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
+import { CircularProgress } from '@mui/material';
 
 const SearchBar = () => {
     const [company, setCompany] = useState<string>('');
@@ -14,7 +15,11 @@ const SearchBar = () => {
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
 
     const handleSearch = async () => {
-        if ((position?.trim()?.length || 0) === 0 && company === '' && (!isJobSearch || (isJobSearch && location === ''))) {
+        if (
+            (position?.trim()?.length || 0) === 0 &&
+            company === '' &&
+            (!isJobSearch || (isJobSearch && location === ''))
+        ) {
             setErrMsg('Please enter a position, company, or location');
             return;
         }
@@ -36,7 +41,7 @@ const SearchBar = () => {
     return (
         <div>
             {(companies.error || locations.error || companies.loading || locations.loading) && (
-                <div>Loading...</div>
+                <CircularProgress></CircularProgress>
             )}
             {companies.result && locations.result && (
                 <div>
@@ -128,9 +133,9 @@ const SearchBar = () => {
                                       <br />
                                       Interview questions:{' '}
                                       <ul>
-                                          {
-                                              job.interviewQuestions.map((question: string) => <li>{question}</li>)
-                                          }
+                                          {job.interviewQuestions.map((question: string) => (
+                                              <li>{question}</li>
+                                          ))}
                                       </ul>
                                       <br />
                                       <br />
