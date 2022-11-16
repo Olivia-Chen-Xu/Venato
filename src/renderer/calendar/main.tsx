@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useAsync } from "react-async-hook";
 import CalHeader from './components/CalHeader';
 import Sidebar from './components/Sidebar';
 import dayjs from 'dayjs';
@@ -7,6 +8,7 @@ import EventModal from './components/EventModal';
 import GlobalContext from './context/GlobalContext';
 import ReusableHeader from 'renderer/reusable/ReusableHeader';
 import dayjs from 'dayjs';
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -23,6 +25,8 @@ const getMonth = (month = dayjs().month()) => {
 }
 
 const Calendar = () => {
+    const events = useAsync(httpsCallable(getFunctions(), 'getCalendarEvents'), []);
+
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState(10);
     const [showEventModal, setShowEventModal] = useState(false);
@@ -31,9 +35,17 @@ const Calendar = () => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
+    const displayEvents = () => {
+        // @ts-ignore
+        events.result.data.forEach((event: { id: string, deadlines: [{ date: string, title: string }] }) => {
+            // display events
+        });
+    };
+
     return (
         <>
             {showEventModal && <EventModal />}
+            {events.result && displayEvents()}
             <div className="h-screen flex flex-col">
                 <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
                 <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
