@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import dayjs from 'dayjs';
 import GlobalContext from './GlobalContext';
+
 function savedEventsReducer(state, { type, payload }) {
   switch (type) {
     case 'push':

@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useAsync } from "react-async-hook";
+import { useAsync } from 'react-async-hook';
+import dayjs from 'dayjs';
+import ReusableHeader from 'renderer/reusable/ReusableHeader';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import CalHeader from './components/CalHeader';
 import Sidebar from './components/Sidebar';
-import dayjs from 'dayjs';
 import Month from './components/Month';
 import EventModal from './components/EventModal';
 import GlobalContext from './context/GlobalContext';
-import ReusableHeader from 'renderer/reusable/ReusableHeader';
-import dayjs from 'dayjs';
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -22,7 +21,7 @@ const getMonth = (month = dayjs().month()) => {
             return dayjs(new Date(year, month, currMonthCount));
         });
     });
-}
+};
 
 const Calendar = () => {
     const events = useAsync(httpsCallable(getFunctions(), 'getCalendarEvents'), []);
@@ -36,10 +35,13 @@ const Calendar = () => {
     }, [monthIndex]);
 
     const displayEvents = () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        events.result.data.forEach((event: { id: string, deadlines: [{ date: string, title: string }] }) => {
-            // display events
-        });
+        events.result.data.forEach(
+            (event: { id: string; deadlines: [{ date: string; title: string }] }) => {
+                // display events
+            }
+        );
     };
 
     return (
