@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react';
-import GlobalContext from '../context/GlobalContext';
+import CalendarState from '../context/CalendarState';
 import { getMonth } from '../getMonth';
 
 export default function SmallCalendar() {
@@ -10,12 +10,12 @@ export default function SmallCalendar() {
         setCurrentMonth(getMonth(currentMonthIdx));
     }, [currentMonthIdx]);
 
-    const { monthIndex, setSmallCalendarMonth, setDaySelected, daySelected } =
-        useContext(GlobalContext);
+    // const { monthIndex, setSmallCalendarMonth, setDaySelected, daySelected } =
+    //     useContext(GlobalContext);
 
     useEffect(() => {
-        setCurrentMonthIdx(monthIndex);
-    }, [monthIndex]);
+        setCurrentMonthIdx(CalendarState.monthIndex);
+    }, [CalendarState.monthIndex]);
 
     function handlePrevMonth() {
         setCurrentMonthIdx(currentMonthIdx - 1);
@@ -27,7 +27,8 @@ export default function SmallCalendar() {
     function getDayClass(day) {
         const nowDay = dayjs().format('DD-MM-YY');
         const currDay = day.format('DD-MM-YY');
-        const selectedDay = daySelected && daySelected.format('DD-MM-YY');
+        const selectedDay =
+            CalendarState.daySelected && CalendarState.daySelected.format('DD-MM-YY');
         if (nowDay === currDay) {
             return 'bg-blue-500 rounded-full text-white';
         }
@@ -68,8 +69,8 @@ export default function SmallCalendar() {
                             <button
                                 key={idx}
                                 onClick={() => {
-                                    setSmallCalendarMonth(currentMonthIdx);
-                                    setDaySelected(day);
+                                    CalendarState.smallCalendarMonth = currentMonthIdx;
+                                    CalendarState.daySelected = day;
                                 }}
                                 className={`py-1 w-full ${getDayClass(day)}`}
                             >

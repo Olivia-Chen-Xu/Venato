@@ -121,12 +121,19 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
 const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
         .get()
-        .then((jobs) =>
-            jobs.docs.map((job) => ({
-                id: <string>job.id,
-                deadlines: <[]>job.data().deadlines,
-            }))
-        )
+        .then((jobs) => {
+            const events: { id: string; title: string; date: string }[] = [];
+            jobs.docs.forEach((job) => {
+                job.data().deadlines.forEach((event: { date: any }) => {
+                    events.push({
+                        id: job.id,
+                        title: job.data().position,
+                        date: event.date,
+                    });
+                });
+            });
+            return events;
+        })
         .catch((err) => `Error getting events: ${err}`);
 });
 

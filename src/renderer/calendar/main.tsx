@@ -1,13 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
-import ReusableHeader from 'renderer/reusable/ReusableHeader';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import CalHeader from './components/CalHeader';
-import Sidebar from './components/Sidebar';
 import Month from './components/Month';
-import EventModal from './components/EventModal';
-import GlobalContext from './context/GlobalContext';
+import CalendarState from './context/CalendarState';
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -28,58 +24,58 @@ const Calendar = () => {
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState(10);
-    const [showEventModal, setShowEventModal] = useState(false);
+    // const [showEventModal, setShowEventModal] = useState(false);
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
-    const displayEvents = () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        events.result.data.forEach(
-            (event: { id: string; deadlines: [{ date: string; title: string }] }) => {
-                // display events
-            }
-        );
-    };
+    if (events.loading) {
+        return <p>Loading...</p>;
+    }
+    if (events.error) {
+        return <p>Error: {events.error.message}</p>;
+    }
 
+    CalendarState.addEvent({ id: '00zxtpLh9oAe9cVHLoVh', title: 'test event', date: '15-11-22' });
+    // const events = [];
+    // events.result.data.forEach(
+    //     (event: { id: string; deadlines: [{ date: string; title: string }] }) => {{
+    //         events.push({ id: event.id, date: event.deadlines });
+    //     }}
+    // );
     return (
-        <>
-            {showEventModal && <EventModal />}
-            {events.result && displayEvents()}
-            <div className="h-screen flex flex-col">
-                <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
-                <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
-                    <div className="grid place-content-center bg-gray-200">
-                        <span className="text-3xl">Task</span>
-                    </div>
-                    <div className="grid place-content-center bg-gray-200">
-                        <span className="text-3xl">Task</span>
-                    </div>
-                    <div className="grid place-content-center bg-gray-200">
-                        <span className="text-3xl">Task</span>
-                    </div>
+        <div className="h-screen flex flex-col">
+            <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
+            <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
+                <div className="grid place-content-center bg-gray-200">
+                    <span className="text-3xl">Task</span>
                 </div>
-
-                <h2 className="ml-20 text-2xl">
-                    {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
-                </h2>
-                <div className="flex flex-1 mb-10">
-                    <button type="button" onClick={() => setMonthIndex(monthIndex - 1)}>
-                        <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
-                            chevron_left
-                        </span>
-                    </button>
-                    <Month month={currentMonth} />
-                    <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
-                        <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
-                            chevron_right
-                        </span>
-                    </button>
+                <div className="grid place-content-center bg-gray-200">
+                    <span className="text-3xl">Task</span>
+                </div>
+                <div className="grid place-content-center bg-gray-200">
+                    <span className="text-3xl">Task</span>
                 </div>
             </div>
-        </>
+
+            <h2 className="ml-20 text-2xl">
+                {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
+            </h2>
+            <div className="flex flex-1 mb-10">
+                <button type="button" onClick={() => setMonthIndex(monthIndex - 1)}>
+                    <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
+                        chevron_left
+                    </span>
+                </button>
+                <Month month={currentMonth} />
+                <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
+                    <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
+                        chevron_right
+                    </span>
+                </button>
+            </div>
+        </div>
     );
 };
 

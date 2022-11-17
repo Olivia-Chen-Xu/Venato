@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
-import GlobalContext from '../context/GlobalContext';
+import CalendarState from '../context/CalendarState';
 
 const labelsClasses = ['indigo', 'gray', 'purple', 'green', 'blue', 'red'];
+/*
 export default function EventModal() {
-    const { setShowEventModal, daySelected, dispatchCalEvents, selectedEvent } =
-        useContext(GlobalContext);
+    // const { setShowEventModal, daySelected, dispatchCalEvents, selectedEvent } =
+    //     useContext(GlobalContext);
 
     const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : '');
     const [desc, setDesc] = useState(selectedEvent ? selectedEvent.desc : '');
@@ -107,3 +108,5 @@ export default function EventModal() {
         </div>
     );
 }
+
+ */

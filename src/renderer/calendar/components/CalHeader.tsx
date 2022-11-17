@@ -1,20 +1,19 @@
 import React, { useContext } from 'react';
 import dayjs from 'dayjs';
 import logo from '../../../../assets/icons/512x512.png';
-import GlobalContext from '../context/GlobalContext';
+import CalendarState from '../context/CalendarState';
 
 export default function calHeader() {
-    const { monthIndex, setMonthIndex } = useContext(GlobalContext);
+    //const { monthIndex, setMonthIndex } = useContext(GlobalContext);
     function handlePrevMonth() {
-        setMonthIndex(monthIndex - 1);
+        CalendarState.monthIndex--;
     }
     function handleNextMonth() {
-        setMonthIndex(monthIndex + 1);
+        CalendarState.monthIndex++;
     }
     function handleReset() {
-        setMonthIndex(
-            monthIndex === dayjs().month() ? monthIndex + Math.random() : dayjs().month()
-        );
+        CalendarState.monthIndex =
+            CalendarState.monthIndex === dayjs().month() ? CalendarState.monthIndex + Math.random() : dayjs().month();
     }
     return (
         <header className="px-4 py-2 flex items-center">
@@ -34,7 +33,7 @@ export default function calHeader() {
                 </span>
             </button>
             <h2 className="ml-4 text-cl text-gray-500 font-bold">
-                {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
+                {dayjs(new Date(dayjs().year(), CalendarState.monthIndex)).format('MMMM YYYY')}
             </h2>
         </header>
     );
