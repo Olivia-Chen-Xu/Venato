@@ -3,19 +3,8 @@ import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
 
 const Day = ({ day, rowIdx }) => {
-    const [dayEvents, setDayEvents] = useState([{ title: 'init state...', label: '' }]);
+    //const [dayEvents, setDayEvents] = useState([{ title: 'init state...', label: '' }]);
     // const { setDaySelected, setShowEventModal, setSelectedEvent } = useContext(CalendarState);
-
-    // const { filterEvents } = useContext(CalendarState);
-    // useEffect(() => {
-    //     // console.log(filterEvents);
-    //     const events = filterEvents.filter((evt) => {
-    //         console.log(`Component : ${day.format('DD-MM-YY')}`);
-    //         console.log(`Input : ${evt.day.format('DD-MM-YY')}`);
-    //         return evt.day.format('DD-MM-YY') === day.format('DD-MM-YY');
-    //     });
-    //     setDayEvents(events);
-    // }, [filterEvents, day]);
 
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
@@ -25,7 +14,7 @@ const Day = ({ day, rowIdx }) => {
 
     // First onclick
     // setDaySelected(day);
-    //                         setShowEventModal(true);
+    // setShowEventModal(true);
 
     // Second: setSelectedEvent(evt)
 

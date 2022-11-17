@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -37,13 +37,8 @@ const Calendar = () => {
         return <p>Error: {events.error.message}</p>;
     }
 
-    CalendarState.addEvent({ id: '00zxtpLh9oAe9cVHLoVh', title: 'test event', date: '15-11-22' });
-    // const events = [];
-    // events.result.data.forEach(
-    //     (event: { id: string; deadlines: [{ date: string; title: string }] }) => {{
-    //         events.push({ id: event.id, date: event.deadlines });
-    //     }}
-    // );
+    // Events loaded
+    events.result.data.forEach((event) => CalendarState.addEvent(event));
     return (
         <div className="h-screen flex flex-col">
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
