@@ -19,10 +19,17 @@ const Day = ({ day, rowIdx }) => {
     // Second: setSelectedEvent(evt)
 
     const getDayEvents = () => {
-        if (!CalendarState.events[day.format('DD-MM-YY')]) {
+        let dayEvents = CalendarState.events[day.format('DD-MM-YY')];
+        if (!dayEvents) {
             return [];
         }
-        return CalendarState.events[day.format('DD-MM-YY')].map((evt, idx) => (
+        let overLimit = false;
+        const size = dayEvents.length;
+        if (dayEvents.length >= 2) {
+            dayEvents = dayEvents.slice(0, 2);
+            overLimit = true;
+        }
+        const jsx = dayEvents.map((evt, idx) => (
             <div
                 key={idx}
                 onClick={() => {}}
@@ -31,6 +38,18 @@ const Day = ({ day, rowIdx }) => {
                 {evt.title}
             </div>
         ));
+        if (overLimit) {
+            jsx.push(
+                <div
+                    key={3}
+                    onClick={() => {}}
+                    className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
+                >
+                    <i>{size - 2} more...</i>
+                </div>
+            );
+        }
+        return jsx;
     };
 
     return (
