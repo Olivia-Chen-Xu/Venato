@@ -1,7 +1,6 @@
 import React from 'react';
 import Calendar from 'renderer/calendar/main';
 import Homepage from 'renderer/homepage/Homepage';
-import Job from 'renderer/job/Job';
 import Kanban from 'renderer/kanban/Kanban';
 import SearchBar from 'renderer/search/SearchBar';
 import ReusableHeader from './ReusableHeader';
@@ -22,11 +21,13 @@ export default function Overlay(props) {
 
     return (
         <>
-            <ReusableHeader />
-            <div className="flex flex-1">
-                <ReusableSideBar />
-                <div className="w-full">{elem}</div>
-            </div>
+          <div className="h-screen overflow-hidden bg-[url('../../assets/home/bg.png')] bg-cover bg-fixed bg-center">
+              <ReusableHeader />
+              <div className="flex flex-1">
+                  <ReusableSideBar />
+                  <div className="w-full">{elem}</div>
+              </div>
+          </div>
         </>
     );
 }
