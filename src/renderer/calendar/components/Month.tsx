@@ -1,22 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
+import Overlay from "../../reusable/Overlay";
 
 const Day = ({ day, rowIdx }) => {
-    //const [dayEvents, setDayEvents] = useState([{ title: 'init state...', label: '' }]);
-    // const { setDaySelected, setShowEventModal, setSelectedEvent } = useContext(CalendarState);
+    const [isOverlay, setIsOverlay] = useState(false);
 
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
             ? 'bg-blue-600 text-white rounded-full w-7'
             : '';
     };
-
-    // First onclick
-    // setDaySelected(day);
-    // setShowEventModal(true);
-
-    // Second: setSelectedEvent(evt)
 
     const getDayEvents = () => {
         let dayEvents = CalendarState.events[day.format('DD-MM-YY')];
@@ -54,7 +48,6 @@ const Day = ({ day, rowIdx }) => {
 
     return (
         <>
-            {}
             <div className="border border-gray-200 flex flex-col">
                 <header className="flex flex-col items-center">
                     {rowIdx === 0 && (
@@ -64,7 +57,7 @@ const Day = ({ day, rowIdx }) => {
                         {day.format('DD')}
                     </p>
                 </header>
-                <div onClick={() => {}} className="flex-1 cursor-pointer">
+                <div onClick={() => {setIsOverlay(true)}} className="flex-1 cursor-pointer">
                     {getDayEvents()}
                 </div>
             </div>
