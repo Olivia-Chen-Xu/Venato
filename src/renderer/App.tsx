@@ -31,6 +31,7 @@ export default function App() {
                     <Route path="/password-reset" element={<PasswordReset />} />
                     <Route path="/home" element={<Overlay page={'home'} />} />
                     <Route path="/job" element={<Overlay page={'jobs'} />} />
+                    <Route path="/questions" element={<Overlay page={'questions'} />} />
                     <Route path="/kanban" element={<Overlay page={'kanban'} />} />
                     <Route path="/calendar" element={<Overlay page={'cal'} />} />
                 </Routes>

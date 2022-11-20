@@ -10,7 +10,7 @@ export default function ReusableHeader() {
             <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
                 <Profile />
             </Drawer>
-            <div className='fixed top-0 w-full backdrop-blur-xl'>
+            <div className='fixed top-0 w-full backdrop-blur-xl drop-shadow-2xl border-b-5 z-50'>
             <header className="mt-3">
                 <img src={logo} alt="" className='float-left ml-3 w-12' />
                 {/* Insert the search bar here */}
