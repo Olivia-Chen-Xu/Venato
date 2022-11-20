@@ -483,6 +483,7 @@ const styles = {
     interviewIcons: {
         position: 'absolute',
         padding: '0px',
+        width: '800px',
         gap: '42px',
         left: '230px',
         top: '65px',
@@ -517,16 +518,6 @@ const styles = {
         outline: 'none',
     },
 
-    technicalQuestions: {
-        boxSizing: 'border-box',
-        position: 'absolute',
-        width: '700px',
-        height: '250px',
-        left: '320px',
-        top: '250px',
-        border: 'none',
-        outline: 'none',
-    },
 
     contactBox: {
         boxSizing: 'border-box',
