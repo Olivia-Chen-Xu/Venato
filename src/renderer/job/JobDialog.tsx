@@ -124,40 +124,116 @@ const Deadlines = ({ value, index, job, setJob }) => {
     };
 
     return (
-        
-        <div hidden={value !== index}>
-            <Button onClick={() => setOpen(true)}>Add a deadline</Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent style={{ display: 'flex' }}>
-                    <TextField
-                        label="What is due"
-                        value={newDdl.position}
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, position: e.target.value });
-                        }}
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            label="Deadline"
-                            value={newDdl.date}
-                            onChange={(newValue) => {
-                                setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                    <Button onClick={addDdl}>Add</Button>
-                </DialogContent>
-            </Dialog>
-            {job.deadlines &&
-                job.deadlines.map((ddl) => (
-                    <div>
-                        <h3>{ddl.date}</h3>
-                        <p>{ddl.position}</p>
+        <>
+            <div hidden={value !== index}>
+                    <div style={styles.interviewIcons}className="grid grid-cols-3 gap-20 mx-20 h-40 mt-5 text-white">
+                        <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                            <div className="ml-5 mt-5">
+                                <h1>
+                                    <span className="text-3xl">Interview</span>
+                                </h1>
+                            </div>
+
+                            <div className="ml-5 mt-8">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        schedule
+                                    </span>{' '}
+                                    Jan 1st - 4:00 PM
+                                </h1>
+                            </div>
+                            <div className="ml-5 mt-1">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        location_on
+                                    </span>{' '}
+                                    Zoom
+                                </h1>
+                            </div>
+                        </div>
+                        <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                            <div className="ml-5 mt-5">
+                                <h1>
+                                    <span className="text-3xl">Interview</span>
+                                </h1>
+                            </div>
+
+                            <div className="ml-5 mt-8">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        schedule
+                                    </span>{' '}
+                                    Jan 1st - 4:00 PM
+                                </h1>
+                            </div>
+                            <div className="ml-5 mt-1">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        location_on
+                                    </span>{' '}
+                                    Zoom
+                                </h1>
+                            </div>
+                        </div>
+                        <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                            <div className="ml-5 mt-5">
+                                <h1>
+                                    <span className="text-3xl">Interview</span>
+                                </h1>
+                            </div>
+
+                            <div className="ml-5 mt-8">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        schedule
+                                    </span>{' '}
+                                    Jan 1st - 4:00 PM
+                                </h1>
+                            </div>
+                            <div className="ml-5 mt-1">
+                                <h1 className="text-md align-middle">
+                                    <span className="material-icons-outlined text-xl">
+                                        location_on
+                                    </span>{' '}
+                                    Zoom
+                                </h1>
+                            </div>
+                        </div>
                     </div>
-                ))}
-        </div>
-        
+                
+
+                <Button onClick={() => setOpen(true)}>Add a deadline</Button>
+                <Dialog open={open} onClose={() => setOpen(false)}>
+                    <DialogContent style={{ display: 'flex' }}>
+                        <TextField
+                            label="What is due"
+                            value={newDdl.position}
+                            onChange={(e) => {
+                                setNewDdl({ ...newDdl, position: e.target.value });
+                            }}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label="Deadline"
+                                value={newDdl.date}
+                                onChange={(newValue) => {
+                                    setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+                        <Button onClick={addDdl}>Add</Button>
+                    </DialogContent>
+                </Dialog>
+                {job.deadlines &&
+                    job.deadlines.map((ddl) => (
+                        <div>
+                            <h3>{ddl.date}</h3>
+                            <p>{ddl.position}</p>
+                        </div>
+                    ))}
+            </div>
+        </>
     );
 };
 const Questions = ({ value, index, job, setJob }) => {
@@ -171,28 +247,45 @@ const Questions = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <div hidden={value !== index}>
-            <Button onClick={() => setOpen(true)}>Add a question</Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent style={{ display: 'flex' }}>
-                    <TextField
-                        label="What was the question"
-                        value={newQuestion}
-                        onChange={(e) => {
-                            setNewQuestion(e.target.value);
-                        }}
-                    />
+        
+            <div hidden={value !== index}>
+                <TextField
+                    label="job description"
+                    style={styles.jobDescription}
+                    multiline
+                    rows={4}
+                    value={job.details.description}
+                    onChange={(e) => {
+                        setJob({
+                            ...job,
+                            details: { ...job.details, description: e.target.value },
+                        });
+                    }}
+                    InputProps={{
+                        disableUnderline: true, // <== added this
+                    }}
+                />
+                <Button onClick={() => setOpen(true)}>Add a question</Button>
+                <Dialog open={open} onClose={() => setOpen(false)}>
+                    <DialogContent style={{ display: 'flex' }}>
+                        <TextField
+                            label="What was the question"
+                            value={newQuestion}
+                            onChange={(e) => {
+                                setNewQuestion(e.target.value);
+                            }}
+                        />
 
-                    <Button onClick={addNewQuestion}>Add</Button>
-                </DialogContent>
-            </Dialog>
-            {job.interviewQuestions &&
-                job.interviewQuestions.map((q) => (
-                    <div>
-                        <h3>{q}</h3>
-                    </div>
-                ))}
-        </div>
+                        <Button onClick={addNewQuestion}>Add</Button>
+                    </DialogContent>
+                </Dialog>
+                {job.interviewQuestions &&
+                    job.interviewQuestions.map((q) => (
+                        <div>
+                            <h3>{q}</h3>
+                        </div>
+                    ))}
+            </div>
     );
 };
 const Contacts = ({ value, index, job, setJob }) => {
@@ -362,6 +455,7 @@ const styles = {
         top: '60px',
         left: '550px',
     },
+    
     Notes: {
         position: 'absolute',
         width: '800px',
@@ -369,5 +463,31 @@ const styles = {
         left: '280px',
         top: '40px',
     },
+
+    interviewIcons: {
+        position: "absolute",
+        padding: "0px",
+        gap: "42px",
+        left: "230px",
+        top: "65px",
+    },
+
+    deadlineButton: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "16px 12px 16px 16px",
+        gap: "10px",
+
+        position: "absolute",
+        width: "152px",
+        height: "51px",
+        left: "589px",
+        top: "614px",
+
+        background: "#633175",
+        borderRadius: "8px",
+    }
 };
 
