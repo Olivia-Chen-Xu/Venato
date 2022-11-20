@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { deleteAccount, signout } from './auth-functions';
 import { auth } from '../../config/firebase';
+import { InputLabel, TextField, Button } from '@mui/material';
+import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 
 // Not in use yet
@@ -45,25 +47,42 @@ const Profile = () => {
     };
 
     return (
-        <>
-            <div>
-                <text className="TopText">Venato profile</text>
-                <button type="submit" className="auth-button" onClick={handleSignOut}>
-                    Sign out
-                </button>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: 400,
+                padding: 20,
+            }}
+        >
+            <text style={{ fontSize: 32, fontWeight: 'regular' }}>Venato profile</text>
+            <br />
+            <Button
+                color="neutral"
+                variant="contained"
+                style={{ width: 200 }}
+                onClick={handleSignOut}
+            >
+                Sign out
+            </Button>
 
-                {/* <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
+            {/* <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
                     Delete account
                 </button> */}
 
-                
-                {/* TEMPORARY */}
-                <button type="submit" className="auth-button" onClick={handleSignOut}>
-                    Delete account
-                </button>
-                {errMsg}
-            </div>
-        </>
+            {/* TEMPORARY */}
+            <br />
+            <Button
+                color="neutral"
+                variant="contained"
+                style={{ width: 200 }}
+                onClick={handleSignOut}
+            >
+                Delete account
+            </Button>
+            <text style={{ color: 'red' }}>{errMsg}</text>
+        </div>
     );
 };
 

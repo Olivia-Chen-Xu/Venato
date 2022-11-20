@@ -107,7 +107,7 @@ const updateEventField = functions.https.onCall(
     }
 );
 
-const updateJobs = functions.https.onCall(
+const updateJob = functions.https.onCall(
     (data: { id: string; newFields: object }, context: any) => {
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
@@ -241,7 +241,7 @@ export {
     getJobs,
     updateEvents,
     updateEventField,
-    updateJobs,
+    updateJob,
     deleteEvent,
     getCalendarEvents,
     jobSearch,

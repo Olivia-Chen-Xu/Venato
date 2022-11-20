@@ -42,7 +42,7 @@ const Details = ({ value, index, job, setJob }) => {
                     setJob({ ...job, position: e.target.value });
                 }}
                 style={{ border: 'none' }}
-            ></Input>
+            />
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
                     placeholder="Company"
@@ -221,6 +221,7 @@ const Contacts = ({ value, index, job, setJob }) => {
 };
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
+        awaitingResponse: false,
         company: '',
         contacts: [],
         deadlines: [],
@@ -228,6 +229,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
             description: '',
             url: '',
         },
+        id: '', // Id is needed to identify the job in the database
         interviewQuestions: [],
         location: '',
         notes: '',
@@ -246,34 +248,55 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         setOpen(false);
     };
 
-    const addNewJob = async () => {
+    const commitJob = async () => {
         setLoading(true);
         const newState = [...state];
-        await httpsCallable(
-            getFunctions(),
-            'addJob'
-        )(job).then((res) => {
-            newState[index] = [{ ...job, id: res.data }, ...state[index]];
-            setState(newState);
-        });
+        // Extract id from job
+        console.log(`Job: ${JSON.stringify(job, null, 4)}`);
+        const id = job.id;
+        const jobCopy = job;
+        delete jobCopy.id;
+        console.log(`Id: ${JSON.stringify(id, null, 4)}`);
+        console.log(`Copy: ${JSON.stringify(jobCopy, null, 4)}`);
+
+        if (isEdit) {
+            await httpsCallable(
+                getFunctions(),
+                'updateJob'
+            )({ id, newFields: jobCopy }).then((res) => {
+                newState[index] = [{ ...job, id: res.data }, ...state[index]];
+                setState(newState);
+            });
+        } else {
+            await httpsCallable(
+                getFunctions(),
+                'addJob'
+            )(jobCopy).then((res) => {
+                newState[index] = [{ ...job, id: res.data }, ...state[index]];
+                setState(newState);
+            });
+        }
+
         setLoading(false);
         setOpen(false);
     };
 
     useEffect(() => {
-        setJob(jobData ? jobData : { ...job, stage: index });
-        console.log(job.stage);
+        setJob(jobData || { ...job, stage: index });
     }, [jobData]);
 
     return (
-        <Dialog open={true} onClose={handleClose} fullWidth={true} maxWidth={'lg'}>
+        <Dialog open onClose={handleClose} fullWidth maxWidth="lg">
             <DialogContent style={{ display: 'flex' }}>
                 {loading ? (
-                    <CircularProgress
-                        style={{ position: 'absolute', right: 30 }}
-                    ></CircularProgress>
+                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
                 ) : (
-                    <Button onClick={addNewJob} style={{ position: 'absolute', right: 30 }}>
+                    <Button
+                        onClick={async () => {
+                            await commitJob();
+                        }}
+                        style={{ position: 'absolute', right: 30 }}
+                    >
                         {isEdit ? 'Save' : 'Add'}
                     </Button>
                 )}
@@ -301,11 +324,11 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                         marginInlineStart: 50,
                     }}
                 >
-                    <Details value={tabValue} index={0} job={job} setJob={setJob}></Details>
-                    <Notes value={tabValue} index={1} job={job} setJob={setJob}></Notes>
-                    <Deadlines value={tabValue} index={2} job={job} setJob={setJob}></Deadlines>
-                    <Questions value={tabValue} index={3} job={job} setJob={setJob}></Questions>
-                    <Contacts value={tabValue} index={4} job={job} setJob={setJob}></Contacts>
+                    <Details value={tabValue} index={0} job={job} setJob={setJob} />
+                    <Notes value={tabValue} index={1} job={job} setJob={setJob} />
+                    <Deadlines value={tabValue} index={2} job={job} setJob={setJob} />
+                    <Questions value={tabValue} index={3} job={job} setJob={setJob} />
+                    <Contacts value={tabValue} index={4} job={job} setJob={setJob} />
                 </div>
             </DialogContent>
         </Dialog>

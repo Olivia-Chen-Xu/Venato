@@ -4,8 +4,9 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ControlPoint } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from 'renderer/job/JobDialog';
+import { color } from '@mui/system';
 
-const colTitles = ['Applciations', 'Interviews', 'Offers', 'Rejections'];
+const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
 const newJob = (idx: number) => {
     return {
@@ -65,15 +66,21 @@ const grid = 8;
 
 const getJobStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
-    padding: grid * 2,
+    padding: grid * 4,
     margin: `0 0 ${grid}px 0`,
-    background: isDragging ? 'lightgreen' : 'grey',
+    display: 'flex',
+    flexDirection: 'column',
+    background: isDragging ? '#C7ADD8' : 'none',
+    //border: '1px solid #676767',
+    borderRadius: 10,
+    boxShadow: '2px 5px 5px #BEBEBE',
     ...draggableStyle,
 });
 const getListStyle = (isDraggingOver) => ({
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
     padding: grid,
-    width: (window.innerWidth - 100) / 4,
+    width: (window.innerWidth - 200) / 4,
+    height: window.innerHeight - 100,
+    overflowY: 'scroll',
 });
 
 export default function Kanban() {
@@ -156,7 +163,7 @@ export default function Kanban() {
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
                 for (const job of res.data) {
-                    newState[job.stage].push(job);
+                    newState[job.stage].push({ ...job, id: job.id });
                 }
                 setState(newState);
                 setLoading(false);
@@ -168,7 +175,13 @@ export default function Kanban() {
     }, []);
 
     return (
-        <div>
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+            }}
+        >
             {/* <button
                 type="button"
                 onClick={() => {
@@ -195,11 +208,22 @@ export default function Kanban() {
                     setState={setState}
                 ></JobDialog>
             )}
-
+            <h4
+                style={{
+                    alignSelf: 'flex-start',
+                    fontSize: 32,
+                    fontWeight: 'bold',
+                    color: '#676767',
+                }}
+            >
+                2023 Summer Internship
+            </h4>
+            <br></br>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 {/* {jobs.map((job) => (
                     <div>{JSON.stringify(job)}</div>
                 ))} */}
+
                 {loading ? (
                     <CircularProgress></CircularProgress>
                 ) : (
@@ -213,7 +237,17 @@ export default function Kanban() {
                                     display: 'flex',
                                 }}
                             >
-                                <p>{colTitles[ind]}</p>
+                                <p
+                                    style={{
+                                        borderBottom: '1px solid #676767',
+                                        width: '80%',
+                                        textAlign: 'center',
+                                        fontSize: 20,
+                                        color: '#676767',
+                                    }}
+                                >
+                                    {colTitles[ind]}
+                                </p>
                                 <IconButton onClick={() => handleAddClick(ind)}>
                                     <ControlPoint />
                                 </IconButton>
@@ -241,25 +275,27 @@ export default function Kanban() {
                                                                     provided.draggableProps.style
                                                                 )}
                                                             >
-                                                                <div
+                                                                <text
                                                                     style={{
-                                                                        display: 'flex',
-                                                                        justifyContent:
-                                                                            'space-around',
+                                                                        fontSize: 20,
+                                                                        fontWeight: 300,
+                                                                        color: '#633175',
+                                                                        textAlign: 'right',
                                                                     }}
                                                                 >
                                                                     {job.position}
-                                                                </div>
-                                                                <div
+                                                                </text>
+                                                                <text
                                                                     style={{
-                                                                        display: 'flex',
-                                                                        justifyContent:
-                                                                            'space-around',
+                                                                        fontSize: 14,
+                                                                        fontWeight: 300,
+                                                                        color: '#633175',
+                                                                        textAlign: 'right',
                                                                     }}
                                                                 >
                                                                     {job.company}
-                                                                </div>
-                                                                <div
+                                                                </text>
+                                                                {/* <div
                                                                     style={{
                                                                         display: 'flex',
                                                                         justifyContent:
@@ -280,7 +316,7 @@ export default function Kanban() {
                                                                     }}
                                                                 >
                                                                     delete
-                                                                </button>
+                                                                </button> */}
                                                             </div>
                                                         )}
                                                     </Draggable>
