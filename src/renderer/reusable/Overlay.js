@@ -21,7 +21,7 @@ export default function Overlay(props) {
     }
     return (
         <React.Fragment>
-        <div className="h-screen overflow-hidden bg-[url('../../assets/home/bg.png')] bg-cover bg-fixed bg-center">
+        <div className="h-screen bg-[url('../../assets/home/bg.png')] bg-cover bg-fixed bg-center">
             <ReusableHeader />
             <div className="flex flex-1">
                 <ReusableSideBar />

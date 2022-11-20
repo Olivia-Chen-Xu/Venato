@@ -10,7 +10,7 @@ export default function ReusableHeader() {
                 <Profile />
             </Drawer>
             <header className="w-full mt-5">
-                <button className="material-icons-outlined text-4xl ml-3 mr-5">panorama</button>
+                <img src="url('../../assets/home/logo.png')" alt="" />
                 {/* Insert the search bar here */}
                 <button onClick={() => setIsOpen(true)} className="float-right">
                     <span className="material-icons-outlined cursor-pointer text-4xl mr-3 ml-5">
