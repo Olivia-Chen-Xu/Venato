@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getEvents } from 'backend/src';
 import { ControlPoint } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from 'renderer/job/JobDialog';
 
 const colTitles = ['Applciations', 'Interviews', 'Offers', 'Rejections'];
 
-const newJob = (idx) => {
+const newJob = (idx: number) => {
     return {
         details: {
             description: 'Will be working on the Facebook Cloud Platform team',
