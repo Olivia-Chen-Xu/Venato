@@ -10,3 +10,8 @@
 html * {
     font-family: 'Inter', sans-serif;
 }
+
+::-webkit-scrollbar {
+    width: 2px;
+    background: transparent;
+}
