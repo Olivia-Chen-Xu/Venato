@@ -247,45 +247,60 @@ const Questions = ({ value, index, job, setJob }) => {
     };
 
     return (
-        
-            <div hidden={value !== index}>
-                <TextField
-                    label="job description"
-                    style={styles.jobDescription}
-                    multiline
-                    rows={4}
-                    value={job.details.description}
-                    onChange={(e) => {
-                        setJob({
-                            ...job,
-                            details: { ...job.details, description: e.target.value },
-                        });
-                    }}
-                    InputProps={{
-                        disableUnderline: true, // <== added this
-                    }}
-                />
-                <Button onClick={() => setOpen(true)}>Add a question</Button>
-                <Dialog open={open} onClose={() => setOpen(false)}>
-                    <DialogContent style={{ display: 'flex' }}>
-                        <TextField
-                            label="What was the question"
-                            value={newQuestion}
-                            onChange={(e) => {
-                                setNewQuestion(e.target.value);
-                            }}
-                        />
+        <div hidden={value !== index}>
+            <TextField
+                label="behavioural questions"
+                style={styles.behaviouralQuestions}
+                multiline
+                rows={4}
+                value={job.details.description}
+                onChange={(e) => {
+                    setJob({
+                        ...job,
+                        details: { ...job.details, description: e.target.value },
+                    });
+                }}
+                InputProps={{
+                    disableUnderline: true,
+                }}
+            />
+            <TextField
+                label="technical questions"
+                style={styles.technicalQuestions}
+                multiline
+                rows={4}
+                value={job.details.description}
+                onChange={(e) => {
+                    setJob({
+                        ...job,
+                        details: { ...job.details, description: e.target.value },
+                    });
+                }}
+                InputProps={{
+                    disableUnderline: true, 
+                }}
+            />
+            <Button onClick={() => setOpen(true)}>Add a question</Button>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+                <DialogContent style={{ display: 'flex' }}>
+                    <TextField
+                        label="question"
+                        value={newQuestion}
+                        onChange={(e) => {
+                            setNewQuestion(e.target.value);
+                        }}
+                    />
 
-                        <Button onClick={addNewQuestion}>Add</Button>
-                    </DialogContent>
-                </Dialog>
-                {job.interviewQuestions &&
-                    job.interviewQuestions.map((q) => (
-                        <div>
-                            <h3>{q}</h3>
-                        </div>
-                    ))}
-            </div>
+                    <Button onClick={addNewQuestion}>Add</Button>
+                </DialogContent>
+            </Dialog>
+            {job.interviewQuestions &&
+                job.interviewQuestions.map((q) => (
+                    <div>
+                        <h3>{q}</h3>
+                    </div>
+                ))}
+        </div>
     );
 };
 const Contacts = ({ value, index, job, setJob }) => {
@@ -440,7 +455,7 @@ const styles = {
         top: '20px',
         left: '0px',
     },
-   
+
     Company: {
         border: 'none',
         outline: 'none',
@@ -455,7 +470,7 @@ const styles = {
         top: '60px',
         left: '550px',
     },
-    
+
     Notes: {
         position: 'absolute',
         width: '800px',
@@ -465,29 +480,51 @@ const styles = {
     },
 
     interviewIcons: {
-        position: "absolute",
-        padding: "0px",
-        gap: "42px",
-        left: "230px",
-        top: "65px",
+        position: 'absolute',
+        padding: '0px',
+        gap: '42px',
+        left: '230px',
+        top: '65px',
     },
 
     deadlineButton: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "16px 12px 16px 16px",
-        gap: "10px",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '16px 12px 16px 16px',
+        gap: '10px',
 
-        position: "absolute",
-        width: "152px",
-        height: "51px",
-        left: "589px",
-        top: "614px",
+        position: 'absolute',
+        width: '152px',
+        height: '51px',
+        left: '589px',
+        top: '614px',
 
-        background: "#633175",
-        borderRadius: "8px",
-    }
+        background: '#633175',
+        borderRadius: '8px',
+    },
+
+    behaviouralQuestions: {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '700px',
+        height: '250px',
+        left: '320px',
+        top: '75px',
+        border: 'none',
+        outline: 'none',
+    },
+
+    technicalQuestions: {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '700px',
+        height: '250px',
+        left: '320px',
+        top: '250px',
+        border: 'none',
+        outline: 'none',
+    },
 };
 
