@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { signin } from './auth-functions';
 import { auth } from '../../config/firebase';
+import { InputLabel, TextField, Button } from '@mui/material';
+import { btnStyle, inputStyle } from './authStyles';
 
 const SignIn = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPW, setShowPW] = useState(false);
     const [errMsg, setErrMsg] = useState('');
 
     const handleSignIn = () => {
@@ -47,45 +50,35 @@ const SignIn = () => {
     };
 
     return (
-        <div className="AuthMainDiv">
-            <text className="TopText">Sign in</text>
+        <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
+            <text className="TopText">Log in</text>
             <br />
             <text className="WelcomeText">Welcome back.</text>
             <br />
-
-            <div style={{ marginTop: '20px' }}>
-                <label htmlFor="email">
-                    Email
-                    <input
-                        className="InputForms"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="john.smith@gmail.com"
-                        required
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
-
-            <div>
-                <label htmlFor="password">
-                    Password
-                    <input
-                        className="InputForms"
-                        type="password"
-                        name="password"
-                        value={password}
-                        placeholder="••••••••••"
-                        required
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
+            <InputLabel>Email</InputLabel>
+            <TextField
+                variant="outlined"
+                placeholder="john.smith@gmail.com"
+                style={inputStyle}
+                required
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                }}
+            ></TextField>
+            <div style={{ height: 20 }}></div>
+            <InputLabel>Password</InputLabel>
+            <TextField
+                variant="outlined"
+                type="password"
+                placeholder="••••••••••"
+                style={inputStyle}
+                required
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                }}
+            ></TextField>
 
             <p
                 style={{
@@ -95,6 +88,7 @@ const SignIn = () => {
                     textDecorationLine: 'underline',
                     fontStyle: 'italic',
                     color: '#676767',
+                    alignSelf: 'flex-end',
                 }}
             >
                 <text style={{ cursor: 'pointer' }} onClick={() => navigate('/password-reset')}>
@@ -103,18 +97,25 @@ const SignIn = () => {
             </p>
 
             <br />
-            <button type="submit" className="auth-button" onClick={handleSignIn}>
-                Sign in
-            </button>
+            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignIn}>
+                Log in
+            </Button>
             <br />
-            <p className="SwapAuthTextLeft">
-                Don't have an account?
+            <div
+                style={{
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    display: 'flex',
+                    width: '100%',
+                }}
+            >
+                <p className="SwapAuthText">Don't have an account?</p>
                 <text className="SwapAuthTextLink" onClick={() => navigate('/sign-up')}>
                     Sign up
                 </text>
-            </p>
+            </div>
             <br />
-            {errMsg}
+            <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
     );
 };

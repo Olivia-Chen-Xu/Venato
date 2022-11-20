@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { passwordResetEmail } from './auth-functions';
 import checkMark from '../../../assets/checkMark.png';
+import { InputLabel, TextField, Button } from '@mui/material';
+import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 
 const PasswordReset = () => {
@@ -66,35 +68,35 @@ const PasswordReset = () => {
             <text className="TopText">Password reset</text>
             <br />
             <br />
-
-            <div>
-                <label htmlFor="email">
-                    Email
-                    <input
-                        className="InputForms"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="john.smith@gmail.com"
-                        required
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
+            <InputLabel>Email</InputLabel>
+            <TextField
+                variant="outlined"
+                placeholder="john.smith@gmail.com"
+                style={inputStyle}
+                required
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                }}
+            ></TextField>
 
             <br />
-            <button type="submit" className="auth-button" onClick={handlePassReset}>
+            <Button
+                color="neutral"
+                variant="contained"
+                className="auth-button"
+                onClick={handlePassReset}
+            >
                 Reset password
-            </button>
-            <p>
+            </Button>
+            <br />
+            <p style={{ alignSelf: 'flex-end' }}>
                 <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
                     Sign in
                 </text>
             </p>
             <br />
-            {errMsg}
+            <text style={{ color: 'red' }}>{errMsg}</text>
             <br />
             {renderEmailSent()}
         </div>
