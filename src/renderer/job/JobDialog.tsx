@@ -36,16 +36,18 @@ const Details = ({ value, index, job, setJob }) => {
             }}
         >
             <Input
-                placeholder="Job Title"
+                className="focus-only"
+                placeholder="job title"
                 value={job.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
                 }}
-                style={{ border: 'none' }}
+                style={styles.jobTitle}
             ></Input>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                    placeholder="Company"
+                    placeholder="company"
+                    style={styles.Company}
                     value={job.company}
                     onChange={(e) => {
                         setJob({ ...job, company: e.target.value });
@@ -57,11 +59,12 @@ const Details = ({ value, index, job, setJob }) => {
                     }
                 />
                 <Input
-                    placeholder="Location"
+                    placeholder="location"
                     value={job.location}
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
                     }}
+                    style={styles.Location}
                     startAdornment={
                         <InputAdornment position="start">
                             <LocationOnOutlined />
@@ -70,17 +73,22 @@ const Details = ({ value, index, job, setJob }) => {
                 />
             </div>
             <TextField
-                label="Job description"
+                label="job description"
+                style={styles.jobDescription}
                 multiline
                 rows={4}
                 value={job.details.description}
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, description: e.target.value } });
                 }}
+                InputProps={{
+                    disableUnderline: true, // <== added this
+                }}
             />
             <TextField
-                label="Application link"
+                label="application link"
                 value={job.details.url}
+                style={styles.applicationLink}
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, url: e.target.value } });
                 }}
@@ -92,13 +100,14 @@ const Notes = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
             <TextField
-                label="Notes"
-                multiline
+                label="notes"
                 rows={4}
                 value={job.notes}
                 onChange={(e) => {
                     setJob({ ...job, notes: e.target.value });
                 }}
+                style={styles.Notes}
+                InputProps={{sx: { height: 300 } }}
             />
         </div>
     );
@@ -115,6 +124,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
     };
 
     return (
+        
         <div hidden={value !== index}>
             <Button onClick={() => setOpen(true)}>Add a deadline</Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
@@ -147,6 +157,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
                     </div>
                 ))}
         </div>
+        
     );
 };
 const Questions = ({ value, index, job, setJob }) => {
@@ -207,7 +218,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                         }}
                     />
 
-                    <Button onClick={addNewContact}>Add</Button>
+                    <Button style={{width: "57px", height: "27px", background: "#633175"}}onClick={addNewContact}>Add</Button>
                 </DialogContent>
             </Dialog>
             {job.contacts &&
@@ -286,7 +297,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     aria-label="Vertical tabs example"
                     sx={{ borderRight: 1, borderColor: 'divider' }}
                 >
-                    <Tab icon={<DescriptionOutlined />} iconPosition="start" label="Job Details" />
+                <Tab icon={<DescriptionOutlined />} iconPosition="start" label="Job Details" />
                     <Tab
                         icon={<DriveFileRenameOutlineOutlined />}
                         iconPosition="start"
@@ -311,3 +322,52 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         </Dialog>
     );
 }
+
+const styles = {
+    jobTitle: {
+        position: 'absolute',
+        top: '20px',
+        border: 'none',
+        outline: 'none',
+    },
+
+    jobDescription: {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '750px',
+        height: '250px',
+        left: '310px',
+        top: '120px',
+        border: 'none',
+        outline: 'none',
+    },
+    applicationLink: {
+        border: 'none',
+        outline: 'none',
+        top: '20px',
+        left: '0px',
+    },
+   
+    Company: {
+        border: 'none',
+        outline: 'none',
+        position: 'absolute',
+        top: '60px',
+        left: '310px',
+    },
+    Location: {
+        border: 'none',
+        outline: 'none',
+        position: 'absolute',
+        top: '60px',
+        left: '550px',
+    },
+    Notes: {
+        position: 'absolute',
+        width: '800px',
+        height: '1600px',
+        left: '280px',
+        top: '40px',
+    },
+};
+
