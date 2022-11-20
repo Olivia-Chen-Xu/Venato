@@ -18,16 +18,15 @@ export default function Overlay(props) {
     } else {
         elem = <Homepage />;
     }
-
     return (
-        <>
-            <div className="h-screen overflow-hidden bg-[url('../../assets/home/bg.png')] bg-cover bg-fixed bg-center">
-                <ReusableHeader />
-                <div className="flex flex-1">
-                    <ReusableSideBar />
-                    <div className="w-full">{elem}</div>
-                </div>
+        <React.Fragment>
+        <div className="h-screen bg-[url('../../assets/home/bg.png')] bg-cover bg-no-repeat bg-fixed bg-center">
+            <ReusableHeader />
+            <div className="flex flex-1 mt-16">
+                <ReusableSideBar />
+                <div className="w-full">{elem}</div>
             </div>
-        </>
+        </div>
+        </React.Fragment>
     );
 }

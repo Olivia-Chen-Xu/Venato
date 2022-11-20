@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Drawer } from '@mui/material';
 import Profile from 'renderer/auth/Profile';
+import logo from '../../../assets/logo.png'
 
 export default function ReusableHeader() {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,8 +10,9 @@ export default function ReusableHeader() {
             <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
                 <Profile />
             </Drawer>
-            <header className="w-full mt-5">
-                <button className="material-icons-outlined text-4xl ml-3 mr-5">panorama</button>
+            <div className='fixed top-0 w-full backdrop-blur-xl'>
+            <header className="mt-3">
+                <img src={logo} alt="" className='float-left ml-3 w-12' />
                 {/* Insert the search bar here */}
                 <button onClick={() => setIsOpen(true)} className="float-right">
                     <span className="material-icons-outlined cursor-pointer text-4xl mr-3 ml-5">
@@ -31,6 +33,7 @@ export default function ReusableHeader() {
                     <button className="py-1 px-5 text-xl">Upgrade</button>
                 </div>
             </header>
+            </div>
         </React.Fragment>
     );
 }
