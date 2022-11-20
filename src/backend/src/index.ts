@@ -118,6 +118,26 @@ const deleteEvent = functions.https.onCall((data: { id: string }, context: any) 
     return getDoc(`events/${data.id}`).update({ toDelete: true });
 });
 
+const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
+    return getCollection('jobs')
+        .get()
+        .then((jobs) => {
+            const events: { id: string; title: string; date: string }[] = [];
+            jobs.docs.forEach((job) => {
+                job.data().deadlines.forEach((event: { date: any }) => {
+                    events.push({
+                        id: job.id,
+                        title: job.data().position,
+                        date: event.date,
+                    });
+                });
+            });
+            return events;
+        })
+        .catch((err) => `Error getting events: ${err}`);
+});
+
+// For search
 const getAllCompanies = functions.https.onCall((data: object, context: any) => {
     return getCollection('companies')
         .get()
@@ -223,6 +243,7 @@ export {
     updateEventField,
     updateJobs,
     deleteEvent,
+    getCalendarEvents,
     jobSearch,
     getAllCompanies,
     getAllLocations,

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getEvents } from 'backend/src';
 import { ControlPoint } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
+import JobDialog from 'renderer/job/JobDialog';
 
 const colTitles = ['Applciations', 'Interviews', 'Offers', 'Rejections'];
 
-const newJob = (idx) => {
+const newJob = (idx: number) => {
     return {
         details: {
             description: 'Will be working on the Facebook Cloud Platform team',
@@ -78,6 +78,11 @@ const getListStyle = (isDraggingOver) => ({
 
 export default function Kanban() {
     const [state, setState] = useState([[], [], [], []]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+    const [index, setIndex] = useState(0);
+    const [currentJob, setCurrentJob] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const addJob = async (index) => {
         const newState = [...state];
@@ -89,6 +94,18 @@ export default function Kanban() {
             newState[index] = [{ ...job, id: res.data }, ...state[index]];
             setState(newState);
         });
+    };
+
+    const handleAddClick = (idx) => {
+        setIndex(idx);
+        setIsEdit(false);
+        setModalOpen(true);
+    };
+
+    const handleJobView = (job) => {
+        setIsEdit(true);
+        setCurrentJob(job);
+        setModalOpen(true);
     };
 
     async function onDragEnd(result) {
@@ -134,6 +151,7 @@ export default function Kanban() {
 
     useEffect(() => {
         const fetchJobs = async () => {
+            setLoading(true);
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
@@ -141,6 +159,7 @@ export default function Kanban() {
                     newState[job.stage].push(job);
                 }
                 setState(newState);
+                setLoading(false);
             });
 
             return newState;
@@ -166,93 +185,115 @@ export default function Kanban() {
             >
                 Add new job
             </button> */}
+            {modalOpen && (
+                <JobDialog
+                    setOpen={setModalOpen}
+                    jobData={currentJob}
+                    isEdit={isEdit}
+                    index={index}
+                    state={state}
+                    setState={setState}
+                ></JobDialog>
+            )}
 
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 {/* {jobs.map((job) => (
                     <div>{JSON.stringify(job)}</div>
                 ))} */}
-                <DragDropContext onDragEnd={onDragEnd}>
-                    {state.map((el, ind) => (
-                        <div
-                            style={{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                display: 'flex',
-                            }}
-                        >
-                            <p>{colTitles[ind]}</p>
-                            <IconButton onClick={() => addJob(ind)}>
-                                <ControlPoint />
-                            </IconButton>
-                            <Droppable key={ind} droppableId={`${ind}`}>
-                                {(provided, snapshot) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        style={getListStyle(snapshot.isDraggingOver)}
-                                        {...provided.droppableProps}
-                                    >
-                                        {el.map((job, index) => (
-                                            <Draggable
-                                                key={job.id}
-                                                draggableId={job.id}
-                                                index={index}
-                                            >
-                                                {(provided, snapshot) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        style={getJobStyle(
-                                                            snapshot.isDragging,
-                                                            provided.draggableProps.style
-                                                        )}
+                {loading ? (
+                    <CircularProgress></CircularProgress>
+                ) : (
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        {state.map((el, ind) => (
+                            <div
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexDirection: 'column',
+                                    display: 'flex',
+                                }}
+                            >
+                                <p>{colTitles[ind]}</p>
+                                <IconButton onClick={() => handleAddClick(ind)}>
+                                    <ControlPoint />
+                                </IconButton>
+                                <Droppable key={ind} droppableId={`${ind}`}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            style={getListStyle(snapshot.isDraggingOver)}
+                                            {...provided.droppableProps}
+                                        >
+                                            {el.map((job, index) => (
+                                                <div onClick={() => handleJobView(job)}>
+                                                    <Draggable
+                                                        key={job.id}
+                                                        draggableId={job.id}
+                                                        index={index}
                                                     >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-around',
-                                                            }}
-                                                        >
-                                                            {job.position}
-                                                        </div>
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-around',
-                                                            }}
-                                                        >
-                                                            {job.company}
-                                                        </div>
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-around',
-                                                            }}
-                                                        >
-                                                            {colTitles[job.stage]}
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                const newState = [...state];
-                                                                newState[ind].splice(index, 1);
-                                                                setState(newState);
-                                                            }}
-                                                        >
-                                                            delete
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                        </div>
-                    ))}
-                </DragDropContext>
+                                                        {(provided, snapshot) => (
+                                                            <div
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={getJobStyle(
+                                                                    snapshot.isDragging,
+                                                                    provided.draggableProps.style
+                                                                )}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        justifyContent:
+                                                                            'space-around',
+                                                                    }}
+                                                                >
+                                                                    {job.position}
+                                                                </div>
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        justifyContent:
+                                                                            'space-around',
+                                                                    }}
+                                                                >
+                                                                    {job.company}
+                                                                </div>
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        justifyContent:
+                                                                            'space-around',
+                                                                    }}
+                                                                >
+                                                                    {colTitles[job.stage]}
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        const newState = [...state];
+                                                                        newState[ind].splice(
+                                                                            index,
+                                                                            1
+                                                                        );
+                                                                        setState(newState);
+                                                                    }}
+                                                                >
+                                                                    delete
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                </div>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            </div>
+                        ))}
+                    </DragDropContext>
+                )}
             </div>
         </div>
     );
