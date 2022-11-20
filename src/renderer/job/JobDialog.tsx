@@ -252,16 +252,14 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         setLoading(true);
         const newState = [...state];
         // Extract id from job
+        console.log(`Job: ${JSON.stringify(job, null, 4)}`);
         const id = job.id;
         const jobCopy = job;
         delete jobCopy.id;
-        console.log(`Job: ${job}`);
-        console.log(`Id: ${id}`);
-        console.log(`Copy: ${jobCopy}`);
+        console.log(`Id: ${JSON.stringify(id, null, 4)}`);
+        console.log(`Copy: ${JSON.stringify(jobCopy, null, 4)}`);
 
         if (isEdit) {
-            console.log(`Id: ${JSON.stringify(id)}`);
-            console.log(`Job: ${JSON.stringify(jobCopy)}`);
             await httpsCallable(
                 getFunctions(),
                 'updateJob'
@@ -285,7 +283,6 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     useEffect(() => {
         setJob(jobData || { ...job, stage: index });
-        console.log(job.stage);
     }, [jobData]);
 
     return (
