@@ -156,7 +156,7 @@ export default function Kanban() {
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
                 for (const job of res.data) {
-                    newState[job.stage].push(job);
+                    newState[job.stage].push({ ...job, id: job.id });
                 }
                 setState(newState);
                 setLoading(false);
