@@ -228,7 +228,6 @@ const Deadlines = ({ value, index, job, setJob }) => {
                 {job.deadlines &&
                     job.deadlines.map((ddl) => (
                         <div>
-                            <h3>{ddl.date}</h3>
                             <p>{ddl.position}</p>
                         </div>
                     ))}
@@ -249,7 +248,7 @@ const Questions = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
             <TextField
-                label="behavioural questions"
+                label="interview questions"
                 style={styles.behaviouralQuestions}
                 multiline
                 rows={4}
@@ -262,22 +261,6 @@ const Questions = ({ value, index, job, setJob }) => {
                 }}
                 InputProps={{
                     disableUnderline: true,
-                }}
-            />
-            <TextField
-                label="technical questions"
-                style={styles.technicalQuestions}
-                multiline
-                rows={4}
-                value={job.details.description}
-                onChange={(e) => {
-                    setJob({
-                        ...job,
-                        details: { ...job.details, description: e.target.value },
-                    });
-                }}
-                InputProps={{
-                    disableUnderline: true, 
                 }}
             />
             <Button onClick={() => setOpen(true)}>Add a question</Button>
@@ -315,6 +298,19 @@ const Contacts = ({ value, index, job, setJob }) => {
 
     return (
         <div hidden={value !== index}>
+            <TextField
+                label="job description"
+                style={styles.contactBox}
+                multiline
+                rows={4}
+                value={job.details.description}
+                onChange={(e) => {
+                    setJob({ ...job, details: { ...job.details, description: e.target.value } });
+                }}
+                InputProps={{
+                    disableUnderline: true, // <== added this
+                }}
+            />
             <Button onClick={() => setOpen(true)}>Add A New Contact</Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent style={{ display: 'flex' }}>
@@ -326,7 +322,12 @@ const Contacts = ({ value, index, job, setJob }) => {
                         }}
                     />
 
-                    <Button style={{width: "57px", height: "27px", background: "#633175"}}onClick={addNewContact}>Add</Button>
+                    <Button
+                        style={{ width: '57px', height: '27px', background: '#633175' }}
+                        onClick={addNewContact}
+                    >
+                        Add
+                    </Button>
                 </DialogContent>
             </Dialog>
             {job.contacts &&
@@ -523,6 +524,17 @@ const styles = {
         height: '250px',
         left: '320px',
         top: '250px',
+        border: 'none',
+        outline: 'none',
+    },
+
+    contactBox: {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '200px',
+        height: '500px',
+        left: '320px',
+        top: '120px',
         border: 'none',
         outline: 'none',
     },
