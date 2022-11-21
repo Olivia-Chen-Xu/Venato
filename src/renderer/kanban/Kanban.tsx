@@ -200,6 +200,7 @@ export default function Kanban() {
             </button> */}
             {modalOpen && (
                 <JobDialog
+                    setCurrentJob={setCurrentJob}
                     setOpen={setModalOpen}
                     jobData={currentJob}
                     isEdit={isEdit}

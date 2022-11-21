@@ -219,7 +219,15 @@ const Contacts = ({ value, index, job, setJob }) => {
         </div>
     );
 };
-export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
+export default function JobDialog({
+    setCurrentJob,
+    jobData,
+    isEdit,
+    setOpen,
+    state,
+    setState,
+    index,
+}) {
     const [job, setJob] = useState({
         awaitingResponse: false,
         company: '',
@@ -246,6 +254,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     const handleClose = () => {
         setOpen(false);
+        setCurrentJob(null);
     };
 
     const commitJob = async () => {
@@ -279,6 +288,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
         setLoading(false);
         setOpen(false);
+        setCurrentJob(null);
     };
 
     useEffect(() => {
