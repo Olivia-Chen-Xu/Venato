@@ -162,9 +162,7 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
-                for (const job of res.data) {
-                    newState[job.stage].push({ ...job, id: job.id });
-                }
+                res.data.forEach(job => newState[job.stage].push({ ...job, id: job.id }));
                 setState(newState);
                 setLoading(false);
             });

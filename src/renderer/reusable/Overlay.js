@@ -1,5 +1,5 @@
 import React from 'react';
-import Calendar from 'renderer/calendar/main';
+import Calendar from 'renderer/calendar/Calendar';
 import Homepage from 'renderer/homepage/Homepage';
 import Kanban from 'renderer/kanban/Kanban';
 import SearchBar from 'renderer/search/SearchBar';

@@ -252,27 +252,24 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         setLoading(true);
         const newState = [...state];
         // Extract id from job
-        console.log(`Job: ${JSON.stringify(job, null, 4)}`);
-        const id = job.id;
-        const jobCopy = job;
+        const { id } = job;
+        const jobCopy = structuredClone(job);
         delete jobCopy.id;
-        console.log(`Id: ${JSON.stringify(id, null, 4)}`);
-        console.log(`Copy: ${JSON.stringify(jobCopy, null, 4)}`);
 
         if (isEdit) {
             await httpsCallable(
                 getFunctions(),
                 'updateJob'
-            )({ id, newFields: jobCopy }).then((res) => {
-                newState[index] = [{ ...job, id: res.data }, ...state[index]];
+            )({ id, newFields: jobCopy }).then(() => {
+                newState[index] = [job, ...state[index]];
                 setState(newState);
             });
         } else {
             await httpsCallable(
                 getFunctions(),
                 'addJob'
-            )(jobCopy).then((res) => {
-                newState[index] = [{ ...job, id: res.data }, ...state[index]];
+            )(jobCopy).then(() => {
+                newState[index] = [job, ...state[index]];
                 setState(newState);
             });
         }

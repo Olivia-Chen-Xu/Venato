@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import Month from './components/Month';
 import CalendarState from './context/CalendarState';
+import JobDialog from "../job/JobDialog";
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -23,8 +24,9 @@ const Calendar = () => {
     const events = useAsync(httpsCallable(getFunctions(), 'getCalendarEvents'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
-    const [monthIndex, setMonthIndex] = useState(10);
-    // const [showEventModal, setShowEventModal] = useState(false);
+    const [monthIndex, setMonthIndex] = useState<number>(10);
+    const [showEventModal, setShowEventModal] = useState(false);
+    const [selectedJob, setSelectedJob] = useState(null);
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
@@ -41,6 +43,16 @@ const Calendar = () => {
     events.result.data.forEach((event) => CalendarState.addEvent(event));
     return (
         <div className="h-screen flex flex-col">
+            {showEventModal && (
+                <JobDialog
+                    setOpen={setShowEventModal}
+                    jobData={currentJob}
+                    isEdit={isEdit}
+                    index={index}
+                    state={state}
+                    setState={setState}
+                ></JobDialog>
+            )}
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
                 <div className="grid place-content-center bg-gray-200">
