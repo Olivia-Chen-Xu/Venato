@@ -170,6 +170,43 @@ const Deadlines = ({ value, index, job, setJob }) => {
     return (
         <>
             <div hidden={value !== index}>
+                <Input
+                    className="focus-only"
+                    placeholder="job title"
+                    value={job.position}
+                    onChange={(e) => {
+                        setJob({ ...job, position: e.target.value });
+                    }}
+                    style={styles.deadlineTitle}
+                ></Input>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Input
+                        placeholder="company"
+                        style={styles.deadlineCompany}
+                        value={job.company}
+                        onChange={(e) => {
+                            setJob({ ...job, company: e.target.value });
+                        }}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <AlternateEmailOutlined />
+                            </InputAdornment>
+                        }
+                    />
+                    <Input
+                        placeholder="location"
+                        value={job.location}
+                        onChange={(e) => {
+                            setJob({ ...job, location: e.target.value });
+                        }}
+                        style={styles.deadlineLocation}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <LocationOnOutlined />
+                            </InputAdornment>
+                        }
+                    />
+                </div>
                 <div
                     style={styles.interviewIcons}
                     className="grid grid-cols-3 gap-20 mx-20 h-40 mt-5 text-white"
@@ -521,7 +558,7 @@ const styles = {
         width: '800px',
         gap: '42px',
         left: '230px',
-        top: '65px',
+        top: '180px',
     },
 
     deadlineButton: {
@@ -547,7 +584,7 @@ const styles = {
         position: 'absolute',
         width: '500px',
         height: '500px',
-        left: '310px',
+        left: '305px',
         top: '50px',
         border: 'none',
         outline: 'none',
@@ -562,5 +599,45 @@ const styles = {
         top: '120px',
         border: 'none',
         outline: 'none',
+    },
+
+    deadlineTitle: {
+        position: 'absolute',
+        left: '26.25%',
+        right: '22.65%',
+        top: '45px',
+        fontFamily: 'Inter',
+        fontStyle: 'normal',
+        fontWeight: '200',
+        fontSize: '36px',
+        lineHeight: '44px',
+        color: '#676767',
+    },
+
+    deadlineLocation: {
+        position: 'absolute',
+        left: '55.75%',
+        right: '22.6%',
+        top: '120px',
+        outline: 'none',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: '12px',
+
+        color: '#676767',
+    },
+
+    deadlineCompany: {
+        position: 'absolute',
+        left: '26.25%',
+        right: '47.95%',
+        top: '120px',
+        outline: 'none',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: '12px',
+        lineHeight: '19px',
+
+        color: '#676767',
     },
 };
