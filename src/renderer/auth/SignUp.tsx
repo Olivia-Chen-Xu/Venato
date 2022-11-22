@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { sendEmailVerification } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { signup } from './auth-functions';
+import { InputLabel, TextField, Button } from '@mui/material';
+import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 
 const SignUp = () => {
@@ -33,6 +35,10 @@ const SignUp = () => {
                         `\nEmail: ${JSON.stringify(r.user.email)}` +
                         `\nID: ${JSON.stringify(r.user.uid)}`
                 );
+                setErrMsg(
+                    `Sign up success (check your email):` +
+                        `\nEmail: ${JSON.stringify(r.user.email)}`
+                );
                 console.log(JSON.stringify(r));
                 // eslint-disable-next-line promise/no-nesting
                 sendEmailVerification(r.user)
@@ -58,76 +64,68 @@ const SignUp = () => {
     };
 
     return (
-        <div className="AuthMainDiv">
+        <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
             <text className="TopText">Sign up</text>
             <br />
             <text className="WelcomeText">Welcome!</text>
             <br />
-
-            <div style={{ marginTop: '20px' }}>
-                <label htmlFor="email">
-                    Email
-                    <input
-                        className="InputForms"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="john.smith@gmail.com"
-                        required
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
-
-            <div>
-                <label htmlFor="password">
-                    Password
-                    <input
-                        className="InputForms"
-                        type="password"
-                        name="password"
-                        value={password}
-                        placeholder="••••••••••"
-                        required
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
-
-            <div>
-                <label htmlFor="passwordconfirm">
-                    Confirm password
-                    <input
-                        className="InputForms"
-                        type="password"
-                        name="passwordconfirm"
-                        value={confirmPassword}
-                        placeholder="••••••••••"
-                        required
-                        onChange={(e) => {
-                            setConfirmPassword(e.target.value);
-                        }}
-                    />
-                </label>
-            </div>
-
-            <br />
-            <button type="submit" className="auth-button" onClick={handleSignup}>
+            <InputLabel>Email</InputLabel>
+            <TextField
+                variant="outlined"
+                placeholder="john.smith@gmail.com"
+                style={inputStyle}
+                required
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                }}
+            ></TextField>
+            <div style={{ height: 20 }}></div>
+            <InputLabel>Password</InputLabel>
+            <TextField
+                variant="outlined"
+                type="password"
+                placeholder="••••••••••"
+                style={inputStyle}
+                required
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                }}
+            ></TextField>
+            <div style={{ height: 20 }}></div>
+            <InputLabel>Confirm password</InputLabel>
+            <TextField
+                variant="outlined"
+                type="password"
+                placeholder="••••••••••"
+                style={inputStyle}
+                required
+                value={confirmPassword}
+                onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                }}
+            ></TextField>
+            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
                 Sign up
-            </button>
+            </Button>
             <br />
-            <p className="SwapAuthTextLeft">
-                Already have an account?
+            <div
+                style={{
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    display: 'flex',
+                    width: '100%',
+                }}
+            >
+                <p className="SwapAuthText">Already have an account?</p>
                 <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
-                    Sign in
+                    Log in
                 </text>
-            </p>
+            </div>
+
             <br />
-            {errMsg}
+            <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
     );
 };

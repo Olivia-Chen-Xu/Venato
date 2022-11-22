@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import './auth.css';
 import { useState } from 'react';
 import { signin } from './auth-functions';
+import { Button } from '@mui/material';
+import { btnStyle } from './authStyles';
 
 const Welcome = () => {
     const navigate = useNavigate();
@@ -26,22 +28,29 @@ const Welcome = () => {
     return (
         <div className="AuthMainDiv">
             <text className="TopText">Venato</text>
-            <br />
+            <Button
+                variant="contained"
+                color="neutral"
+                style={btnStyle}
+                onClick={() => navigate('/sign-in')}
+            >
+                Log In
+            </Button>
 
-            <button type="submit" className="auth-button" onClick={() => navigate('/sign-in')}>
-                Sign In
-            </button>
-            <br />
-
-            <button type="submit" className="auth-button" onClick={() => navigate('/sign-up')}>
+            <Button
+                variant="contained"
+                style={btnStyle}
+                color="neutral"
+                onClick={() => navigate('/sign-up')}
+            >
                 Sign Up
-            </button>
+            </Button>
 
-            <button type="submit" className="auth-button" onClick={bypassSignIn}>
+            <Button variant="contained" color="neutral" style={btnStyle} onClick={bypassSignIn}>
                 Bypass sign-in
-            </button>
+            </Button>
             <br />
-            {errMsg}
+            <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
     );
 };

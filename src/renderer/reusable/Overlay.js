@@ -5,6 +5,7 @@ import Kanban from 'renderer/kanban/Kanban';
 import SearchBar from 'renderer/search/SearchBar';
 import ReusableHeader from './ReusableHeader';
 import ReusableSideBar from './ReusableSideBar';
+import Questions from 'renderer/questions/Questions';
 
 export default function Overlay(props) {
     const { page } = props;
@@ -15,19 +16,20 @@ export default function Overlay(props) {
         elem = <Calendar />;
     } else if (page === 'kanban') {
         elem = <Kanban />;
-    } else {
+    } else if (page === 'questions'){
+        elem = <Questions />
+    }    else {
         elem = <Homepage />;
     }
-
     return (
-        <>
-          <div className="h-screen overflow-hidden bg-[url('../../assets/home/bg.png')] bg-cover bg-fixed bg-center">
-              <ReusableHeader />
-              <div className="flex flex-1">
-                  <ReusableSideBar />
-                  <div className="w-full">{elem}</div>
-              </div>
-          </div>
-        </>
+        <React.Fragment>
+        <div className="h-screen bg-[url('../../assets/home/bg.png')] bg-cover bg-no-repeat bg-fixed bg-center">
+            <ReusableHeader />
+            <div className="flex flex-1 mt-16">
+                <ReusableSideBar />
+                <div className="ml-20 basis-full">{elem}</div>
+            </div>
+        </div>
+        </React.Fragment>
     );
 }
