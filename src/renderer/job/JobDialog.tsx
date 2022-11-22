@@ -83,6 +83,7 @@ const Details = ({ value, index, job, setJob }) => {
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
+                    sx: { width: 625 },
                 }}
             />
             <TextField
@@ -92,6 +93,10 @@ const Details = ({ value, index, job, setJob }) => {
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, url: e.target.value } });
                 }}
+                InputProps={{
+                    disableUnderline: true, // <== added this
+                    sx: { width: 625 },
+                }}
             />
         </div>
     );
@@ -99,6 +104,43 @@ const Details = ({ value, index, job, setJob }) => {
 const Notes = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
+            <Input
+                className="focus-only"
+                placeholder="job title"
+                value={job.position}
+                onChange={(e) => {
+                    setJob({ ...job, position: e.target.value });
+                }}
+                style={styles.jobTitle}
+            ></Input>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Input
+                    placeholder="company"
+                    style={styles.Company}
+                    value={job.company}
+                    onChange={(e) => {
+                        setJob({ ...job, company: e.target.value });
+                    }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <AlternateEmailOutlined />
+                        </InputAdornment>
+                    }
+                />
+                <Input
+                    placeholder="location"
+                    value={job.location}
+                    onChange={(e) => {
+                        setJob({ ...job, location: e.target.value });
+                    }}
+                    style={styles.Location}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <LocationOnOutlined />
+                        </InputAdornment>
+                    }
+                />
+            </div>
             <TextField
                 label="notes"
                 rows={4}
@@ -411,25 +453,23 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 const styles = {
     jobTitle: {
         position: 'absolute',
-        left: '21.32%',
+        left: '25.5%',
         right: '22.65%',
-        top: '13.58%',
-        bottom: '32.1%',
-
+        top: '0px',
+        fontFamily: 'Inter',
         fontStyle: 'normal',
-        fontWeight: '400',
+        fontWeight: '200',
         fontSize: '36px',
         lineHeight: '44px',
-
         color: '#676767',
     },
 
     jobDescription: {
         boxSizing: 'border-box',
         position: 'absolute',
-        width: '750px',
+        width: '445px',
         height: '250px',
-        left: '310px',
+        left: '305px',
         top: '120px',
         border: 'none',
         outline: 'none',
@@ -438,30 +478,41 @@ const styles = {
         border: 'none',
         outline: 'none',
         top: '20px',
-        left: '0px',
+        left: '-5px',
     },
 
     Company: {
-        border: 'none',
-        outline: 'none',
         position: 'absolute',
-        top: '60px',
-        left: '310px',
+        left: '25.5%',
+        right: '47.95%',
+        top: '65px',
+        outline: 'none',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: '12px',
+        lineHeight: '19px',
+
+        color: '#676767',
     },
     Location: {
-        border: 'none',
-        outline: 'none',
         position: 'absolute',
-        top: '60px',
-        left: '550px',
+        left: '55%',
+        right: '22.6%',
+        top: '65px',
+        outline: 'none',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: '12px',
+
+        color: '#676767',
     },
 
     Notes: {
         position: 'absolute',
-        width: '800px',
-        height: '1600px',
-        left: '280px',
-        top: '40px',
+        width: '600px',
+        height: '725px',
+        left: '300px',
+        top: '85px',
     },
 
     interviewIcons: {
