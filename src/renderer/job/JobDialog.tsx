@@ -150,7 +150,7 @@ const Notes = ({ value, index, job, setJob }) => {
                 }}
                 style={styles.Notes}
                 InputProps={{
-                    sx: { height: 300 },
+                    sx: { height: 250 },
                 }}
             />
         </div>
@@ -509,10 +509,10 @@ const styles = {
 
     Notes: {
         position: 'absolute',
-        width: '600px',
+        width: '625px',
         height: '725px',
-        left: '300px',
-        top: '85px',
+        left: '305px',
+        top: '130px',
     },
 
     interviewIcons: {
