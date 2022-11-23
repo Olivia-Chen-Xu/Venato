@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
-import Overlay from "../../reusable/Overlay";
 
 const Day = ({ day, rowIdx }) => {
-    const [isOverlay, setIsOverlay] = useState(false);
-
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
             ? 'bg-blue-600 text-white rounded-full w-7'
@@ -17,16 +14,21 @@ const Day = ({ day, rowIdx }) => {
         if (!dayEvents) {
             return [];
         }
+
         let overLimit = false;
         const size = dayEvents.length;
         if (dayEvents.length >= 2) {
             dayEvents = dayEvents.slice(0, 2);
             overLimit = true;
         }
+
         const jsx = dayEvents.map((evt, idx) => (
             <div
                 key={idx}
-                onClick={() => {}}
+                onClick={() => {
+                    CalendarState.currentJob = evt.id;
+                    console.log(CalendarState.currentJob);
+                }}
                 className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
             >
                 {evt.title}
@@ -57,7 +59,9 @@ const Day = ({ day, rowIdx }) => {
                         {day.format('DD')}
                     </p>
                 </header>
-                <div onClick={() => {setIsOverlay(true)}} className="flex-1 cursor-pointer">
+                <div
+                    className="flex-1 cursor-pointer"
+                >
                     {getDayEvents()}
                 </div>
             </div>
@@ -65,18 +69,16 @@ const Day = ({ day, rowIdx }) => {
     );
 };
 
-const Month = ({ month }) => {
-    return (
-        <div className="flex-1 grid grid-cols-7 grid-rows-5">
-            {month.map((row, i) => (
-                <React.Fragment key={i}>
-                    {row.map((day, idx) => (
-                        <Day day={day} key={idx} rowIdx={i} />
-                    ))}
-                </React.Fragment>
-            ))}
-        </div>
-    );
-};
+const Month = ({ month }) => (
+    <div className="flex-1 grid grid-cols-7 grid-rows-5">
+        {month.map((row, i) => (
+            <React.Fragment key={i}>
+                {row.map((day, idx) => (
+                    <Day day={day} key={idx} rowIdx={i} />
+                ))}
+            </React.Fragment>
+        ))}
+    </div>
+);
 
 export default Month;

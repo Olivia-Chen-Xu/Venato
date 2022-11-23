@@ -21,36 +21,37 @@ const getMonth = (month = dayjs().month()) => {
 };
 
 const Calendar = () => {
-    const events = useAsync(httpsCallable(getFunctions(), 'getCalendarEvents'), []);
+    const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
-    const [showEventModal, setShowEventModal] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
+    const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
-    if (events.loading) {
+    if (jobs.loading) {
         return <p>Loading...</p>;
     }
-    if (events.error) {
-        return <p>Error: {events.error.message}</p>;
+    if (jobs.error) {
+        return <p>Error: {jobs.error.message}</p>;
     }
 
     // Events loaded
-    events.result.data.forEach((event) => CalendarState.addEvent(event));
+    CalendarState.addJobs(jobs.result.data);
     return (
         <div className="h-screen flex flex-col">
-            {showEventModal && (
+            {CalendarState.currentJob !== '' && (
                 <JobDialog
-                    setOpen={setShowEventModal}
-                    jobData={currentJob}
+                    setOpen={setModalOpen}
+                    jobData={CalendarState.getCurrentJob()}
                     isEdit={isEdit}
-                    index={index}
-                    state={state}
-                    setState={setState}
+                    index={0}
+                    state={[]}
+                    setState={false}
                 ></JobDialog>
             )}
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
