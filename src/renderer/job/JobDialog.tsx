@@ -260,11 +260,7 @@ export default function JobDialog({
 
     const handleClose = () => {
         setOpen(false);
-        if (setCurrentJob === false) {
-            setOpen('');
-        } else {
-            setCurrentJob(null);
-        }
+        setCurrentJob(null);
     };
 
     const commitJob = async () => {
@@ -282,8 +278,7 @@ export default function JobDialog({
             functionName
         )(params).then(() => {
             if (setState === false) {
-                // CalendarState
-                CalendarState.jobIsOpen = false;
+                CalendarState.jobs[job.id] = job;
             } else {
                 newState[index] = [job, ...state[index]];
                 setState(newState);
@@ -292,11 +287,7 @@ export default function JobDialog({
 
         setLoading(false);
         setOpen(false);
-        if (setCurrentJob === false) {
-            setOpen('');
-        } else {
-            setCurrentJob(null);
-        }
+        setCurrentJob(null);
     };
 
     useEffect(() => {

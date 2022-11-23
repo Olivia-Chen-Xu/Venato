@@ -25,8 +25,9 @@ const Calendar = () => {
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
-    const [modalJob, setModalJob] = useState('');
-    const [selectedJob, setSelectedJob] = useState(null);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentJob, setCurrentJob] = useState(null);
     const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
 
     useEffect(() => {
@@ -44,16 +45,16 @@ const Calendar = () => {
     CalendarState.addJobs(jobs.result.data);
     return (
         <div className="h-screen flex flex-col">
-            {modalJob !== '' && (
+            {modalOpen && (
                 <JobDialog
-                    setOpen={setModalJob}
-                    setCurrentJob={false}
-                    jobData={CalendarState.jobs[modalJob]}
+                    setOpen={setModalOpen}
+                    setCurrentJob={setCurrentJob}
+                    jobData={currentJob}
                     isEdit={isEdit}
                     index={0}
                     state={[]}
                     setState={false}
-                ></JobDialog>
+                />
             )}
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
@@ -77,7 +78,7 @@ const Calendar = () => {
                         chevron_left
                     </span>
                 </button>
-                <Month month={currentMonth} setModalJob={setModalJob} />
+                <Month month={currentMonth} setOpen={setModalOpen} setJob={setCurrentJob} />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                         chevron_right

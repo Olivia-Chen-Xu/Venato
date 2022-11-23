@@ -205,7 +205,7 @@ export default function Kanban() {
                     index={index}
                     state={state}
                     setState={setState}
-                ></JobDialog>
+                />
             )}
             <h4
                 style={{

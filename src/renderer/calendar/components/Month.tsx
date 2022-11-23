@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
 
-const Day = ({ day, rowIdx, setModalJob }) => {
+const Day = ({ day, rowIdx, setOpen, setJob }) => {
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
             ? 'bg-blue-600 text-white rounded-full w-7'
@@ -26,7 +26,11 @@ const Day = ({ day, rowIdx, setModalJob }) => {
             <div
                 key={idx}
                 onClick={() => {
-                    setModalJob(evt.id);
+                    setJob(CalendarState.jobs[evt.id]);
+                    console.log(evt.id);
+                    console.log(CalendarState.jobs);
+                    console.log(CalendarState.jobs[evt.id]);
+                    setOpen(true);
                 }}
                 className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
             >
@@ -68,12 +72,12 @@ const Day = ({ day, rowIdx, setModalJob }) => {
     );
 };
 
-const Month = ({ month, setModalJob }) => (
+const Month = ({ month, setOpen, setJob }) => (
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
         {month.map((row, i) => (
             <React.Fragment key={i}>
                 {row.map((day, idx) => (
-                    <Day day={day} key={idx} rowIdx={i} setModalJob={setModalJob} />
+                    <Day day={day} key={idx} rowIdx={i} setOpen={setOpen} setJob={setJob} />
                 ))}
             </React.Fragment>
         ))}

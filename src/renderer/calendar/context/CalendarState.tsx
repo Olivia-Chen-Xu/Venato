@@ -54,8 +54,11 @@ class CalendarState {
     static jobs: { [id: string]: object } = {};
 
     static addJobs(jobs: object[]) {
+        this.jobs = {};
+        this.events = {};
+
         jobs.forEach((job) => {
-            jobs[job.id] = job;
+            this.jobs[job.id] = job;
 
             job.deadlines.forEach((deadline: { date: string; title: any }) => {
                 (this.events[deadline.date] = this.events[deadline.date] || []).push({
