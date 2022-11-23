@@ -186,7 +186,7 @@ const Questions = ({ value, index, job, setJob }) => {
             {job.interviewQuestions &&
                 job.interviewQuestions.map((q) => (
                     <div>
-                        <h3>{q}</h3>
+                        <li>{q}</li>
                     </div>
                 ))}
         </div>
