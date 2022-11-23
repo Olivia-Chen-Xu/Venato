@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
     DialogContent,
     Tabs,
@@ -24,6 +24,7 @@ import {
     LocationOnOutlined,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import CalendarState from '../calendar/context/CalendarState';
 
 const Details = ({ value, index, job, setJob }) => {
     return (
@@ -88,6 +89,7 @@ const Details = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Notes = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
@@ -103,6 +105,7 @@ const Notes = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Deadlines = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({ date: null, position: '' });
@@ -149,6 +152,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Questions = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState('');
@@ -184,6 +188,7 @@ const Questions = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Contacts = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState('');
@@ -219,6 +224,7 @@ const Contacts = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
         awaitingResponse: false,
@@ -245,7 +251,11 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     const handleClose = () => {
-        setOpen(false);
+        if (setOpen === false) {
+            CalendarState.currentJob = '';
+        } else {
+            setOpen(false);
+        }
     };
 
     const commitJob = async () => {
@@ -256,26 +266,27 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         const jobCopy = structuredClone(job);
         delete jobCopy.id;
 
-        if (isEdit) {
-            await httpsCallable(
-                getFunctions(),
-                'updateJob'
-            )({ id, newFields: jobCopy }).then(() => {
+        const functionName = isEdit ? 'updateJob' : 'addJob';
+        const params = isEdit ? { id, newFields: jobCopy } : jobCopy;
+        await httpsCallable(
+            getFunctions(),
+            functionName
+        )(params).then(() => {
+            if (setState === false) {
+                // CalendarState
+                CalendarState.jobIsOpen = false;
+            } else {
                 newState[index] = [job, ...state[index]];
                 setState(newState);
-            });
-        } else {
-            await httpsCallable(
-                getFunctions(),
-                'addJob'
-            )(jobCopy).then(() => {
-                newState[index] = [job, ...state[index]];
-                setState(newState);
-            });
-        }
+            }
+        });
 
         setLoading(false);
-        setOpen(false);
+        if (setOpen === false) {
+            CalendarState.jobIsOpen = false;
+        } else {
+            setOpen(false);
+        }
     };
 
     useEffect(() => {
