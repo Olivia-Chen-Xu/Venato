@@ -150,9 +150,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
                     <div>
-                        <h3>
-                            {dateToString(ddl.date)}: {ddl.title}
-                        </h3>
+                        <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
                     </div>
                 ))}
         </div>
