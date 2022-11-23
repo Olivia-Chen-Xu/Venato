@@ -146,7 +146,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
                 job.deadlines.map((ddl) => (
                     <div>
                         <h3>{ddl.date}</h3>
-                        <p>{ddl.position}</p>
+                        <p>{ddl.title}</p>
                     </div>
                 ))}
         </div>

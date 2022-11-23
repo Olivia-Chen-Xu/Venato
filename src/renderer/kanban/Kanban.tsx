@@ -224,7 +224,7 @@ export default function Kanban() {
                 ))} */}
 
                 {loading ? (
-                    <CircularProgress></CircularProgress>
+                    <CircularProgress />
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
                         {state.map((el, ind) => (

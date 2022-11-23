@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { CircularProgress } from "@mui/material";
 import Month from './components/Month';
 import CalendarState from './context/CalendarState';
-import JobDialog from "../job/JobDialog";
+import JobDialog from '../job/JobDialog';
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -35,7 +36,7 @@ const Calendar = () => {
     }, [monthIndex]);
 
     if (jobs.loading) {
-        return <p>Loading...</p>;
+        return <div><CircularProgress /></div>;
     }
     if (jobs.error) {
         return <p>Error: {jobs.error.message}</p>;

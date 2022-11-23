@@ -38,7 +38,9 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
             jsx.push(
                 <div
                     key={3}
-                    onClick={() => {}}
+                    onClick={() => {
+                        // TODO: When clicking the 'more' options, open a menu
+                    }}
                     className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
                 >
                     <i>{size - 2} more...</i>
