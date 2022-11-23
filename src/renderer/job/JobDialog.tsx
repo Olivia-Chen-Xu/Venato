@@ -225,7 +225,15 @@ const Contacts = ({ value, index, job, setJob }) => {
     );
 };
 
-export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
+export default function JobDialog({
+    setCurrentJob,
+    jobData,
+    isEdit,
+    setOpen,
+    state,
+    setState,
+    index,
+}) {
     const [job, setJob] = useState({
         awaitingResponse: false,
         company: '',
@@ -251,11 +259,8 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     const handleClose = () => {
-        if (setOpen === false) {
-            CalendarState.currentJob = '';
-        } else {
-            setOpen(false);
-        }
+        setOpen(false);
+        setCurrentJob(null);
     };
 
     const commitJob = async () => {
@@ -282,11 +287,8 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         });
 
         setLoading(false);
-        if (setOpen === false) {
-            CalendarState.jobIsOpen = false;
-        } else {
-            setOpen(false);
-        }
+        setOpen(false);
+        setCurrentJob(null);
     };
 
     useEffect(() => {
