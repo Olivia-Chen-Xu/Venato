@@ -260,7 +260,11 @@ export default function JobDialog({
 
     const handleClose = () => {
         setOpen(false);
-        setCurrentJob(null);
+        if (setCurrentJob === false) {
+            setOpen('');
+        } else {
+            setCurrentJob(null);
+        }
     };
 
     const commitJob = async () => {
@@ -288,7 +292,11 @@ export default function JobDialog({
 
         setLoading(false);
         setOpen(false);
-        setCurrentJob(null);
+        if (setCurrentJob === false) {
+            setOpen('');
+        } else {
+            setCurrentJob(null);
+        }
     };
 
     useEffect(() => {

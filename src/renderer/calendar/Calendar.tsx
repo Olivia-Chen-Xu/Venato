@@ -25,7 +25,7 @@ const Calendar = () => {
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalJob, setModalJob] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
     const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
 
@@ -44,10 +44,11 @@ const Calendar = () => {
     CalendarState.addJobs(jobs.result.data);
     return (
         <div className="h-screen flex flex-col">
-            {CalendarState.currentJob !== '' && (
+            {modalJob !== '' && (
                 <JobDialog
-                    setOpen={setModalOpen}
-                    jobData={CalendarState.getCurrentJob()}
+                    setOpen={setModalJob}
+                    setCurrentJob={false}
+                    jobData={CalendarState.jobs[modalJob]}
                     isEdit={isEdit}
                     index={0}
                     state={[]}
@@ -76,7 +77,7 @@ const Calendar = () => {
                         chevron_left
                     </span>
                 </button>
-                <Month month={currentMonth} />
+                <Month month={currentMonth} setModalJob={setModalJob} />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                         chevron_right

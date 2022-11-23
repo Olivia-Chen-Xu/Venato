@@ -70,10 +70,6 @@ class CalendarState {
         this.jobs[job.id] = job;
     }
 
-    static getCurrentJob() {
-        return this.jobs[this.currentJob];
-    }
-
     // Events are lightweight objects with minimum data mapped to by a date for easy access
     static events: { [date: string]: { id: string; title: string }[] } = {};
 }

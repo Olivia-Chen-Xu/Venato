@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
 
-const Day = ({ day, rowIdx }) => {
+const Day = ({ day, rowIdx, setModalJob }) => {
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
             ? 'bg-blue-600 text-white rounded-full w-7'
@@ -26,8 +26,7 @@ const Day = ({ day, rowIdx }) => {
             <div
                 key={idx}
                 onClick={() => {
-                    CalendarState.currentJob = evt.id;
-                    console.log(CalendarState.currentJob);
+                    setModalJob(evt.id);
                 }}
                 className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
             >
@@ -69,12 +68,12 @@ const Day = ({ day, rowIdx }) => {
     );
 };
 
-const Month = ({ month }) => (
+const Month = ({ month, setModalJob }) => (
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
         {month.map((row, i) => (
             <React.Fragment key={i}>
                 {row.map((day, idx) => (
-                    <Day day={day} key={idx} rowIdx={i} />
+                    <Day day={day} key={idx} rowIdx={i} setModalJob={setModalJob} />
                 ))}
             </React.Fragment>
         ))}
