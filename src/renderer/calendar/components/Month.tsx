@@ -17,7 +17,7 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
 
         let overLimit = false;
         const size = dayEvents.length;
-        if (dayEvents.length >= 2) {
+        if (dayEvents.length > 2) {
             dayEvents = dayEvents.slice(0, 2);
             overLimit = true;
         }
