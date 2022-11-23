@@ -27,9 +27,6 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
                 key={idx}
                 onClick={() => {
                     setJob(CalendarState.jobs[evt.id]);
-                    console.log(evt.id);
-                    console.log(CalendarState.jobs);
-                    console.log(CalendarState.jobs[evt.id]);
                     setOpen(true);
                 }}
                 className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
