@@ -117,6 +117,11 @@ const Deadlines = ({ value, index, job, setJob }) => {
         setNewDdl({ date: null, position: '' });
     };
 
+    const dateToString = (date: string) => {
+        const parts = date.split('-');
+        return (parts[0] === '11' ? 'November ' : 'December ') + parts[0];
+    };
+
     return (
         <div hidden={value !== index}>
             <Button onClick={() => setOpen(true)}>Add a deadline</Button>
@@ -145,8 +150,9 @@ const Deadlines = ({ value, index, job, setJob }) => {
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
                     <div>
-                        <h3>{ddl.date}</h3>
-                        <p>{ddl.title}</p>
+                        <h3>
+                            {dateToString(ddl.date)}: {ddl.title}
+                        </h3>
                     </div>
                 ))}
         </div>
