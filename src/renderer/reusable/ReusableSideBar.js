@@ -13,7 +13,7 @@ export default function ReusableSideBar() {
             </button>
             </Tooltip>
             <Tooltip title="Kanban" placement="right">
-            
+
             <button
                 className="material-icons-outlined text-5xl"
                 onClick={() => {
@@ -24,7 +24,7 @@ export default function ReusableSideBar() {
             </button>
             </Tooltip>
 
-            
+
             <Tooltip title="Calendar" placement="right">
 
             <button
@@ -38,11 +38,11 @@ export default function ReusableSideBar() {
             </Tooltip>
 
             <Tooltip title="Interview Questions" placement="right">
-            
+
             <button
                 className="material-icons-outlined text-5xl"
                 onClick={() => {
-                    nav('/job');
+                    nav('/questions');
                 }}
             >
                 quiz
@@ -54,7 +54,7 @@ export default function ReusableSideBar() {
             <button
                 className="material-icons-outlined text-5xl"
                 onClick={() => {
-                    nav('/questions');
+                    nav('/job');
                 }}
             >
                 travel_explore
