@@ -151,7 +151,7 @@ const Notes = ({ value, index, job, setJob }) => {
                 }}
                 style={styles.Notes}
                 InputProps={{
-                    sx: { height: 250 },
+                    sx: { height: 200 },
                 }}
             />
         </div>
@@ -487,7 +487,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     return (
         <Dialog open={true} onClose={handleClose} fullWidth={true} maxWidth={'lg'}>
-            <DialogContent style={{ display: 'flex', justifyContent: 'end'}}>
+            <DialogContent style={{ display: 'flex', justifyContent: 'end' }}>
                 {loading ? (
                     <CircularProgress
                         style={{ position: 'absolute', right: 30 }}
@@ -496,55 +496,63 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     <Button
                         variant="contained"
                         onClick={addNewJob}
-                        style={{ position: 'absolute', left: 30 }}
+                        style={{
+                            position: 'absolute',
+                            left: 142,
+                            top: 340,
+                            padding: '16px 12px 16px 16px',
+                            gap: '10px',
+                            width: '145px',
+                            height: '51px',
+                        }}
                     >
                         {isEdit ? 'Save' : 'Add'}
                     </Button>
                 )}
-               
-                    <Tabs
-                        orientation="vertical"
-                        variant="scrollable"
-                        value={tabValue}
-                        onChange={handleChange}
-                        aria-label="Vertical tabs example"
-                        sx={{
-                            borderRight: 1,
-                            borderColor: 'divider',
-                            alignSelf: 'end',
-                        }}
-                    >
-                        <Tab
-                            icon={<DescriptionOutlined />}
-                            iconPosition="start"
-                            label="Job Details"
-                            sx={{ alignSelf: 'end' }}
-                        />
-                        <Tab
-                            icon={<DriveFileRenameOutlineOutlined />}
-                            iconPosition="start"
-                            label="Notes"
-                            sx={{ alignSelf: 'end' }}
-                        />
-                        <Tab
-                            sx={{ alignSelf: 'end' }}
-                            icon={<CalendarMonthOutlined />}
-                            iconPosition="start"
-                            label="Deadlines"
-                        />
-                        <Tab
-                            sx={{ alignSelf: 'end' }}
-                            icon={<QuizOutlined />}
-                            iconPosition="start"
-                            label="Interview Questions"
-                        />
-                        <Tab
-                            sx={{ alignSelf: 'end' }}
-                            icon={<ContactPageOutlined />}
-                            iconPosition="start"
-                            label="Contacts"
-                        />
-                    </Tabs>
+
+                <Tabs
+                    orientation="vertical"
+                    variant="scrollable"
+                    value={tabValue}
+                    onChange={handleChange}
+                    aria-label="Vertical tabs example"
+                    sx={{
+                        borderRight: 1,
+                        borderColor: 'divider',
+                        alignSelf: 'end',
+                    }}
+                >
+                    <Tab
+                        icon={<DescriptionOutlined />}
+                        iconPosition="start"
+                        label="Job Details"
+                        sx={{ alignSelf: 'end' }}
+                    />
+                    <Tab
+                        icon={<DriveFileRenameOutlineOutlined />}
+                        iconPosition="start"
+                        label="Notes"
+                        sx={{ alignSelf: 'end' }}
+                    />
+                    <Tab
+                        sx={{ alignSelf: 'end' }}
+                        icon={<CalendarMonthOutlined />}
+                        iconPosition="start"
+                        label="Deadlines"
+                    />
+                    <Tab
+                        sx={{ alignSelf: 'end' }}
+                        icon={<QuizOutlined />}
+                        iconPosition="start"
+                        label="Interview Questions"
+                    />
+                    <Tab
+                        sx={{ alignSelf: 'end' }}
+                        icon={<ContactPageOutlined />}
+                        iconPosition="start"
+                        label="Contacts"
+                    />
+                </Tabs>
                 <div
                     style={{
                         marginInlineStart: 50,
@@ -588,7 +596,7 @@ const styles = {
         position: 'absolute',
         border: 'none',
         outline: 'none',
-        top: '275px',
+        top: '260px',
         left: '142px',
     },
 
@@ -619,10 +627,10 @@ const styles = {
 
     Notes: {
         position: 'absolute',
-        width: '625px',
-        height: '725px',
+        height: '500px',
+        width: '490px',
         left: '142px',
-        top: '130px',
+        top: '120px',
     },
 
     interviewIcons: {
@@ -643,8 +651,8 @@ const styles = {
         gap: '10px',
         width: '145px',
         height: '51px',
-        left: '140px',
-        top: '310px',
+        left: '310px',
+        top: '340px',
         whiteSpace: 'nowrap',
 
         background: '#633175',
