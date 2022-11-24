@@ -18,7 +18,7 @@ const QuestionSearch = () => {
             return;
         }
 
-        setMessage('Loading jobs...');
+        setMessage('Loading questions...');
         const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
 
         setJobs(result.data);
@@ -120,8 +120,7 @@ const QuestionSearch = () => {
                                         Contacts:{' '}
                                         {job.contacts.map((contact) => (
                                             <div>
-                                                <a href={contact}>{contact}</a>
-                                                <br />
+                                                <li><a href={contact}>{contact}</a></li>
                                             </div>
                                         ))}
                                     </div>

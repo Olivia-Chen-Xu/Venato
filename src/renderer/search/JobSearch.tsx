@@ -11,22 +11,31 @@ const JobSearch = () => {
     const [position, setPosition] = useState<string>('');
     const [location, setLocation] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [errMsg, setErrMsg] = useState<string>('');
+    const [message, setMessage] = useState<string>('');
 
     const handleSearch = async () => {
         if ((position?.trim()?.length || 0) === 0 && company === '' && location === '') {
-            setErrMsg('Please enter a position, company, or location');
+            setMessage('Please enter a position, company, or location');
             return;
         }
 
+        setMessage('Loading jobs...');
         const result = await httpsCallable(
             getFunctions(),
             'jobSearch'
         )({ company, position, location });
 
         setJobs(result.data);
-        setErrMsg('');
+        setMessage('');
         console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
+    };
+
+    const clearSearch = () => {
+        setCompany('');
+        setPosition('');
+        setLocation('');
+        setJobs([]);
+        setMessage('');
     };
 
     return (
@@ -85,8 +94,19 @@ const JobSearch = () => {
                     >
                         Search
                     </button>
+                    <button
+                        type="submit"
+                        onClick={clearSearch}
+                        style={{
+                            outline: '1px solid black',
+                            borderRadius: '2px',
+                            marginLeft: '1em',
+                        }}
+                    >
+                        Clear search
+                    </button>
                     <br />
-                    {errMsg}
+                    {message}
                     <br />
                     {jobs.map((job: object, index: number) => {
                         return (
@@ -102,15 +122,17 @@ const JobSearch = () => {
                                 <br />
                                 URL: <a href={job.details.url}>{job.details.url}</a>
                                 <br />
-                                Contacts:{' '}
-                                {job.contacts.map((contact) => (
-                                    <div>
-                                        <a href={contact}>{contact}</a>
-                                        <br />
-                                    </div>
-                                ))}
+                                <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
+                                    Contacts:{' '}
+                                    {job.contacts.map((contact) => (
+                                        <div>
+                                            <li><a href={contact}>{contact}</a></li>
+                                        </div>
+                                    ))}
+                                </div>
                                 <br />
-                                <br />
+                                <text style={{ color: "white" }}>.</text>
+
                             </div>
                         );
                     })}
