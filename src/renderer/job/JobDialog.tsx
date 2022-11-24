@@ -10,7 +10,7 @@ import {
     Dialog,
     Backdrop,
     CircularProgress,
-    Stack,
+    Box,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -274,7 +274,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
                     </div>
                 </div>
 
-                <Button variant="contained" onClick={() => setOpen(true)}>
+                <Button style={styles.deadlineButton}variant="contained" onClick={() => setOpen(true)}>
                     Add a deadline
                 </Button>
                 <Dialog open={open} onClose={() => setOpen(false)}>
@@ -487,37 +487,64 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     return (
         <Dialog open={true} onClose={handleClose} fullWidth={true} maxWidth={'lg'}>
-            <DialogContent style={{ display: 'flex' }}>
+            <DialogContent style={{ display: 'flex', justifyContent: 'end'}}>
                 {loading ? (
                     <CircularProgress
                         style={{ position: 'absolute', right: 30 }}
                     ></CircularProgress>
                 ) : (
-                    <Button variant="contained" onClick={addNewJob} style={{ position: 'absolute', left: 30 }}>
+                    <Button
+                        variant="contained"
+                        onClick={addNewJob}
+                        style={{ position: 'absolute', left: 30 }}
+                    >
                         {isEdit ? 'Save' : 'Add'}
                     </Button>
                 )}
-
-                <Stack direction="row" justifyContent="end">
+               
                     <Tabs
                         orientation="vertical"
                         variant="scrollable"
                         value={tabValue}
                         onChange={handleChange}
                         aria-label="Vertical tabs example"
-                        sx={{ borderRight: 1, borderColor: 'divider'}}
+                        sx={{
+                            borderRight: 1,
+                            borderColor: 'divider',
+                            alignSelf: 'end',
+                        }}
                     >
-                        <Tab icon={<DescriptionOutlined />} iconPosition="start" label="Job Details" />
+                        <Tab
+                            icon={<DescriptionOutlined />}
+                            iconPosition="start"
+                            label="Job Details"
+                            sx={{ alignSelf: 'end' }}
+                        />
                         <Tab
                             icon={<DriveFileRenameOutlineOutlined />}
                             iconPosition="start"
                             label="Notes"
+                            sx={{ alignSelf: 'end' }}
                         />
-                        <Tab icon={<CalendarMonthOutlined />} iconPosition="start" label="Deadlines" />
-                        <Tab icon={<QuizOutlined />} iconPosition="start" label="Interview Questions" />
-                        <Tab icon={<ContactPageOutlined />} iconPosition="start" label="Contacts" />
+                        <Tab
+                            sx={{ alignSelf: 'end' }}
+                            icon={<CalendarMonthOutlined />}
+                            iconPosition="start"
+                            label="Deadlines"
+                        />
+                        <Tab
+                            sx={{ alignSelf: 'end' }}
+                            icon={<QuizOutlined />}
+                            iconPosition="start"
+                            label="Interview Questions"
+                        />
+                        <Tab
+                            sx={{ alignSelf: 'end' }}
+                            icon={<ContactPageOutlined />}
+                            iconPosition="start"
+                            label="Contacts"
+                        />
                     </Tabs>
-                </Stack>
                 <div
                     style={{
                         marginInlineStart: 50,
@@ -537,10 +564,9 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 const styles = {
     jobTitle: {
         position: 'absolute',
-        left: '25.5%',
-        right: '22.65%',
+        left: '12%',
+        right: '22.9%',
         top: '0px',
-        fontFamily: 'Inter',
         fontStyle: 'normal',
         fontWeight: '200',
         fontSize: '36px',
@@ -551,37 +577,37 @@ const styles = {
     jobDescription: {
         boxSizing: 'border-box',
         position: 'absolute',
-        width: '445px',
+        width: '475px',
         height: '250px',
-        left: '305px',
+        left: '142px',
         top: '120px',
         border: 'none',
         outline: 'none',
     },
     applicationLink: {
+        position: 'absolute',
         border: 'none',
         outline: 'none',
-        top: '20px',
-        left: '-5px',
+        top: '275px',
+        left: '142px',
     },
 
     Company: {
         position: 'absolute',
-        left: '25.5%',
+        left: '12%',
         right: '47.95%',
         top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
         fontSize: '12px',
-        lineHeight: '19px',
 
         color: '#676767',
     },
     Location: {
         position: 'absolute',
-        left: '55%',
-        right: '22.6%',
+        left: '53%',
+        right: '22.9%',
         top: '65px',
         outline: 'none',
         fontStyle: 'normal',
@@ -595,32 +621,31 @@ const styles = {
         position: 'absolute',
         width: '625px',
         height: '725px',
-        left: '305px',
+        left: '142px',
         top: '130px',
     },
 
     interviewIcons: {
         position: 'absolute',
-        padding: '0px',
-        width: '800px',
+        width: '740px',
         gap: '42px',
-        left: '230px',
-        top: '180px',
+        left: '60px',
+        top: '100px',
     },
 
     deadlineButton: {
+        position: 'absolute',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         padding: '16px 12px 16px 16px',
         gap: '10px',
-
-        position: 'absolute',
-        width: '152px',
+        width: '145px',
         height: '51px',
-        left: '589px',
-        top: '614px',
+        left: '140px',
+        top: '310px',
+        whiteSpace: 'nowrap',
 
         background: '#633175',
         borderRadius: '8px',
@@ -650,10 +675,9 @@ const styles = {
 
     deadlineTitle: {
         position: 'absolute',
-        left: '26.25%',
+        left: '12%',
         right: '22.65%',
-        top: '45px',
-        fontFamily: 'Inter',
+        top: '0px',
         fontStyle: 'normal',
         fontWeight: '200',
         fontSize: '36px',
@@ -663,9 +687,9 @@ const styles = {
 
     deadlineLocation: {
         position: 'absolute',
-        left: '55.75%',
+        left: '55%',
         right: '22.6%',
-        top: '120px',
+        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
@@ -676,9 +700,9 @@ const styles = {
 
     deadlineCompany: {
         position: 'absolute',
-        left: '26.25%',
+        left: '12%',
         right: '47.95%',
-        top: '120px',
+        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
