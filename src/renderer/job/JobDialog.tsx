@@ -215,26 +215,34 @@ const Deadlines = ({ value, index, job, setJob }) => {
                             </InputAdornment>
                         }
                     />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            label="Deadline"
-                            value={newDdl.date}
-                            onChange={(newValue) => {
-                                setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                    <Button onClick={addDdl}>Add</Button>
+                    <div style={{ position: 'absolute', top: '150px', left: '142px', right: '100px' }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label="Deadline"
+                                value={newDdl.date}
+                                onChange={(newValue) => {
+                                    setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+                        <Button style={{ position: 'absolute', width: '150px', top: '75px', left: '0px', right: '100px' }} variant="contained" onClick={addDdl}>Add Deadline</Button>
+                    </div>
                 </div>
             </div>
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
-                    
-                    
-                    <div style={{position: 'absolute', top: '350px', left: '130px',  right: '125px'}}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: '350px',
+                            left: '142px',
+                            right: '125px',
+                        }}
+                    >
                         <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
-                    </div>))}
+                    </div>
+                ))}
         </div>
     );
 };
@@ -288,7 +296,18 @@ const Questions = ({ value, index, job, setJob }) => {
                     }
                 />
             </div>
-            <Button variant="contained" onClick={() => setOpen(true)}>
+            <Button
+                style={{
+                    position: 'absolute',
+                    width: '140px',
+                    top: '230px',
+                    left: '142px',
+                    right: '100px',
+                    whiteSpace: 'nowrap',
+                }}
+                variant="contained"
+                onClick={() => setOpen(true)}
+            >
                 Add a question
             </Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
@@ -301,19 +320,32 @@ const Questions = ({ value, index, job, setJob }) => {
                         }}
                     />
 
-                    <Button style={{position: 'absolute', top: 300}}variant="contained" onClick={addNewQuestion}>
+                    <Button
+                        style={{ position: 'absolute', top: 300 }}
+                        variant="contained"
+                        onClick={addNewQuestion}
+                    >
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
 
-            <div style={{ position: 'absolute', textAlign: 'left'}}>
-            {job.interviewQuestions &&
-                job.interviewQuestions.map((q) => (
-                    <div>
-                        <li>{q}</li>
-                    </div>
-                ))}
+            <div
+                style={{
+                    position: 'absolute',
+                    width: '150px',
+                    top: '125px',
+                    left: '142px',
+                    right: '100px',
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                {job.interviewQuestions &&
+                    job.interviewQuestions.map((q) => (
+                        <div>
+                            <li>{q}</li>
+                        </div>
+                    ))}
             </div>
         </div>
     );
@@ -331,9 +363,46 @@ const Contacts = ({ value, index, job, setJob }) => {
 
     return (
         <div hidden={value !== index}>
+            <Input
+                className="focus-only"
+                placeholder="job title"
+                value={job.position}
+                onChange={(e) => {
+                    setJob({ ...job, position: e.target.value });
+                }}
+                style={styles.deadlineTitle}
+            ></Input>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Input
+                    placeholder="company"
+                    style={styles.deadlineCompany}
+                    value={job.company}
+                    onChange={(e) => {
+                        setJob({ ...job, company: e.target.value });
+                    }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <AlternateEmailOutlined />
+                        </InputAdornment>
+                    }
+                />
+                <Input
+                    placeholder="location"
+                    value={job.location}
+                    onChange={(e) => {
+                        setJob({ ...job, location: e.target.value });
+                    }}
+                    style={styles.deadlineLocation}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <LocationOnOutlined />
+                        </InputAdornment>
+                    }
+                />
+            </div>
             <TextField
                 label="job description"
-                style={styles.contactBox}
+                style={styles.jobDescription}
                 multiline
                 rows={4}
                 value={job.details.description}
@@ -344,7 +413,20 @@ const Contacts = ({ value, index, job, setJob }) => {
                     disableUnderline: true, // <== added this
                 }}
             />
-            <Button variant="contained" onClick={() => setOpen(true)}>Add A New Contact</Button>
+            <Button
+                style={{
+                    position: 'absolute',
+                    width: '145px',
+                    top: '280px',
+                    left: '650px',
+                    right: '100px',
+                    whiteSpace: 'nowrap',
+                }}
+                variant="contained"
+                onClick={() => setOpen(true)}
+            >
+                Add Contact
+            </Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent style={{ display: 'flex' }}>
                     <TextField
@@ -363,12 +445,23 @@ const Contacts = ({ value, index, job, setJob }) => {
                     </Button>
                 </DialogContent>
             </Dialog>
-            {job.contacts &&
-                job.contacts.map((contact) => (
-                    <div>
-                        <a href={contact}>{contact}</a>
-                    </div>
-                ))}
+            <div
+                style={{
+                    position: 'absolute',
+                    width: '150px',
+                    top: '270px',
+                    left: '142px',
+                    right: '100px',
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                {job.contacts &&
+                    job.contacts.map((contact) => (
+                        <div>
+                            <a href={contact}>{contact}</a>
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 };
@@ -619,17 +712,6 @@ const styles = {
         height: '500px',
         left: '305px',
         top: '50px',
-        border: 'none',
-        outline: 'none',
-    },
-
-    contactBox: {
-        boxSizing: 'border-box',
-        position: 'absolute',
-        width: '200px',
-        height: '500px',
-        left: '320px',
-        top: '120px',
         border: 'none',
         outline: 'none',
     },
