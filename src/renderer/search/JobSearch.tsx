@@ -37,9 +37,8 @@ const JobSearch = () => {
             {companies.result && locations.result && (
                 <div>
                     <br />
-                    {isJobSearch ? 'Job search' : 'Interview question search'}
+                    Job search
                     <br />
-
                     <label htmlFor="position">
                         Position
                         <input
@@ -47,32 +46,38 @@ const JobSearch = () => {
                             name="email"
                             value={position}
                             placeholder=""
+                            style={{ outline: '1px solid black', width: '30%' }}
                             onChange={(e) => {
                                 setPosition(e.target.value);
                             }}
                         />
                     </label>
-
                     <label htmlFor="company">
-                        Company:
-                        <select name="company" onChange={(e) => setCompany(e.target.value)}>
+                        Company: {' '}
+                        <select
+                            name="company"
+                            onChange={(e) => setCompany(e.target.value)}
+                            style={{ outline: '1px solid black', borderRadius: '2px' }}
+                        >
                             <option value="" />
                             {companies.result.data.map((c) => (
                                 <option value={c}>{c}</option>
                             ))}
                         </select>
                     </label>
-
                     <label htmlFor="location">
-                        Location:
-                        <select name="location" onChange={(e) => setLocation(e.target.value)}>
+                        Location: {' '}
+                        <select
+                            name="location"
+                            onChange={(e) => setLocation(e.target.value)}
+                            style={{ outline: '1px solid black', borderRadius: '2px' }}
+                        >
                             <option value="" />
                             {locations.result.data.map((c) => (
                                 <option value={c}>{c}</option>
                             ))}
                         </select>
                     </label>
-
                     <button
                         type="submit"
                         onClick={handleSearch}
@@ -83,7 +88,6 @@ const JobSearch = () => {
                     <br />
                     {errMsg}
                     <br />
-
                     {jobs.map((job: object, index: number) => {
                         return (
                             <div>
