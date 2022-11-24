@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import CalendarState from '../context/CalendarState';
 
-const Day = ({ day, rowIdx, setOpen, setJob }) => {
+const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
     const getCurrentDayClass = () => {
         return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
             ? 'bg-blue-600 text-white rounded-full w-7'
@@ -25,8 +25,10 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
         const jsx = dayEvents.map((evt, idx) => (
             <div
                 key={idx}
-                onClick={() => {
+                onClick={(event) => {
+                    event.stopPropagation(); // So the day div onClick won't be triggered also
                     setJob(CalendarState.jobs[evt.id]);
+                    setIsEdit(true);
                     setOpen(true);
                 }}
                 className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
@@ -63,6 +65,26 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
                 </header>
                 <div
                     className="flex-1 cursor-pointer"
+                    onClick={() => {
+                        setJob({
+                            awaitingResponse: false,
+                            company: '',
+                            contacts: [],
+                            deadlines: [],
+                            details: {
+                                description: '',
+                                url: '',
+                            },
+                            id: '', // Id is needed to identify the job in the database
+                            interviewQuestions: [],
+                            location: '',
+                            notes: '',
+                            stage: 0,
+                            position: '',
+                        });
+                        setIsEdit(false);
+                        setOpen(true);
+                    }}
                 >
                     {getDayEvents()}
                 </div>
@@ -71,12 +93,19 @@ const Day = ({ day, rowIdx, setOpen, setJob }) => {
     );
 };
 
-const Month = ({ month, setOpen, setJob }) => (
+const Month = ({ month, setOpen, setJob, setIsEdit }) => (
     <div className="flex-1 grid grid-cols-7 grid-rows-5">
         {month.map((row, i) => (
             <React.Fragment key={i}>
                 {row.map((day, idx) => (
-                    <Day day={day} key={idx} rowIdx={i} setOpen={setOpen} setJob={setJob} />
+                    <Day
+                        day={day}
+                        key={idx}
+                        rowIdx={i}
+                        setOpen={setOpen}
+                        setJob={setJob}
+                        setIsEdit={setIsEdit}
+                    />
                 ))}
             </React.Fragment>
         ))}

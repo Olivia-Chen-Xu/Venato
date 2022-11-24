@@ -36,7 +36,11 @@ const Calendar = () => {
     }, [monthIndex]);
 
     if (jobs.loading) {
-        return <div><CircularProgress /></div>;
+        return (
+            <div>
+                <CircularProgress />
+            </div>
+        );
     }
     if (jobs.error) {
         return <p>Error: {jobs.error.message}</p>;
@@ -79,7 +83,7 @@ const Calendar = () => {
                         chevron_left
                     </span>
                 </button>
-                <Month month={currentMonth} setOpen={setModalOpen} setJob={setCurrentJob} />
+                <Month month={currentMonth} setOpen={setModalOpen} setJob={setCurrentJob} setIsEdit={setIsEdit} />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                         chevron_right

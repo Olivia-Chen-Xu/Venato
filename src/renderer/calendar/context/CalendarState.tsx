@@ -70,6 +70,19 @@ class CalendarState {
     }
 
     static updateJob(job) {
+        const oldJob = this.jobs[job.id];
+        oldJob.deadlines.forEach((deadline: { date: string; title: any }) => {
+            const deadlineFormatted = { title: deadline.title, id: oldJob.id };
+            this.events[deadline.date].filter((j) => j !== deadlineFormatted);
+        });
+
+        job.deadlines.forEach((deadline: { date: string; title: any }) => {
+            (this.events[deadline.date] = this.events[deadline.date] || []).push({
+                id: job.id,
+                title: deadline.title,
+            });
+        });
+
         this.jobs[job.id] = job;
     }
 

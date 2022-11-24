@@ -222,7 +222,7 @@ const Contacts = ({ value, index, job, setJob }) => {
             {job.contacts &&
                 job.contacts.map((contact) => (
                     <div>
-                        <h3>{contact}</h3>
+                        <a href={contact}>{contact}</a>
                     </div>
                 ))}
         </div>
@@ -282,7 +282,7 @@ export default function JobDialog({
             functionName
         )(params).then(() => {
             if (setState === false) {
-                CalendarState.jobs[job.id] = job;
+                CalendarState.updateJob(job);
             } else {
                 newState[index] = [job, ...state[index]];
                 setState(newState);
