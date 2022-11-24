@@ -371,18 +371,20 @@ const Questions = ({ value, index, job, setJob }) => {
                         }}
                     />
 
-                    <Button variant="contained" onClick={addNewQuestion}>
+                    <Button style={{position: 'absolute', top: 300}}variant="contained" onClick={addNewQuestion}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
 
+            <div style={{ position: 'absolute', textAlign: 'left'}}>
             {job.interviewQuestions &&
                 job.interviewQuestions.map((q) => (
                     <div>
                         <h3>{q}</h3>
                     </div>
                 ))}
+            </div>
         </div>
     );
 };
@@ -504,6 +506,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                             gap: '10px',
                             width: '145px',
                             height: '51px',
+                            borderRadius: '8px',
                         }}
                     >
                         {isEdit ? 'Save' : 'Add'}
@@ -628,7 +631,7 @@ const styles = {
     Notes: {
         position: 'absolute',
         height: '500px',
-        width: '490px',
+        width: '480px',
         left: '142px',
         top: '120px',
     },
