@@ -27,6 +27,7 @@ import {
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import CalendarState from '../calendar/context/CalendarState';
 
+
 const Details = ({ value, index, job, setJob }) => {
     return (
         <div
@@ -235,9 +236,10 @@ const Deadlines = ({ value, index, job, setJob }) => {
                     <div
                         style={{
                             position: 'absolute',
-                            top: '350px',
+                            top: '365px',
                             left: '142px',
                             right: '125px',
+                            
                         }}
                     >
                         <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
@@ -300,7 +302,7 @@ const Questions = ({ value, index, job, setJob }) => {
                 style={{
                     position: 'absolute',
                     width: '140px',
-                    top: '230px',
+                    top: '280px',
                     left: '142px',
                     right: '100px',
                     whiteSpace: 'nowrap',
@@ -340,11 +342,23 @@ const Questions = ({ value, index, job, setJob }) => {
                     whiteSpace: 'nowrap',
                 }}
             >
+    
                 {job.interviewQuestions &&
                     job.interviewQuestions.map((q) => (
-                        <div>
-                            <li>{q}</li>
-                        </div>
+                            <TextField
+                               label="interview questions"
+                               style={styles.interviewQuestions}
+                               multiline
+                               rows={4}
+                               value={q}
+                               onChange={(e) => {
+                                   setJob({ ...job, questions: { ...job.questions, questions: e.target.value } });
+                               }}
+                               InputProps={{
+                                   disableUnderline: true, // <== added this
+                                   sx: { width: 480 },
+                               }}
+                           />
                     ))}
             </div>
         </div>
@@ -418,7 +432,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                     position: 'absolute',
                     width: '145px',
                     top: '280px',
-                    left: '650px',
+                    left: '600px',
                     right: '100px',
                     whiteSpace: 'nowrap',
                 }}
@@ -445,23 +459,25 @@ const Contacts = ({ value, index, job, setJob }) => {
                     </Button>
                 </DialogContent>
             </Dialog>
-            <div
-                style={{
-                    position: 'absolute',
-                    width: '150px',
-                    top: '270px',
-                    left: '142px',
-                    right: '100px',
-                    whiteSpace: 'nowrap',
-                }}
-            >
                 {job.contacts &&
                     job.contacts.map((contact) => (
-                        <div>
-                            <a href={contact}>{contact}</a>
-                        </div>
+
+                        <TextField
+                               label="contacts"
+                               style={styles.contactsBox}
+                               multiline
+                               rows={4}
+                               value={contact}
+                               onChange={(e) => {
+                                   setJob({ ...job, contacts: { ...job.contacts, contacts: e.target.value } });
+                               }}
+                               InputProps={{
+                                   disableUnderline: true, // <== added this
+                                   sx: { height: 150, width: 400 },
+                               }}
+                        />
+    
                     ))}
-            </div>
         </div>
     );
 };
@@ -631,10 +647,10 @@ const styles = {
     jobDescription: {
         boxSizing: 'border-box',
         position: 'absolute',
-        width: '475px',
+        width: '480px',
         height: '250px',
         left: '142px',
-        top: '120px',
+        top: '105px',
         border: 'none',
         outline: 'none',
     },
@@ -708,12 +724,25 @@ const styles = {
     interviewQuestions: {
         boxSizing: 'border-box',
         position: 'absolute',
-        width: '500px',
-        height: '500px',
-        left: '305px',
-        top: '50px',
+        width: '250px',
+        height: '250px',
+        left: '0px',
+        top: '0px',
         border: 'none',
         outline: 'none',
+        color: '#676767',
+    },
+
+    contactsBox: {
+        boxSizing: 'border-box',
+        position: 'absolute',
+        width: '250px',
+        height: '120px',
+        left: '142px',
+        top: '240px',
+        border: 'none',
+        outline: 'none',
+        color: '#676767',
     },
 
     deadlineTitle: {
