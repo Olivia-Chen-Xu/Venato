@@ -99,7 +99,7 @@ const QuestionSearch = () => {
                     <br />
                     {jobs.map((job: object, index: number) => {
                         return (
-                            <div>
+                            <div style={{ marginTop: '20px' }}>
                                 <h4>{`Job #${index + 1}:`}</h4>
                                 {`Company: ${job.company}`}
                                 <br />
@@ -107,12 +107,27 @@ const QuestionSearch = () => {
                                 <br />
                                 {`Description: ${job.details.description}`}
                                 <br />
-                                Interview questions:{' '}
-                                {job.interviewQuestions.map((question: string) => (
-                                    <li>{question}</li>
-                                ))}
+                                URL: <a href={job.details.url}>{job.details.url}</a>
                                 <br />
+                                <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
+                                    <div style={{ float: 'left' }}>
+                                        Interview questions:{' '}
+                                        {job.interviewQuestions.map((question: string) => (
+                                            <li>{question}</li>
+                                        ))}
+                                    </div>
+                                    <div style={{ float: 'left', marginLeft: '5%' }}>
+                                        Contacts:{' '}
+                                        {job.contacts.map((contact) => (
+                                            <div>
+                                                <a href={contact}>{contact}</a>
+                                                <br />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                                 <br />
+                                <text style={{ color: "white" }}>.</text>
                             </div>
                         );
                     })}
