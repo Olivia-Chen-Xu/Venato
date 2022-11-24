@@ -10,21 +10,23 @@ const QuestionSearch = () => {
     const [company, setCompany] = useState<string>('');
     const [position, setPosition] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [errMsg, setErrMsg] = useState<string>('');
+    const [message, setMessage] = useState<string>('');
 
     const handleSearch = async () => {
         if ((position?.trim()?.length || 0) === 0 && company === '') {
-            setErrMsg('Please enter a position or company');
+            setMessage('Please enter a position or company');
             return;
         }
 
+        setMessage('Loading jobs...');
         const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
 
         setJobs(result.data);
-        setErrMsg('');
+        setMessage('');
         console.log(`Company: '${company}' Position: '${position}'`);
     };
 
+    const inputBoxStyle = { outline: '1px solid black', width: '30%' };
     return (
         <div>
             {(companies.error || locations.error || companies.loading || locations.loading) && (
@@ -42,25 +44,39 @@ const QuestionSearch = () => {
                             name="email"
                             value={position}
                             placeholder=""
+                            style={inputBoxStyle}
                             onChange={(e) => {
                                 setPosition(e.target.value);
                             }}
                         />
                     </label>
                     <label htmlFor="company">
-                        Company:
-                        <select name="company" onChange={(e) => setCompany(e.target.value)}>
+                        Company: {' '}
+                        <select
+                            name="company"
+                            onChange={(e) => setCompany(e.target.value)}
+                            style={{ outline: '1px solid black', borderRadius: '2px' }}
+                        >
                             <option value="" />
                             {companies.result.data.map((c) => (
-                                <option value={c}>{c}</option>
+                                <option
+                                    style={{ outline: '1px solid black', borderRadius: '2px' }}
+                                    value={c}
+                                >
+                                    {c}
+                                </option>
                             ))}
                         </select>
                     </label>
-                    <button type="submit" onClick={handleSearch}>
+                    <button
+                        type="submit"
+                        onClick={handleSearch}
+                        style={{ outline: '1px solid black', borderRadius: '2px' }}
+                    >
                         Search
                     </button>
                     <br />
-                    {errMsg}
+                    {message}
                     <br />
                     {jobs.map((job: object, index: number) => {
                         return (

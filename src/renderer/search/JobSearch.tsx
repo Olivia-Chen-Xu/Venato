@@ -73,7 +73,11 @@ const JobSearch = () => {
                         </select>
                     </label>
 
-                    <button type="submit" onClick={handleSearch}>
+                    <button
+                        type="submit"
+                        onClick={handleSearch}
+                        style={{ outline: '1px solid black', borderRadius: '2px' }}
+                    >
                         Search
                     </button>
                     <br />
