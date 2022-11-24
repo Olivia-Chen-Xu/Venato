@@ -3,12 +3,12 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
 import { CircularProgress } from '@mui/material';
 
-const SearchBar = () => {
+const QuestionSearch = () => {
     const [company, setCompany] = useState<string>('');
     const [position, setPosition] = useState<string>('');
     const [location, setLocation] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [isJobSearch, setIsJobSearch] = useState<boolean>(true);
+    const [isJobSearch, setIsJobSearch] = useState<boolean>(false);
     const [errMsg, setErrMsg] = useState<string>('');
 
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
@@ -20,7 +20,7 @@ const SearchBar = () => {
             company === '' &&
             (!isJobSearch || (isJobSearch && location === ''))
         ) {
-            setErrMsg('Please enter a position, company, or location');
+            setErrMsg('Please enter a position or company');
             return;
         }
 
@@ -34,19 +34,16 @@ const SearchBar = () => {
         console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
     };
 
-   
-
     return (
         <div>
             {(companies.error || locations.error || companies.loading || locations.loading) && (
-                <CircularProgress></CircularProgress>
+                <CircularProgress />
             )}
             {companies.result && locations.result && (
                 <div>
                     <br />
                     {isJobSearch ? 'Job search' : 'Interview question search'}
                     <br />
-                   
 
                     <label htmlFor="position">
                         Position
@@ -71,17 +68,6 @@ const SearchBar = () => {
                         </select>
                     </label>
 
-                    
-                        <label htmlFor="location">
-                            Location:
-                            <select name="location" onChange={(e) => setLocation(e.target.value)}>
-                                <option value="" />
-                                {locations.result.data.map((c) => (
-                                    <option value={c}>{c}</option>
-                                ))}
-                            </select>
-                        </label>
-
                     <button type="submit" onClick={handleSearch}>
                         Search
                     </button>
@@ -90,36 +76,30 @@ const SearchBar = () => {
                     <br />
 
                     {jobs.map((job: object, index: number) => {
-                              return (
-                                  <div>
-                                      <h4>{`Job #${index + 1}:`}</h4>
-                                      {`Company: ${job.company}`}
-                                      <br />
-                                      {`Position: ${job.position}`}
-                                      <br />
-                                      {`Location: ${job.location}`}
-                                      <br />
-                                      {`Description: ${job.details.description}`}
-                                      <br />
-                                      URL: <a href={job.details.url}>{job.details.url}</a>
-                                      <br />
-                                      Contacts:{' '}
-                                      {job.contacts.map((contact) => (
-                                          <div>
-                                              <a href={contact}>{contact}</a>
-                                              <br />
-                                          </div>
-                                      ))}
-                                      <br />
-                                      <br />
-                                  </div>
-                              );
-                          })
-                        }
+                        return (
+                            <div>
+                                <h4>{`Job #${index + 1}:`}</h4>
+                                {`Company: ${job.company}`}
+                                <br />
+                                {`Position: ${job.position}`}
+                                <br />
+                                {`Description: ${job.details.description}`}
+                                <br />
+                                Interview questions:{' '}
+                                <ul>
+                                    {job.interviewQuestions.map((question: string) => (
+                                        <li>{question}</li>
+                                    ))}
+                                </ul>
+                                <br />
+                                <br />
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>
     );
 };
 
-export default SearchBar;
+export default QuestionSearch;
