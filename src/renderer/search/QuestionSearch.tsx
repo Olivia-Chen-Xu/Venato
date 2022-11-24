@@ -26,6 +26,13 @@ const QuestionSearch = () => {
         console.log(`Company: '${company}' Position: '${position}'`);
     };
 
+    const clearSearch = () => {
+        setCompany('');
+        setPosition('');
+        setJobs([]);
+        setMessage('');
+    };
+
     const inputBoxStyle = { outline: '1px solid black', width: '30%' };
     return (
         <div>
@@ -51,7 +58,7 @@ const QuestionSearch = () => {
                         />
                     </label>
                     <label htmlFor="company">
-                        Company: {' '}
+                        Company:{' '}
                         <select
                             name="company"
                             onChange={(e) => setCompany(e.target.value)}
@@ -68,12 +75,24 @@ const QuestionSearch = () => {
                             ))}
                         </select>
                     </label>
+                    {'  '}
                     <button
                         type="submit"
                         onClick={handleSearch}
                         style={{ outline: '1px solid black', borderRadius: '2px' }}
                     >
                         Search
+                    </button>
+                    <button
+                        type="submit"
+                        onClick={clearSearch}
+                        style={{
+                            outline: '1px solid black',
+                            borderRadius: '2px',
+                            marginLeft: '1em',
+                        }}
+                    >
+                        Clear search
                     </button>
                     <br />
                     {message}
@@ -89,11 +108,9 @@ const QuestionSearch = () => {
                                 {`Description: ${job.details.description}`}
                                 <br />
                                 Interview questions:{' '}
-                                <ul>
-                                    {job.interviewQuestions.map((question: string) => (
-                                        <li>{question}</li>
-                                    ))}
-                                </ul>
+                                {job.interviewQuestions.map((question: string) => (
+                                    <li>{question}</li>
+                                ))}
                                 <br />
                                 <br />
                             </div>
