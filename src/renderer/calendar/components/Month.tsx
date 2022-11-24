@@ -4,13 +4,13 @@ import CalendarState from '../context/CalendarState';
 
 const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
     const getCurrentDayClass = () => {
-        return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
+        return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
             ? 'bg-blue-600 text-white rounded-full w-7'
             : '';
     };
 
     const getDayEvents = () => {
-        let dayEvents = CalendarState.events[day.format('DD-MM-YY')];
+        let dayEvents = CalendarState.events[day.format('YY-MM-DD')];
         if (!dayEvents) {
             return [];
         }

@@ -126,42 +126,43 @@ const generateJobs = async (num: number) => {
         const numDeadlines = Math.floor(Math.random() * 3) + 1;
         switch (numDeadlines) {
             case 1:
+                const temp = Math.floor(Math.random() * 29) + 1;
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 29) + 1}-${month}-22`,
+                    date: `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`,
                     title: Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview',
                 });
                 break;
             case 2:
+                const temp2 = Math.floor(Math.random() * 14) + 1;
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 14) + 1}-${month}-22`,
+                    date: `22-${month}-${temp2 < 10 ? `0${temp2}` : `${temp2}`}`,
                     title:
                         Math.random() < 0.5
                             ? 'Submit resume + cover letter'
                             : 'Fill out application',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 15) + 15}-${month}-22`,
+                    date: `22-${month}-${Math.floor(Math.random() * 15) + 15}`,
                     title: 'Interview',
                 });
                 break;
             case 3:
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 9) + 1}-${month}-22`,
+                    date: `22-${month}-0${Math.floor(Math.random() * 9) + 1}`,
                     title: 'Initial application due',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 10) + 10}-${month}-22`,
+                    date: `22-${month}-${Math.floor(Math.random() * 10) + 10}`,
                     title: Math.random() < 0.5 ? 'First round interview' : 'Technical round',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 10) + 20}-${month}-22`,
+                    date: `22-${month}-${Math.floor(Math.random() * 10) + 20}`,
                     title: '❗ Final interview ❗',
                 });
                 break;
             default:
                 throw `Invalid num deadlines: ${numDeadlines}`;
         }
-
         return deadlines;
     };
 

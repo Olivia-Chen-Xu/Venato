@@ -2,8 +2,8 @@ import React from 'react';
 import Calendar from 'renderer/calendar/Calendar';
 import Homepage from 'renderer/homepage/Homepage';
 import Kanban from 'renderer/kanban/Kanban';
-import SearchBar from 'renderer/search/SearchBar';
-import Questions from 'renderer/questions/Questions';
+import JobSearch from 'renderer/search/JobSearch';
+import Questions from 'renderer/search/QuestionSearch';
 import ReusableHeader from './ReusableHeader';
 import ReusableSideBar from './ReusableSideBar';
 
@@ -11,7 +11,7 @@ export default function Overlay(props) {
     const { page } = props;
     let elem; // By default show home?
     if (page === 'jobs') {
-        elem = <SearchBar />;
+        elem = <JobSearch />;
     } else if (page === 'cal') {
         elem = <Calendar />;
     } else if (page === 'kanban') {

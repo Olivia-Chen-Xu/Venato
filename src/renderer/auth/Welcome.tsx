@@ -54,7 +54,7 @@ const Welcome = () => {
             {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>*/}
             {/*    Generate jobs*/}
             {/*</Button>*/}
-            {/*<br />*/}
+            <br />
             <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
     );
