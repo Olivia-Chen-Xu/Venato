@@ -47,18 +47,47 @@ class CalendarState {
 
     static labels: any[] = [];
 
-    static events: { [date: string]: { id: string; title: string }[] } = {};
+    // The ID of the currently selected job (empty string for none selected)
+    static currentJob: string = '';
 
-    static addEvent(event: { id: string; title: string; date: string }) {
-        (this.events[event.date] = this.events[event.date] || []).push({
-            id: event.id,
-            title: event.title,
+    // Jobs include all the job data and are accessed by their id
+    static jobs: { [id: string]: object } = {};
+
+    static addJobs(jobs: object[]) {
+        this.jobs = {};
+        this.events = {};
+
+        jobs.forEach((job) => {
+            this.jobs[job.id] = job;
+
+            job.deadlines.forEach((deadline: { date: string; title: any }) => {
+                (this.events[deadline.date] = this.events[deadline.date] || []).push({
+                    id: job.id,
+                    title: deadline.title,
+                });
+            });
         });
     }
 
-    static clearEvents() {
-        this.events = {};
+    static updateJob(job) {
+        const oldJob = this.jobs[job.id];
+        oldJob.deadlines.forEach((deadline: { date: string; title: any }) => {
+            const deadlineFormatted = { title: deadline.title, id: oldJob.id };
+            this.events[deadline.date].filter((j) => j !== deadlineFormatted);
+        });
+
+        job.deadlines.forEach((deadline: { date: string; title: any }) => {
+            (this.events[deadline.date] = this.events[deadline.date] || []).push({
+                id: job.id,
+                title: deadline.title,
+            });
+        });
+
+        this.jobs[job.id] = job;
     }
+
+    // Events are lightweight objects with minimum data mapped to by a date for easy access
+    static events: { [date: string]: { id: string; title: string }[] } = {};
 }
 
 export default CalendarState;

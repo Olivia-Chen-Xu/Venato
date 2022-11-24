@@ -162,9 +162,7 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
-                for (const job of res.data) {
-                    newState[job.stage].push({ ...job, id: job.id });
-                }
+                res.data.forEach(job => newState[job.stage].push({ ...job, id: job.id }));
                 setState(newState);
                 setLoading(false);
             });
@@ -207,7 +205,7 @@ export default function Kanban() {
                     index={index}
                     state={state}
                     setState={setState}
-                ></JobDialog>
+                />
             )}
             <h4
                 style={{
@@ -226,7 +224,7 @@ export default function Kanban() {
                 ))} */}
 
                 {loading ? (
-                    <CircularProgress></CircularProgress>
+                    <CircularProgress />
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
                         {state.map((el, ind) => (

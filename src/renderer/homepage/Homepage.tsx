@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import generateJobs from '../search/generateJobs';
 import SearchBar from '../search/SearchBar';
 
 export default function Homepage() {
@@ -15,7 +14,7 @@ export default function Homepage() {
                     <div className='ml-5 mt-5'>
                         <h1><span className="text-3xl">Interview</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
                         <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
                     </div>
@@ -27,7 +26,7 @@ export default function Homepage() {
                     <div className='ml-5 mt-5'>
                         <h1><span className="text-3xl">Interview</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
                         <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
                     </div>
@@ -38,7 +37,7 @@ export default function Homepage() {
                     <div className='ml-5 mt-5'>
                         <h1><span className="text-3xl">Interview</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
                         <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
                     </div>

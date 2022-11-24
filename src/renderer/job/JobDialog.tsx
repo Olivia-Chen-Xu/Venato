@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
     DialogContent,
     Tabs,
@@ -24,6 +24,7 @@ import {
     LocationOnOutlined,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import CalendarState from '../calendar/context/CalendarState';
 
 const Details = ({ value, index, job, setJob }) => {
     return (
@@ -88,6 +89,7 @@ const Details = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Notes = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
@@ -103,6 +105,7 @@ const Notes = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Deadlines = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({ date: null, position: '' });
@@ -112,6 +115,11 @@ const Deadlines = ({ value, index, job, setJob }) => {
         setJob({ ...job, deadlines: [newDdl, ...job.deadlines] });
         setOpen(false);
         setNewDdl({ date: null, position: '' });
+    };
+
+    const dateToString = (date: string) => {
+        const parts = date.split('-');
+        return (parts[0] === '11' ? 'November ' : 'December ') + parts[0];
     };
 
     return (
@@ -142,13 +150,13 @@ const Deadlines = ({ value, index, job, setJob }) => {
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
                     <div>
-                        <h3>{ddl.date}</h3>
-                        <p>{ddl.position}</p>
+                        <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
                     </div>
                 ))}
         </div>
     );
 };
+
 const Questions = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState('');
@@ -178,12 +186,13 @@ const Questions = ({ value, index, job, setJob }) => {
             {job.interviewQuestions &&
                 job.interviewQuestions.map((q) => (
                     <div>
-                        <h3>{q}</h3>
+                        <li>{q}</li>
                     </div>
                 ))}
         </div>
     );
 };
+
 const Contacts = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState('');
@@ -213,12 +222,13 @@ const Contacts = ({ value, index, job, setJob }) => {
             {job.contacts &&
                 job.contacts.map((contact) => (
                     <div>
-                        <h3>{contact}</h3>
+                        <a href={contact}>{contact}</a>
                     </div>
                 ))}
         </div>
     );
 };
+
 export default function JobDialog({
     setCurrentJob,
     jobData,
@@ -261,30 +271,23 @@ export default function JobDialog({
         setLoading(true);
         const newState = [...state];
         // Extract id from job
-        console.log(`Job: ${JSON.stringify(job, null, 4)}`);
-        const id = job.id;
-        const jobCopy = job;
+        const { id } = job;
+        const jobCopy = structuredClone(job);
         delete jobCopy.id;
-        console.log(`Id: ${JSON.stringify(id, null, 4)}`);
-        console.log(`Copy: ${JSON.stringify(jobCopy, null, 4)}`);
 
-        if (isEdit) {
-            await httpsCallable(
-                getFunctions(),
-                'updateJob'
-            )({ id, newFields: jobCopy }).then((res) => {
-                newState[index] = [{ ...job, id: res.data }, ...state[index]];
+        const functionName = isEdit ? 'updateJob' : 'addJob';
+        const params = isEdit ? { id, newFields: jobCopy } : jobCopy;
+        await httpsCallable(
+            getFunctions(),
+            functionName
+        )(params).then(() => {
+            if (setState === false) {
+                CalendarState.updateJob(job);
+            } else {
+                newState[index] = [job, ...state[index]];
                 setState(newState);
-            });
-        } else {
-            await httpsCallable(
-                getFunctions(),
-                'addJob'
-            )(jobCopy).then((res) => {
-                newState[index] = [{ ...job, id: res.data }, ...state[index]];
-                setState(newState);
-            });
-        }
+            }
+        });
 
         setLoading(false);
         setOpen(false);

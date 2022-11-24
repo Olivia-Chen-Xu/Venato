@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { CircularProgress } from "@mui/material";
 import Month from './components/Month';
 import CalendarState from './context/CalendarState';
+import JobDialog from '../job/JobDialog';
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -20,27 +22,45 @@ const getMonth = (month = dayjs().month()) => {
 };
 
 const Calendar = () => {
-    const events = useAsync(httpsCallable(getFunctions(), 'getCalendarEvents'), []);
+    const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
-    const [monthIndex, setMonthIndex] = useState(10);
-    // const [showEventModal, setShowEventModal] = useState(false);
+    const [monthIndex, setMonthIndex] = useState<number>(10);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentJob, setCurrentJob] = useState(null);
+    const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
-    if (events.loading) {
-        return <p>Loading...</p>;
+    if (jobs.loading) {
+        return (
+            <div>
+                <CircularProgress />
+            </div>
+        );
     }
-    if (events.error) {
-        return <p>Error: {events.error.message}</p>;
+    if (jobs.error) {
+        return <p>Error: {jobs.error.message}</p>;
     }
 
     // Events loaded
-    events.result.data.forEach((event) => CalendarState.addEvent(event));
+    CalendarState.addJobs(jobs.result.data);
     return (
         <div className="h-screen flex flex-col">
+            {modalOpen && (
+                <JobDialog
+                    setOpen={setModalOpen}
+                    setCurrentJob={setCurrentJob}
+                    jobData={currentJob}
+                    isEdit={isEdit}
+                    index={0}
+                    state={[]}
+                    setState={false}
+                />
+            )}
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
                 <div className="grid place-content-center bg-gray-200">
@@ -63,7 +83,7 @@ const Calendar = () => {
                         chevron_left
                     </span>
                 </button>
-                <Month month={currentMonth} />
+                <Month month={currentMonth} setOpen={setModalOpen} setJob={setCurrentJob} setIsEdit={setIsEdit} />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
                         chevron_right
