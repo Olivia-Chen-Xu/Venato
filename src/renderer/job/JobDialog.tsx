@@ -177,7 +177,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <>
+        <div>
             <div hidden={value !== index}>
                 <Input
                     className="focus-only"
@@ -226,14 +226,15 @@ const Deadlines = ({ value, index, job, setJob }) => {
                         />
                     </LocalizationProvider>
                     <Button onClick={addDdl}>Add</Button>
-                </DialogContent>
-            </Dialog>
+                </div>
+            </div>
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
-                    <div>
+                    
+                    
+                    <div style={{position: 'absolute', top: '350px', left: '130px',  right: '125px'}}>
                         <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
-                    </div>
-                ))}
+                    </div>))}
         </div>
     );
 };
@@ -449,13 +450,13 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                         onClick={addNewJob}
                         style={{
                             position: 'absolute',
-                            left: 142,
-                            top: 340,
-                            padding: '16px 12px 16px 16px',
+                            right: 5,
+                            top: 20,
+                            padding: '14px 12px 14px 14px',
                             gap: '10px',
-                            width: '145px',
-                            height: '51px',
-                            borderRadius: '8px',
+                            width: '25px',
+                            height: '25px',
+                            borderRadius: '4px',
                         }}
                     >
                         {isEdit ? 'Save' : 'Add'}
