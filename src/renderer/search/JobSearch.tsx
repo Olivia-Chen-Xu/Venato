@@ -4,22 +4,17 @@ import { useAsync } from 'react-async-hook';
 import { CircularProgress } from '@mui/material';
 
 const JobSearch = () => {
+    const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
+    const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
+
     const [company, setCompany] = useState<string>('');
     const [position, setPosition] = useState<string>('');
     const [location, setLocation] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [isJobSearch, setIsJobSearch] = useState<boolean>(true);
     const [errMsg, setErrMsg] = useState<string>('');
 
-    const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
-    const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
-
     const handleSearch = async () => {
-        if (
-            (position?.trim()?.length || 0) === 0 &&
-            company === '' &&
-            (!isJobSearch || (isJobSearch && location === ''))
-        ) {
+        if ((position?.trim()?.length || 0) === 0 && company === '' && location === '') {
             setErrMsg('Please enter a position, company, or location');
             return;
         }
@@ -27,7 +22,7 @@ const JobSearch = () => {
         const result = await httpsCallable(
             getFunctions(),
             'jobSearch'
-        )(isJobSearch ? { company, position, location } : { company, position });
+        )({ company, position, location });
 
         setJobs(result.data);
         setErrMsg('');

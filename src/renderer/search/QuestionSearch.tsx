@@ -4,34 +4,25 @@ import { useAsync } from 'react-async-hook';
 import { CircularProgress } from '@mui/material';
 
 const QuestionSearch = () => {
-    const [company, setCompany] = useState<string>('');
-    const [position, setPosition] = useState<string>('');
-    const [location, setLocation] = useState<string>('');
-    const [jobs, setJobs] = useState<object[]>([]);
-    const [isJobSearch, setIsJobSearch] = useState<boolean>(false);
-    const [errMsg, setErrMsg] = useState<string>('');
-
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
 
+    const [company, setCompany] = useState<string>('');
+    const [position, setPosition] = useState<string>('');
+    const [jobs, setJobs] = useState<object[]>([]);
+    const [errMsg, setErrMsg] = useState<string>('');
+
     const handleSearch = async () => {
-        if (
-            (position?.trim()?.length || 0) === 0 &&
-            company === '' &&
-            (!isJobSearch || (isJobSearch && location === ''))
-        ) {
+        if ((position?.trim()?.length || 0) === 0 && company === '') {
             setErrMsg('Please enter a position or company');
             return;
         }
 
-        const result = await httpsCallable(
-            getFunctions(),
-            'jobSearch'
-        )(isJobSearch ? { company, position, location } : { company, position });
+        const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
 
         setJobs(result.data);
         setErrMsg('');
-        console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
+        console.log(`Company: '${company}' Position: '${position}'`);
     };
 
     return (
@@ -42,9 +33,8 @@ const QuestionSearch = () => {
             {companies.result && locations.result && (
                 <div>
                     <br />
-                    {isJobSearch ? 'Job search' : 'Interview question search'}
+                    Interview question search
                     <br />
-
                     <label htmlFor="position">
                         Position
                         <input
@@ -57,7 +47,6 @@ const QuestionSearch = () => {
                             }}
                         />
                     </label>
-
                     <label htmlFor="company">
                         Company:
                         <select name="company" onChange={(e) => setCompany(e.target.value)}>
@@ -67,14 +56,12 @@ const QuestionSearch = () => {
                             ))}
                         </select>
                     </label>
-
                     <button type="submit" onClick={handleSearch}>
                         Search
                     </button>
                     <br />
                     {errMsg}
                     <br />
-
                     {jobs.map((job: object, index: number) => {
                         return (
                             <div>
