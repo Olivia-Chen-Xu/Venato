@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
     DialogContent,
     Tabs,
@@ -25,6 +25,7 @@ import {
     LocationOnOutlined,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import CalendarState from '../calendar/context/CalendarState';
 
 const Details = ({ value, index, job, setJob }) => {
     return (
@@ -102,6 +103,7 @@ const Details = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Notes = ({ value, index, job, setJob }) => {
     return (
         <div hidden={value !== index}>
@@ -157,6 +159,7 @@ const Notes = ({ value, index, job, setJob }) => {
         </div>
     );
 };
+
 const Deadlines = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({ date: null, position: '' });
@@ -166,6 +169,11 @@ const Deadlines = ({ value, index, job, setJob }) => {
         setJob({ ...job, deadlines: [newDdl, ...job.deadlines] });
         setOpen(false);
         setNewDdl({ date: null, position: '' });
+    };
+
+    const dateToString = (date: string) => {
+        const parts = date.split('-');
+        return (parts[0] === '11' ? 'November ' : 'December ') + parts[0];
     };
 
     return (
@@ -207,108 +215,29 @@ const Deadlines = ({ value, index, job, setJob }) => {
                             </InputAdornment>
                         }
                     />
-                </div>
-                <div
-                    style={styles.interviewIcons}
-                    className="grid grid-cols-3 gap-20 mx-20 h-40 mt-5 text-white"
-                >
-                    <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                        <div className="ml-5 mt-5">
-                            <h1>
-                                <span className="text-3xl">Interview</span>
-                            </h1>
-                        </div>
-
-                        <div className="ml-5 mt-8">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                Jan 1st - 4:00 PM
-                            </h1>
-                        </div>
-                        <div className="ml-5 mt-1">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                                Zoom
-                            </h1>
-                        </div>
-                    </div>
-                    <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                        <div className="ml-5 mt-5">
-                            <h1>
-                                <span className="text-3xl">Interview</span>
-                            </h1>
-                        </div>
-
-                        <div className="ml-5 mt-8">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                Jan 1st - 4:00 PM
-                            </h1>
-                        </div>
-                        <div className="ml-5 mt-1">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                                Zoom
-                            </h1>
-                        </div>
-                    </div>
-                    <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                        <div className="ml-5 mt-5">
-                            <h1>
-                                <span className="text-3xl">Interview</span>
-                            </h1>
-                        </div>
-
-                        <div className="ml-5 mt-8">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                Jan 1st - 4:00 PM
-                            </h1>
-                        </div>
-                        <div className="ml-5 mt-1">
-                            <h1 className="text-md align-middle">
-                                <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                                Zoom
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-
-                <Button style={styles.deadlineButton}variant="contained" onClick={() => setOpen(true)}>
-                    Add a deadline
-                </Button>
-                <Dialog open={open} onClose={() => setOpen(false)}>
-                    <DialogContent style={{ display: 'flex' }}>
-                        <TextField
-                            label="What is due"
-                            value={newDdl.position}
-                            onChange={(e) => {
-                                setNewDdl({ ...newDdl, position: e.target.value });
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            label="Deadline"
+                            value={newDdl.date}
+                            onChange={(newValue) => {
+                                setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
                             }}
+                            renderInput={(params) => <TextField {...params} />}
                         />
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label="Deadline"
-                                value={newDdl.date}
-                                onChange={(newValue) => {
-                                    setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
-                        <Button onClick={addDdl}>Add</Button>
-                    </DialogContent>
-                </Dialog>
-                {job.deadlines &&
-                    job.deadlines.map((ddl) => (
-                        <div>
-                            <p>{ddl.position}</p>
-                        </div>
-                    ))}
-            </div>
-        </>
+                    </LocalizationProvider>
+                    <Button onClick={addDdl}>Add</Button>
+                </DialogContent>
+            </Dialog>
+            {job.deadlines &&
+                job.deadlines.map((ddl) => (
+                    <div>
+                        <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
+                    </div>
+                ))}
+        </div>
     );
 };
+
 const Questions = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState('');
@@ -381,13 +310,14 @@ const Questions = ({ value, index, job, setJob }) => {
             {job.interviewQuestions &&
                 job.interviewQuestions.map((q) => (
                     <div>
-                        <h3>{q}</h3>
+                        <li>{q}</li>
                     </div>
                 ))}
             </div>
         </div>
     );
 };
+
 const Contacts = ({ value, index, job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState('');
@@ -435,12 +365,13 @@ const Contacts = ({ value, index, job, setJob }) => {
             {job.contacts &&
                 job.contacts.map((contact) => (
                     <div>
-                        <h3>{contact}</h3>
+                        <a href={contact}>{contact}</a>
                     </div>
                 ))}
         </div>
     );
 };
+
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
         company: '',
@@ -471,13 +402,31 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     const addNewJob = async () => {
         setLoading(true);
         const newState = [...state];
+        // Extract id from job
+        const { id } = job;
+        const jobCopy = structuredClone(job);
+        delete jobCopy.id;
+
+        const functionName = isEdit ? 'updateJob' : 'addJob';
+        const params = isEdit ? { id, newFields: jobCopy } : jobCopy;
         await httpsCallable(
             getFunctions(),
-            'addJob'
-        )(job).then((res) => {
-            newState[index] = [{ ...job, id: res.data }, ...state[index]];
-            setState(newState);
+            functionName
+        )(params).then((res) => {
+            if (setState === false) {
+                CalendarState.updateJob(job);
+            } else {
+                if (isEdit) {
+                    //console.log(index);
+                    newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
+                } else {
+                    newState[index] = [{ ...job, id: res.data }, ...state[index]];
+                }
+
+                setState(newState);
+            }
         });
+
         setLoading(false);
         setOpen(false);
     };

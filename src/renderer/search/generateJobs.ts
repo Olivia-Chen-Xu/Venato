@@ -16,37 +16,6 @@ interface Job {
     awaitingResponse: boolean;
 }
 
-const jobs: Job[] = [
-    {
-        company: 'Google',
-        contacts: [
-            'https://www.linkedin.com/in/olivia-chen-xu/',
-            'https://www.linkedin.com/in/cameron-beaulieu/',
-        ],
-        deadlines: [
-            {
-                date: '17-11-22',
-                title: 'Submit resume',
-            },
-            {
-                date: '30-11-22',
-                title: 'Interview',
-            },
-        ],
-        details: {
-            description:
-                "Will be working on the Google Cloud Platform team, which is responsible for building and maintaining the infrastructure that powers Google's cloud services.",
-            url: 'https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3332078940',
-        },
-        interviewQuestions: ['Reverse a linked list', 'Depth-first search'],
-        location: 'San Francisco, California',
-        notes: 'I REALLY want this job',
-        stage: 0,
-        position: 'Software Engineer Intern',
-        awaitingResponse: true,
-    },
-];
-
 const companies = [
     'Google',
     'Facebook',
@@ -68,16 +37,16 @@ const contacts = [
     'https://www.linkedin.com/in/wasiq-wadud/',
 ];
 const descriptions = [
-    'Will be working on the Google Cloud Platform team',
-    'Will be working on the Facebook Cloud Platform team',
-    'Will be working on the Amazon Cloud Platform team',
-    'Will be working on the Apple Cloud Platform team',
-    'Will be working on the Microsoft Cloud Platform team',
-    'Will be working on the Netflix Cloud Platform team',
-    'Will be working on the Spotify Cloud Platform team',
-    'Will be working on the Uber Cloud Platform team',
-    'Will be working on the Airbnb Cloud Platform team',
-    'Will be working on the Tesla Cloud Platform team',
+    "Will be working on the Google Cloud Platform team, which is responsible for building and maintaining the infrastructure that powers Google's cloud services.",
+    'Aiding a METAverse architect with QA and efficiency',
+    "Working with Amazon's product recommendation team",
+    'Will be working on a Tech support related internal tool',
+    'This position includes work with the Microsoft bug fixer dashboard',
+    "Netflix's recommendation API will be the main part of this job",
+    "Spotify is know for it's easy-to-use and powerful desktop app, which is what you will be working on",
+    "Uber is applauded for it's incredibly simple UI, which oyu will be helping maintain",
+    'This job entails improving facilitation of client-renter contract',
+    "Working with the immense data collected by Tesla's self-driving cars",
 ];
 const urls = [
     'https://www.google.com',
@@ -122,21 +91,23 @@ const locations = [
     'Atlanta, Georgia',
 ];
 const jobNotes = [
-    "Probabaly underqualified, but I'll try anyway",
+    "Probably under-qualified, but I'll try anyway",
     'I REALLY want this job',
     'This would be a good fit',
     'If it pays well, I might consider it',
     'If i get this... bill gates time 😎😎😎',
     'Have to travel to the US for this one',
-    'holy fuck this is a good job',
+    'jeeeeeeez this is a good job',
     'I have no idea what this job is',
     "I'll probably get rejected",
     'I hope bezos sees this',
+    'Salary: good. Company: good. Location: good. Travel? huge PITA',
 ];
 const jobPositions = [
     'Software Engineer Intern',
     'Software Engineer',
     'Software Developer',
+    'Software Developer Intern',
     'Data Scientist',
     'Data Analyst',
     'Data Engineer',
@@ -155,42 +126,47 @@ const generateJobs = async (num: number) => {
         const numDeadlines = Math.floor(Math.random() * 3) + 1;
         switch (numDeadlines) {
             case 1:
+                const temp = Math.floor(Math.random() * 29) + 1;
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 30)}-${month}-22`,
-                    title: 'Job interview',
+                    date: `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`,
+                    title: Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview',
                 });
                 break;
             case 2:
+                const temp2 = Math.floor(Math.random() * 14) + 1;
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 15)}-${month}-22`,
-                    title: 'Submit resume + cover letter',
+                    date: `22-${month}-${temp2 < 10 ? `0${temp2}` : `${temp2}`}`,
+                    title:
+                        Math.random() < 0.5
+                            ? 'Submit resume + cover letter'
+                            : 'Fill out application',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 15) + 15}-${month}-22`,
+                    date: `22-${month}-${Math.floor(Math.random() * 15) + 15}`,
                     title: 'Interview',
                 });
                 break;
             case 3:
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 10)}-${month}-22`,
+                    date: `22-${month}-0${Math.floor(Math.random() * 9) + 1}`,
                     title: 'Initial application due',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 10) + 10}-${month}-22`,
-                    title: 'First round interview',
+                    date: `22-${month}-${Math.floor(Math.random() * 10) + 10}`,
+                    title: Math.random() < 0.5 ? 'First round interview' : 'Technical round',
                 });
                 deadlines.push({
-                    date: `${Math.floor(Math.random() * 10) + 20}-${month}-22`,
-                    title: 'Final interview',
+                    date: `22-${month}-${Math.floor(Math.random() * 10) + 20}`,
+                    title: '❗ Final interview ❗',
                 });
                 break;
             default:
                 throw `Invalid num deadlines: ${numDeadlines}`;
         }
-
         return deadlines;
     };
 
+    const jobs: Job[] = [];
     for (let i = 0; i < num; i += 1) {
         const company = Math.floor(Math.random() * companies.length);
         jobs.push({

@@ -1,49 +1,82 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import generateJobs from '../search/generateJobs';
-import SearchBar from '../search/SearchBar';
+import { useAsync } from "react-async-hook";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { CircularProgress } from "@mui/material";
+import CalendarState from '../calendar/context/CalendarState';
 
 export default function Homepage() {
     const nav = useNavigate();
+    const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
+
+    if (jobs.loading) {
+        return (
+            <div>
+                <CircularProgress />
+            </div>
+        );
+    }
+    if (jobs.error) {
+        return <p>Error: {jobs.error.message}</p>;
+    }
+
+    // Events loaded
+    CalendarState.addJobs(jobs.result.data);
+
+    // Get the 3 most immediate tasks
+    const taskDates = Object.entries(CalendarState.events)
+        .map((elem) => elem[0])
+        .sort()
+        .slice(0, 3);
+    const recent = [
+        ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
+        ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
+        ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
+    ].slice(0, 3);
+    const formatDate = (date: string) => {
+        const split = date.split('-');
+        return `${split[1] === '11' ? 'Nov.' : 'Dec.'} ${(split[2] * 1).toString()}`;
+    };
+
     return (
-        <React.Fragment>
+        <>
             <h1 className="text-3xl mt-3">Welcome Back!</h1>
 
             <h1 className="text-xl mt-2 grid place-content-center uppercase">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 mt-5 text-white">
                 <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                     <div className='ml-5 mt-5'>
-                        <h1><span className="text-3xl">Interview</span></h1>
+                        <h1><span className="text-3xl">{recent[0].title}</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> {formatDate(recent[0].date)}</h1>
                     </div>
                     <div className='ml-5 mt-1'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> Zoom</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> {CalendarState.jobs[recent[0].id].company}</h1>
                     </div>
                 </div>
                 <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                     <div className='ml-5 mt-5'>
-                        <h1><span className="text-3xl">Interview</span></h1>
+                        <h1><span className="text-3xl">{recent[1].title}</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> {formatDate(recent[1].date)}</h1>
                     </div>
                     <div className='ml-5 mt-1'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> Zoom</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> {CalendarState.jobs[recent[1].id].company}</h1>
                     </div>
                 </div><div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                     <div className='ml-5 mt-5'>
-                        <h1><span className="text-3xl">Interview</span></h1>
+                        <h1><span className="text-3xl">{recent[2].title}</span></h1>
                     </div>
-                  
+
                     <div className='ml-5 mt-8'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> Jan 1st - 4:00 PM</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">schedule</span> {formatDate(recent[2].date)}</h1>
                     </div>
                     <div className='ml-5 mt-1'>
-                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> Zoom</h1>
+                        <h1 className='text-md align-middle'><span className="material-icons-outlined text-xl">location_on</span> {CalendarState.jobs[recent[2].id].company}</h1>
                     </div>
                 </div>
             </div>
@@ -81,6 +114,6 @@ export default function Homepage() {
                     </button>
                 </div> */}
             </div>
-        </React.Fragment>
+        </>
     );
 }

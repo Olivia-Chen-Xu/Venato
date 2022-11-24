@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import './auth.css';
 import { useState } from 'react';
-import { signin } from './auth-functions';
 import { Button } from '@mui/material';
+import { signin } from './auth-functions';
 import { btnStyle } from './authStyles';
+import generateJobs from '../search/generateJobs';
 
 const Welcome = () => {
     const navigate = useNavigate();
@@ -49,6 +50,10 @@ const Welcome = () => {
             <Button variant="contained" color="neutral" style={btnStyle} onClick={bypassSignIn}>
                 Bypass sign-in
             </Button>
+            <br />
+            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>*/}
+            {/*    Generate jobs*/}
+            {/*</Button>*/}
             <br />
             <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
