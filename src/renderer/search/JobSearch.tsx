@@ -132,7 +132,6 @@ const JobSearch = () => {
                                 </div>
                                 <br />
                                 <text style={{ color: "white" }}>.</text>
-
                             </div>
                         );
                     })}
