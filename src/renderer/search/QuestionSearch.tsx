@@ -33,36 +33,6 @@ const QuestionSearch = () => {
         setMessage('');
     };
 
-    const getQuestionLink = (question: string) => {
-        // const makeHttpObject = () => {
-        //     try {
-        //         return new XMLHttpRequest();
-        //     } catch (error) {}
-        //     // try {
-        //     //     return new ActiveXObject('Msxml2.XMLHTTP');
-        //     // } catch (error) {}
-        //     // try {
-        //     //     return new ActiveXObject('Microsoft.XMLHTTP');
-        //     // } catch (error) {}
-        //
-        //     throw new Error('Could not create HTTP request object.');
-        // };
-
-        const searchURL = `https://en.wikipedia.org/wiki/${question
-            .trim()
-            .toLowerCase()
-            .replace(/(^\w)/g, (m: string) => m.toUpperCase())
-            .replace(' ', '_')}`;
-
-        // const request = makeHttpObject();
-        // request.open('GET', searchURL, true);
-        // request.send(null);
-        // request.onreadystatechange = () => {
-        //     if (request.readyState === 4) console.log(request.responseText);
-        // };
-        return searchURL;
-    };
-
     const inputBoxStyle = { outline: '1px solid black', width: '30%' };
     return (
         <div>
@@ -143,7 +113,11 @@ const QuestionSearch = () => {
                                     <div style={{ float: 'left' }}>
                                         Interview questions:{' '}
                                         {job.interviewQuestions.map((question: string) => {
-                                            const link = getQuestionLink(question);
+                                            const link = `https://www.google.com/search?q=${question.replaceAll(
+                                                ' ',
+                                                '+'
+                                            )}`;
+
                                             return (
                                                 <li>
                                                     <a href={link}>{question}</a>
