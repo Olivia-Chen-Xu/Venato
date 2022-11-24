@@ -109,8 +109,9 @@ export default function Kanban() {
         setModalOpen(true);
     };
 
-    const handleJobView = (job) => {
+    const handleJobView = (job, idx) => {
         setIsEdit(true);
+        setIndex(idx);
         setCurrentJob(job);
         setModalOpen(true);
     };
@@ -162,7 +163,7 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
-                res.data.forEach(job => newState[job.stage].push({ ...job, id: job.id }));
+                res.data.forEach((job) => newState[job.stage].push({ ...job, id: job.id }));
                 setState(newState);
                 setLoading(false);
             });
@@ -258,7 +259,7 @@ export default function Kanban() {
                                             {...provided.droppableProps}
                                         >
                                             {el.map((job, index) => (
-                                                <div onClick={() => handleJobView(job)}>
+                                                <div onClick={() => handleJobView(job, ind)}>
                                                     <Draggable
                                                         key={job.id}
                                                         draggableId={job.id}

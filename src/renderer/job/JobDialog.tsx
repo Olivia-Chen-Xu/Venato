@@ -280,11 +280,17 @@ export default function JobDialog({
         await httpsCallable(
             getFunctions(),
             functionName
-        )(params).then(() => {
+        )(params).then((res) => {
             if (setState === false) {
                 CalendarState.updateJob(job);
             } else {
-                newState[index] = [job, ...state[index]];
+                if (isEdit) {
+                    //console.log(index);
+                    newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
+                } else {
+                    newState[index] = [{ ...job, id: res.data }, ...state[index]];
+                }
+
                 setState(newState);
             }
         });
