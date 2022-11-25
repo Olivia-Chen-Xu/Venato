@@ -4,6 +4,7 @@ import { useAsync } from "react-async-hook";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { CircularProgress } from "@mui/material";
 import CalendarState from '../calendar/context/CalendarState';
+import dayjs from "dayjs";
 
 export default function Homepage() {
     const nav = useNavigate();
@@ -27,6 +28,7 @@ export default function Homepage() {
     const taskDates = Object.entries(CalendarState.events)
         .map((elem) => elem[0])
         .sort()
+        .filter((e) => e >= dayjs().format('YY-MM-DD'))
         .slice(0, 3);
     const recent = [
         ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
