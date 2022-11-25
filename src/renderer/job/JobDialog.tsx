@@ -155,7 +155,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
 
     const dateToString = (date: string) => {
         const parts = date.split('-');
-        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + parts[2];
+        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + (parts[2] * 1).toString();
     };
 
     return (
@@ -226,6 +226,17 @@ const Questions = ({ value, index, job, setJob }) => {
             <br></br>
 
             {job.interviewQuestions &&
+                /* job.interviewQuestions.map((question: string) => (
+                    <li>
+                        <a
+                            href={`https://www.google.com/search?q=${question.replaceAll(
+                                ' ',
+                                '+'
+                            )}`}
+                        >
+                            {question}
+                        </a>
+                    </li> */
                 job.interviewQuestions.map((q) => (
                     <div style={{ marginBottom: 10 }}>
                         <TextField
@@ -362,7 +373,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                 CalendarState.updateJob(job);
             } else {
                 if (isEdit) {
-                    //console.log(index);
+                    // console.log(index);
                     newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
                 } else {
                     newState[index] = [{ ...job, id: res.data }, ...state[index]];

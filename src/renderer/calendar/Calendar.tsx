@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -6,6 +6,7 @@ import { CircularProgress } from '@mui/material';
 import Month from './components/Month';
 import CalendarState from './context/CalendarState';
 import JobDialog from '../job/JobDialog';
+import taskLine from '../../../assets/task-line.png';
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -53,6 +54,7 @@ const Calendar = () => {
     const taskDates = Object.entries(CalendarState.events)
         .map((elem) => elem[0])
         .sort()
+        .filter((e) => e >= dayjs().format('YY-MM-DD'))
         .slice(0, 3);
     const recent = [
         ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
@@ -61,7 +63,7 @@ const Calendar = () => {
     ].slice(0, 3);
     const formatDate = (date) => {
         const split = date.split('-');
-        return `${split[1] === '11' ? 'November' : 'December'} ${(split[2] * 1).toString()}`;
+        return `${split[1] === '11' ? 'Nov. ' : 'Dec. '} ${(split[2] * 1).toString()}`;
     };
 
     return (
@@ -78,48 +80,117 @@ const Calendar = () => {
                 />
             )}
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
-            <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
+            <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[0].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[0].title}</text>
-                    {CalendarState.jobs[recent[0].id].position} |{' '}
-                    {CalendarState.jobs[recent[0].id].company}
-                    <br />
-                    {formatDate(recent[0].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[0].title}</span>
+                        </h1>
+                    </div>
+
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[0].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[0].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[0].id].company}
+                        </h1>
+                    </div>
                 </div>
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[1].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[1].title}</text>
-                    {CalendarState.jobs[recent[1].id].position} |{' '}
-                    {CalendarState.jobs[recent[1].id].company}
-                    <br />
-                    {formatDate(recent[1].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[1].title}</span>
+                        </h1>
+                    </div>
+
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[1].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[1].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[1].id].company}
+                        </h1>
+                    </div>
                 </div>
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[2].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[2].title}</text>
-                    {CalendarState.jobs[recent[2].id].position} |{' '}
-                    {CalendarState.jobs[recent[2].id].company}
-                    <br />
-                    {formatDate(recent[2].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[2].title}</span>
+                        </h1>
+                    </div>
+
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[2].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[2].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[2].id].company}
+                        </h1>
+                    </div>
                 </div>
             </div>
 
