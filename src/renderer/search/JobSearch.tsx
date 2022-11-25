@@ -7,11 +7,10 @@ import './job.css';
 import bar from '../../../assets/bar.png';
 import Select from '@mui/material/Select';
 import { MenuItem } from '@mui/material';
+import Search from '@mui/icons-material/Search'
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
-
-const jobView = (job: object) => {
-    return <h1>TEST</h1>;
-};
+import TextField from '@mui/material/TextField';
 
 const SearchBar = () => {
     let elem;
@@ -22,14 +21,15 @@ const SearchBar = () => {
     const [isJobSearch, setIsJobSearch] = useState<boolean>(true);
     const [errMsg, setErrMsg] = useState<string>('');
     const [currJob, setcurrJob] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
-    const handleJob = (job: object) => {
-        setcurrJob(job);
-        elem = jobView(job);
-        console.log(currJob);
-    };
+
+    function handleLoad() {
+        setLoading(true);
+        handleSearch();
+    }
 
     const handleSearch = async () => {
         if (
@@ -38,6 +38,7 @@ const SearchBar = () => {
             (!isJobSearch || (isJobSearch && location === ''))
         ) {
             setErrMsg('Please enter a position, company, or location');
+            setLoading(false);
             return;
         }
 
@@ -47,8 +48,9 @@ const SearchBar = () => {
         )(isJobSearch ? { company, position, location } : { company, position });
 
         setJobs(result.data);
+        setcurrJob(result.data[0]);
         setErrMsg('');
-        document.getElementById('top'),
+        setLoading(false);
         console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
     };
 
@@ -61,150 +63,164 @@ const SearchBar = () => {
             </div>
             {companies.result && locations.result && (
                 <div>
-                    <div className="flex flex-1 drop-shadow-xl">
-                        <div>
-                            <label htmlFor="position">
-                                <input
-                                    id="position"
-                                    type="email"
-                                    name="email"
-                                    value={position}
-                                    placeholder="Position"
-                                    onChange={(e) => {
-                                        setPosition(e.target.value);
-                                    }}
-                                />
-                            </label>
+                    <div className="grid place-content-center">
+                        <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
+                            <div>
+                                <label htmlFor="position">
+                                    <input
+                                        id="position"
+                                        type="email"
+                                        name="email"
+                                        // value={position}
+                                        placeholder="Position"
+                                        onChange={(e) => {
+                                            setPosition(e.target.value);
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                            <div>
+                                <label htmlFor="company">
+                                    <select
+                                        id="company"
+                                        name="company"
+                                        select
+                                        label="Company"
+                                        value={company}
+                                        onChange={(e) => setCompany(e.target.value)}
+                                    >
+                                        <option value="" selected>
+                                            Company
+                                        </option>
+                                        {companies.result.data.map((c) => (
+                                            <option value={c}>{c}</option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+                            <div>
+                                <label htmlFor="location">
+                                    <select
+                                        select
+                                        sx={{
+                                            height: 20
+                                        }}
+                                        id="location"
+                                        name="location"
+                                        label="Location"
+                                        value={location}
+                                        onChange={(e) => setLocation(e.target.value)}
+                                    >
+                                        <option value="" selected>
+                                            Location
+                                        </option>
+                                        {locations.result.data.map((c) => (
+                                            <option value={c}>{c}</option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+                            <div className='h-full border border-black ml-2'>
+                            <LoadingButton
+                                onClick={handleLoad}
+                                variant="contained"
+                                loading={loading}
+                                disableElevation
+                                size="medium"
+                                sx={{
+                                    height: '100%'
+                                }}
+                                endIcon={<Search />}
+                            >
+                                {' '}
+                                Search
+                            </LoadingButton>
                         </div>
-                        <div>
-                            <label htmlFor="company">
-                                <Select
-                                    id='company'
-                                    name="company"
-                                    value = {company}
-                                    onChange={(e) => setCompany(e.target.value)}
-                                >
-                                    <MenuItem value="" selected>
-                                        Company
-                                    </MenuItem>
-                                    {companies.result.data.map((c) => (
-                                        <MenuItem value={c}>{c}</MenuItem>
-                                    ))}
-                                </Select>
-                            </label>
                         </div>
-                        <div>
-                            <label htmlFor="location">
-                                <Select
-                                    id='location'
-                                    name="location"
-                                    value = {location}
-                                    onChange={(e) => setLocation(e.target.value)}
-                                >
-                                    <MenuItem value="" selected>
-                                        Location
-                                    </MenuItem>
-                                    {locations.result.data.map((c) => (
-                                        <MenuItem value={c}>{c}</MenuItem>
-                                    ))}
-                                </Select>
-                            </label>
-                        </div>
-                        <Button variant='contained'> Search
-
-                        </Button>
                     </div>
 
-                    <button type="submit" onClick={handleSearch}>
-                        Search
-                    </button>
                     <br />
                     {errMsg}
                     <br />
 
-                    <div id="search" className="w-full flex flex-1">
+                    <div className="w-full flex flex-1">
                         <div id="res">
                             {jobs.map((job: object, index: number) => {
                                 return (
-                                        <div
-                                            id="job"
-                                            onClick={() => handleJob(job)}
-                                            className="my-10 rounded-2xl text-white"
-                                        >
-                                            <div id="title">
-                                                <h1>
-                                                    <span className="font-bold text-xl">
-                                                        {' '}
-                                                        {`${job.position}`}
-                                                    </span>
-                                                </h1>
-                                            </div>
-                                            <img
-                                                src={bar}
-                                                alt=""
-                                                className="w-full"
-                                            />
-
-                                            <div className="mt-3">
-                                                <h1 className="text-lg align-middle">
-                                                    <span className="material-icons-outlined">
-                                                        alternate_email
-                                                    </span> {' '}
-                                                    {`${job.company}`}
-                                                </h1>
-                                            </div>
-                                            <div className="mt-1">
-                                                <h1 className="text-lg align-middle">
-                                                    <span className="material-icons-outlined">
-                                                        location_on
-                                                    </span>{' '}
-                                                    {`${job.location}`}
-                                                </h1>
-                                            </div>
+                                    <div
+                                        id="job"
+                                        onClick={() => setcurrJob(job)}
+                                        className="my-10 rounded-2xl text-white"
+                                    >
+                                        <div id="title">
+                                            <h1>
+                                                <span className="font-bold text-xl">
+                                                    {' '}
+                                                    {`${job.position}`}
+                                                </span>
+                                            </h1>
                                         </div>
+                                        <img src={bar} alt="" className="w-full" />
+
+                                        <div className="mt-3">
+                                            <h1 className="text-lg align-middle">
+                                                <span className="material-icons-outlined">
+                                                    alternate_email
+                                                </span>{' '}
+                                                {`${job.company}`}
+                                            </h1>
+                                        </div>
+                                        <div className="mt-1">
+                                            <h1 className="text-lg align-middle">
+                                                <span className="material-icons-outlined">
+                                                    location_on
+                                                </span>{' '}
+                                                {`${job.location}`}
+                                            </h1>
+                                        </div>
+                                    </div>
                                 );
                             })}
                         </div>
-
-                        <div id="top" className="w-full">
-                            {elem}
-                            <div className="mt-3 ml-5 mr-5 text-white">
-                                <h1 className="text-2xl font-bold mb-1">Job title</h1>
-                                <img src={bar} alt="" className="w-full" />
-                                <div className="flex mb-2">
-                                    <div className="w-full text-xl">
-                                        <h3>
-                                            <span className="mt-1 material-icons-outlined">
-                                                alternate_email
-                                            </span>{' '}
-                                            Company
-                                        </h3>
-                                        <h3>
-                                            {' '}
-                                            <span className="material-icons-outlined">
-                                                location_on
-                                            </span>{' '}
-                                            Location
-                                        </h3>
+                        {currJob && (
+                            <div id="top" className="w-full">
+                                <div className="mt-3 ml-5 mr-5 text-white">
+                                    <h1 className="text-2xl font-bold mb-1">{currJob.position}</h1>
+                                    <img src={bar} alt="" className="w-full" />
+                                    <div className="flex mb-2">
+                                        <div className="w-full text-xl">
+                                            <h3>
+                                                <span className="mt-1 material-icons-outlined">
+                                                    alternate_email
+                                                </span>{' '}
+                                                {currJob.company}
+                                            </h3>
+                                            <h3>
+                                                {' '}
+                                                <span className="material-icons-outlined">
+                                                    location_on
+                                                </span>{' '}
+                                                {currJob.location}
+                                            </h3>
+                                        </div>
+                                        <div className="w-full mt-2">
+                                            <button id="apply" className="px-5 text-xl">
+                                                Apply Now
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="w-full mt-2">
-                                        <button id="apply" className="px-5 text-xl">
-                                            Apply Now
-                                        </button>
+                                </div>
+                                <div id="bottom" className="mt-2 h-full">
+                                    <div className="mt-5">
+                                        <h1 className="ml-5 mr-5">Job Details</h1>
+                                        <br />
+                                        <h2 className="ml-5 mr-5">{currJob.details.description}</h2>
+                                        <br />
+                                        <br />
                                     </div>
-                                    {/* .comapany, .position, .location, .details.description */}
                                 </div>
                             </div>
-                            <div id="bottom" className='h-full'>
-                                <div className="mt-5">
-                                    <h1 className="ml-5 mr-5">Job Details</h1>
-                                    <br />
-                                    <h2 className="ml-5 mr-5">Job Description</h2>
-                                    <br />
-                                    <br />
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             )}

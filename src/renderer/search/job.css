@@ -29,6 +29,7 @@
     background-color: #8080ae;
     margin-left: 5rem;
     padding: 1.25rem;
+    cursor: pointer;
 }
 
 #results {
@@ -43,6 +44,7 @@
     padding-right: 3rem;
     flex: end;
     background-color: white;
+    border-left: 1px solid gray;
 }
 
 #location {
@@ -50,22 +52,21 @@
     padding-bottom: 1.25rem;
     padding-left: 0.25rem;
     padding-right: 1.25rem;
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
-    margin-right: 2.5rem;
+    border-left: 1px solid gray;
+
     background-color: white;
 }
 
 #position {
-    margin-left: 6rem;
     padding-top: 1.25rem;
     padding-left: 0.25rem;
-    padding-bottom: 1.1rem;
-    padding-right: 40vw;
+    padding-bottom: 1rem;
+    padding-right: 20vw;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
+    background-color: white;
 }
 
 #search {
-    background-color: white;
+    border-radius: 16px;
 }
