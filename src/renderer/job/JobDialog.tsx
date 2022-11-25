@@ -40,7 +40,7 @@ const Details = ({ value, index, job, setJob }) => {
         >
             <Input
                 className="focus-only"
-                placeholder="job title"
+                placeholder="Job Title"
                 value={job.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
@@ -49,7 +49,7 @@ const Details = ({ value, index, job, setJob }) => {
             ></Input>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                    placeholder="company"
+                    placeholder="Company"
                     style={styles.Company}
                     value={job.company}
                     onChange={(e) => {
@@ -62,7 +62,7 @@ const Details = ({ value, index, job, setJob }) => {
                     }
                 />
                 <Input
-                    placeholder="location"
+                    placeholder="Location"
                     value={job.location}
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -76,7 +76,7 @@ const Details = ({ value, index, job, setJob }) => {
                 />
             </div>
             <TextField
-                label="job description"
+                label="Job Description"
                 style={styles.jobDescription}
                 multiline
                 rows={4}
@@ -90,7 +90,7 @@ const Details = ({ value, index, job, setJob }) => {
                 }}
             />
             <TextField
-                label="application link"
+                label="Application Link"
                 value={job.details.url}
                 style={styles.applicationLink}
                 onChange={(e) => {
@@ -110,7 +110,7 @@ const Notes = ({ value, index, job, setJob }) => {
         <div hidden={value !== index}>
             <Input
                 className="focus-only"
-                placeholder="job title"
+                placeholder="Job Title"
                 value={job.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
@@ -119,7 +119,7 @@ const Notes = ({ value, index, job, setJob }) => {
             ></Input>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                    placeholder="company"
+                    placeholder="Company"
                     style={styles.Company}
                     value={job.company}
                     onChange={(e) => {
@@ -132,7 +132,7 @@ const Notes = ({ value, index, job, setJob }) => {
                     }
                 />
                 <Input
-                    placeholder="location"
+                    placeholder="Location"
                     value={job.location}
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -146,7 +146,7 @@ const Notes = ({ value, index, job, setJob }) => {
                 />
             </div>
             <TextField
-                label="notes"
+                label="Notes"
                 rows={4}
                 value={job.notes}
                 onChange={(e) => {
@@ -182,7 +182,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
             <div hidden={value !== index}>
                 <Input
                     className="focus-only"
-                    placeholder="job title"
+                    placeholder="Job Title"
                     value={job.position}
                     onChange={(e) => {
                         setJob({ ...job, position: e.target.value });
@@ -191,7 +191,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
                 ></Input>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Input
-                        placeholder="company"
+                        placeholder="Company"
                         style={styles.deadlineCompany}
                         value={job.company}
                         onChange={(e) => {
@@ -204,7 +204,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
                         }
                     />
                     <Input
-                        placeholder="location"
+                        placeholder="Location"
                         value={job.location}
                         onChange={(e) => {
                             setJob({ ...job, location: e.target.value });
@@ -263,7 +263,7 @@ const Questions = ({ value, index, job, setJob }) => {
         <div hidden={value !== index}>
             <Input
                 className="focus-only"
-                placeholder="job title"
+                placeholder="Job Title"
                 value={job.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
@@ -272,7 +272,7 @@ const Questions = ({ value, index, job, setJob }) => {
             ></Input>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                    placeholder="company"
+                    placeholder="Company"
                     style={styles.deadlineCompany}
                     value={job.company}
                     onChange={(e) => {
@@ -285,7 +285,7 @@ const Questions = ({ value, index, job, setJob }) => {
                     }
                 />
                 <Input
-                    placeholder="location"
+                    placeholder="Location"
                     value={job.location}
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -315,7 +315,7 @@ const Questions = ({ value, index, job, setJob }) => {
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent style={{ display: 'flex' }}>
                     <TextField
-                        label="question"
+                        label="Question"
                         value={newQuestion}
                         onChange={(e) => {
                             setNewQuestion(e.target.value);
@@ -346,7 +346,7 @@ const Questions = ({ value, index, job, setJob }) => {
                 {job.interviewQuestions &&
                     job.interviewQuestions.map((q) => (
                             <TextField
-                               label="interview questions"
+                               label="Interview Questions"
                                style={styles.interviewQuestions}
                                multiline
                                rows={4}
@@ -379,7 +379,7 @@ const Contacts = ({ value, index, job, setJob }) => {
         <div hidden={value !== index}>
             <Input
                 className="focus-only"
-                placeholder="job title"
+                placeholder="Job Title"
                 value={job.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
@@ -388,7 +388,7 @@ const Contacts = ({ value, index, job, setJob }) => {
             ></Input>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                    placeholder="company"
+                    placeholder="Company"
                     style={styles.deadlineCompany}
                     value={job.company}
                     onChange={(e) => {
@@ -401,7 +401,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                     }
                 />
                 <Input
-                    placeholder="location"
+                    placeholder="Location"
                     value={job.location}
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -415,7 +415,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                 />
             </div>
             <TextField
-                label="job description"
+                label="Job Description"
                 style={styles.jobDescription}
                 multiline
                 rows={4}
@@ -444,7 +444,7 @@ const Contacts = ({ value, index, job, setJob }) => {
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent style={{ display: 'flex' }}>
                     <TextField
-                        label="What was their LinkedIn"
+                        label="LinkedIn"
                         value={newContact}
                         onChange={(e) => {
                             setNewContact(e.target.value);
@@ -463,7 +463,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                     job.contacts.map((contact) => (
 
                         <TextField
-                               label="contacts"
+                               label="Contacts"
                                style={styles.contactsBox}
                                multiline
                                rows={4}
@@ -559,8 +559,8 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                         onClick={addNewJob}
                         style={{
                             position: 'absolute',
-                            right: 5,
-                            top: 20,
+                            right: 90,
+                            top: 10,
                             padding: '14px 12px 14px 14px',
                             gap: '10px',
                             width: '25px',
@@ -642,6 +642,7 @@ const styles = {
         fontSize: '36px',
         lineHeight: '44px',
         color: '#676767',
+        
     },
 
     jobDescription: {
@@ -739,7 +740,7 @@ const styles = {
         width: '250px',
         height: '120px',
         left: '142px',
-        top: '240px',
+        top: '260px',
         border: 'none',
         outline: 'none',
         color: '#676767',
