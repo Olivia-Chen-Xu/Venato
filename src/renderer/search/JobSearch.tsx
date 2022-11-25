@@ -2,143 +2,214 @@ import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
 import { CircularProgress } from '@mui/material';
+import '../App.css';
+import './job.css';
+import bar from '../../../assets/bar.png';
+import Select from '@mui/material/Select';
+import { MenuItem } from '@mui/material';
+import Button from '@mui/material/Button';
 
-const JobSearch = () => {
-    const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
-    const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
+const jobView = (job: object) => {
+    return <h1>TEST</h1>;
+};
 
+const SearchBar = () => {
+    let elem;
     const [company, setCompany] = useState<string>('');
     const [position, setPosition] = useState<string>('');
     const [location, setLocation] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [message, setMessage] = useState<string>('');
+    const [isJobSearch, setIsJobSearch] = useState<boolean>(true);
+    const [errMsg, setErrMsg] = useState<string>('');
+    const [currJob, setcurrJob] = useState<any>(null);
+
+    const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
+    const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
+    const handleJob = (job: object) => {
+        setcurrJob(job);
+        elem = jobView(job);
+        console.log(currJob);
+    };
 
     const handleSearch = async () => {
-        if ((position?.trim()?.length || 0) === 0 && company === '' && location === '') {
-            setMessage('Please enter a position, company, or location');
+        if (
+            (position?.trim()?.length || 0) === 0 &&
+            company === '' &&
+            (!isJobSearch || (isJobSearch && location === ''))
+        ) {
+            setErrMsg('Please enter a position, company, or location');
             return;
         }
 
-        setMessage('Loading jobs...');
         const result = await httpsCallable(
             getFunctions(),
             'jobSearch'
-        )({ company, position, location });
+        )(isJobSearch ? { company, position, location } : { company, position });
 
         setJobs(result.data);
-        setMessage('');
+        setErrMsg('');
+        document.getElementById('top'),
         console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
     };
 
-    const clearSearch = () => {
-        setCompany('');
-        setPosition('');
-        setLocation('');
-        setJobs([]);
-        setMessage('');
-    };
-
     return (
-        <div>
-            {(companies.error || locations.error || companies.loading || locations.loading) && (
-                <CircularProgress />
-            )}
+        <div className="ml-5 mr-5">
+            <div className="grid place-content-center">
+                {(companies.error || locations.error || companies.loading || locations.loading) && (
+                    <CircularProgress></CircularProgress>
+                )}
+            </div>
             {companies.result && locations.result && (
                 <div>
-                    <br />
-                    Job search
-                    <br />
-                    <label htmlFor="position">
-                        Position
-                        <input
-                            type="email"
-                            name="email"
-                            value={position}
-                            placeholder=""
-                            style={{ outline: '1px solid black', width: '30%' }}
-                            onChange={(e) => {
-                                setPosition(e.target.value);
-                            }}
-                        />
-                    </label>
-                    <label htmlFor="company">
-                        Company: {' '}
-                        <select
-                            name="company"
-                            onChange={(e) => setCompany(e.target.value)}
-                            style={{ outline: '1px solid black', borderRadius: '2px' }}
-                        >
-                            <option value="" />
-                            {companies.result.data.map((c) => (
-                                <option value={c}>{c}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label htmlFor="location">
-                        Location: {' '}
-                        <select
-                            name="location"
-                            onChange={(e) => setLocation(e.target.value)}
-                            style={{ outline: '1px solid black', borderRadius: '2px' }}
-                        >
-                            <option value="" />
-                            {locations.result.data.map((c) => (
-                                <option value={c}>{c}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <button
-                        type="submit"
-                        onClick={handleSearch}
-                        style={{ outline: '1px solid black', borderRadius: '2px' }}
-                    >
+                    <div className="flex flex-1 drop-shadow-xl">
+                        <div>
+                            <label htmlFor="position">
+                                <input
+                                    id="position"
+                                    type="email"
+                                    name="email"
+                                    value={position}
+                                    placeholder="Position"
+                                    onChange={(e) => {
+                                        setPosition(e.target.value);
+                                    }}
+                                />
+                            </label>
+                        </div>
+                        <div>
+                            <label htmlFor="company">
+                                <Select
+                                    id='company'
+                                    name="company"
+                                    value = {company}
+                                    onChange={(e) => setCompany(e.target.value)}
+                                >
+                                    <MenuItem value="" selected>
+                                        Company
+                                    </MenuItem>
+                                    {companies.result.data.map((c) => (
+                                        <MenuItem value={c}>{c}</MenuItem>
+                                    ))}
+                                </Select>
+                            </label>
+                        </div>
+                        <div>
+                            <label htmlFor="location">
+                                <Select
+                                    id='location'
+                                    name="location"
+                                    value = {location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                >
+                                    <MenuItem value="" selected>
+                                        Location
+                                    </MenuItem>
+                                    {locations.result.data.map((c) => (
+                                        <MenuItem value={c}>{c}</MenuItem>
+                                    ))}
+                                </Select>
+                            </label>
+                        </div>
+                        <Button variant='contained'> Search
+
+                        </Button>
+                    </div>
+
+                    <button type="submit" onClick={handleSearch}>
                         Search
                     </button>
-                    <button
-                        type="submit"
-                        onClick={clearSearch}
-                        style={{
-                            outline: '1px solid black',
-                            borderRadius: '2px',
-                            marginLeft: '1em',
-                        }}
-                    >
-                        Clear search
-                    </button>
                     <br />
-                    {message}
+                    {errMsg}
                     <br />
-                    {jobs.map((job: object, index: number) => {
-                        return (
-                            <div>
-                                <h4>{`Job #${index + 1}:`}</h4>
-                                {`Company: ${job.company}`}
-                                <br />
-                                {`Position: ${job.position}`}
-                                <br />
-                                {`Location: ${job.location}`}
-                                <br />
-                                {`Description: ${job.details.description}`}
-                                <br />
-                                URL: <a href={job.details.url}>{job.details.url}</a>
-                                <br />
-                                <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
-                                    Contacts:{' '}
-                                    {job.contacts.map((contact) => (
-                                        <div>
-                                            <li><a href={contact}>{contact}</a></li>
+
+                    <div id="search" className="w-full flex flex-1">
+                        <div id="res">
+                            {jobs.map((job: object, index: number) => {
+                                return (
+                                        <div
+                                            id="job"
+                                            onClick={() => handleJob(job)}
+                                            className="my-10 rounded-2xl text-white"
+                                        >
+                                            <div id="title">
+                                                <h1>
+                                                    <span className="font-bold text-xl">
+                                                        {' '}
+                                                        {`${job.position}`}
+                                                    </span>
+                                                </h1>
+                                            </div>
+                                            <img
+                                                src={bar}
+                                                alt=""
+                                                className="w-full"
+                                            />
+
+                                            <div className="mt-3">
+                                                <h1 className="text-lg align-middle">
+                                                    <span className="material-icons-outlined">
+                                                        alternate_email
+                                                    </span> {' '}
+                                                    {`${job.company}`}
+                                                </h1>
+                                            </div>
+                                            <div className="mt-1">
+                                                <h1 className="text-lg align-middle">
+                                                    <span className="material-icons-outlined">
+                                                        location_on
+                                                    </span>{' '}
+                                                    {`${job.location}`}
+                                                </h1>
+                                            </div>
                                         </div>
-                                    ))}
+                                );
+                            })}
+                        </div>
+
+                        <div id="top" className="w-full">
+                            {elem}
+                            <div className="mt-3 ml-5 mr-5 text-white">
+                                <h1 className="text-2xl font-bold mb-1">Job title</h1>
+                                <img src={bar} alt="" className="w-full" />
+                                <div className="flex mb-2">
+                                    <div className="w-full text-xl">
+                                        <h3>
+                                            <span className="mt-1 material-icons-outlined">
+                                                alternate_email
+                                            </span>{' '}
+                                            Company
+                                        </h3>
+                                        <h3>
+                                            {' '}
+                                            <span className="material-icons-outlined">
+                                                location_on
+                                            </span>{' '}
+                                            Location
+                                        </h3>
+                                    </div>
+                                    <div className="w-full mt-2">
+                                        <button id="apply" className="px-5 text-xl">
+                                            Apply Now
+                                        </button>
+                                    </div>
+                                    {/* .comapany, .position, .location, .details.description */}
                                 </div>
-                                <br />
-                                <text style={{ color: "white" }}>.</text>
                             </div>
-                        );
-                    })}
+                            <div id="bottom" className='h-full'>
+                                <div className="mt-5">
+                                    <h1 className="ml-5 mr-5">Job Details</h1>
+                                    <br />
+                                    <h2 className="ml-5 mr-5">Job Description</h2>
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
     );
 };
 
-export default JobSearch;
+export default SearchBar;
