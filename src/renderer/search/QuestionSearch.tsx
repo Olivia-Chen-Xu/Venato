@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
 import { CircularProgress } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Search from '@mui/icons-material/Search';
 
 const QuestionSearch = () => {
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
@@ -11,10 +13,18 @@ const QuestionSearch = () => {
     const [position, setPosition] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
     const [message, setMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+
+
+    function handleLoad() {
+        setLoading(true);
+        handleSearch();
+    }
 
     const handleSearch = async () => {
         if ((position?.trim()?.length || 0) === 0 && company === '') {
             setMessage('Please enter a position or company');
+            setLoading(false);
             return;
         }
 
@@ -22,6 +32,7 @@ const QuestionSearch = () => {
         const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
 
         setJobs(result.data);
+        setLoading(false);
         setMessage('');
         console.log(`Company: '${company}' Position: '${position}'`);
     };
@@ -41,6 +52,69 @@ const QuestionSearch = () => {
             )}
             {companies.result && locations.result && (
                 <div>
+                <div className="grid place-content-center">
+                <h1 className="grid place-content-center text-2xl mb-1">Question Search</h1>
+                <div className='flex flex-1'>
+                <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
+                    <div>
+                        <label htmlFor="position">
+                            <input
+                                id="position"
+                                type="email"
+                                name="email"
+                                // value={position}
+                                placeholder="Position"
+                                onChange={(e) => {
+                                    setPosition(e.target.value);
+                                }}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label htmlFor="company">
+                            <select
+                                id="company"
+                                name="company"
+                                select
+                                label="Company"
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                            >
+                                <option value="" selected>
+                                    Company
+                                </option>
+                                {companies.result.data.map((c) => (
+                                    <option value={c}>{c}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    </div>
+                    <div className="h-full bg-transparent align-middle">
+                        <LoadingButton
+                            id="searchBtn"
+                            onClick={handleLoad}
+                            variant="contained"
+                            loading={loading}
+                            disableElevation
+                            size="small"
+                            sx={{
+                                height: '80%',
+                            }}
+                            endIcon={<Search />}
+                        >
+                            {' '}
+                            Search
+                        </LoadingButton>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            
+                <div>
+{/*                     
+
                     <br />
                     Interview question search
                     <br />
@@ -93,9 +167,11 @@ const QuestionSearch = () => {
                         }}
                     >
                         Clear search
-                    </button>
+                    </button> */}
                     <br />
+                    <div className='grid place-content-center'>
                     {message}
+            </div>
                     <br />
                     {jobs.map((job: object, index: number) => {
                         return (
@@ -142,8 +218,11 @@ const QuestionSearch = () => {
                         );
                     })}
                 </div>
+                </div>
             )}
         </div>
+    
+        
     );
 };
 

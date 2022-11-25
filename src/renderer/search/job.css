@@ -43,6 +43,7 @@
     padding-right: 1.25rem;
     padding-right: 3rem;
     flex: end;
+    outline: none;
     background-color: white;
     border-left: 1px solid gray;
 }
@@ -53,7 +54,7 @@
     padding-left: 0.25rem;
     padding-right: 1.25rem;
     border-left: 1px solid gray;
-
+    outline: none;
     background-color: white;
 }
 
@@ -65,8 +66,14 @@
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: white;
+    outline: none;
 }
 
 #search {
     border-radius: 16px;
+}
+
+#searchBtn {
+    margin-left: 1.25rem;
+    margin-top: 5%;
 }

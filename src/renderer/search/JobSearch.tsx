@@ -7,7 +7,7 @@ import './job.css';
 import bar from '../../../assets/bar.png';
 import Select from '@mui/material/Select';
 import { MenuItem } from '@mui/material';
-import Search from '@mui/icons-material/Search'
+import Search from '@mui/icons-material/Search';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -64,6 +64,8 @@ const SearchBar = () => {
             {companies.result && locations.result && (
                 <div>
                     <div className="grid place-content-center">
+                        <h1 className="grid place-content-center text-2xl mb-1">Job Search</h1>
+                        <div className='flex flex-1'>
                         <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
                             <div>
                                 <label htmlFor="position">
@@ -103,7 +105,7 @@ const SearchBar = () => {
                                     <select
                                         select
                                         sx={{
-                                            height: 20
+                                            height: 20,
                                         }}
                                         id="location"
                                         name="location"
@@ -120,27 +122,31 @@ const SearchBar = () => {
                                     </select>
                                 </label>
                             </div>
-                            <div className='h-full border border-black ml-2'>
-                            <LoadingButton
-                                onClick={handleLoad}
-                                variant="contained"
-                                loading={loading}
-                                disableElevation
-                                size="medium"
-                                sx={{
-                                    height: '100%'
-                                }}
-                                endIcon={<Search />}
-                            >
-                                {' '}
-                                Search
-                            </LoadingButton>
-                        </div>
+                            </div>
+                            <div className="h-full bg-transparent align-middle">
+                                <LoadingButton
+                                    id="searchBtn"
+                                    onClick={handleLoad}
+                                    variant="contained"
+                                    loading={loading}
+                                    disableElevation
+                                    size="small"
+                                    sx={{
+                                        height: '80%',
+                                    }}
+                                    endIcon={<Search />}
+                                >
+                                    {' '}
+                                    Search
+                                </LoadingButton>
+                            </div>
                         </div>
                     </div>
 
                     <br />
+                    <div className='grid place-content-center'>
                     {errMsg}
+                    </div>
                     <br />
 
                     <div className="w-full flex flex-1">
