@@ -53,6 +53,7 @@ const Calendar = () => {
     const taskDates = Object.entries(CalendarState.events)
         .map((elem) => elem[0])
         .sort()
+        .filter((e) => e >= dayjs().format('YY-MM-DD'))
         .slice(0, 3);
     const recent = [
         ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
