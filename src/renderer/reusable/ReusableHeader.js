@@ -11,11 +11,11 @@ export default function ReusableHeader() {
                 <Profile />
             </Drawer>
             <div className="fixed top-0 w-full backdrop-blur-xl drop-shadow-2xl border-b-5 z-50">
-                <header className="mt-3">
+                <header className="mt-3 text-neutral-500">
                     <img src={logo} alt="" className="float-left ml-3 w-28" />
                     {/* Insert the search bar here */}
                     <button onClick={() => setIsOpen(true)} className="float-right">
-                        <span className="material-icons-outlined cursor-pointer text-4xl mr-3 ml-5">
+                        <span className="material-icons-outlined cursor-pointer text-4xl mr-3 ml-5 ">
                             account_circle
                         </span>
                     </button>

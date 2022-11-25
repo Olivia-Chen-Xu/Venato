@@ -5,7 +5,7 @@ import CalendarState from '../context/CalendarState';
 const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
-            ? 'bg-blue-600 text-white rounded-full w-7'
+            ? 'bg-[#C8ADD8] text-white rounded-full w-7'
             : '';
     };
 
@@ -31,7 +31,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
                     setIsEdit(true);
                     setOpen(true);
                 }}
-                className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
+                className="bg-200 bg-slate-100 p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate"
             >
                 {evt.title}
             </div>
@@ -64,7 +64,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
                     </p>
                 </header>
                 <div
-                    className="flex-1 cursor-pointer"
+                    className="flex-1 cursor-pointer "
                     onClick={() => {
                         setJob({
                             awaitingResponse: false,

@@ -82,14 +82,14 @@ const Calendar = () => {
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
                 <div
-                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
+                    className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[0].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <div className="ml-5 mt-5">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[0].title}</span>
                         </h1>
@@ -119,14 +119,14 @@ const Calendar = () => {
                     </div>
                 </div>
                 <div
-                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
+                    className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[1].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <div className="ml-5 mt-5">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[1].title}</span>
                         </h1>
@@ -156,14 +156,14 @@ const Calendar = () => {
                     </div>
                 </div>
                 <div
-                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
+                    className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[2].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <div className="ml-5 mt-5">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[2].title}</span>
                         </h1>
@@ -193,10 +193,13 @@ const Calendar = () => {
                     </div>
                 </div>
             </div>
+            <br></br>
+            <br></br>
 
             <h2 className="ml-20 text-2xl">
                 {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
             </h2>
+            <br></br>
             <div className="flex flex-1 mb-10">
                 <button type="button" onClick={() => setMonthIndex(monthIndex - 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">

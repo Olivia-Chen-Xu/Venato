@@ -159,7 +159,13 @@ const Deadlines = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <div hidden={value !== index}>
+        <div
+            style={{
+                flexDirection: 'column',
+                display: value == index ? 'flex' : 'none',
+                height: '100%',
+            }}
+        >
             <Headings job={job} setJob={setJob}></Headings>
             <br></br>
             <Button variant="contained" onClick={addDdl} startIcon={<AddCircleOutline />}>
@@ -188,7 +194,13 @@ const Questions = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <div hidden={value !== index}>
+        <div
+            style={{
+                flexDirection: 'column',
+                display: value == index ? 'flex' : 'none',
+                height: '100%',
+            }}
+        >
             <Headings job={job} setJob={setJob}></Headings>
             <br></br>
             <Button
@@ -270,7 +282,13 @@ const Contacts = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <div hidden={value !== index}>
+        <div
+            style={{
+                flexDirection: 'column',
+                display: value == index ? 'flex' : 'none',
+                height: '100%',
+            }}
+        >
             <Headings job={job} setJob={setJob}></Headings>
             <br></br>
             <Button
@@ -403,40 +421,6 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     paddingTop: 30,
                 }}
             >
-                {loading ? (
-                    <CircularProgress
-                        style={{ position: 'absolute', right: 30 }}
-                    ></CircularProgress>
-                ) : (
-                    <div style={{ position: 'absolute', right: 50, top: 20 }}>
-                        <Button
-                            variant="outlined"
-                            style={{
-                                padding: '14px 12px 14px 14px',
-                                gap: '10px',
-                                height: '25px',
-                                borderRadius: '4px',
-                                marginInlineEnd: 5,
-                            }}
-                        >
-                            <Delete />
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={addNewJob}
-                            style={{
-                                padding: '15px 12px 15px 14px',
-                                gap: '10px',
-                                width: '25px',
-                                height: '25px',
-                                borderRadius: '4px',
-                            }}
-                        >
-                            {isEdit ? 'Save' : 'Add'}
-                        </Button>
-                    </div>
-                )}
-
                 <Tabs
                     orientation="vertical"
                     variant="scrollable"
@@ -491,6 +475,39 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     <Questions value={tabValue} index={3} job={job} setJob={setJob}></Questions>
                     <Contacts value={tabValue} index={4} job={job} setJob={setJob}></Contacts>
                 </div>
+                {loading ? (
+                    <CircularProgress
+                        style={{ position: 'absolute', right: 30 }}
+                    ></CircularProgress>
+                ) : (
+                    <div style={{ position: 'absolute', right: 50, top: 20 }}>
+                        <Button
+                            variant="outlined"
+                            style={{
+                                padding: '14px 12px 14px 14px',
+                                gap: '10px',
+                                height: '25px',
+                                borderRadius: '4px',
+                                marginInlineEnd: 5,
+                            }}
+                        >
+                            <Delete />
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={addNewJob}
+                            style={{
+                                padding: '15px 12px 15px 14px',
+                                gap: '10px',
+                                width: '25px',
+                                height: '25px',
+                                borderRadius: '4px',
+                            }}
+                        >
+                            {isEdit ? 'Save' : 'Add'}
+                        </Button>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

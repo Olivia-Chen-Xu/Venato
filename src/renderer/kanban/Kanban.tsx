@@ -177,6 +177,7 @@ export default function Kanban() {
     return (
         <div
             style={{
+                paddingLeft: 40,
                 display: 'flex',
                 justifyContent: 'center',
                 flexDirection: 'column',
