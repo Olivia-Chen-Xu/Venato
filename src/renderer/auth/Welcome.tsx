@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 import { signin } from './auth-functions';
 import { btnStyle } from './authStyles';
+import logo from '../../../assets/logo.png';
 import generateJobs from '../search/generateJobs';
 
 const Welcome = () => {
@@ -28,7 +29,7 @@ const Welcome = () => {
 
     return (
         <div className="AuthMainDiv">
-            <text className="TopText">Venato</text>
+            <img src={logo} alt="" width={200} />
             <Button
                 variant="contained"
                 color="neutral"
@@ -48,7 +49,7 @@ const Welcome = () => {
             </Button>
 
             <Button variant="contained" color="neutral" style={btnStyle} onClick={bypassSignIn}>
-                Bypass sign-in
+                {'Bypass sign-in (dev only)'}
             </Button>
             <br />
             {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>*/}
