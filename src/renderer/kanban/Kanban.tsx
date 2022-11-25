@@ -109,8 +109,9 @@ export default function Kanban() {
         setModalOpen(true);
     };
 
-    const handleJobView = (job) => {
+    const handleJobView = (job, idx) => {
         setIsEdit(true);
+        setIndex(idx);
         setCurrentJob(job);
         setModalOpen(true);
     };
@@ -162,9 +163,7 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
-                for (const job of res.data) {
-                    newState[job.stage].push({ ...job, id: job.id });
-                }
+                res.data.forEach((job) => newState[job.stage].push({ ...job, id: job.id }));
                 setState(newState);
                 setLoading(false);
             });
@@ -200,13 +199,14 @@ export default function Kanban() {
             </button> */}
             {modalOpen && (
                 <JobDialog
+                    setCurrentJob={setCurrentJob}
                     setOpen={setModalOpen}
                     jobData={currentJob}
                     isEdit={isEdit}
                     index={index}
                     state={state}
                     setState={setState}
-                ></JobDialog>
+                />
             )}
             <h4
                 style={{
@@ -225,7 +225,7 @@ export default function Kanban() {
                 ))} */}
 
                 {loading ? (
-                    <CircularProgress></CircularProgress>
+                    <CircularProgress />
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
                         {state.map((el, ind) => (
@@ -259,7 +259,7 @@ export default function Kanban() {
                                             {...provided.droppableProps}
                                         >
                                             {el.map((job, index) => (
-                                                <div onClick={() => handleJobView(job)}>
+                                                <div onClick={() => handleJobView(job, ind)}>
                                                     <Draggable
                                                         key={job.id}
                                                         draggableId={job.id}

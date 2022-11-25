@@ -6,62 +6,59 @@ export default function ReusableSideBar() {
     const nav = useNavigate();
     return (
         <div className="fixed left-0 h-fit">
-        <div className="mt-10 px-3 py-4 rounded-tr-2xl rounded-br-2xl bg-gradient-to-t from-[#ADADD8] to-[#C8ADD8] material-icons-outlined grid grid-rows-5 gap-y-4 text-white h-1/3">
-            <Tooltip title="Home" placement="right">
-            <button className="material-icons-outlined text-5xl" onClick={() => nav('/home')}>
-                home
-            </button>
-            </Tooltip>
-            <Tooltip title="Kanban" placement="right">
-            
-            <button
-                className="material-icons-outlined text-5xl"
-                onClick={() => {
-                    nav('/kanban');
-                }}
-            >
-                dashboard
-            </button>
-            </Tooltip>
+            <div className="mt-10 px-3 py-6 rounded-tr-2xl rounded-br-2xl bg-gradient-to-t from-[#ADADD8] to-[#C8ADD8] material-icons-outlined grid grid-rows-5 gap-y-6 text-white h-1/3">
+                <Tooltip title="Home" placement="right">
+                    <button
+                        className="material-icons-outlined text-5xl"
+                        onClick={() => nav('/home')}
+                    >
+                        home
+                    </button>
+                </Tooltip>
+                <Tooltip title="Kanban" placement="right">
+                    <button
+                        className="material-icons-outlined text-5xl"
+                        onClick={() => {
+                            nav('/kanban');
+                        }}
+                    >
+                        dashboard
+                    </button>
+                </Tooltip>
 
-            
-            <Tooltip title="Calendar" placement="right">
+                <Tooltip title="Calendar" placement="right">
+                    <button
+                        className="material-icons-outlined text-5xl"
+                        onClick={() => {
+                            nav('/calendar');
+                        }}
+                    >
+                        calendar_month
+                    </button>
+                </Tooltip>
 
-            <button
-                className="material-icons-outlined text-5xl"
-                onClick={() => {
-                    nav('/calendar');
-                }}
-            >
-                calendar_month
-            </button>
-            </Tooltip>
+                <Tooltip title="Interview Questions" placement="right">
+                    <button
+                        className="material-icons-outlined text-5xl"
+                        onClick={() => {
+                            nav('/questions');
+                        }}
+                    >
+                        quiz
+                    </button>
+                </Tooltip>
 
-            <Tooltip title="Interview Questions" placement="right">
-            
-            <button
-                className="material-icons-outlined text-5xl"
-                onClick={() => {
-                    nav('/questions');
-                }}
-            >
-                quiz
-            </button>
-            </Tooltip>
-
-            <Tooltip title="Job Search" placement="right">
-
-            <button
-                className="material-icons-outlined text-5xl"
-                onClick={() => {
-                    nav('/job');
-                }}
-            >
-                travel_explore
-            </button>
-            </Tooltip>
-
-        </div>
+                <Tooltip title="Job Search" placement="right">
+                    <button
+                        className="material-icons-outlined text-5xl"
+                        onClick={() => {
+                            nav('/job');
+                        }}
+                    >
+                        travel_explore
+                    </button>
+                </Tooltip>
+            </div>
         </div>
     );
 }
