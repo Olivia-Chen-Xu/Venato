@@ -119,7 +119,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
 
     const dateToString = (date: string) => {
         const parts = date.split('-');
-        return (parts[0] === '11' ? 'November ' : 'December ') + parts[0];
+        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + parts[2];
     };
 
     return (
