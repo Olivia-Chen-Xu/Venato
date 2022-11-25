@@ -189,7 +189,7 @@ const SearchBar = () => {
                             })}
                         </div>
                         {currJob && (
-                            <div id="top" className="w-full">
+                            <div id="top" className="w-full h-fit">
                                 <div className="mt-3 ml-5 mr-5 text-white">
                                     <h1 className="text-2xl font-bold mb-1">{currJob.position}</h1>
                                     <img src={bar} alt="" className="w-full" />
@@ -216,7 +216,7 @@ const SearchBar = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div id="bottom" className="mt-2 h-full">
+                                <div id="bottom" className="mt-2 h-fit">
                                     <div className="mt-5">
                                         <h1 className="ml-5 mr-5">Job Details</h1>
                                         <br />
