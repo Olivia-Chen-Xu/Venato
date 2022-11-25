@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from "react-async-hook";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress } from '@mui/material';
 import CalendarState from '../calendar/context/CalendarState';
 import dayjs from "dayjs";
 

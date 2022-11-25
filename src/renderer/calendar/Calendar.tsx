@@ -6,6 +6,7 @@ import { CircularProgress } from '@mui/material';
 import Month from './components/Month';
 import CalendarState from './context/CalendarState';
 import JobDialog from '../job/JobDialog';
+import taskLine from '../../../assets/task-line.png';
 
 const getMonth = (month = dayjs().month()) => {
     month = Math.floor(month);
@@ -94,7 +95,17 @@ const Calendar = () => {
                         </h1>
                     </div>
 
-                    <div className="ml-5 mt-8">
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[0].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">schedule</span>{' '}
                             {formatDate(recent[0].date)}
@@ -121,7 +132,17 @@ const Calendar = () => {
                         </h1>
                     </div>
 
-                    <div className="ml-5 mt-8">
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[1].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">schedule</span>{' '}
                             {formatDate(recent[1].date)}
@@ -148,7 +169,17 @@ const Calendar = () => {
                         </h1>
                     </div>
 
-                    <div className="ml-5 mt-8">
+                    <div style={{ marginTop: '4%' }}>
+                        <img src={taskLine} alt="Horizontal divider" />
+                    </div>
+
+                    <div className="ml-5 mt-2">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">work</span>{' '}
+                            {CalendarState.jobs[recent[2].id].position}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">schedule</span>{' '}
                             {formatDate(recent[2].date)}
