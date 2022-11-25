@@ -2,10 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import dayjs from 'dayjs';
 import CalendarState from '../calendar/context/CalendarState';
 import taskLine from '../../../assets/task-line.png';
+import { AddCircleOutline } from '@mui/icons-material';
 
 export default function Homepage() {
     const nav = useNavigate();
@@ -42,13 +43,15 @@ export default function Homepage() {
     };
 
     return (
-        <>
-            <h1 className="text-3xl mt-3">Welcome Back!</h1>
+        <div>
+            <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
 
-            <h1 className="text-xl mt-2 grid place-content-center uppercase">Upcoming Tasks</h1>
+            <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">
+                Upcoming Tasks
+            </h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
-                <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5 mt-5">
+                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[0].title}</span>
                         </h1>
@@ -77,8 +80,8 @@ export default function Homepage() {
                         </h1>
                     </div>
                 </div>
-                <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5 mt-5">
+                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[1].title}</span>
                         </h1>
@@ -107,8 +110,8 @@ export default function Homepage() {
                         </h1>
                     </div>
                 </div>
-                <div className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5 mt-5">
+                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div className="ml-5">
                         <h1>
                             <span className="text-3xl">{recent[2].title}</span>
                         </h1>
@@ -138,10 +141,19 @@ export default function Homepage() {
                     </div>
                 </div>
             </div>
+            <br></br>
+            <br></br>
 
-            <h1 className="text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Recent Boards
+            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
+                Job Boards
             </h1>
+            <br></br>
+            <div className="flex justify-center">
+                <Button color="neutral" variant="contained" startIcon={<AddCircleOutline />}>
+                    Create new board
+                </Button>
+            </div>
+            <br></br>
             <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -174,6 +186,6 @@ export default function Homepage() {
                     </button>
                 </div> */}
             </div>
-        </>
+        </div>
     );
 }
