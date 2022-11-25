@@ -119,7 +119,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
 
     const dateToString = (date: string) => {
         const parts = date.split('-');
-        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + parts[2];
+        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + (parts[2] * 1).toString();
     };
 
     return (
@@ -184,10 +184,17 @@ const Questions = ({ value, index, job, setJob }) => {
                 </DialogContent>
             </Dialog>
             {job.interviewQuestions &&
-                job.interviewQuestions.map((q) => (
-                    <div>
-                        <li>{q}</li>
-                    </div>
+                job.interviewQuestions.map((question: string) => (
+                    <li>
+                        <a
+                            href={`https://www.google.com/search?q=${question.replaceAll(
+                                ' ',
+                                '+'
+                            )}`}
+                        >
+                            {question}
+                        </a>
+                    </li>
                 ))}
         </div>
     );
@@ -285,7 +292,7 @@ export default function JobDialog({
                 CalendarState.updateJob(job);
             } else {
                 if (isEdit) {
-                    //console.log(index);
+                    // console.log(index);
                     newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
                 } else {
                     newState[index] = [{ ...job, id: res.data }, ...state[index]];

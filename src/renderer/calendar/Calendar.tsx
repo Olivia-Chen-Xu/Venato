@@ -63,7 +63,7 @@ const Calendar = () => {
     ].slice(0, 3);
     const formatDate = (date) => {
         const split = date.split('-');
-        return `${split[1] === '11' ? 'November' : 'December'} ${(split[2] * 1).toString()}`;
+        return `${split[1] === '11' ? 'Nov. ' : 'Dec. '} ${(split[2] * 1).toString()}`;
     };
 
     return (
