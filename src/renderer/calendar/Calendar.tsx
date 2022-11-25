@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -81,46 +81,85 @@ const Calendar = () => {
             <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5">
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[0].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[0].title}</text>
-                    {CalendarState.jobs[recent[0].id].position} |{' '}
-                    {CalendarState.jobs[recent[0].id].company}
-                    <br />
-                    {formatDate(recent[0].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[0].title}</span>
+                        </h1>
+                    </div>
+
+                    <div className="ml-5 mt-8">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[0].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[0].id].company}
+                        </h1>
+                    </div>
                 </div>
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[1].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[1].title}</text>
-                    {CalendarState.jobs[recent[1].id].position} |{' '}
-                    {CalendarState.jobs[recent[1].id].company}
-                    <br />
-                    {formatDate(recent[1].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[1].title}</span>
+                        </h1>
+                    </div>
+
+                    <div className="ml-5 mt-8">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[1].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[1].id].company}
+                        </h1>
+                    </div>
                 </div>
                 <div
-                    className="grid place-content-center bg-gray-200"
+                    className="place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
                         setCurrentJob(CalendarState.jobs[recent[2].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
-                    <text className="text-3xl">{recent[2].title}</text>
-                    {CalendarState.jobs[recent[2].id].position} |{' '}
-                    {CalendarState.jobs[recent[2].id].company}
-                    <br />
-                    {formatDate(recent[2].date)}
+                    <div className="ml-5 mt-5">
+                        <h1>
+                            <span className="text-3xl">{recent[2].title}</span>
+                        </h1>
+                    </div>
+
+                    <div className="ml-5 mt-8">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                            {formatDate(recent[2].date)}
+                        </h1>
+                    </div>
+                    <div className="ml-5 mt-1">
+                        <h1 className="text-md align-middle">
+                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                            {CalendarState.jobs[recent[2].id].company}
+                        </h1>
+                    </div>
                 </div>
             </div>
 
