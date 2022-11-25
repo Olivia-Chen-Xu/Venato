@@ -13,7 +13,9 @@ export default function calHeader() {
     }
     function handleReset() {
         CalendarState.monthIndex =
-            CalendarState.monthIndex === dayjs().month() ? CalendarState.monthIndex + Math.random() : dayjs().month();
+            CalendarState.monthIndex === dayjs().month()
+                ? CalendarState.monthIndex + Math.random()
+                : dayjs().month();
     }
     return (
         <header className="px-4 py-2 flex items-center">
