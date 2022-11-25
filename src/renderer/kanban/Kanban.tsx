@@ -105,6 +105,7 @@ export default function Kanban() {
 
     const handleAddClick = (idx) => {
         setIndex(idx);
+        setCurrentJob(null);
         setIsEdit(false);
         setModalOpen(true);
     };

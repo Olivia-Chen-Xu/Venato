@@ -25,20 +25,14 @@ import {
     AlternateEmailOutlined,
     LocationOnOutlined,
     Delete,
+    AddCircleOutline,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import CalendarState from '../calendar/context/CalendarState';
 
-const Details = ({ value, index, job, setJob }) => {
+const Headings = ({ job, setJob }) => {
     return (
-        <div
-            style={{
-                flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
-                height: '100%',
-                paddingBlock: 'auto',
-            }}
-        >
+        <>
             <Input
                 className="focus-only"
                 placeholder="Job Title"
@@ -78,6 +72,20 @@ const Details = ({ value, index, job, setJob }) => {
                     }
                 />
             </div>
+        </>
+    );
+};
+
+const Details = ({ value, index, job, setJob }) => {
+    return (
+        <div
+            style={{
+                flexDirection: 'column',
+                display: value == index ? 'flex' : 'none',
+                height: '100%',
+            }}
+        >
+            <Headings job={job} setJob={setJob}></Headings>
             <br></br>
             <br></br>
             <TextField
@@ -91,7 +99,6 @@ const Details = ({ value, index, job, setJob }) => {
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
-                    sx: { width: 625 },
                 }}
             />
             <br></br>
@@ -104,7 +111,6 @@ const Details = ({ value, index, job, setJob }) => {
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
-                    sx: { width: 625 },
                 }}
             />
         </div>
@@ -113,54 +119,23 @@ const Details = ({ value, index, job, setJob }) => {
 
 const Notes = ({ value, index, job, setJob }) => {
     return (
-        <div hidden={value !== index}>
-            <Input
-                className="focus-only"
-                placeholder="Job Title"
-                value={job.position}
-                onChange={(e) => {
-                    setJob({ ...job, position: e.target.value });
-                }}
-                style={styles.jobTitle}
-            ></Input>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Input
-                    placeholder="Company"
-                    style={styles.Company}
-                    value={job.company}
-                    onChange={(e) => {
-                        setJob({ ...job, company: e.target.value });
-                    }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <AlternateEmailOutlined />
-                        </InputAdornment>
-                    }
-                />
-                <Input
-                    placeholder="Location"
-                    value={job.location}
-                    onChange={(e) => {
-                        setJob({ ...job, location: e.target.value });
-                    }}
-                    style={styles.Location}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined />
-                        </InputAdornment>
-                    }
-                />
-            </div>
+        <div
+            style={{
+                flexDirection: 'column',
+                display: value == index ? 'flex' : 'none',
+                height: '100%',
+            }}
+        >
+            <Headings job={job} setJob={setJob}></Headings>
+            <br></br>
+            <br></br>
             <TextField
                 label="Notes"
-                rows={4}
+                multiline
+                rows={10}
                 value={job.notes}
                 onChange={(e) => {
                     setJob({ ...job, notes: e.target.value });
-                }}
-                style={styles.Notes}
-                InputProps={{
-                    sx: { height: 200 },
                 }}
             />
         </div>
@@ -184,88 +159,17 @@ const Deadlines = ({ value, index, job, setJob }) => {
     };
 
     return (
-        <div>
-            <div hidden={value !== index}>
-                <Input
-                    className="focus-only"
-                    placeholder="Job Title"
-                    value={job.position}
-                    onChange={(e) => {
-                        setJob({ ...job, position: e.target.value });
-                    }}
-                    style={styles.deadlineTitle}
-                ></Input>
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Input
-                        placeholder="Company"
-                        style={styles.deadlineCompany}
-                        value={job.company}
-                        onChange={(e) => {
-                            setJob({ ...job, company: e.target.value });
-                        }}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <AlternateEmailOutlined />
-                            </InputAdornment>
-                        }
-                    />
-                    <Input
-                        placeholder="Location"
-                        value={job.location}
-                        onChange={(e) => {
-                            setJob({ ...job, location: e.target.value });
-                        }}
-                        style={styles.deadlineLocation}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <LocationOnOutlined />
-                            </InputAdornment>
-                        }
-                    />
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '150px',
-                            left: '142px',
-                            right: '100px',
-                        }}
-                    >
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label="Deadline"
-                                value={newDdl.date}
-                                onChange={(newValue) => {
-                                    setNewDdl({ ...newDdl, date: newValue.$d.toJSON() });
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
-                        <Button
-                            style={{
-                                position: 'absolute',
-                                width: '150px',
-                                top: '75px',
-                                left: '0px',
-                                right: '100px',
-                            }}
-                            variant="contained"
-                            onClick={addDdl}
-                        >
-                            Add Deadline
-                        </Button>
-                    </div>
-                </div>
-            </div>
+        <div hidden={value !== index}>
+            <Headings job={job} setJob={setJob}></Headings>
+            <br></br>
+            <Button variant="contained" onClick={addDdl} startIcon={<AddCircleOutline />}>
+                Add Deadline
+            </Button>
+            <br></br>
+            <br></br>
             {job.deadlines &&
                 job.deadlines.map((ddl) => (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '365px',
-                            left: '142px',
-                            right: '125px',
-                        }}
-                    >
+                    <div>
                         <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
                     </div>
                 ))}
@@ -285,108 +189,61 @@ const Questions = ({ value, index, job, setJob }) => {
 
     return (
         <div hidden={value !== index}>
-            <Input
-                className="focus-only"
-                placeholder="Job Title"
-                value={job.position}
-                onChange={(e) => {
-                    setJob({ ...job, position: e.target.value });
-                }}
-                style={styles.deadlineTitle}
-            ></Input>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Input
-                    placeholder="Company"
-                    style={styles.deadlineCompany}
-                    value={job.company}
-                    onChange={(e) => {
-                        setJob({ ...job, company: e.target.value });
-                    }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <AlternateEmailOutlined />
-                        </InputAdornment>
-                    }
-                />
-                <Input
-                    placeholder="Location"
-                    value={job.location}
-                    onChange={(e) => {
-                        setJob({ ...job, location: e.target.value });
-                    }}
-                    style={styles.deadlineLocation}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined />
-                        </InputAdornment>
-                    }
-                />
-            </div>
+            <Headings job={job} setJob={setJob}></Headings>
+            <br></br>
             <Button
-                style={{
-                    position: 'absolute',
-                    width: '140px',
-                    top: '280px',
-                    left: '142px',
-                    right: '100px',
-                    whiteSpace: 'nowrap',
-                }}
                 variant="contained"
                 onClick={() => setOpen(true)}
+                startIcon={<AddCircleOutline />}
             >
                 Add a question
             </Button>
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent style={{ display: 'flex' }}>
+                <DialogContent
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: 600,
+                        alignItems: 'center',
+                    }}
+                >
                     <TextField
-                        label="Question"
+                        label="Interview Question"
                         value={newQuestion}
+                        fullWidth
                         onChange={(e) => {
                             setNewQuestion(e.target.value);
                         }}
                     />
+                    <br></br>
 
-                    <Button
-                        style={{ position: 'absolute', top: 300 }}
-                        variant="contained"
-                        onClick={addNewQuestion}
-                    >
+                    <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
+            <br></br>
+            <br></br>
 
-            <div
-                style={{
-                    position: 'absolute',
-                    width: '150px',
-                    top: '125px',
-                    left: '142px',
-                    right: '100px',
-                    whiteSpace: 'nowrap',
-                }}
-            >
-                {job.interviewQuestions &&
-                    job.interviewQuestions.map((q) => (
+            {job.interviewQuestions &&
+                job.interviewQuestions.map((q) => (
+                    <div style={{ marginBottom: 10 }}>
                         <TextField
-                            label="Interview Questions"
+                            label="Interview Question"
                             style={styles.interviewQuestions}
-                            multiline
-                            rows={4}
                             value={q}
                             onChange={(e) => {
                                 setJob({
                                     ...job,
-                                    questions: { ...job.questions, questions: e.target.value },
+                                    questions: { ...job.questions, questions: e.target.value }, //TODO: THIS PART IS BUGGY
                                 });
                             }}
                             InputProps={{
                                 disableUnderline: true, // <== added this
-                                sx: { width: 480 },
                             }}
                         />
-                    ))}
-            </div>
+                    </div>
+                ))}
         </div>
     );
 };
@@ -403,107 +260,58 @@ const Contacts = ({ value, index, job, setJob }) => {
 
     return (
         <div hidden={value !== index}>
-            <Input
-                className="focus-only"
-                placeholder="Job Title"
-                value={job.position}
-                onChange={(e) => {
-                    setJob({ ...job, position: e.target.value });
-                }}
-                style={styles.deadlineTitle}
-            ></Input>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Input
-                    placeholder="Company"
-                    style={styles.deadlineCompany}
-                    value={job.company}
-                    onChange={(e) => {
-                        setJob({ ...job, company: e.target.value });
-                    }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <AlternateEmailOutlined />
-                        </InputAdornment>
-                    }
-                />
-                <Input
-                    placeholder="Location"
-                    value={job.location}
-                    onChange={(e) => {
-                        setJob({ ...job, location: e.target.value });
-                    }}
-                    style={styles.deadlineLocation}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined />
-                        </InputAdornment>
-                    }
-                />
-            </div>
-            <TextField
-                label="Job Description"
-                style={styles.jobDescription}
-                multiline
-                rows={4}
-                value={job.details.description}
-                onChange={(e) => {
-                    setJob({ ...job, details: { ...job.details, description: e.target.value } });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
+            <Headings job={job} setJob={setJob}></Headings>
+            <br></br>
             <Button
-                style={{
-                    position: 'absolute',
-                    width: '145px',
-                    top: '280px',
-                    left: '600px',
-                    right: '100px',
-                    whiteSpace: 'nowrap',
-                }}
                 variant="contained"
                 onClick={() => setOpen(true)}
+                startIcon={<AddCircleOutline />}
             >
                 Add Contact
             </Button>
+            <br></br>
+            <br></br>
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent style={{ display: 'flex' }}>
+                <DialogContent
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: 600,
+                        alignItems: 'center',
+                    }}
+                >
                     <TextField
                         label="LinkedIn"
+                        style={styles.contactsBox}
                         value={newContact}
                         onChange={(e) => {
                             setNewContact(e.target.value);
                         }}
                     />
-
-                    <Button
-                        style={{ width: '57px', height: '27px', background: '#633175' }}
-                        onClick={addNewContact}
-                    >
+                    <br></br>
+                    <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
             {job.contacts &&
                 job.contacts.map((contact) => (
-                    <TextField
-                        label="Contacts"
-                        style={styles.contactsBox}
-                        multiline
-                        rows={4}
-                        value={contact}
-                        onChange={(e) => {
-                            setJob({
-                                ...job,
-                                contacts: { ...job.contacts, contacts: e.target.value },
-                            });
-                        }}
-                        InputProps={{
-                            disableUnderline: true, // <== added this
-                            sx: { height: 150, width: 400 },
-                        }}
-                    />
+                    <div style={{ marginBottom: 10 }}>
+                        <TextField
+                            label="Contacts"
+                            style={styles.contactsBox}
+                            value={contact}
+                            onChange={(e) => {
+                                setJob({
+                                    ...job,
+                                    contacts: { ...job.contacts, contacts: e.target.value }, //TODO: THIS PART IS BUGGY
+                                });
+                            }}
+                            InputProps={{
+                                disableUnderline: true, // <== added this
+                            }}
+                        />
+                    </div>
                 ))}
         </div>
     );
@@ -663,6 +471,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                 <div
                     style={{
                         marginInlineStart: 50,
+                        width: 640,
                     }}
                 >
                     <Details value={tabValue} index={0} job={job} setJob={setJob}></Details>
@@ -687,7 +496,6 @@ const styles = {
 
     jobDescription: {
         boxSizing: 'border-box',
-        width: '480px',
         border: 'none',
         outline: 'none',
     },
@@ -713,11 +521,6 @@ const styles = {
         color: '#676767',
     },
 
-    Notes: {
-        height: '500px',
-        width: '480px',
-    },
-
     interviewIcons: {
         width: '740px',
         gap: '42px',
@@ -739,21 +542,13 @@ const styles = {
     },
 
     interviewQuestions: {
-        boxSizing: 'border-box',
-        width: '250px',
-        height: '250px',
-        border: 'none',
-        outline: 'none',
         color: '#676767',
+        width: '100%',
     },
 
     contactsBox: {
-        boxSizing: 'border-box',
-        width: '250px',
-        height: '120px',
-        border: 'none',
-        outline: 'none',
         color: '#676767',
+        width: '100%',
     },
 
     deadlineTitle: {
