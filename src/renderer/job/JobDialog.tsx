@@ -11,6 +11,7 @@ import {
     Backdrop,
     CircularProgress,
     Box,
+    IconButton,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -23,19 +24,19 @@ import {
     ContactPageOutlined,
     AlternateEmailOutlined,
     LocationOnOutlined,
+    Delete,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import CalendarState from '../calendar/context/CalendarState';
-
 
 const Details = ({ value, index, job, setJob }) => {
     return (
         <div
             style={{
-                justifyContent: 'space-around',
                 flexDirection: 'column',
                 display: value == index ? 'flex' : 'none',
                 height: '100%',
+                paddingBlock: 'auto',
             }}
         >
             <Input
@@ -52,34 +53,38 @@ const Details = ({ value, index, job, setJob }) => {
                     placeholder="Company"
                     style={styles.Company}
                     value={job.company}
+                    disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, company: e.target.value });
                     }}
                     startAdornment={
                         <InputAdornment position="start">
-                            <AlternateEmailOutlined />
+                            <AlternateEmailOutlined style={{ fontSize: 20 }} />
                         </InputAdornment>
                     }
                 />
                 <Input
                     placeholder="Location"
                     value={job.location}
+                    disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
                     }}
                     style={styles.Location}
                     startAdornment={
                         <InputAdornment position="start">
-                            <LocationOnOutlined />
+                            <LocationOnOutlined style={{ fontSize: 20 }} />
                         </InputAdornment>
                     }
                 />
             </div>
+            <br></br>
+            <br></br>
             <TextField
                 label="Job Description"
                 style={styles.jobDescription}
                 multiline
-                rows={4}
+                rows={10}
                 value={job.details.description}
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, description: e.target.value } });
@@ -89,6 +94,7 @@ const Details = ({ value, index, job, setJob }) => {
                     sx: { width: 625 },
                 }}
             />
+            <br></br>
             <TextField
                 label="Application Link"
                 value={job.details.url}
@@ -216,7 +222,14 @@ const Deadlines = ({ value, index, job, setJob }) => {
                             </InputAdornment>
                         }
                     />
-                    <div style={{ position: 'absolute', top: '150px', left: '142px', right: '100px' }}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: '150px',
+                            left: '142px',
+                            right: '100px',
+                        }}
+                    >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 label="Deadline"
@@ -227,7 +240,19 @@ const Deadlines = ({ value, index, job, setJob }) => {
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </LocalizationProvider>
-                        <Button style={{ position: 'absolute', width: '150px', top: '75px', left: '0px', right: '100px' }} variant="contained" onClick={addDdl}>Add Deadline</Button>
+                        <Button
+                            style={{
+                                position: 'absolute',
+                                width: '150px',
+                                top: '75px',
+                                left: '0px',
+                                right: '100px',
+                            }}
+                            variant="contained"
+                            onClick={addDdl}
+                        >
+                            Add Deadline
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -239,7 +264,6 @@ const Deadlines = ({ value, index, job, setJob }) => {
                             top: '365px',
                             left: '142px',
                             right: '125px',
-                            
                         }}
                     >
                         <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
@@ -342,23 +366,25 @@ const Questions = ({ value, index, job, setJob }) => {
                     whiteSpace: 'nowrap',
                 }}
             >
-    
                 {job.interviewQuestions &&
                     job.interviewQuestions.map((q) => (
-                            <TextField
-                               label="Interview Questions"
-                               style={styles.interviewQuestions}
-                               multiline
-                               rows={4}
-                               value={q}
-                               onChange={(e) => {
-                                   setJob({ ...job, questions: { ...job.questions, questions: e.target.value } });
-                               }}
-                               InputProps={{
-                                   disableUnderline: true, // <== added this
-                                   sx: { width: 480 },
-                               }}
-                           />
+                        <TextField
+                            label="Interview Questions"
+                            style={styles.interviewQuestions}
+                            multiline
+                            rows={4}
+                            value={q}
+                            onChange={(e) => {
+                                setJob({
+                                    ...job,
+                                    questions: { ...job.questions, questions: e.target.value },
+                                });
+                            }}
+                            InputProps={{
+                                disableUnderline: true, // <== added this
+                                sx: { width: 480 },
+                            }}
+                        />
                     ))}
             </div>
         </div>
@@ -459,25 +485,26 @@ const Contacts = ({ value, index, job, setJob }) => {
                     </Button>
                 </DialogContent>
             </Dialog>
-                {job.contacts &&
-                    job.contacts.map((contact) => (
-
-                        <TextField
-                               label="Contacts"
-                               style={styles.contactsBox}
-                               multiline
-                               rows={4}
-                               value={contact}
-                               onChange={(e) => {
-                                   setJob({ ...job, contacts: { ...job.contacts, contacts: e.target.value } });
-                               }}
-                               InputProps={{
-                                   disableUnderline: true, // <== added this
-                                   sx: { height: 150, width: 400 },
-                               }}
-                        />
-    
-                    ))}
+            {job.contacts &&
+                job.contacts.map((contact) => (
+                    <TextField
+                        label="Contacts"
+                        style={styles.contactsBox}
+                        multiline
+                        rows={4}
+                        value={contact}
+                        onChange={(e) => {
+                            setJob({
+                                ...job,
+                                contacts: { ...job.contacts, contacts: e.target.value },
+                            });
+                        }}
+                        InputProps={{
+                            disableUnderline: true, // <== added this
+                            sx: { height: 150, width: 400 },
+                        }}
+                    />
+                ))}
         </div>
     );
 };
@@ -547,29 +574,48 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     }, [jobData]);
 
     return (
-        <Dialog open={true} onClose={handleClose} fullWidth={true} maxWidth={'lg'}>
-            <DialogContent style={{ display: 'flex', justifyContent: 'end' }}>
+        <Dialog open={true} onClose={handleClose} maxWidth={'lg'}>
+            <DialogContent
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    height: 600,
+                    paddingRight: 50,
+                    paddingTop: 30,
+                }}
+            >
                 {loading ? (
                     <CircularProgress
                         style={{ position: 'absolute', right: 30 }}
                     ></CircularProgress>
                 ) : (
-                    <Button
-                        variant="contained"
-                        onClick={addNewJob}
-                        style={{
-                            position: 'absolute',
-                            right: 90,
-                            top: 10,
-                            padding: '14px 12px 14px 14px',
-                            gap: '10px',
-                            width: '25px',
-                            height: '25px',
-                            borderRadius: '4px',
-                        }}
-                    >
-                        {isEdit ? 'Save' : 'Add'}
-                    </Button>
+                    <div style={{ position: 'absolute', right: 50, top: 20 }}>
+                        <Button
+                            variant="outlined"
+                            style={{
+                                padding: '14px 12px 14px 14px',
+                                gap: '10px',
+                                height: '25px',
+                                borderRadius: '4px',
+                                marginInlineEnd: 5,
+                            }}
+                        >
+                            <Delete />
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={addNewJob}
+                            style={{
+                                padding: '15px 12px 15px 14px',
+                                gap: '10px',
+                                width: '25px',
+                                height: '25px',
+                                borderRadius: '4px',
+                            }}
+                        >
+                            {isEdit ? 'Save' : 'Add'}
+                        </Button>
+                    </div>
                 )}
 
                 <Tabs
@@ -581,37 +627,36 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     sx={{
                         borderRight: 1,
                         borderColor: 'divider',
-                        alignSelf: 'end',
                     }}
                 >
                     <Tab
                         icon={<DescriptionOutlined />}
-                        iconPosition="start"
+                        iconPosition="end"
                         label="Job Details"
                         sx={{ alignSelf: 'end' }}
                     />
                     <Tab
                         icon={<DriveFileRenameOutlineOutlined />}
-                        iconPosition="start"
+                        iconPosition="end"
                         label="Notes"
                         sx={{ alignSelf: 'end' }}
                     />
                     <Tab
                         sx={{ alignSelf: 'end' }}
                         icon={<CalendarMonthOutlined />}
-                        iconPosition="start"
+                        iconPosition="end"
                         label="Deadlines"
                     />
                     <Tab
                         sx={{ alignSelf: 'end' }}
                         icon={<QuizOutlined />}
-                        iconPosition="start"
+                        iconPosition="end"
                         label="Interview Questions"
                     />
                     <Tab
                         sx={{ alignSelf: 'end' }}
                         icon={<ContactPageOutlined />}
-                        iconPosition="start"
+                        iconPosition="end"
                         label="Contacts"
                     />
                 </Tabs>
@@ -633,79 +678,52 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
 const styles = {
     jobTitle: {
-        position: 'absolute',
-        left: '12%',
-        right: '22.9%',
-        top: '0px',
         fontStyle: 'normal',
         fontWeight: '200',
         fontSize: '36px',
         lineHeight: '44px',
         color: '#676767',
-        
     },
 
     jobDescription: {
         boxSizing: 'border-box',
-        position: 'absolute',
         width: '480px',
-        height: '250px',
-        left: '142px',
-        top: '105px',
         border: 'none',
         outline: 'none',
     },
     applicationLink: {
-        position: 'absolute',
         border: 'none',
         outline: 'none',
-        top: '260px',
-        left: '142px',
     },
 
     Company: {
-        position: 'absolute',
-        left: '12%',
-        right: '47.95%',
-        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '12px',
+        fontSize: '14px',
 
         color: '#676767',
     },
     Location: {
-        position: 'absolute',
-        left: '53%',
-        right: '22.9%',
-        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '12px',
-
+        fontSize: '14px',
+        marginLeft: 20,
         color: '#676767',
     },
 
     Notes: {
-        position: 'absolute',
         height: '500px',
         width: '480px',
-        left: '142px',
-        top: '120px',
     },
 
     interviewIcons: {
-        position: 'absolute',
         width: '740px',
         gap: '42px',
-        left: '60px',
-        top: '100px',
     },
 
     deadlineButton: {
-        position: 'absolute',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -714,8 +732,6 @@ const styles = {
         gap: '10px',
         width: '145px',
         height: '51px',
-        left: '310px',
-        top: '340px',
         whiteSpace: 'nowrap',
 
         background: '#633175',
@@ -724,11 +740,8 @@ const styles = {
 
     interviewQuestions: {
         boxSizing: 'border-box',
-        position: 'absolute',
         width: '250px',
         height: '250px',
-        left: '0px',
-        top: '0px',
         border: 'none',
         outline: 'none',
         color: '#676767',
@@ -736,21 +749,14 @@ const styles = {
 
     contactsBox: {
         boxSizing: 'border-box',
-        position: 'absolute',
         width: '250px',
         height: '120px',
-        left: '142px',
-        top: '260px',
         border: 'none',
         outline: 'none',
         color: '#676767',
     },
 
     deadlineTitle: {
-        position: 'absolute',
-        left: '12%',
-        right: '22.65%',
-        top: '0px',
         fontStyle: 'normal',
         fontWeight: '200',
         fontSize: '36px',
@@ -759,10 +765,6 @@ const styles = {
     },
 
     deadlineLocation: {
-        position: 'absolute',
-        left: '55%',
-        right: '22.6%',
-        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
@@ -772,10 +774,6 @@ const styles = {
     },
 
     deadlineCompany: {
-        position: 'absolute',
-        left: '12%',
-        right: '47.95%',
-        top: '65px',
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
