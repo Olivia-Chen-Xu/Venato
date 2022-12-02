@@ -1,50 +1,41 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
+import Welcome from './auth/Welcome';
+import SignIn from './auth/SignIn';
+import SignUp from './auth/SignUp';
+import PasswordReset from './auth/PasswordReset';
 import './App.css';
+import Overlay from './reusable/Overlay';
 
-const Hello = () => {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-};
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#633175',
+        },
+        neutral: {
+            main: '#C7ADD8',
+            contrastText: '#fff',
+        },
+    },
+});
 
 export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Welcome />} />
+                    <Route path="/sign-in" element={<SignIn />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/password-reset" element={<PasswordReset />} />
+                    <Route path="/home" element={<Overlay page={'home'} />} />
+                    <Route path="/job" element={<Overlay page={'jobs'} />} />
+                    <Route path="/questions" element={<Overlay page={'questions'} />} />
+                    <Route path="/kanban" element={<Overlay page={'kanban'} />} />
+                    <Route path="/calendar" element={<Overlay page={'cal'} />} />
+                </Routes>
+            </Router>
+        </ThemeProvider>
+    );
 }

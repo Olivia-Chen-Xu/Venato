@@ -49,16 +49,13 @@
     "test": "jest"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "*.{}": [
       "cross-env NODE_ENV=development eslint --cache"
     ],
     "*.json,.{eslintrc,prettierrc}": [
       "prettier --ignore-path .eslintignore --parser json --write"
     ],
-    "*.{css,scss}": [
-      "prettier --ignore-path .eslintignore --single-quote --write"
-    ],
-    "*.{html,md,yml}": [
+    "*.{css,scss,html,md,yml}": [
       "prettier --ignore-path .eslintignore --single-quote --write"
     ]
   },
@@ -108,12 +105,26 @@
     }
   },
   "dependencies": {
+    "@craco/craco": "^6.4.5",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/lab": "^5.0.0-alpha.109",
+    "@mui/material": "^5.10.14",
+    "@mui/styled-engine-sc": "^5.10.6",
+    "@mui/x-date-pickers": "^5.0.8",
+    "@tailwindcss/forms": "^0.5.3",
+    "dayjs": "^1.11.5",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^5.2.3",
+    "firebase": "^9.10.0",
     "react": "^18.2.0",
+    "react-async-hook": "^4.0.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
@@ -130,6 +141,7 @@
     "@types/webpack-bundle-analyzer": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
+    "autoprefixer": "^10.4.13",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
     "concurrently": "^7.3.0",
@@ -162,8 +174,11 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.3",
     "jest-environment-jsdom": "^28.1.3",
+    "keyv": "^4.5.0",
     "lint-staged": "^13.0.3",
     "mini-css-extract-plugin": "^2.6.1",
+    "postcss": "^8.4.19",
+    "postcss-loader": "^7.0.1",
     "prettier": "^2.7.1",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
@@ -171,6 +186,7 @@
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
+    "tailwindcss": "^3.2.4",
     "terser-webpack-plugin": "^5.3.5",
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.3.1",
