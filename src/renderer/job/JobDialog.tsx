@@ -168,7 +168,11 @@ const Deadlines = ({ value, index, job, setJob }) => {
         >
             <Headings job={job} setJob={setJob}></Headings>
             <br></br>
-            <Button variant="contained" onClick={addDdl} startIcon={<AddCircleOutline />}>
+            <Button
+                variant="contained"
+                // onClick={addDdl} // TODO: This is buggy
+                startIcon={<AddCircleOutline />}
+            >
                 Add Deadline
             </Button>
             <br></br>
@@ -255,12 +259,12 @@ const Questions = ({ value, index, job, setJob }) => {
                             label="Interview Question"
                             style={styles.interviewQuestions}
                             value={q}
-                            onChange={(e) => {
-                                setJob({
-                                    ...job,
-                                    questions: { ...job.questions, questions: e.target.value }, //TODO: THIS PART IS BUGGY
-                                });
-                            }}
+                            // onChange={(e) => {
+                            //     setJob({
+                            //         ...job,
+                            //         questions: { ...job.questions, questions: e.target.value }, //TODO: THIS PART IS BUGGY
+                            //     });
+                            // }}
                             InputProps={{
                                 disableUnderline: true, // <== added this
                             }}
@@ -330,12 +334,12 @@ const Contacts = ({ value, index, job, setJob }) => {
                             label="Contacts"
                             style={styles.contactsBox}
                             value={contact}
-                            onChange={(e) => {
-                                setJob({
-                                    ...job,
-                                    contacts: { ...job.contacts, contacts: e.target.value }, //TODO: THIS PART IS BUGGY
-                                });
-                            }}
+                            // onChange={(e) => {
+                            //     setJob({
+                            //         ...job,
+                            //         contacts: { ...job.contacts, contacts: e.target.value }, //TODO: THIS PART IS BUGGY
+                            //     });
+                            // }}
                             InputProps={{
                                 disableUnderline: true, // <== added this
                             }}
