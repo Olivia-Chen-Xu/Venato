@@ -1,0 +1,80 @@
+#apply {
+    background: linear-gradient(
+        290.54deg,
+        rgba(128, 128, 174, 0.5) 15.77%,
+        rgba(199, 199, 226, 0.45) 118.29%
+    );
+    border-radius: 8px;
+    padding: 0.5rem;
+    float: right;
+}
+
+#top {
+    background-color: #adadd8;
+    border-radius: 16px;
+    margin-right: 2.5rem;
+    margin-left: 1.25rem;
+}
+
+#bottom {
+    background-color: #fdfdfd;
+    border-radius: 16px;
+    border-color: #c7c7e2;
+    border-width: 1px;
+}
+
+#job {
+    margin-top: 1.25rem;
+    margin-right: 5rem;
+    background-color: #8080ae;
+    margin-left: 5rem;
+    padding: 1.25rem;
+    cursor: pointer;
+}
+
+#results {
+    width: 50%;
+}
+
+#company {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    padding-left: 0.25rem;
+    padding-right: 1.25rem;
+    padding-right: 3rem;
+    flex: end;
+    outline: none;
+    background-color: white;
+    border-left: 1px solid gray;
+}
+
+#location {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    padding-left: 0.25rem;
+    padding-right: 1.25rem;
+    border-left: 1px solid gray;
+    outline: none;
+    background-color: white;
+}
+
+#position {
+    padding-top: 1.25rem;
+    padding-left: 0.25rem;
+    padding-bottom: 1rem;
+    padding-right: 20vw;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background-color: white;
+    outline: none;
+}
+
+#search {
+    border-radius: 16px;
+    padding-right: 1rem;
+}
+
+#searchBtn {
+    margin-left: 1.25rem;
+    margin-top: 5%;
+}
