@@ -253,12 +253,12 @@ const Questions = ({ value, index, job, setJob }) => {
                             {question}
                         </a>
                     </li> */
-                job.interviewQuestions.map((q) => (
+                job.interviewQuestions.map((question) => (
                     <div style={{ marginBottom: 10 }}>
                         <TextField
                             label="Interview Question"
                             style={styles.interviewQuestions}
-                            value={q}
+                            value={question.name}
                             // onChange={(e) => {
                             //     setJob({
                             //         ...job,
