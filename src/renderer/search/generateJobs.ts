@@ -1,13 +1,6 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface Job {
-    contacts: string[];
-    deadlines: { date: string; title: string }[];
-    interviewQuestions: string[];
-    notes: string;
-    stage: number;
-    awaitingResponse: boolean;
-
     info: {
         company: string;
         position: string;
@@ -17,20 +10,29 @@ interface Job {
     details: {
         description: string;
         link: string;
-    },
-    notes: jobNotes[~~(Math.random() * jobNotes.length)],
-    deadlines: generateDeadlines(),
-    interviewQuestions: [...questions]
-    .sort(() => 0.5 - Math.random())
-    .slice(0, Math.floor(Math.random() * 5) + 1),
-    contacts: [...contacts]
-    .sort(() => 0.5 - Math.random())
-    .slice(0, Math.floor(Math.random() * 3) + 1),
+    };
+    notes: string;
+    deadlines: {
+        title: string;
+        date: string;
+        time: string;
+        location: string;
+    }[];
+    interviewQuestions: { name: string; description: string }[];
+    contacts: {
+        name: string;
+        title: string;
+        company: string;
+        email: string;
+        phone: string;
+        linkedin: string;
+        notes: string;
+    }[];
 
     metadata: {
-        stage: Math.floor(Math.random() * 4),
-        awaitingResponse: Math.random() < 0.5,
-            },
+        stage: number;
+        awaitingResponse: boolean;
+    };
 }
 
 const companies = [
