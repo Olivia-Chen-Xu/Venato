@@ -52,9 +52,9 @@ const Welcome = () => {
                 {'Bypass sign-in (dev only)'}
             </Button>
             <br />
-            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>*/}
-            {/*    Generate jobs*/}
-            {/*</Button>*/}
+            <Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>
+                Generate jobs
+            </Button>
             <br />
             <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
