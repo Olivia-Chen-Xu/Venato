@@ -178,9 +178,9 @@ const Deadlines = ({ value, index, job, setJob }) => {
             <br></br>
             <br></br>
             {job.deadlines &&
-                job.deadlines.map((ddl) => (
+                job.deadlines.map((deadline) => (
                     <div>
-                        <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
+                        <strong>{`${dateToString(deadline.date)}, ${deadline.time}`}</strong>: {deadline.title}
                     </div>
                 ))}
         </div>
