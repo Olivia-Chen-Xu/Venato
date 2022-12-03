@@ -235,15 +235,6 @@ const QuestionSearch = () => {
                         <br />
                         <div className="grid place-content-center">{message}</div>
                         <br />
-                        <Button
-                            variant="contained"
-                            color="neutral"
-                            onClick={() => {
-                                displayQuestions();
-                            }}
-                        >
-                            Log jobs
-                        </Button>
                         {displayQuestions()}
                     </div>
                 </div>
