@@ -169,25 +169,32 @@ const generateJobs = async (num: number) => {
     const jobs: Job[] = [];
     for (let i = 0; i < num; i += 1) {
         const company = Math.floor(Math.random() * companies.length);
-        jobs.push({
-            company: companies[company],
-            contacts: [...contacts]
-                .sort(() => 0.5 - Math.random())
-                .slice(0, Math.floor(Math.random() * 3) + 1),
-            deadlines: generateDeadlines(),
+        const job = {
+            info: {
+                company: companies[company],
+                position: jobPositions[~~(Math.random() * jobPositions.length)],
+                location: locations[~~(Math.random() * locations.length)],
+            },
+
             details: {
                 description: descriptions[company],
                 url: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
             },
+            notes: jobNotes[~~(Math.random() * jobNotes.length)],
+            deadlines: generateDeadlines(),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 5) + 1),
-            location: locations[~~(Math.random() * locations.length)],
-            notes: jobNotes[~~(Math.random() * jobNotes.length)],
-            stage: Math.floor(Math.random() * 4),
-            position: jobPositions[~~(Math.random() * jobPositions.length)],
-            awaitingResponse: Math.random() < 0.5,
-        });
+            contacts: [...contacts]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, Math.floor(Math.random() * 3) + 1),
+
+            metadata: {
+                stage: Math.floor(Math.random() * 4),
+                awaitingResponse: Math.random() < 0.5,
+            },
+        };
+        jobs.push(job);
     }
 
     // Commit jobs to db
