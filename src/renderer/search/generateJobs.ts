@@ -47,14 +47,6 @@ const companies = [
     'Airbnb',
     'Tesla',
 ];
-const contacts = [
-    'https://www.linkedin.com/in/olivia-chen-xu/',
-    'https://www.linkedin.com/in/cameron-beaulieu/',
-    'https://www.linkedin.com/in/reid-moffat/',
-    'https://www.linkedin.com/in/krishaan-thyagarajan/',
-    'https://www.linkedin.com/in/danieljoseph8/',
-    'https://www.linkedin.com/in/wasiq-wadud/',
-];
 const descriptions = [
     "Will be working on the Google Cloud Platform team, which is responsible for building and maintaining the infrastructure that powers Google's cloud services.",
     'Aiding a METAverse architect with QA and efficiency',
@@ -330,6 +322,73 @@ const generateJobs = async (num: number) => {
         return deadlines;
     };
 
+    // Generate list of potential contacts
+    const contactNames = [
+        {
+            name: 'Olivia Xu',
+            linkedin: 'https://www.linkedin.com/in/olivia-chen-xu/',
+        },
+        {
+            name: 'Cameron Beaulieu',
+            linkedin: 'https://www.linkedin.com/in/cameron-beaulieu/',
+        },
+        {
+            name: 'Reid Moffat',
+            linkedin: 'https://www.linkedin.com/in/reid-moffat/',
+        },
+        {
+            name: 'Daniel Joseph',
+            linkedin: 'https://www.linkedin.com/in/danieljoseph8/',
+        },
+        {
+            name: 'Krishaan Thyagarajan',
+            linkedin: 'https://www.linkedin.com/in/krishaan-thyagarajan/',
+        },
+        {
+            name: 'Wasiq Wadud',
+            linkedin: 'https://www.linkedin.com/in/wasiq-wadud/',
+        },
+    ];
+    const contacts: {
+        // Note: company is added later with the job
+        name: string;
+        title: string;
+        email: string;
+        phone: string;
+        linkedin: string;
+        notes: string;
+    }[] = [];
+    const contactNotes = [
+        'I know this person through a mutual friend',
+        'I met this person at a hackathon',
+        'They are a friend of a friend',
+        'I met this person at a networking event',
+        "I don't know who this is, but they reached out to me",
+        'I met this person at a career fair',
+        'I met this person through a mutual friend',
+        "Gotta impress them... they're a big shot",
+        "If I get this job, I'll have to thank this person",
+        'They are pretty high up in the company',
+        'They are a friend of a friend of a friend',
+        'They are a friend of a friend of a friend of a friend',
+        'They are a friend of a friend of a friend of a friend of a friend',
+        'They are a friend of a friend of a friend of a friend of a friend of a friend',
+        'They are a friend of a friend of a friend of a friend of a friend of a friend of a friend',
+    ];
+    contactNames.forEach((contact) => {
+        const newContact = {
+            name: contact.name,
+            title: jobPositions[~~(Math.random() * jobPositions.length)]
+                .replace('Intern', '')
+                .trimEnd(),
+            email: `${contact.name.toLowerCase().replace(' ', '.')}@gmail.com`,
+            phone: Math.floor(Math.random() * 10000000000) < 1000000000 ? `0${num}` : `${num}`,
+            linkedin: contact.linkedin,
+            notes: Math.random() < 0.7 ? contactNotes[~~(Math.random() * contactNotes.length)] : '',
+        };
+        contacts.push(newContact);
+    });
+
     const jobs: Job[] = [];
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
@@ -342,7 +401,7 @@ const generateJobs = async (num: number) => {
 
             details: {
                 description: descriptions[company],
-                url: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
+                link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
             },
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
             deadlines: generateDeadlines(),
@@ -351,7 +410,8 @@ const generateJobs = async (num: number) => {
                 .slice(0, Math.floor(Math.random() * 5) + 1),
             contacts: [...contacts]
                 .sort(() => 0.5 - Math.random())
-                .slice(0, Math.floor(Math.random() * 3) + 1),
+                .slice(0, Math.floor(Math.random() * 3) + 1)
+                .map((contact) => ({ ...contact, company: companies[company] })),
 
             metadata: {
                 stage: Math.floor(Math.random() * 4),
