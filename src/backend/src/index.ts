@@ -29,6 +29,7 @@ const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
 });
 
 // On account deletion, delete user data in db
+// Note: doesn't work on the console or if you delete multiple users at once with the admin SDK
 const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
     return getDoc(`users${user.uid}`).delete();
 });
