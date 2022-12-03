@@ -10,6 +10,7 @@ interface Job {
     details: {
         description: string;
         link: string;
+        salary: string;
     };
     notes: string;
     deadlines: {
@@ -402,6 +403,7 @@ const generateJobs = async (num: number) => {
             details: {
                 description: descriptions[company],
                 link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
+                salary: `${Math.floor(Math.random() * 100000) + 50000}USD`,
             },
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
             deadlines: generateDeadlines(),
