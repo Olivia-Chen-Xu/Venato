@@ -28,7 +28,7 @@ const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
     return getDoc(`users/${user.uid}`).set(defaultDocData);
 });
 
-// On account deletion, delete user data in db (note: if you delete multiple users at once with the admin SDK)
+// On account deletion, delete user data in db (note: doesn't work if you delete multiple users at once with the admin SDK)
 const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
     return getDoc(`users/${user.uid}`).delete();
 });
