@@ -102,7 +102,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[0].id].position}
+                            {CalendarState.jobs[recent[0].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -114,7 +114,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[0].id].company}
+                            {CalendarState.jobs[recent[0].id].info.company}
                         </h1>
                     </div>
                 </div>
@@ -139,7 +139,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[1].id].position}
+                            {CalendarState.jobs[recent[1].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -151,7 +151,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[1].id].company}
+                            {CalendarState.jobs[recent[1].id].info.company}
                         </h1>
                     </div>
                 </div>
@@ -176,7 +176,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[2].id].position}
+                            {CalendarState.jobs[recent[2].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -188,7 +188,7 @@ const Calendar = () => {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[2].id].company}
+                            {CalendarState.jobs[recent[2].id].info.company}
                         </h1>
                     </div>
                 </div>
