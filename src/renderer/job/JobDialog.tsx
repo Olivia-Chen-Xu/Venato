@@ -333,7 +333,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                         <TextField
                             label="Contacts"
                             style={styles.contactsBox}
-                            value={contact}
+                            value={contact.name}
                             // onChange={(e) => {
                             //     setJob({
                             //         ...job,
