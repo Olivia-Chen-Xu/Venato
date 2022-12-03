@@ -72,6 +72,12 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
 });
 
 const addJob = functions.https.onCall((data: object, context: any) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'The function must be called while authenticated.'
+        );
+    }
     return getCollection('jobs')
         .add(data)
         .then((docRef) => docRef.id)
@@ -197,10 +203,10 @@ const jobSearch = functions.https.onCall(
             );
         }
         if (queries.company) {
-            query = query.where('company', '==', data.company);
+            query = query.where('info.company', '==', data.company);
         }
         if (queries.location) {
-            query = query.where('location', '==', data.location);
+            query = query.where('info.location', '==', data.location);
         }
 
         // Execute and return the query
@@ -211,6 +217,7 @@ const jobSearch = functions.https.onCall(
                 jobs.forEach((doc) => {
                     const job = doc.data();
                     delete job.positionSearchable;
+                    delete job.userId;
 
                     jobList.push(job);
                 });
@@ -237,6 +244,7 @@ const purgeDeletedEvent = functions.firestore
 // Makes searchable fields for the jobs on create and add company/location to db
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
+    data.userID = context.auth?.uid;
     const promises = [];
 
     // Add searchable job position field and the company + location to db
