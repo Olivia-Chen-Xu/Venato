@@ -36,7 +36,7 @@ const Headings = ({ job, setJob }) => {
             <Input
                 className="focus-only"
                 placeholder="Job Title"
-                value={job.position}
+                value={job.info.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
                 }}
@@ -46,7 +46,7 @@ const Headings = ({ job, setJob }) => {
                 <Input
                     placeholder="Company"
                     style={styles.Company}
-                    value={job.company}
+                    value={job.info.company}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, company: e.target.value });
@@ -59,7 +59,7 @@ const Headings = ({ job, setJob }) => {
                 />
                 <Input
                     placeholder="Location"
-                    value={job.location}
+                    value={job.info.location}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -352,18 +352,26 @@ const Contacts = ({ value, index, job, setJob }) => {
 
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
-        company: '',
-        contacts: [],
-        deadlines: [],
+        info: {
+            company: '',
+            position: '',
+            location: '',
+        },
+
         details: {
             description: '',
-            url: '',
+            link: '',
+            salary: '',
         },
-        interviewQuestions: [],
-        location: '',
         notes: '',
-        stage: index,
-        position: '',
+        deadlines: [],
+        interviewQuestions: [],
+        contacts: [],
+
+        metadata: {
+            stage: index,
+            awaitingResponse: false,
+        },
     });
 
     const [tabValue, setTabValue] = useState(0);
