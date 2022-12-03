@@ -45,7 +45,7 @@ export default function Homepage() {
 
     const renderBoards = () => {
         const boardsHtml = [];
-        boards.result.data.keys().forEach((name: string) => {
+        Object.keys(boards.result.data).forEach((name: string) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -54,7 +54,7 @@ export default function Homepage() {
                             nav('/kanban');
                         }}
                     >
-                        <span className="absolute bottom-5 left-5 ">name</span>
+                        <span className="absolute bottom-5 left-5 ">{name}</span>
                     </button>
                 </div>
             );
@@ -176,26 +176,6 @@ export default function Homepage() {
             <br></br>
             <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
                 {renderBoards()}
-                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
-                    <button
-                        className="relative w-full h-full py-16"
-                        onClick={() => {
-                            nav('/kanban');
-                        }}
-                    >
-                        <span className="absolute bottom-5 left-5 ">Summer Internships 2023</span>
-                    </button>
-                </div>
-                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
-                    <button
-                        className="relative w-full h-full"
-                        onClick={() => {
-                            nav('/kanban');
-                        }}
-                    >
-                        <span className="absolute bottom-5 left-5">Summer Internships 2022</span>
-                    </button>
-                </div>
                 {/* <div className="grid place-content-center">
                     <button
                         className="px-80 h-32 bg-gray-200"
