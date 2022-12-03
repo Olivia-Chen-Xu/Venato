@@ -175,18 +175,19 @@ const QuestionSearch = () => {
                         {jobs.map((job: object, index: number) => {
                             return (
                                 <div className="ml-20">
-                                    {job.interviewQuestions.map((question: string) => {
-                                        const link = `https://www.google.com/search?q=${question.replaceAll(
-                                            ' ',
-                                            '+'
-                                        )}`;
+                                    {job.interviewQuestions.map((question: { name: string, description: string }) => {
+                                            const link = `https://www.google.com/search?q=${question.name.replaceAll(
+                                                ' ',
+                                                '+'
+                                            )}`;
 
-                                        return (
-                                            <li>
-                                                <a href={link}>{question}</a>
-                                            </li>
-                                        );
-                                    })}
+                                            return (
+                                                <li>
+                                                    <a href={link}>{question.name}</a>
+                                                </li>
+                                            );
+                                        }
+                                    )}
                                 </div>
                                 // <div style={{ marginTop: '20px' }}>
                                 //     <h4>{`Job #${index + 1}:`}</h4>
