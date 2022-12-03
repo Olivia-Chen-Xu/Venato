@@ -121,6 +121,16 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
         .catch((err) => `Error fetching user jobs: ${err}`);
 });
 
+// Returns all job boards for the current signed-in user (name + array of job ids)
+const getJobBoards = functions.https.onCall((data: object, context: any) => {
+    return getDoc(`users/${context.auth.uid}`)
+        .get()
+        .then((doc) => {
+            return doc.data()?.boards;
+        })
+        .catch((err) => `Error fetching user job boards: ${err}`);
+});
+
 // Updates an event in the database with a new object
 const updateEvents = functions.https.onCall(
     (data: { id: string; newObject: object }, context: any) => {
@@ -270,6 +280,7 @@ export {
     addJob,
     getEvents,
     getJobs,
+    getJobBoards,
     updateEvents,
     updateEventField,
     updateJob,

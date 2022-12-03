@@ -11,15 +11,16 @@ import { AddCircleOutline } from '@mui/icons-material';
 export default function Homepage() {
     const nav = useNavigate();
     const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
+    const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
 
-    if (jobs.loading) {
+    if (jobs.loading || boards.loading) {
         return (
             <div>
                 <CircularProgress />
             </div>
         );
     }
-    if (jobs.error) {
+    if (jobs.error || boards.error) {
         return <p>Error: {jobs.error.message}</p>;
     }
 
@@ -40,6 +41,25 @@ export default function Homepage() {
     const formatDate = (date: string) => {
         const split = date.split('-');
         return `${split[1] === '11' ? 'Nov.' : 'Dec.'} ${(split[2] * 1).toString()}`;
+    };
+
+    const renderBoards = () => {
+        const boardsHtml = [];
+        boards.result.data.keys().forEach((name: string) => {
+            boardsHtml.push(
+                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                    <button
+                        className="relative w-full h-full py-16"
+                        onClick={() => {
+                            nav('/kanban');
+                        }}
+                    >
+                        <span className="absolute bottom-5 left-5 ">name</span>
+                    </button>
+                </div>
+            );
+        });
+        return boardsHtml;
     };
 
     return (
@@ -64,7 +84,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[0].id].position}
+                            {CalendarState.jobs[recent[0].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -76,7 +96,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[0].id].company}
+                            {CalendarState.jobs[recent[0].id].info.company}
                         </h1>
                     </div>
                 </div>
@@ -94,7 +114,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[1].id].position}
+                            {CalendarState.jobs[recent[1].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -106,7 +126,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[1].id].company}
+                            {CalendarState.jobs[recent[1].id].info.company}
                         </h1>
                     </div>
                 </div>
@@ -124,7 +144,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[2].id].position}
+                            {CalendarState.jobs[recent[2].id].info.position}
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
@@ -136,7 +156,7 @@ export default function Homepage() {
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[2].id].company}
+                            {CalendarState.jobs[recent[2].id].info.company}
                         </h1>
                     </div>
                 </div>
@@ -155,6 +175,7 @@ export default function Homepage() {
             </div>
             <br></br>
             <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
+                {renderBoards()}
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
