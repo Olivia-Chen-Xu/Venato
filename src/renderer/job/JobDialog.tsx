@@ -104,7 +104,7 @@ const Details = ({ value, index, job, setJob }) => {
             <br></br>
             <TextField
                 label="Application Link"
-                value={job.details.url}
+                value={job.details.link}
                 style={styles.applicationLink}
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, url: e.target.value } });
