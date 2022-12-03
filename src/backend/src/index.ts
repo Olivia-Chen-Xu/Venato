@@ -16,6 +16,26 @@ const getCollection = (collection: string) => {
     return admin.firestore().collection(collection);
 };
 
+// Verify user is logged in and has access to the job
+const verifyAuthentication = async (context: functions.https.CallableContext, jobId: string) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'The function must be called while authenticated.'
+        );
+    }
+    await getDoc(`jobs/${jobId}`)
+        .get()
+        .then((doc) => {
+            if (doc.data()?.userId !== context.auth?.uid) {
+                throw new functions.https.HttpsError(
+                    'permission-denied',
+                    "You cannot edit this job as it doesn't belong to you"
+                );
+            }
+        });
+};
+
 /**
  * Auth triggers - automatically triggered when a user is created/deleted
  */
@@ -109,7 +129,9 @@ const updateEventField = functions.https.onCall(
 );
 
 const updateJob = functions.https.onCall(
-    (data: { id: string; newFields: object }, context: any) => {
+    async (data: { id: string; newFields: object }, context: any) => {
+        await verifyAuthentication(context, data.id);
+
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
