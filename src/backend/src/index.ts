@@ -23,8 +23,7 @@ const getCollection = (collection: string) => {
 // On account creation create a db collection for them with default data
 const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
     const defaultDocData = {
-        email: user.email,
-        name: user.displayName,
+        boards: {},
     };
     return getDoc(`users/${user.uid}`).set(defaultDocData);
 });
