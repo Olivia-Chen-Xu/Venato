@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Button } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Search from '@mui/icons-material/Search';
 
@@ -34,6 +34,69 @@ const QuestionSearch = () => {
         setLoading(false);
         setMessage('');
         console.log(`Company: '${company}' Position: '${position}'`);
+    };
+
+    const displayQuestions = () => {
+        const unique = {};
+        const questions = jobs
+            .map((job) => job.interviewQuestions.map((question) => question.name))
+            .flat(1)
+            .filter((e) => !(unique[e] = e in unique));
+
+        return questions.map((question) => (
+            <div className="ml-20">
+                <li>
+                    <a
+                        href={`https://www.google.com/search?q=${question.replaceAll(
+                            ' ',
+                            '+'
+                        )}`}
+                    >
+                        {question}
+                    </a>
+                </li>
+            </div>
+            // <div style={{ marginTop: '20px' }}>
+            //     <h4>{`Job #${index + 1}:`}</h4>
+            //     {`Company: ${job.company}`}
+            //     <br />
+            //     {`Position: ${job.position}`}
+            //     <br />
+            //     {`Description: ${job.details.description}`}
+            //     <br />
+            //     URL: <a href={job.details.url}>{job.details.url}</a>
+            //     <br />
+            //     <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
+            //         <div style={{ float: 'left' }}>
+            //             Interview questions:{' '}
+            //             {job.interviewQuestions.map((question: string) => {
+            //                 const link = `https://www.google.com/search?q=${question.replaceAll(
+            //                     ' ',
+            //                     '+'
+            //                 )}`;
+
+            //                 return (
+            //                     <li>
+            //                         <a href={link}>{question}</a>
+            //                     </li>
+            //                 );
+            //             })}
+            //         </div>
+            //         <div style={{ float: 'left', marginLeft: '5%' }}>
+            //             Contacts:{' '}
+            //             {job.contacts.map((contact) => (
+            //                 <div>
+            //                     <li>
+            //                         <a href={contact}>{contact}</a>
+            //                     </li>
+            //                 </div>
+            //             ))}
+            //         </div>
+            //     </div>
+            //     <br />
+            //     <text style={{ color: 'white' }}>.</text>
+            // </div>
+        ));
     };
 
     const clearSearch = () => {
@@ -172,64 +235,7 @@ const QuestionSearch = () => {
                         <br />
                         <div className="grid place-content-center">{message}</div>
                         <br />
-                        {jobs.map((job: object, index: number) => {
-                            return (
-                                <div className="ml-20">
-                                    {job.interviewQuestions.map((question: string) => {
-                                        const link = `https://www.google.com/search?q=${question.replaceAll(
-                                            ' ',
-                                            '+'
-                                        )}`;
-
-                                        return (
-                                            <li>
-                                                <a href={link}>{question}</a>
-                                            </li>
-                                        );
-                                    })}
-                                </div>
-                                // <div style={{ marginTop: '20px' }}>
-                                //     <h4>{`Job #${index + 1}:`}</h4>
-                                //     {`Company: ${job.company}`}
-                                //     <br />
-                                //     {`Position: ${job.position}`}
-                                //     <br />
-                                //     {`Description: ${job.details.description}`}
-                                //     <br />
-                                //     URL: <a href={job.details.url}>{job.details.url}</a>
-                                //     <br />
-                                //     <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
-                                //         <div style={{ float: 'left' }}>
-                                //             Interview questions:{' '}
-                                //             {job.interviewQuestions.map((question: string) => {
-                                //                 const link = `https://www.google.com/search?q=${question.replaceAll(
-                                //                     ' ',
-                                //                     '+'
-                                //                 )}`;
-
-                                //                 return (
-                                //                     <li>
-                                //                         <a href={link}>{question}</a>
-                                //                     </li>
-                                //                 );
-                                //             })}
-                                //         </div>
-                                //         <div style={{ float: 'left', marginLeft: '5%' }}>
-                                //             Contacts:{' '}
-                                //             {job.contacts.map((contact) => (
-                                //                 <div>
-                                //                     <li>
-                                //                         <a href={contact}>{contact}</a>
-                                //                     </li>
-                                //                 </div>
-                                //             ))}
-                                //         </div>
-                                //     </div>
-                                //     <br />
-                                //     <text style={{ color: 'white' }}>.</text>
-                                // </div>
-                            );
-                        })}
+                        {displayQuestions()}
                     </div>
                 </div>
             )}

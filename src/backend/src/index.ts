@@ -16,6 +16,26 @@ const getCollection = (collection: string) => {
     return admin.firestore().collection(collection);
 };
 
+// Verify user is logged in and has access to the job
+const verifyAuthentication = async (context: functions.https.CallableContext, jobId: string) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'The function must be called while authenticated.'
+        );
+    }
+    await getDoc(`jobs/${jobId}`)
+        .get()
+        .then((doc) => {
+            if (doc.data()?.userId !== context.auth?.uid) {
+                throw new functions.https.HttpsError(
+                    'permission-denied',
+                    "You cannot edit this job as it doesn't belong to you"
+                );
+            }
+        });
+};
+
 /**
  * Auth triggers - automatically triggered when a user is created/deleted
  */
@@ -52,6 +72,12 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
 });
 
 const addJob = functions.https.onCall((data: object, context: any) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'The function must be called while authenticated.'
+        );
+    }
     return getCollection('jobs')
         .add(data)
         .then((docRef) => docRef.id)
@@ -77,20 +103,32 @@ const getEvents = functions.https.onCall((data: object, context: any) => {
 // Returns all the jobs in the database
 const getJobs = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
+        .where('userId', '==', context.auth.uid)
         .get()
         .then((jobs) => {
             const jobList: any = [];
             jobs.forEach((job) => {
-                // Remove the searchable fields (not required) and add the id
-                const jobData = job.data();
+                // Remove the query helper fields (positionSearchable, userId) and add the job id
+                const jobData = job.data(); // TODO : inline this (can be cleaned up)
                 delete jobData.positionSearchable;
+                delete jobData.userId;
                 jobData.id = job.id;
 
                 jobList.push(jobData);
             });
             return jobList;
         })
-        .catch((err) => err);
+        .catch((err) => `Error fetching user jobs: ${err}`);
+});
+
+// Returns all job boards for the current signed-in user (name + array of job ids)
+const getJobBoards = functions.https.onCall((data: object, context: any) => {
+    return getDoc(`users/${context.auth.uid}`)
+        .get()
+        .then((doc) => {
+            return doc.data()?.boards;
+        })
+        .catch((err) => `Error fetching user job boards: ${err}`);
 });
 
 // Updates an event in the database with a new object
@@ -107,7 +145,9 @@ const updateEventField = functions.https.onCall(
 );
 
 const updateJob = functions.https.onCall(
-    (data: { id: string; newFields: object }, context: any) => {
+    async (data: { id: string; newFields: object }, context: any) => {
+        await verifyAuthentication(context, data.id);
+
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
@@ -173,10 +213,10 @@ const jobSearch = functions.https.onCall(
             );
         }
         if (queries.company) {
-            query = query.where('company', '==', data.company);
+            query = query.where('info.company', '==', data.company);
         }
         if (queries.location) {
-            query = query.where('location', '==', data.location);
+            query = query.where('info.location', '==', data.location);
         }
 
         // Execute and return the query
@@ -187,6 +227,7 @@ const jobSearch = functions.https.onCall(
                 jobs.forEach((doc) => {
                     const job = doc.data();
                     delete job.positionSearchable;
+                    delete job.userId;
 
                     jobList.push(job);
                 });
@@ -213,6 +254,7 @@ const purgeDeletedEvent = functions.firestore
 // Makes searchable fields for the jobs on create and add company/location to db
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
+    data.userID = context.auth?.uid;
     const promises = [];
 
     // Add searchable job position field and the company + location to db
@@ -238,6 +280,7 @@ export {
     addJob,
     getEvents,
     getJobs,
+    getJobBoards,
     updateEvents,
     updateEventField,
     updateJob,

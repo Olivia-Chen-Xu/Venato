@@ -36,7 +36,7 @@ const Headings = ({ job, setJob }) => {
             <Input
                 className="focus-only"
                 placeholder="Job Title"
-                value={job.position}
+                value={job.info.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
                 }}
@@ -46,7 +46,7 @@ const Headings = ({ job, setJob }) => {
                 <Input
                     placeholder="Company"
                     style={styles.Company}
-                    value={job.company}
+                    value={job.info.company}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, company: e.target.value });
@@ -59,7 +59,7 @@ const Headings = ({ job, setJob }) => {
                 />
                 <Input
                     placeholder="Location"
-                    value={job.location}
+                    value={job.info.location}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -104,7 +104,7 @@ const Details = ({ value, index, job, setJob }) => {
             <br></br>
             <TextField
                 label="Application Link"
-                value={job.details.url}
+                value={job.details.link}
                 style={styles.applicationLink}
                 onChange={(e) => {
                     setJob({ ...job, details: { ...job.details, url: e.target.value } });
@@ -178,9 +178,9 @@ const Deadlines = ({ value, index, job, setJob }) => {
             <br></br>
             <br></br>
             {job.deadlines &&
-                job.deadlines.map((ddl) => (
+                job.deadlines.map((deadline) => (
                     <div>
-                        <strong>{dateToString(ddl.date)}</strong>: {ddl.title}
+                        <strong>{`${dateToString(deadline.date)}, ${deadline.time}`}</strong>: {deadline.title}
                     </div>
                 ))}
         </div>
@@ -253,12 +253,12 @@ const Questions = ({ value, index, job, setJob }) => {
                             {question}
                         </a>
                     </li> */
-                job.interviewQuestions.map((q) => (
+                job.interviewQuestions.map((question) => (
                     <div style={{ marginBottom: 10 }}>
                         <TextField
                             label="Interview Question"
                             style={styles.interviewQuestions}
-                            value={q}
+                            value={question.name}
                             // onChange={(e) => {
                             //     setJob({
                             //         ...job,
@@ -333,7 +333,7 @@ const Contacts = ({ value, index, job, setJob }) => {
                         <TextField
                             label="Contacts"
                             style={styles.contactsBox}
-                            value={contact}
+                            value={contact.name}
                             // onChange={(e) => {
                             //     setJob({
                             //         ...job,
@@ -352,18 +352,26 @@ const Contacts = ({ value, index, job, setJob }) => {
 
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
-        company: '',
-        contacts: [],
-        deadlines: [],
+        info: {
+            company: '',
+            position: '',
+            location: '',
+        },
+
         details: {
             description: '',
-            url: '',
+            link: '',
+            salary: '',
         },
-        interviewQuestions: [],
-        location: '',
         notes: '',
-        stage: index,
-        position: '',
+        deadlines: [],
+        interviewQuestions: [],
+        contacts: [],
+
+        metadata: {
+            stage: index,
+            awaitingResponse: false,
+        },
     });
 
     const [tabValue, setTabValue] = useState(0);

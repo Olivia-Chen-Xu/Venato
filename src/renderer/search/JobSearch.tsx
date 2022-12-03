@@ -51,7 +51,7 @@ const SearchBar = () => {
         setcurrJob(result.data[0]);
         setErrMsg('');
         setLoading(false);
-        console.log(`Company: '${company}' Position: '${position}' Location: '${location}'`);
+        console.log(`Position: ${position}, Company: ${company}, Location: ${location}`);
     };
 
     return (
@@ -76,7 +76,7 @@ const SearchBar = () => {
                                         // value={position}
                                         placeholder="Position"
                                         onChange={(e) => {
-                                            setPosition(e.target.value);
+                                            setPosition(e.target.value.trim());
                                         }}
                                     />
                                 </label>
@@ -162,7 +162,7 @@ const SearchBar = () => {
                                             <h1>
                                                 <span className="font-bold text-xl">
                                                     {' '}
-                                                    {`${job.position}`}
+                                                    {`${job.info.position}`}
                                                 </span>
                                             </h1>
                                         </div>
@@ -173,7 +173,7 @@ const SearchBar = () => {
                                                 <span className="material-icons-outlined">
                                                     alternate_email
                                                 </span>{' '}
-                                                {`${job.company}`}
+                                                {`${job.info.company}`}
                                             </h1>
                                         </div>
                                         <div className="mt-1">
@@ -181,7 +181,7 @@ const SearchBar = () => {
                                                 <span className="material-icons-outlined">
                                                     location_on
                                                 </span>{' '}
-                                                {`${job.location}`}
+                                                {`${job.info.location}`}
                                             </h1>
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@ const SearchBar = () => {
                         {currJob && (
                             <div id="top" className="w-full h-fit">
                                 <div className="mt-3 ml-5 mr-5 text-white">
-                                    <h1 className="text-2xl font-bold mb-1">{currJob.position}</h1>
+                                    <h1 className="text-2xl font-bold mb-1">{currJob.info.position}</h1>
                                     <img src={bar} alt="" className="w-full" />
                                     <div className="flex mb-2">
                                         <div className="w-full text-xl">
@@ -199,14 +199,14 @@ const SearchBar = () => {
                                                 <span className="mt-1 material-icons-outlined">
                                                     alternate_email
                                                 </span>{' '}
-                                                {currJob.company}
+                                                {currJob.info.company}
                                             </h3>
                                             <h3>
                                                 {' '}
                                                 <span className="material-icons-outlined">
                                                     location_on
                                                 </span>{' '}
-                                                {currJob.location}
+                                                {currJob.info.location}
                                             </h3>
                                         </div>
                                         <div className="w-full mt-2">

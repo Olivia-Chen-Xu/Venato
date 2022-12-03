@@ -164,7 +164,7 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
                 //console.log(res.data);
-                res.data.forEach((job) => newState[job.stage].push({ ...job, id: job.id }));
+                res.data.forEach((job) => newState[job.metadata.stage].push({ ...job, id: job.id }));
                 setState(newState);
                 setLoading(false);
             });
@@ -285,7 +285,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.position}
+                                                                    {job.info.position}
                                                                 </text>
                                                                 <text
                                                                     style={{
@@ -295,7 +295,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.company}
+                                                                    {job.info.company}
                                                                 </text>
                                                                 {/* <div
                                                                     style={{
@@ -304,7 +304,7 @@ export default function Kanban() {
                                                                             'space-around',
                                                                     }}
                                                                 >
-                                                                    {colTitles[job.stage]}
+                                                                    {colTitles[job.metadata.stage]}
                                                                 </div>
                                                                 <button
                                                                     type="button"
