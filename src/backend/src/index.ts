@@ -77,20 +77,22 @@ const getEvents = functions.https.onCall((data: object, context: any) => {
 // Returns all the jobs in the database
 const getJobs = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
+        .where('userId', '==', context.auth.uid)
         .get()
         .then((jobs) => {
             const jobList: any = [];
             jobs.forEach((job) => {
-                // Remove the searchable fields (not required) and add the id
-                const jobData = job.data();
+                // Remove the query helper fields (positionSearchable, userId) and add the job id
+                const jobData = job.data(); // TODO : inline this (can be cleaned up)
                 delete jobData.positionSearchable;
+                delete jobData.userId;
                 jobData.id = job.id;
 
                 jobList.push(jobData);
             });
             return jobList;
         })
-        .catch((err) => err);
+        .catch((err) => `Error fetching user jobs: ${err}`);
 });
 
 // Updates an event in the database with a new object
