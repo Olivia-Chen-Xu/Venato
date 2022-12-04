@@ -8,12 +8,7 @@ import { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db }
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall((data: [], context: any) => {
-    if (!context.auth || context.auth.email !== '18rem8@queensu.ca') {
-        throw new functions.https.HttpsError(
-            'permission-denied',
-            'Generating jobs is a dev-only feature, only the admin account can generate them'
-        );
-    }
+    verifyIsAuthenticated(context);
 
     const batch = db.batch();
     data.forEach((job: any) => {
