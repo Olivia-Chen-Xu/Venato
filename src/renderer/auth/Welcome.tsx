@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import { signin } from './auth-functions';
 import { btnStyle } from './authStyles';
 import logo from '../../../assets/logo.png';
-import generateJobs from '../search/generateJobs';
+import generateJobs from '../search/GenerateJobs';
 
 const Welcome = () => {
     const navigate = useNavigate();

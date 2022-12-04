@@ -294,7 +294,7 @@ const Contacts = ({ value, index, job, setJob }) => {
             }}
         >
             <Headings job={job} setJob={setJob}></Headings>
-            <br></br>
+            <br />
             <Button
                 variant="contained"
                 onClick={() => setOpen(true)}
@@ -302,8 +302,8 @@ const Contacts = ({ value, index, job, setJob }) => {
             >
                 Add Contact
             </Button>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent
                     style={{
