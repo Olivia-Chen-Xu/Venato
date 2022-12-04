@@ -9,7 +9,7 @@ import { getCollection, auth } from './helpers';
 const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
 
 // Removes jobs that have been deleted for 30 days
-const purgeExpiredData = functions.pubsub.schedule('every 24 hours').onRun((context) => {
+const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((context) => {
     const toDelete: any[] = [];
 
     getCollection('jobs')
@@ -28,7 +28,7 @@ const purgeExpiredData = functions.pubsub.schedule('every 24 hours').onRun((cont
 });
 
 // Removes users that have been unverified for at least a day
-const purgeUnverifiedUsers = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
     const unVerifiedUsers: string[] = [];
 
     // Go through users in batches of 1000
@@ -63,4 +63,10 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every 24 hours').onRun(a
         .catch((err) => console.log(`Failed to delete unverified users: ${err}`));
 });
 
-export { purgeExpiredData, purgeUnverifiedUsers };
+const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun((context) => {
+    console.log('Running data integrity check');
+
+    // TODO (make sure that all db data makes sense (e.g. no users with more than the limit of jobs, no invalid ids, etc))
+});
+
+export { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck };

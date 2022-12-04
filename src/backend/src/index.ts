@@ -11,7 +11,7 @@ import {
 } from './getData';
 import { addJobs, addJob, updateJob } from './mutateData';
 import { onJobCreate } from './firestore';
-import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
+import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cron';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -60,4 +60,5 @@ export {
     onJobCreate,
     purgeExpiredData,
     purgeUnverifiedUsers,
+    dataIntegrityCheck,
 };
