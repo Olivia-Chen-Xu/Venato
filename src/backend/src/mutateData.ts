@@ -39,7 +39,7 @@ const updateJob = functions.https.onCall(
 // In 30 days, a CRON job will permanently remove it from firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
     await verifyJobPermission(context, data.id);
-    return getDoc(`jobs/${data.id}`).update({ deleted: true });
+    return getDoc(`jobs/${data.id}`).update({ deletedTime: Date.now() });
 });
 
 export { addJobs, addJob, updateJob, deleteJob };

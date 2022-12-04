@@ -8,11 +8,15 @@ import { getDoc } from './helpers';
 
 // When a user signs up, create a default document for them in firestore
 const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
-    return getDoc(`users/${user.uid}`).set({ boards: {} });
+    const defaultDoc = {
+        boards: {}
+    };
+    return getDoc(`users/${user.uid}`).set(defaultDoc);
 });
 
-// On account deletion, delete user data in db (note: don't delete multiple users at teh same time with the admin SDK)
+// On account deletion, delete user data in db (note: don't delete multiple users at the same time with the admin SDK)
 const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
+    // TODO: Delete all jobs this user has created
     return getDoc(`users/${user.uid}`).delete();
 });
 

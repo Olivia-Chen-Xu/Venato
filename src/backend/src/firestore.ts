@@ -8,17 +8,6 @@ import { getDoc } from './helpers';
  * company and location to a list of companies and locations respectively in firestore
  */
 
-// TODO: Make a CRON job to cleanup old firestore data (i.e deleted jobs after 30 days)
-// Removes any event from the db when toDelete is set to true
-// const purgeDeletedEvent = functions.firestore
-//     .document('events/{eventId}')
-//     .onUpdate((change, context) => {
-//         if (change.after.data().toDelete) {
-//             return change.after.ref.delete();
-//         }
-//         return null;
-//     });
-
 // Makes searchable fields for the jobs on create and add company/location to db
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
@@ -40,6 +29,11 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     return Promise.all(promises);
 });
 
-// TODO: Make an onDelete function that removes the company/location from db if no other jobs have it
+// On job purge (CRON job removed it after 30 days deleted):
+// - Remove the company and location from the db if no other jobs have that company/location
+// - Remove the job from the user's job board
+const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
+    // TODO
+});
 
-export { onJobCreate };
+export { onJobCreate, onJobPurge };

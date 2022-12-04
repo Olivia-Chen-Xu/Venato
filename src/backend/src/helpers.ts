@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
 
 /**
- * Helper functions for Firebase Functions, plus admin app initialization
+ * Initialize the app with admin permissions to be used in other functions
  */
 
 // Admin SDK is required to access Firestore.
@@ -12,6 +12,13 @@ admin.initializeApp();
 
 // Batch jobs require a db reference
 const db = admin.firestore();
+
+// Auth-based functions may need admin permissions for authentication
+const auth = admin.auth();
+
+/**
+ * Helper functions for commonly used functionality
+ */
 
 // Shorthand for the very common requirement of getting a document or collection
 const getDoc = (doc: string) => {
@@ -31,7 +38,7 @@ const verifyIsAuthenticated = (context: functions.https.CallableContext) => {
     }
 };
 
-// Verify the user who called the function has access to the specififed job
+// Verify the user who called the function has access to the specified job
 const verifyJobPermission = async (context: functions.https.CallableContext, jobId: string) => {
     verifyIsAuthenticated(context);
 
@@ -47,4 +54,4 @@ const verifyJobPermission = async (context: functions.https.CallableContext, job
         });
 };
 
-export { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db };
+export { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db, auth };
