@@ -9,6 +9,7 @@ import {
 } from './getData';
 import { addJobs, addJob, updateJob } from './mutateData';
 import { onJobCreate } from './firestore';
+import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -26,8 +27,15 @@ import { onJobCreate } from './firestore';
  *  -Once the function is written, export it, import it here then export it from this file
  *  -Initialize firebase (https://firebase.google.com/docs/functions/get-started#set-up-node.js-and-the-firebase-cli)
  *  -To deploy, run 'firebase deploy --only functions:<FUNCTION NAME>'
- *  -To call a function, use 'httpsCallable(getFunctions(), '<FUNCTION NAME>')(<PARAMETER>)'
+ *  -To call a callable function, use 'httpsCallable(getFunctions(), '<FUNCTION NAME>')(<PARAMETER>)'
  *   (note: functions are async, you'll need an await)
+ *
+ * Notes/resources:
+ *  -Make sure to throw proper errors if something is wrong (usually either the user is unauthenticated
+ *   or invalid params). The format is 'throw new functions.https.HttpsError('<code>', '<message>')',
+ *   error messages is what went wrong (don't put the app's data in it like the context), codes are listed here:
+ *   https://firebase.google.com/docs/reference/node/firebase.functions#functionserrorcode
+ *  -
  *
  * You should be able to figure out what to do by going through existing functions, otherwise do a
  * quick Stack Overflow search 🙂
@@ -46,4 +54,6 @@ export {
     getAllCompanies,
     getAllLocations,
     onJobCreate,
+    purgeExpiredData,
+    purgeUnverifiedUsers,
 };

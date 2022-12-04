@@ -37,15 +37,15 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every 24 hours').onRun(a
             .listUsers(1000, nextPageToken)
             .then((listUsersResult) => {
                 // Get unverified users
-                listUsersResult.users
-                    .filter(
-                        (userRecord) =>
-                            new Date(userRecord.metadata.creationTime).getTime() <
-                                Date.now() - oneDayInMilliseconds && !userRecord.emailVerified
-                    )
-                    .forEach((userRecord) => {
+                listUsersResult.users.forEach((userRecord) => {
+                    if (
+                        !userRecord.emailVerified &&
+                        new Date(userRecord.metadata.creationTime).getTime() <
+                            Date.now() - oneDayInMilliseconds
+                    ) {
                         unVerifiedUsers.push(userRecord.uid);
-                    });
+                    }
+                });
 
                 // List next page if it exists
                 if (listUsersResult.pageToken) {

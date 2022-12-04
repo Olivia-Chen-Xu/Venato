@@ -92,7 +92,10 @@ const jobSearch = functions.https.onCall(
             location: (data.location?.trim()?.length || 0) !== 0,
         };
         if (!queries.position && !queries.company && !queries.location) {
-            return 'No query specified';
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'A company, position or location is required to search for jobs'
+            );
         }
 
         // Build the query
@@ -126,6 +129,19 @@ const jobSearch = functions.https.onCall(
                 return jobList;
             })
             .catch((err) => `Error querying interview questions: ${err}`);
+    }
+);
+
+const interviewQuestionsSearch = functions.https.onCall(
+    (data: { company: string; position: string }, context: any) => {
+        verifyIsAuthenticated(context);
+
+        if (!data.company && !data.position) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'A company or position is required to search for interview questions'
+            );
+        }
     }
 );
 
