@@ -1,8 +1,8 @@
-import * as functions from "firebase-functions";
-import { getDoc, getCollection, verifyAuthentication, admin } from "./helpers";
+import * as functions from 'firebase-functions';
+import { getDoc, getCollection, verifyAuthentication, db } from './helpers';
 
 /**
- * Contains functions for mutating data in firestore (create, update and delete)
+ * Callable functions for mutating data in firestore (creating, updating or deleting)
  */
 
 const addEvent = functions.https.onCall((data: object, context: any) => {
@@ -10,7 +10,6 @@ const addEvent = functions.https.onCall((data: object, context: any) => {
 });
 
 const addJobs = functions.https.onCall((data: [], context: any) => {
-    const db = admin.firestore();
     const batch = db.batch();
     data.forEach((job: any) => {
         batch.set(db.collection('jobs').doc(), job);

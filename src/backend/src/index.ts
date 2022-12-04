@@ -10,10 +10,6 @@ import { purgeDeletedEvent, onJobCreate } from "./firestore";
 
 
 
-/**
- * Auth triggers - automatically triggered when a user is created/deleted
- */
-
 
 
 /**
@@ -21,10 +17,6 @@ import { purgeDeletedEvent, onJobCreate } from "./firestore";
  */
 
 
-
-/**
- * Firestore triggers - do sensitive operations automatically when the database changes
- */
 
 
 

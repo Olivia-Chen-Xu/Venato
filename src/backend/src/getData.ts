@@ -1,15 +1,13 @@
-import * as functions from "firebase-functions";
-import { getDoc, getCollection, admin } from "./helpers";
+import * as functions from 'firebase-functions';
+import { getDoc, getCollection } from './helpers';
 
 /**
- * Contains functions for getting data from firestore
+ * Callable functions for getting data from firestore
  */
 
 // Gets events from the database
 const getEvents = functions.https.onCall((data: object, context: any) => {
-    return admin
-        .firestore()
-        .collection('events')
+    return getCollection('events')
         .get()
         .then((events) => {
             const eventList: any = [];
@@ -51,10 +49,6 @@ const getJobBoards = functions.https.onCall((data: object, context: any) => {
         })
         .catch((err) => `Error fetching user job boards: ${err}`);
 });
-
-
-
-
 
 const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
@@ -136,4 +130,12 @@ const jobSearch = functions.https.onCall(
     }
 );
 
-export { getEvents, getJobs, getJobBoards, getCalendarEvents, getAllCompanies, getAllLocations, jobSearch };
+export {
+    getEvents,
+    getJobs,
+    getJobBoards,
+    getCalendarEvents,
+    getAllCompanies,
+    getAllLocations,
+    jobSearch,
+};

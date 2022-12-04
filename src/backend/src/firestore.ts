@@ -1,11 +1,9 @@
-import * as functions from "firebase-functions";
-import { getDoc } from "./helpers";
+import * as functions from 'firebase-functions';
+import { getDoc } from './helpers';
 
 /**
- * Contains firestore triggers
+ * Firestore triggers - automatically triggered when a firestore document is changed
  *
- * These are automatically triggered by firebase when a document with the specified path is changed
- * in the specified way
  * e.g. When a document in /jobs/* is created, make a searchable field for the position and add the
  * company and location to a list of companies and locations respectively in firestore
  */

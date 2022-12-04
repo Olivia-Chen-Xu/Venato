@@ -1,12 +1,22 @@
 import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
 
+/**
+ * Helper functions for Firebase Functions, plus admin app initialization
+ */
+
+// Admin SDK is required to access Firestore.
+// It also allows enhanced security since it's only available on the server-side and ignores
+// firestore security rules, so all other requests not defined in the API will be blocked
 admin.initializeApp();
 
+// Batch jobs require a db reference
+const db = admin.firestore();
+
+// Shorthand for the very common requirement of getting a document or collection
 const getDoc = (doc: string) => {
     return admin.firestore().doc(doc);
 };
-
 const getCollection = (collection: string) => {
     return admin.firestore().collection(collection);
 };
@@ -19,6 +29,7 @@ const verifyAuthentication = async (context: functions.https.CallableContext, jo
             'The function must be called while authenticated.'
         );
     }
+
     await getDoc(`jobs/${jobId}`)
         .get()
         .then((doc) => {
@@ -31,4 +42,4 @@ const verifyAuthentication = async (context: functions.https.CallableContext, jo
         });
 };
 
-export { getDoc, getCollection, verifyAuthentication, admin };
+export { getDoc, getCollection, verifyAuthentication, db };
