@@ -46,15 +46,14 @@ const updateEventField = functions.https.onCall(
 const updateJob = functions.https.onCall(
     async (data: { id: string; newFields: object }, context: any) => {
         await verifyAuthentication(context, data.id);
-
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
 
-// Deactivates an event in the database (a trigger will delete it after)
-
-const deleteEvent = functions.https.onCall((data: { id: string }, context: any) => {
-    return getDoc(`events/${data.id}`).update({ toDelete: true });
+// Deactivates a job in firestore (it's NOT removed, it can still be restored since just a flag is set)
+// In 30 days, a CRON job will permanently remove it from firestore
+const deleteJob = functions.https.onCall((data: { id: string }, context: any) => {
+    return getDoc(`jobs/${data.id}`).update({ deleted: true });
 });
 
-export { addEvent, addJobs, addJob, updateEvents, updateEventField, updateJob, deleteEvent };
+export { addEvent, addJobs, addJob, updateEvents, updateEventField, updateJob, deleteJob };
