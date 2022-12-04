@@ -1,7 +1,8 @@
 import { onUserSignup, onUserDeleted } from './auth';
 import {
-    getJobs,
     getJobBoards,
+    getUpcomingEvents,
+    getJobs,
     getCalendarEvents,
     getAllCompanies,
     getAllLocations,
@@ -47,8 +48,9 @@ export {
     onUserDeleted,
     addJobs,
     addJob,
-    getJobs,
     getJobBoards,
+    getUpcomingEvents,
+    getJobs,
     updateJob,
     getCalendarEvents,
     jobSearch,

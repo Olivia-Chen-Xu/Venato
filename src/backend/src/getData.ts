@@ -5,6 +5,34 @@ import { getDoc, getCollection, verifyIsAuthenticated } from './helpers';
  * Callable functions for getting data from firestore
  */
 
+// Returns all job boards for the current signed-in user (each has a name + array of job ids)
+const getJobBoards = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
+    return getDoc(`users/${context.auth.uid}`)
+        .get()
+        .then((doc) => {
+            return doc.data()?.boards;
+        })
+        .catch((err) => `Error fetching user job boards: ${err}`);
+});
+
+// Returns the next 3 job events for the currently signed-in user
+const getUpcomingEvents = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
+    // TODO: need to move deadlines to their own collection for querying (right now they're an
+    //  array in the job object)
+    return getCollection('deadlines')
+        .where('userId', '==', context.auth.uid)
+        .where('time', '>=', Date.now())
+        .orderBy('time')
+        .limit(3)
+        .get()
+        .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
+        .catch((err) => `Error fetching upcoming events: ${err}`);
+});
+
 // Returns all the jobs that belong to the currently signed-in user
 const getJobs = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
@@ -26,18 +54,6 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
             return jobList;
         })
         .catch((err) => `Error fetching user jobs: ${err}`);
-});
-
-// Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getJobBoards = functions.https.onCall((data: object, context: any) => {
-    verifyIsAuthenticated(context);
-
-    return getDoc(`users/${context.auth.uid}`)
-        .get()
-        .then((doc) => {
-            return doc.data()?.boards;
-        })
-        .catch((err) => `Error fetching user job boards: ${err}`);
 });
 
 // Returns all job events (to display on the calendar) for the currently signed-in user
@@ -167,8 +183,9 @@ const interviewQuestionsSearch = functions.https.onCall(
 );
 
 export {
-    getJobs,
     getJobBoards,
+    getUpcomingEvents,
+    getJobs,
     getCalendarEvents,
     getAllCompanies,
     getAllLocations,
