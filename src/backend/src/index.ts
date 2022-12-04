@@ -6,6 +6,7 @@ import {
     getAllCompanies,
     getAllLocations,
     jobSearch,
+    interviewQuestionsSearch,
 } from './getData';
 import { addJobs, addJob, updateJob } from './mutateData';
 import { onJobCreate } from './firestore';
@@ -51,6 +52,7 @@ export {
     updateJob,
     getCalendarEvents,
     jobSearch,
+    interviewQuestionsSearch,
     getAllCompanies,
     getAllLocations,
     onJobCreate,

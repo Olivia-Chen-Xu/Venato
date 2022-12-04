@@ -80,16 +80,16 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
         .catch((err) => err);
 });
 
-// TODO: split this into job and interview question search
+// Search for a job by position, company, or location
 const jobSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {
         verifyIsAuthenticated(context);
 
         // Check which of the three inputs are given
-        const queries: { position: boolean; company: boolean; location: boolean } = {
-            position: (data.position?.trim()?.length || 0) !== 0,
-            company: (data.company?.trim()?.length || 0) !== 0,
-            location: (data.location?.trim()?.length || 0) !== 0,
+        const queries: { position: string; company: string; location: string } = {
+            position: data.position?.replace(/ +/g, ' ').trim() || '',
+            company: data.company?.replace(/ +/g, ' ').trim() || '',
+            location: data.location?.replace(/ +/g, ' ').trim() || '',
         };
         if (!queries.position && !queries.company && !queries.location) {
             throw new functions.https.HttpsError(
@@ -114,34 +114,55 @@ const jobSearch = functions.https.onCall(
             query = query.where('info.location', '==', data.location);
         }
 
-        // Execute and return the query
+        // Execute the query and return the result
         return query
             .get()
             .then((jobs) => {
-                const jobList: object[] = [];
-                jobs.forEach((doc) => {
-                    const job = doc.data();
-                    delete job.positionSearchable;
-                    delete job.userId;
-
-                    jobList.push(job);
-                });
-                return jobList;
+                return jobs.docs.map((doc) => ({
+                    details: doc.data().details,
+                    info: doc.data().info,
+                    interviewQuestions: doc.data().interviewQuestions,
+                }));
             })
-            .catch((err) => `Error querying interview questions: ${err}`);
+            .catch((err) => `Error querying jobs questions: ${err}`);
     }
 );
 
+// Search for interview questions based on a company and/or position
 const interviewQuestionsSearch = functions.https.onCall(
-    (data: { company: string; position: string }, context: any) => {
+    (data: { position: string; company: string }, context: any) => {
         verifyIsAuthenticated(context);
 
-        if (!data.company && !data.position) {
+        // Parse the search queries and verify at least one valid is given
+        const queries: { position: string; company: string } = {
+            position: data.position?.replace(/ +/g, ' ').trim() || '',
+            company: data.company?.replace(/ +/g, ' ').trim() || '',
+        };
+        if (!queries.position && !queries.company) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'A company or position is required to search for interview questions'
             );
         }
+
+        // Build the query
+        let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = getCollection('jobs');
+        if (queries.position) {
+            query = query.where(
+                'positionSearchable',
+                'array-contains-any',
+                data.position.toLowerCase().split(' ')
+            );
+        }
+        if (queries.company) {
+            query = query.where('info.company', '==', data.company);
+        }
+
+        // Execute the query and return the result
+        return query
+            .get()
+            .then((jobs) => jobs.docs.map((job) => job.data().interviewQuestions).flat())
+            .catch((err) => `Error querying interview questions: ${err}`);
     }
 );
 
@@ -152,4 +173,5 @@ export {
     getAllCompanies,
     getAllLocations,
     jobSearch,
+    interviewQuestionsSearch,
 };
