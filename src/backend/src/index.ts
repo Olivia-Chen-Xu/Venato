@@ -1,7 +1,7 @@
 import { onUserSignup, onUserDeleted } from "./auth";
-import { getEvents, getJobs, getJobBoards, getCalendarEvents, getAllCompanies, getAllLocations, jobSearch } from "./getData";
-import { addEvent, addJobs, addJob, updateEvents, updateEventField, updateJob, deleteEvent } from "./mutateData";
-import { purgeDeletedEvent, onJobCreate } from "./firestore";
+import { getJobs, getJobBoards, getCalendarEvents, getAllCompanies, getAllLocations, jobSearch } from "./getData";
+import { addJobs, addJob, updateJob } from "./mutateData";
+import { onJobCreate } from "./firestore";
 
 
 /**
@@ -23,21 +23,15 @@ import { purgeDeletedEvent, onJobCreate } from "./firestore";
 export {
     onUserSignup,
     onUserDeleted,
-    addEvent,
     addJobs,
     addJob,
-    getEvents,
     getJobs,
     getJobBoards,
-    updateEvents,
-    updateEventField,
     updateJob,
-    deleteEvent,
     getCalendarEvents,
     jobSearch,
     getAllCompanies,
     getAllLocations,
-    purgeDeletedEvent,
     onJobCreate,
 };
 

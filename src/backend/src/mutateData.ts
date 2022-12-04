@@ -5,10 +5,8 @@ import { getDoc, getCollection, verifyAuthentication, db } from './helpers';
  * Callable functions for mutating data in firestore (creating, updating or deleting)
  */
 
-const addEvent = functions.https.onCall((data: object, context: any) => {
-    return getCollection('events').add(data);
-});
-
+// Adds a list of jobs to firestore
+// This is only used for generating jobs in development
 const addJobs = functions.https.onCall((data: [], context: any) => {
     const batch = db.batch();
     data.forEach((job: any) => {
@@ -17,6 +15,7 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
     return batch.commit();
 });
 
+// Adds a job to firestore
 const addJob = functions.https.onCall((data: object, context: any) => {
     if (!context.auth) {
         throw new functions.https.HttpsError(
@@ -30,19 +29,7 @@ const addJob = functions.https.onCall((data: object, context: any) => {
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
-// Updates an event in the database with a new object
-const updateEvents = functions.https.onCall(
-    (data: { id: string; newObject: object }, context: any) => {
-        return getDoc(`events/${data.id}`).set(data.newObject);
-    }
-);
-
-const updateEventField = functions.https.onCall(
-    (data: { id: string; newFields: object }, context: any) => {
-        return getDoc(`events/${data.id}`).update(data.newFields);
-    }
-);
-
+// Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
     async (data: { id: string; newFields: object }, context: any) => {
         await verifyAuthentication(context, data.id);
@@ -56,4 +43,4 @@ const deleteJob = functions.https.onCall((data: { id: string }, context: any) =>
     return getDoc(`jobs/${data.id}`).update({ deleted: true });
 });
 
-export { addEvent, addJobs, addJob, updateEvents, updateEventField, updateJob, deleteJob };
+export { addJobs, addJob, updateJob, deleteJob };

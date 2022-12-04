@@ -5,21 +5,7 @@ import { getDoc, getCollection } from './helpers';
  * Callable functions for getting data from firestore
  */
 
-// Gets events from the database
-const getEvents = functions.https.onCall((data: object, context: any) => {
-    return getCollection('events')
-        .get()
-        .then((events) => {
-            const eventList: any = [];
-            events.forEach((event) => {
-                eventList.push(event.data());
-            });
-            return eventList;
-        })
-        .catch((err) => err);
-});
-
-// Returns all the jobs in the database
+// Returns all the jobs that belong to the currently signed-in user
 const getJobs = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
         .where('userId', '==', context.auth.uid)
@@ -28,7 +14,7 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
             const jobList: any = [];
             jobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
-                const jobData = job.data(); // TODO : inline this (can be cleaned up)
+                const jobData = job.data(); // TODO: inline this (can be cleaned up)
                 delete jobData.positionSearchable;
                 delete jobData.userId;
                 jobData.id = job.id;
@@ -40,7 +26,7 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
         .catch((err) => `Error fetching user jobs: ${err}`);
 });
 
-// Returns all job boards for the current signed-in user (name + array of job ids)
+// Returns all job boards for the current signed-in user (each has a name + array of job ids)
 const getJobBoards = functions.https.onCall((data: object, context: any) => {
     return getDoc(`users/${context.auth.uid}`)
         .get()
@@ -50,6 +36,7 @@ const getJobBoards = functions.https.onCall((data: object, context: any) => {
         .catch((err) => `Error fetching user job boards: ${err}`);
 });
 
+// Returns all job events (to display on the calendar) for the currently signed-in user
 const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
     return getCollection('jobs')
         .get()
@@ -66,17 +53,16 @@ const getCalendarEvents = functions.https.onCall((data: object, context: any) =>
             });
             return events;
         })
-        .catch((err) => `Error getting events: ${err}`);
+        .catch((err) => `Error getting calendar events: ${err}`);
 });
 
-// For search
+// For searching or adding jobs, we need all the possible companies and/or locations
 const getAllCompanies = functions.https.onCall((data: object, context: any) => {
     return getCollection('companies')
         .get()
         .then((companies) => companies.docs.map((company) => company.id))
         .catch((err) => err);
 });
-
 const getAllLocations = functions.https.onCall((data: object, context: any) => {
     return getCollection('locations')
         .get()
@@ -84,6 +70,7 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
         .catch((err) => err);
 });
 
+// TODO: split this into job and interview question search
 const jobSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {
         // Check which of the three inputs are given
@@ -131,7 +118,6 @@ const jobSearch = functions.https.onCall(
 );
 
 export {
-    getEvents,
     getJobs,
     getJobBoards,
     getCalendarEvents,
