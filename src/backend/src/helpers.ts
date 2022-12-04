@@ -21,14 +21,19 @@ const getCollection = (collection: string) => {
     return admin.firestore().collection(collection);
 };
 
-// Verify user is logged in and has access to the job
-const verifyAuthentication = async (context: functions.https.CallableContext, jobId: string) => {
+// Confirm a function call comes from a logged-in user
+const verifyIsAuthenticated = (context: functions.https.CallableContext) => {
     if (!context.auth) {
         throw new functions.https.HttpsError(
             'unauthenticated',
-            'The function must be called while authenticated.'
+            'You must be logged in to call the API'
         );
     }
+};
+
+// Verify the user who called the function has access to the specififed job
+const verifyJobPermission = async (context: functions.https.CallableContext, jobId: string) => {
+    verifyIsAuthenticated(context);
 
     await getDoc(`jobs/${jobId}`)
         .get()
@@ -42,4 +47,4 @@ const verifyAuthentication = async (context: functions.https.CallableContext, jo
         });
 };
 
-export { getDoc, getCollection, verifyAuthentication, db };
+export { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db };

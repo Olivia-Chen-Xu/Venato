@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getDoc, getCollection, verifyAuthentication, db } from './helpers';
+import { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db } from './helpers';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)
@@ -8,6 +8,13 @@ import { getDoc, getCollection, verifyAuthentication, db } from './helpers';
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall((data: [], context: any) => {
+    if (!context.auth || context.auth.email !== '18rem8@queensu.ca') {
+        throw new functions.https.HttpsError(
+            'permission-denied',
+            'Generating jobs is a dev-only feature, only the admin account can generate them'
+        );
+    }
+
     const batch = db.batch();
     data.forEach((job: any) => {
         batch.set(db.collection('jobs').doc(), job);
@@ -17,12 +24,8 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
 
 // Adds a job to firestore
 const addJob = functions.https.onCall((data: object, context: any) => {
-    if (!context.auth) {
-        throw new functions.https.HttpsError(
-            'unauthenticated',
-            'The function must be called while authenticated.'
-        );
-    }
+    verifyIsAuthenticated(context);
+
     return getCollection('jobs')
         .add(data)
         .then((docRef) => docRef.id)
@@ -32,14 +35,15 @@ const addJob = functions.https.onCall((data: object, context: any) => {
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
     async (data: { id: string; newFields: object }, context: any) => {
-        await verifyAuthentication(context, data.id);
+        await verifyJobPermission(context, data.id);
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
 
 // Deactivates a job in firestore (it's NOT removed, it can still be restored since just a flag is set)
 // In 30 days, a CRON job will permanently remove it from firestore
-const deleteJob = functions.https.onCall((data: { id: string }, context: any) => {
+const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
+    await verifyJobPermission(context, data.id);
     return getDoc(`jobs/${data.id}`).update({ deleted: true });
 });
 

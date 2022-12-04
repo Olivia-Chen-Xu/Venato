@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getDoc, getCollection } from './helpers';
+import { getDoc, getCollection, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -7,6 +7,8 @@ import { getDoc, getCollection } from './helpers';
 
 // Returns all the jobs that belong to the currently signed-in user
 const getJobs = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
     return getCollection('jobs')
         .where('userId', '==', context.auth.uid)
         .get()
@@ -28,6 +30,8 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
 const getJobBoards = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
     return getDoc(`users/${context.auth.uid}`)
         .get()
         .then((doc) => {
@@ -38,6 +42,8 @@ const getJobBoards = functions.https.onCall((data: object, context: any) => {
 
 // Returns all job events (to display on the calendar) for the currently signed-in user
 const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
     return getCollection('jobs')
         .get()
         .then((jobs) => {
@@ -58,12 +64,16 @@ const getCalendarEvents = functions.https.onCall((data: object, context: any) =>
 
 // For searching or adding jobs, we need all the possible companies and/or locations
 const getAllCompanies = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
     return getCollection('companies')
         .get()
         .then((companies) => companies.docs.map((company) => company.id))
         .catch((err) => err);
 });
 const getAllLocations = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
     return getCollection('locations')
         .get()
         .then((locations) => locations.docs.map((location) => location.id))
@@ -73,6 +83,8 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
 // TODO: split this into job and interview question search
 const jobSearch = functions.https.onCall(
     (data: { company: string; position: string; location: string }, context: any) => {
+        verifyIsAuthenticated(context);
+
         // Check which of the three inputs are given
         const queries: { position: boolean; company: boolean; location: boolean } = {
             position: (data.position?.trim()?.length || 0) !== 0,
