@@ -1,4 +1,4 @@
-import { onUserSignup, onUserDeleted } from './auth';
+import { beforeCreate, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
 import {
     getJobBoards,
     getUpcomingEvents,
@@ -44,8 +44,10 @@ import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cr
  */
 
 export {
+    beforeCreate,
     onUserSignup,
     onUserDeleted,
+    beforeSignIn,
     addJobs,
     addJob,
     getJobBoards,
