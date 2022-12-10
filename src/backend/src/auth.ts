@@ -9,31 +9,38 @@ const nodemailer = require('nodemailer');
 
 // Send a verification email to the user when they create an account
 // This makes it automatic and server-side, preventing any client-side exploits
-const mailTransport = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'supportabc@gmail.com',
-        pass: '11112222',
-    },
-});
+const beforeCreate = functions
+    .runWith({ secrets: ['GMAIL_PASSWORD'] })
+    .auth.user()
+    .beforeCreate((user, context) => {
+        // nodemailer config
+        const mailTransport = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'venato.jobapp@gmail.com',
+                pass: process.env.GMAIL_PASSWORD,
+            },
+        });
 
-const beforeCreate = functions.auth.user().beforeCreate((user, context) => {
-    // Send custom email verification on sign-up.
-    return auth.generateEmailVerificationLink(user.email).then((link) => {
-        const mailOptions = {
-            from: 'Abc Support <Abc_Support@gmail.com>',
-            to: user.email,
-            subject: 'Welcome to Abc',
-            html: `<p style="font-size: 16px;">Thanks for signing up</p>
+        // Send custom email verification on sign-up
+        return auth.generateEmailVerificationLink(user.email).then((link) => {
+            const mailOptions = {
+                from: 'Abc Support <Abc_Support@gmail.com>',
+                to: user.email,
+                subject: 'Welcome to Abc',
+                html: `<p style="font-size: 16px;">Thanks for signing up</p>
                    <p style="font-size: 16px;">Verification link: ${link}</p>
                    <p style="font-size: 12px;">Stay tuned for more updates soon</p>
                    <p style="font-size: 12px;">Best Regards,</p>
                    <p style="font-size: 12px;">-Support Team</p>`,
-        };
+            };
 
-        return mailTransport.sendMail(mailOptions).then(() => `Email sent to: ${user.email}`);
+            return mailTransport
+                .sendMail(mailOptions)
+                .then(() => `Email sent to: ${user.email}`)
+                .catch((err) => `Error sending email: ${err}`);
+        });
     });
-});
 
 // When a user signs up, create a default document for them in firestore
 const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
