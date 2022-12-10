@@ -1,4 +1,6 @@
+import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cron';
 import { beforeCreate, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
+import { onJobCreate, onJobPurge } from './firestore';
 import {
     getJobBoards,
     getUpcomingEvents,
@@ -9,9 +11,7 @@ import {
     jobSearch,
     interviewQuestionsSearch,
 } from './getData';
-import { addJobs, addJob, updateJob } from './mutateData';
-import { onJobCreate } from './firestore';
-import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cron';
+import { addJobs, addJob, updateJob, deleteJob } from './mutateData';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -44,23 +44,25 @@ import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cr
  */
 
 export {
+    purgeExpiredData,
+    purgeUnverifiedUsers,
+    dataIntegrityCheck,
     beforeCreate,
     onUserSignup,
     onUserDeleted,
     beforeSignIn,
-    addJobs,
-    addJob,
+    onJobCreate,
+    onJobPurge,
     getJobBoards,
     getUpcomingEvents,
     getJobs,
-    updateJob,
     getCalendarEvents,
-    jobSearch,
-    interviewQuestionsSearch,
     getAllCompanies,
     getAllLocations,
-    onJobCreate,
-    purgeExpiredData,
-    purgeUnverifiedUsers,
-    dataIntegrityCheck,
+    jobSearch,
+    interviewQuestionsSearch,
+    addJobs,
+    addJob,
+    updateJob,
+    deleteJob,
 };

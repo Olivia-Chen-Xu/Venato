@@ -69,4 +69,4 @@ const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun((c
     // TODO (make sure that all db data makes sense (e.g. no users with more than the limit of jobs, no invalid ids, etc))
 });
 
-export { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck };
+export { purgeUnverifiedUsers, purgeExpiredData, dataIntegrityCheck };

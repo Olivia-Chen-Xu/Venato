@@ -1,7 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getDoc, auth } from './helpers';
-
-const nodemailer = require('nodemailer');
+import { getDoc } from './helpers';
 
 /**
  * Auth triggers - automatically triggered based on auth events
@@ -12,40 +10,43 @@ const nodemailer = require('nodemailer');
 const beforeCreate = functions
     .runWith({ secrets: ['GMAIL_PASSWORD'] })
     .auth.user()
-    .beforeCreate(async (user, context) => {
-        if (!user || !user.email || !user.emailVerified) return;
+    .beforeCreate((user, context) => {
+        if (!user || !user.email || !user.emailVerified) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                "User or user's email is null, or they're already verified"
+            );
+        }
 
-        // nodemailer config
-        const mailTransport = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'venato.jobapp@gmail.com',
-                pass: process.env.GMAIL_PASSWORD,
-            },
-        });
+        // TODO: Write to a firestore collection that's triggered by 'Trigger Email'
+        // // nodemailer config
+        // const mailTransport = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     auth: {
+        //         user: 'venato.jobapp@gmail.com',
+        //         pass: process.env.GMAIL_PASSWORD,
+        //     },
+        // });
 
-        // Generate verification link
-        let link;
-        await auth.generateEmailVerificationLink(user.email).then((verifyLink) => {
-            link = verifyLink;
-        });
-
-        // Build and send email
-        const mailOptions = {
-            from: 'Venato',
-            to: user.email,
-            subject: 'Welcome to Venato!',
-            html: `<p style="font-size: 16px;">Thanks for signing up</p>
-               <p style="font-size: 16px;">Verification link: ${link}</p>
-               <p style="font-size: 12px;">Stay tuned for more updates soon</p>
-               <p style="font-size: 12px;">Best Regards,</p>
-               <p style="font-size: 12px;">-The Venato Team</p>`,
-        };
-
-        return mailTransport
-            .sendMail(mailOptions)
-            .then(() => console.log(`Email successfully sent to: ${user.email}`))
-            .catch((err: string) => console.log(`Error sending email: ${err}`));
+        // // Generate and send verification link
+        // return auth.generateEmailVerificationLink(user.email).then((link) => {
+        //     // Build and send email
+        //     const mailOptions = {
+        //         from: 'Venato',
+        //         to: user.email,
+        //         subject: 'Welcome to Venato!',
+        //         html: `<p style="font-size: 16px;">Thanks for signing up</p>
+        //        <p style="font-size: 16px;">Verification link: ${link}</p>
+        //        <p style="font-size: 12px;">Stay tuned for more updates soon</p>
+        //        <p style="font-size: 12px;">Best Regards,</p>
+        //        <p style="font-size: 12px;">-The Venato Team</p>`,
+        //     };
+        //
+        //     return mailTransport
+        //         .sendMail(mailOptions)
+        //         .then(() => console.log(`Email successfully sent to: ${user.email}`))
+        //         .catch((err: string) => console.log(`Error sending email: ${err}`));
+        // });
     });
 
 // When a user signs up, create a default document for them in firestore
