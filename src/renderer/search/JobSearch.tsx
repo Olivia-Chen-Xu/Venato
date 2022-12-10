@@ -1,16 +1,12 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useAsync } from 'react-async-hook';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, MenuItem } from '@mui/material';
 import '../App.css';
 import './job.css';
-import bar from '../../../assets/bar.png';
-import Select from '@mui/material/Select';
-import { MenuItem } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import bar from '../../../assets/bar.png';
 
 const SearchBar = () => {
     let elem;
@@ -58,70 +54,70 @@ const SearchBar = () => {
         <div className="ml-5 mr-5">
             <div className="grid place-content-center">
                 {(companies.error || locations.error || companies.loading || locations.loading) && (
-                    <CircularProgress></CircularProgress>
+                    <CircularProgress />
                 )}
             </div>
             {companies.result && locations.result && (
                 <div>
                     <div className="grid place-content-center">
                         <h1 className="grid place-content-center text-2xl mb-1">Job Search</h1>
-                        <div className='flex flex-1'>
-                        <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
-                            <div>
-                                <label htmlFor="position">
-                                    <input
-                                        id="position"
-                                        type="email"
-                                        name="email"
-                                        // value={position}
-                                        placeholder="Position"
-                                        onChange={(e) => {
-                                            setPosition(e.target.value.trim());
-                                        }}
-                                    />
-                                </label>
-                            </div>
-                            <div>
-                                <label htmlFor="company">
-                                    <select
-                                        id="company"
-                                        name="company"
-                                        select
-                                        label="Company"
-                                        value={company}
-                                        onChange={(e) => setCompany(e.target.value)}
-                                    >
-                                        <option value="" selected>
-                                            Company
-                                        </option>
-                                        {companies.result.data.map((c) => (
-                                            <option value={c}>{c}</option>
-                                        ))}
-                                    </select>
-                                </label>
-                            </div>
-                            <div>
-                                <label htmlFor="location">
-                                    <select
-                                        select
-                                        sx={{
-                                            height: 20,
-                                        }}
-                                        id="location"
-                                        name="location"
-                                        label="Location"
-                                        value={location}
-                                        onChange={(e) => setLocation(e.target.value)}
-                                    >
-                                        <option value="" selected>
-                                            Location
-                                        </option>
-                                        {locations.result.data.map((c) => (
-                                            <option value={c}>{c}</option>
-                                        ))}
-                                    </select>
-                                </label>
-                            </div>
+                        <div className="flex flex-1">
+                            <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
+                                <div>
+                                    <label htmlFor="position">
+                                        <input
+                                            id="position"
+                                            type="email"
+                                            name="email"
+                                            // value={position}
+                                            placeholder="Position"
+                                            onChange={(e) => {
+                                                setPosition(e.target.value.trim());
+                                            }}
+                                        />
+                                    </label>
+                                </div>
+                                <div>
+                                    <label htmlFor="company">
+                                        <select
+                                            id="company"
+                                            name="company"
+                                            select
+                                            label="Company"
+                                            value={company}
+                                            onChange={(e) => setCompany(e.target.value)}
+                                        >
+                                            <option value="" selected>
+                                                Company
+                                            </option>
+                                            {companies.result.data.map((c) => (
+                                                <option value={c}>{c}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label htmlFor="location">
+                                        <select
+                                            select
+                                            sx={{
+                                                height: 20,
+                                            }}
+                                            id="location"
+                                            name="location"
+                                            label="Location"
+                                            value={location}
+                                            onChange={(e) => setLocation(e.target.value)}
+                                        >
+                                            <option value="" selected>
+                                                Location
+                                            </option>
+                                            {locations.result.data.map((c) => (
+                                                <option value={c}>{c}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
                             </div>
                             <div className="h-full bg-transparent align-middle">
                                 <LoadingButton
@@ -144,9 +140,7 @@ const SearchBar = () => {
                     </div>
 
                     <br />
-                    <div className='grid place-content-center'>
-                    {errMsg}
-                    </div>
+                    <div className="grid place-content-center">{errMsg}</div>
                     <br />
 
                     <div className="w-full flex flex-1">
@@ -191,7 +185,9 @@ const SearchBar = () => {
                         {currJob && (
                             <div id="top" className="w-full h-fit">
                                 <div className="mt-3 ml-5 mr-5 text-white">
-                                    <h1 className="text-2xl font-bold mb-1">{currJob.info.position}</h1>
+                                    <h1 className="text-2xl font-bold mb-1">
+                                        {currJob.info.position}
+                                    </h1>
                                     <img src={bar} alt="" className="w-full" />
                                     <div className="flex mb-2">
                                         <div className="w-full text-xl">
