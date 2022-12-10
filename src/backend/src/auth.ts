@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 const beforeCreate = functions
     .runWith({ secrets: ['GMAIL_PASSWORD'] })
     .auth.user()
-    .beforeCreate((user, context) => {
+    .beforeCreate(async (user, context) => {
         // nodemailer config
         const mailTransport = nodemailer.createTransport({
             service: 'gmail',
@@ -22,28 +22,32 @@ const beforeCreate = functions
             },
         });
 
-        // Send custom email verification on sign-up
-        return auth.generateEmailVerificationLink(user.email).then((link) => {
-            const mailOptions = {
-                from: 'Abc Support <Abc_Support@gmail.com>',
-                to: user.email,
-                subject: 'Welcome to Abc',
-                html: `<p style="font-size: 16px;">Thanks for signing up</p>
-                   <p style="font-size: 16px;">Verification link: ${link}</p>
-                   <p style="font-size: 12px;">Stay tuned for more updates soon</p>
-                   <p style="font-size: 12px;">Best Regards,</p>
-                   <p style="font-size: 12px;">-Support Team</p>`,
-            };
-
-            return mailTransport
-                .sendMail(mailOptions)
-                .then(() => `Email sent to: ${user.email}`)
-                .catch((err) => `Error sending email: ${err}`);
+        // Generate verification link
+        let link;
+        await auth.generateEmailVerificationLink(user.email).then((verifyLink) => {
+            link = verifyLink;
         });
+
+        // Build and send email
+        const mailOptions = {
+            from: 'Venato',
+            to: user.email,
+            subject: 'Welcome to Venato!',
+            html: `<p style="font-size: 16px;">Thanks for signing up</p>
+               <p style="font-size: 16px;">Verification link: ${link}</p>
+               <p style="font-size: 12px;">Stay tuned for more updates soon</p>
+               <p style="font-size: 12px;">Best Regards,</p>
+               <p style="font-size: 12px;">-The Venato Team</p>`,
+        };
+
+        return mailTransport
+            .sendMail(mailOptions)
+            .then(() => console.log(`Email successfully sent to: ${user.email}`))
+            .catch((err: string) => console.log(`Error sending email: ${err}`));
     });
 
 // When a user signs up, create a default document for them in firestore
-const onUserSignup = functions.auth.user().onCreate((user: auth.UserRecord) => {
+const onUserSignup = functions.auth.user().onCreate((user) => {
     const defaultDoc = {
         boards: {},
     };
@@ -62,7 +66,7 @@ const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
 
 // On account deletion, delete user data in db
 // (Note: don't delete multiple users at the same time with the admin SDK, this won't trigger)
-const onUserDeleted = functions.auth.user().onDelete((user: auth.UserRecord) => {
+const onUserDeleted = functions.auth.user().onDelete((user) => {
     const promises = [];
 
     // Delete user's jobs
