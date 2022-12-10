@@ -1,20 +1,38 @@
 import * as functions from 'firebase-functions';
 import { getDoc, auth } from './helpers';
 
+const nodemailer = require('nodemailer');
+
 /**
  * Auth triggers - automatically triggered based on auth events
  */
 
 // Send a verification email to the user when they create an account
 // This makes it automatic and server-side, preventing any client-side exploits
+const mailTransport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'supportabc@gmail.com',
+        pass: '11112222',
+    },
+});
+
 const beforeCreate = functions.auth.user().beforeCreate((user, context) => {
-    const locale = context.locale;
-    if (user.email && !user.emailVerified) {
-        // Send custom email verification on sign-up.
-        return auth.generateEmailVerificationLink(user.email).then((link) => {
-            return sendCustomVerificationEmail(user.email, link, locale);
-        });
-    }
+    // Send custom email verification on sign-up.
+    return auth.generateEmailVerificationLink(user.email).then((link) => {
+        const mailOptions = {
+            from: 'Abc Support <Abc_Support@gmail.com>',
+            to: user.email,
+            subject: 'Welcome to Abc',
+            html: `<p style="font-size: 16px;">Thanks for signing up</p>
+                   <p style="font-size: 16px;">Verification link: ${link}</p>
+                   <p style="font-size: 12px;">Stay tuned for more updates soon</p>
+                   <p style="font-size: 12px;">Best Regards,</p>
+                   <p style="font-size: 12px;">-Support Team</p>`,
+        };
+
+        return mailTransport.sendMail(mailOptions).then(() => `Email sent to: ${user.email}`);
+    });
 });
 
 // When a user signs up, create a default document for them in firestore
