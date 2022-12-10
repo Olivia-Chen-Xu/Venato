@@ -67,12 +67,17 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, 
     getDoc(`users/${userId}`)
         .get()
         .then((userDoc) => {
-            const newBoards: object = userDoc.data()?.boards;
-            for (const [key, value] of Object.entries(newBoards)) {
-                if (value.contains(id)) {
-                    newBoards[key] = value.filter((jobId: string) => jobId !== id);
-                }
+            interface Boards {
+                [name: string]: string[];
             }
+            const newBoards: Boards = userDoc.data()?.boards;
+
+            Object.entries(newBoards).forEach((entry: [string, string[]]) => {
+                const [key, values] = entry;
+                if (values.includes(id)) {
+                    newBoards[key as keyof Boards] = values.filter((jobId: string) => jobId !== id);
+                }
+            });
             promises.push(getDoc(`users/${userId}`).update({ boards: newBoards }));
         })
         .catch((err) => `Error getting user document: ${err}`);

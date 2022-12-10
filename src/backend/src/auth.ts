@@ -13,6 +13,8 @@ const beforeCreate = functions
     .runWith({ secrets: ['GMAIL_PASSWORD'] })
     .auth.user()
     .beforeCreate(async (user, context) => {
+        if (!user || !user.email || !user.emailVerified) return;
+
         // nodemailer config
         const mailTransport = nodemailer.createTransport({
             service: 'gmail',
