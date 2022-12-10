@@ -6,26 +6,7 @@ import { getCollection, auth } from './helpers';
  */
 
 // For comparing times (date times are in milliseconds since the unix epoc)
-const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-
-// Removes jobs that have been deleted for 30 days
-const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((context) => {
-    const toDelete: any[] = [];
-
-    getCollection('jobs')
-        .where('deletedTime', '<', Date.now() - 30 * oneDayInMilliseconds)
-        .get()
-        .then((snapshot) => {
-            snapshot.forEach((doc) => {
-                toDelete.push(doc.ref.delete());
-            });
-        })
-        .catch((err) => `Error getting expired jobs from firestore: ${err}`);
-
-    return Promise.all(toDelete)
-        .then(() => console.log(`Successfully purged ${toDelete.length} deleted jobs`))
-        .catch((err) => console.log(`Error purging deleted jobs: ${err}`));
-});
+const oneDay = 24 * 60 * 60 * 1000;
 
 // Removes users that have been unverified for at least a day
 const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
@@ -41,7 +22,7 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
                     if (
                         !userRecord.emailVerified &&
                         new Date(userRecord.metadata.creationTime).getTime() <
-                            Date.now() - oneDayInMilliseconds
+                        Date.now() - oneDay
                     ) {
                         unVerifiedUsers.push(userRecord.uid);
                     }
@@ -59,8 +40,27 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
     await listAllUsers(undefined);
 
     return Promise.all(unVerifiedUsers.map((user) => auth.deleteUser(user)))
-        .then(() => console.log(`Successfully deleted ${unVerifiedUsers.length} users`))
+        .then(() => console.log(`Successfully deleted ${unVerifiedUsers.length} unverified users`))
         .catch((err) => console.log(`Failed to delete unverified users: ${err}`));
+});
+
+// Removes jobs that have been deleted for 30 days
+const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((context) => {
+    const toDelete: any[] = [];
+
+    getCollection('jobs')
+        .where('deletedTime', '<', Date.now() - 30 * oneDay)
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                toDelete.push(doc.ref.delete());
+            });
+        })
+        .catch((err) => `Error getting expired jobs from firestore: ${err}`);
+
+    return Promise.all(toDelete)
+        .then(() => console.log(`Successfully purged ${toDelete.length} deleted jobs (30+ days)`))
+        .catch((err) => console.log(`Error purging deleted jobs: ${err}`));
 });
 
 const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun((context) => {
