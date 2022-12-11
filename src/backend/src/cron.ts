@@ -1,12 +1,9 @@
 import * as functions from 'firebase-functions';
-import { getCollection, auth } from './helpers';
+import { getCollection, auth, getTimestamp } from './helpers';
 
 /**
  * CRON jobs - automatically triggered on a set schedule
  */
-
-// For comparing times (date times are in milliseconds since the unix epoc)
-const oneDay = 24 * 60 * 60 * 1000;
 
 // Removes users that have been unverified for at least a day
 const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
@@ -22,7 +19,7 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
                     if (
                         !userRecord.emailVerified &&
                         new Date(userRecord.metadata.creationTime).getTime() <
-                        Date.now() - oneDay
+                            Date.now() - 24 * 60 * 60 * 1000
                     ) {
                         unVerifiedUsers.push(userRecord.uid);
                     }
@@ -44,22 +41,46 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
         .catch((err) => console.log(`Failed to delete unverified users: ${err}`));
 });
 
-// Removes jobs that have been deleted for 30 days
+// Remove any old data in the db that's not needed anymore
 const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((context) => {
-    const toDelete: any[] = [];
-
+    // Remove jobs that have been deleted for 30 days
+    const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('jobs')
-        .where('deletedTime', '<', Date.now() - 30 * oneDay)
+        .where('deletedTime', '<', getTimestamp(30))
         .get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
-                toDelete.push(doc.ref.delete());
+                jobsToDelete.push(doc.ref.delete());
             });
         })
-        .catch((err) => `Error getting expired jobs from firestore: ${err}`);
+        .catch((err) => console.log(`Error getting expired jobs from firestore: ${err}`));
 
-    return Promise.all(toDelete)
-        .then(() => console.log(`Successfully purged ${toDelete.length} deleted jobs (30+ days)`))
+    // Remove emails have been sent at least a day ago
+    const emailsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
+    getCollection('emails')
+        .where('delivery.endTime', '<', getTimestamp(1))
+        .where('delivery.state', '==', 'SUCCESS')
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                emailsToDelete.push(doc.ref.delete());
+            });
+        })
+        .catch((err) => console.log(`Error getting sent emails from firestore: ${err}`));
+
+    // Make a response message and return all the promises
+    let returnMessage = '';
+    if (jobsToDelete.length > 0) {
+        returnMessage += `Successfully purged ${jobsToDelete.length} jobs (30+ days deleted)`;
+    }
+    if (emailsToDelete.length > 0) {
+        returnMessage +=
+            (jobsToDelete.length > 0 ? '. ' : '') +
+            `Successfully purged ${emailsToDelete.length} emails (sent at least a day ago)`;
+    }
+
+    return Promise.all([jobsToDelete.flat(), emailsToDelete.flat()])
+        .then(() => console.log(returnMessage || 'No jobs or emails to purge from firestore'))
         .catch((err) => console.log(`Error purging deleted jobs: ${err}`));
 });
 

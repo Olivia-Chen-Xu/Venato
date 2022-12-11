@@ -54,4 +54,18 @@ const verifyJobPermission = async (context: functions.https.CallableContext, job
         });
 };
 
-export { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db, auth };
+// Gets a firebase timestamp for x days ago
+const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+const getTimestamp = (days: number) => {
+    return admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
+};
+
+export {
+    getDoc,
+    getCollection,
+    verifyIsAuthenticated,
+    verifyJobPermission,
+    getTimestamp,
+    db,
+    auth,
+};
