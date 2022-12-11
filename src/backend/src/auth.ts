@@ -5,73 +5,24 @@ import { getCollection, getDoc, auth } from './helpers';
  * Auth triggers - automatically triggered based on auth events
  */
 
-// // Send a verification email to the user when they create an account
-// // This makes it automatic and server-side, preventing any client-side exploits
-// const beforeCreate = functions
-//     .runWith({ secrets: ['GMAIL_PASSWORD'] })
-//     .auth.user()
-//     .beforeCreate(async (user, context) => {
-//         if (!user) {
-//             throw new functions.https.HttpsError('invalid-argument', 'User is null');
-//         }
-//         if (!user.email) {
-//             throw new functions.https.HttpsError('invalid-argument', "User's email is null");
-//         }
-//         if (user.emailVerified) {
-//             throw new functions.https.HttpsError('invalid-argument', 'User is already verified');
-//         }
-// TODO: Write to a firestore collection that's triggered by 'Trigger Email'
-// // nodemailer config
-// const mailTransport = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user: 'venato.jobapp@gmail.com',
-//         pass: process.env.GMAIL_PASSWORD,
-//     },
-// });
-
-// // Generate and send verification link
-// return auth.generateEmailVerificationLink(user.email).then((link) => {
-//     // Build and send email
-//     const mailOptions = {
-//         from: 'Venato',
-//         to: user.email,
-//         subject: 'Welcome to Venato!',
-//         html: `<p style="font-size: 16px;">Thanks for signing up</p>
-//        <p style="font-size: 16px;">Verification link: ${link}</p>
-//        <p style="font-size: 12px;">Stay tuned for more updates soon</p>
-//        <p style="font-size: 12px;">Best Regards,</p>
-//        <p style="font-size: 12px;">-The Venato Team</p>`,
-//     };
-//
-//     return mailTransport
-//         .sendMail(mailOptions)
-//         .then(() => console.log(`Email successfully sent to: ${user.email}`))
-//         .catch((err: string) => console.log(`Error sending email: ${err}`));
-// });
-// let link;
-// await auth.generateEmailVerificationLink(user.email).then((verifyLink) => {
-//     link = verifyLink;
-// });
-
-// return getCollection('mail')
-//     .add({
-//         to: user.email,
-//         message: {
-//             subject: 'Hello from Firebase!',
-//             html: `<p style="font-size: 16px;">Thanks for signing up</p>
-//                        <p style="font-size: 16px;">Verification link: https://www.google.ca/</p>
-//                        <p style="font-size: 12px;">Stay tuned for more updates soon</p>
-//                        <p style="font-size: 12px;">Best Regards,</p>
-//                        <p style="font-size: 12px;">-The Venato Team</p>`,
-//         },
-//     })
-//     .then(() => console.log(`Email successfully sent to: ${user.email}`))
-//     .catch((err: string) => console.log(`Error sending email: ${err}`));
-// });
-
+// Creates a new user (client-side registration is blocked)
 const createAccount = functions.https.onCall(
     async (data: { email: string; password: string }, context) => {
+        // Verify input data
+        if (!data?.email) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Email address is required to sign up'
+            );
+        }
+        if (!data?.password) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Password is required to sign up'
+            );
+        }
+
+        // Create user (will throw an error if the email is already in use)
         return auth
             .createUser({
                 email: data.email,
@@ -118,10 +69,10 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
                 .add({
                     to: user.email,
                     message: {
-                        subject: 'Hello from Firebase!',
-                        html: `<p style="font-size: 16px;">Thanks for signing up</p>
-                               <p style="font-size: 16px;">Verification link: ${verifyLink}</p>
-                               <p style="font-size: 12px;">Stay tuned for more updates soon</p>
+                        subject: 'Verify your email for Venato',
+                        html: `<p style="font-size: 16px;">Thanks for signing up!</p>
+                               <p style="font-size: 16px;">Verify your account here: ${verifyLink}</p>
+                               <p style="font-size: 12px;">If you didn't sign up, please disregard this email</p>
                                <p style="font-size: 12px;">Best Regards,</p>
                                <p style="font-size: 12px;">-The Venato Team</p>`,
                     },

@@ -33,7 +33,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
 // - Remove the company and location from the db if no other jobs have that company/location
 // - Remove the job from the user's job board
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
-    const promises: Promise<any>[] = [];
+    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
     const [id, userId, company, location] = [
         snap.id,
