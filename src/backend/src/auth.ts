@@ -94,33 +94,44 @@ const createAccount = functions.https.onCall(
 );
 
 // When a user signs up, create a default document for them in firestore
-const onUserSignup = functions.auth.user().onCreate((user) => {
+const onUserSignup = functions.auth.user().onCreate(async (user) => {
+    const promises = [];
+
     // Create a default db document for the user
     const defaultDoc = {
         boards: {},
     };
-    const addDeafultDoc = getDoc(`users/${user.uid}`)
-        .set(defaultDoc)
-        .then(() => console.log(`Default db data successfully created for user: ${user.uid}`))
-        .catch((err) => console.log(`Error creating default db data for ${user.uid}: ${err}`));
+    promises.push(
+        getDoc(`users/${user.uid}`)
+            .set(defaultDoc)
+            .then(() => console.log(`Default db data successfully created for user: ${user.uid}`))
+            .catch((err) => console.log(`Error creating default db data for ${user.uid}: ${err}`))
+    );
 
     // Adds a verification email to the db (will be sent by the 'Trigger Email' extension)
-    const addVerificationEmail = getCollection('emails')
-        .add({
-            to: user.email,
-            message: {
-                subject: 'Hello from Firebase!',
-                html: `<p style="font-size: 16px;">Thanks for signing up</p>
-                               <p style="font-size: 16px;">Verification link: https://www.google.ca/</p>
+    if (user.email) {
+        const verifyLink = await auth
+            .generateEmailVerificationLink(user.email)
+            .then((link) => link);
+        promises.push(
+            getCollection('emails')
+                .add({
+                    to: user.email,
+                    message: {
+                        subject: 'Hello from Firebase!',
+                        html: `<p style="font-size: 16px;">Thanks for signing up</p>
+                               <p style="font-size: 16px;">Verification link: ${verifyLink}</p>
                                <p style="font-size: 12px;">Stay tuned for more updates soon</p>
                                <p style="font-size: 12px;">Best Regards,</p>
                                <p style="font-size: 12px;">-The Venato Team</p>`,
-            },
-        })
-        .then(() => console.log(`Email successfully sent to: ${user.email}`))
-        .catch((err: string) => console.log(`Error sending email: ${err}`));
+                    },
+                })
+                .then(() => console.log(`Email successfully sent to: ${user.email}`))
+                .catch((err: string) => console.log(`Error sending email: ${err}`))
+        );
+    }
 
-    return Promise.all([addDeafultDoc, addVerificationEmail]);
+    return Promise.all(promises);
 });
 
 // When a user tries to sign in, verify that their email is verified
