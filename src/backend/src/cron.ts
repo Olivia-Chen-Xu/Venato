@@ -6,6 +6,7 @@ import { getCollection, auth, getTimestamp } from './helpers';
  */
 
 // Removes users that have been unverified for at least a day
+// if there's bugs, try https://github.com/firebase/functions-samples/blob/main/delete-unused-accounts-cron/functions/index.js
 const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
     const unVerifiedUsers: string[] = [];
 

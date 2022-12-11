@@ -37,7 +37,7 @@ import { addJobs, addJob, updateJob, deleteJob } from './mutateData';
  *   or invalid params). The format is 'throw new functions.https.HttpsError('<code>', '<message>')',
  *   error messages is what went wrong (don't put the app's data in it like the context), codes are listed here:
  *   https://firebase.google.com/docs/reference/node/firebase.functions#functionserrorcode
- *  -
+ *  -Samples: https://github.com/firebase/functions-samples
  *
  * You should be able to figure out what to do by going through existing functions, otherwise do a
  * quick Stack Overflow search 🙂
