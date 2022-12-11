@@ -1,5 +1,5 @@
 import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cron';
-import { beforeCreate, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
+import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
 import { onJobCreate, onJobPurge } from './firestore';
 import {
     getJobBoards,
@@ -47,7 +47,7 @@ export {
     purgeExpiredData,
     purgeUnverifiedUsers,
     dataIntegrityCheck,
-    beforeCreate,
+    createAccount,
     onUserSignup,
     onUserDeleted,
     beforeSignIn,

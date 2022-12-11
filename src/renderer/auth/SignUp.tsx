@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { sendEmailVerification } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { signup } from './auth-functions';
 import { InputLabel, TextField, Button } from '@mui/material';
+import { signup } from './auth-functions';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -15,55 +15,52 @@ const SignUp = () => {
 
     const [errMsg, setErrMsg] = useState('');
 
-    const handleSignup = () => {
+    const handleSignup = async () => {
         if (password !== confirmPassword) {
             setErrMsg('Passwords do not match');
             return;
         }
 
-        const signupResult = signup(email, password);
+        const signupResult = await signup(email, password);
         if (typeof signupResult === 'string') {
             setErrMsg(signupResult);
-            return;
         }
 
-        signupResult
-            // eslint-disable-next-line promise/always-return
-            .then((r) => {
-                console.log(
-                    `Sign up success (check your email):` +
-                        `\nEmail: ${JSON.stringify(r.user.email)}` +
-                        `\nID: ${JSON.stringify(r.user.uid)}`
-                );
-                setErrMsg(
-                    `Sign up success (check your email):` +
-                        `\nEmail: ${JSON.stringify(r.user.email)}`
-                );
-                console.log(JSON.stringify(r));
-                // eslint-disable-next-line promise/no-nesting
-                sendEmailVerification(r.user)
-                    // eslint-disable-next-line promise/always-return
-                    .then(() => {
-                        console.log(`Verification email sent successfully to ${r.user.email}`);
-                        // This isn't an error, but I need to show the message
-                        setErrMsg(
-                            `Sign up success (check your email):` +
-                                `\nEmail: ${JSON.stringify(r.user.email)}`
-                        );
-                        // navigate('/sign-in');
-                    })
-                    .catch((e) =>
-                        console.error(`Error sending verification email to ${r.user.email}: ${e}`)
-                    );
-            })
-            .catch((err) => {
-                console.log(`Error creating user: ${err}`);
-                if (err.code === 'auth/email-already-in-use') {
-                    setErrMsg('The email you entered is already in use; please enter another one');
-                } else {
-                    setErrMsg('Failed to create user');
-                }
-            });
+        // signupResult
+        //     .then((r) => {
+        //         console.log(
+        //             `Sign up success (check your email):` +
+        //                 `\nEmail: ${JSON.stringify(r.user.email)}` +
+        //                 `\nID: ${JSON.stringify(r.user.uid)}`
+        //         );
+        //         setErrMsg(
+        //             `Sign up success (check your email):` +
+        //                 `\nEmail: ${JSON.stringify(r.user.email)}`
+        //         );
+        //         console.log(JSON.stringify(r));
+        //
+        //         sendEmailVerification(r.user)
+        //             .then(() => {
+        //                 console.log(`Verification email sent successfully to ${r.user.email}`);
+        //                 // This isn't an error, but I need to show the message
+        //                 setErrMsg(
+        //                     `Sign up success (check your email):` +
+        //                         `\nEmail: ${JSON.stringify(r.user.email)}`
+        //                 );
+        //                 navigate('/sign-in');
+        //             })
+        //             .catch((e) =>
+        //                 console.error(`Error sending verification email to ${r.user.email}: ${e}`)
+        //             );
+        //     })
+        //     .catch((err) => {
+        //         console.log(`Error creating user: ${err}`);
+        //         if (err.code === 'auth/email-already-in-use') {
+        //             setErrMsg('The email you entered is already in use; please enter another one');
+        //         } else {
+        //             setErrMsg('Failed to create user');
+        //         }
+        //     });
     };
 
     return (
@@ -82,8 +79,8 @@ const SignUp = () => {
                 onChange={(e) => {
                     setEmail(e.target.value);
                 }}
-            ></TextField>
-            <div style={{ height: 20 }}></div>
+            />
+            <div style={{ height: 20 }} />
             <InputLabel>Password</InputLabel>
             <TextField
                 variant="outlined"
@@ -95,8 +92,8 @@ const SignUp = () => {
                 onChange={(e) => {
                     setPassword(e.target.value);
                 }}
-            ></TextField>
-            <div style={{ height: 20 }}></div>
+            />
+            <div style={{ height: 20 }} />
             <InputLabel>Confirm password</InputLabel>
             <TextField
                 variant="outlined"
@@ -108,7 +105,7 @@ const SignUp = () => {
                 onChange={(e) => {
                     setConfirmPassword(e.target.value);
                 }}
-            ></TextField>
+            />
             <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
                 Sign up
             </Button>
@@ -126,6 +123,12 @@ const SignUp = () => {
                     Log in
                 </text>
             </div>
+
+            <button
+                onClick={async () => console.log(await httpsCallable(getFunctions(), 'getJobBoards')())}
+            >
+                Check if authenticated
+            </button>
 
             <br />
             <text style={{ color: 'red' }}>{errMsg}</text>

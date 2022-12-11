@@ -1,11 +1,11 @@
 import {
-    createUserWithEmailAndPassword,
     deleteUser,
     signInWithEmailAndPassword,
     signOut,
     sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 export const signup = (email: string, password: string) => {
     // Validate email is entered and valid
@@ -37,7 +37,7 @@ export const signup = (email: string, password: string) => {
         );
     }
 
-    return createUserWithEmailAndPassword(auth, email, password);
+    return httpsCallable(getFunctions(), 'createAccount')({ email, password });
 };
 
 export const signin = (email: string, password: string) => {

@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getDoc, getCollection, verifyIsAuthenticated } from './helpers';
+import { getCollection, getDoc, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
