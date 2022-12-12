@@ -60,12 +60,16 @@ const getTimestamp = (days: number) => {
     return admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
 };
 
+// For doing misc. tasks like deleting document keys
+const firestoreHelper = admin.firestore;
+
 export {
     getDoc,
     getCollection,
     verifyIsAuthenticated,
     verifyJobPermission,
     getTimestamp,
+    firestoreHelper,
     db,
     auth,
 };

@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getDoc } from './helpers';
+import { firestoreHelper, getCollection, getDoc } from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -8,13 +8,18 @@ import { getCollection, getDoc } from './helpers';
  * company and location to a list of companies and locations respectively in firestore
  */
 
-// Makes searchable fields for the jobs on create and add company/location to db
+/**
+ * On job create:
+ * -Makes searchable fields for the job position
+ * -Add company/location to db (if it doesn't already exist)
+ * -Move interview question to it own collection and add the doc id to this job
+ */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
     data.userID = context.auth?.uid;
     const promises = [];
 
-    // Add searchable job position field and the company + location to db
+    // Add searchable job position field
     promises.push(
         snap.ref.update({
             positionSearchable: data.info.position
@@ -23,8 +28,28 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
                 .split(' '),
         })
     );
+
+    // Add company and location to db
     promises.push(getDoc(`companies/${data.info.company}`).set({}));
     promises.push(getDoc(`locations/${data.info.location}`).set({}));
+
+    // Move the interview question to its own collection
+    const { interviewQuestions } = data;
+    promises.push(snap.ref.update({ interviewQuestions: [] }));
+
+    interviewQuestions.forEach((question) => {
+        promises.push(
+            getCollection('interviewQuestions')
+                .add(question)
+                .then((docRef) => {
+                    promises.push(
+                        snap.ref.update({
+                            interviewQuestions: firestoreHelper.FieldValue.arrayUnion(docRef.id),
+                        })
+                    );
+                })
+        );
+    });
 
     return Promise.all(promises);
 });
