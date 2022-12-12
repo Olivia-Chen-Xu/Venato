@@ -2,7 +2,7 @@ import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cr
 import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
 import { onJobCreate, onJobPurge } from './firestore';
 import {
-    getJobBoards,
+    getHomepageData,
     getUpcomingEvents,
     getJobs,
     getCalendarEvents,
@@ -53,7 +53,7 @@ export {
     beforeSignIn,
     onJobCreate,
     onJobPurge,
-    getJobBoards,
+    getHomepageData,
     getUpcomingEvents,
     getJobs,
     getCalendarEvents,

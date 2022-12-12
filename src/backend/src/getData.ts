@@ -3,26 +3,53 @@ import { getCollection, getDoc, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
+ * Note: There is an overlap between some, so some functions are helpers used in multiple functions
  */
 
-// Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getJobBoards = functions.https.onCall((data: object, context: any) => {
-    verifyIsAuthenticated(context);
-
-    return getDoc(`users/${context.auth.uid}`)
+// Gets all the job boards (name + list of jobs) for the currently signed-in user
+const getJobBoards = (uid: string) => {
+    return getDoc(`users/${uid}`)
         .get()
         .then((doc) => {
             return doc.data()?.boards;
         })
         .catch((err) => `Error fetching user job boards: ${err}`);
+};
+
+// Gets all jobs for the current user
+const getUserJobs = (uid: string) => {
+    return getCollection('jobs')
+        .where('userId', '==', uid)
+        .get()
+        .then((jobs) => {
+            const jobList: any = [];
+            jobs.forEach((job) => {
+                // Remove the query helper fields (positionSearchable, userId) and add the job id
+                const jobData = job.data(); // TODO: inline this (can be cleaned up)
+                delete jobData.positionSearchable;
+                delete jobData.userId;
+                jobData.id = job.id;
+
+                jobList.push(jobData);
+            });
+            return jobList;
+        })
+        .catch((err) => `Error fetching user jobs: ${err}`);
+};
+
+// Returns all job boards for the current signed-in user (each has a name + array of job ids)
+const getHomepageData = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
+    return Promise.all([getJobBoards(context.auth.uid), getUserJobs(context.auth.uid)])
+        .then((userData) => ({ boards: userData[0], jobs: userData[1] }))
+        .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
 // Returns the next 3 job events for the currently signed-in user
 const getUpcomingEvents = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    // TODO: need to move deadlines to their own collection for querying (right now they're an
-    //  array in the job object)
     return getCollection('deadlines')
         .where('userId', '==', context.auth.uid)
         .where('time', '>=', Date.now())
@@ -183,7 +210,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 );
 
 export {
-    getJobBoards,
+    getHomepageData,
     getUpcomingEvents,
     getJobs,
     getCalendarEvents,
