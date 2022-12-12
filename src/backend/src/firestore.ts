@@ -34,17 +34,17 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     promises.push(getDoc(`locations/${data.info.location}`).set({}));
 
     // Move the interview question to its own collection
-    const { interviewQuestions } = data;
-    promises.push(snap.ref.update({ interviewQuestions: [] }));
+    const { deadlines } = data;
+    promises.push(snap.ref.update({ deadlines: [] }));
 
-    interviewQuestions.forEach((question) => {
+    deadlines.forEach((deadline) => {
         promises.push(
-            getCollection('interviewQuestions')
-                .add(question)
+            getCollection('deadlines')
+                .add(deadline)
                 .then((docRef) => {
                     promises.push(
                         snap.ref.update({
-                            interviewQuestions: firestoreHelper.FieldValue.arrayUnion(docRef.id),
+                            deadlines: firestoreHelper.FieldValue.arrayUnion(docRef.id),
                         })
                     );
                 })
