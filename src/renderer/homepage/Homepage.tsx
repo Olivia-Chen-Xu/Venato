@@ -1,14 +1,13 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress } from '@mui/material';
 import dayjs from 'dayjs';
+import { AddCircleOutline } from '@mui/icons-material';
 import CalendarState from '../calendar/context/CalendarState';
 import taskLine from '../../../assets/task-line.png';
-import { AddCircleOutline } from '@mui/icons-material';
 
-export default function Homepage() {
+const Homepage = () => {
     const nav = useNavigate();
     const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
     const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
@@ -189,4 +188,6 @@ export default function Homepage() {
             </div>
         </div>
     );
-}
+};
+
+export default Homepage;
