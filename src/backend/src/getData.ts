@@ -10,9 +10,7 @@ import { getCollection, getDoc, verifyIsAuthenticated } from './helpers';
 const getJobBoards = (uid: string) => {
     return getDoc(`users/${uid}`)
         .get()
-        .then((doc) => {
-            return doc.data()?.boards;
-        })
+        .then((doc) => doc.data()?.boards)
         .catch((err) => `Error fetching user job boards: ${err}`);
 };
 
@@ -25,62 +23,40 @@ const getUserJobs = (uid: string) => {
             const jobList: any = [];
             jobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
-                const jobData = job.data(); // TODO: inline this (can be cleaned up)
-                delete jobData.positionSearchable;
-                delete jobData.userId;
-                jobData.id = job.id;
-
-                jobList.push(jobData);
+                const { userID: foo, positionSearchable: bar, ...jobData } = job.data();
+                jobList.push({ ...jobData, id: job.id });
             });
             return jobList;
         })
         .catch((err) => `Error fetching user jobs: ${err}`);
 };
 
-// Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getHomepageData = functions.https.onCall((data: object, context: any) => {
-    verifyIsAuthenticated(context);
-
-    return Promise.all([getJobBoards(context.auth.uid), getUserJobs(context.auth.uid)])
-        .then((userData) => ({ boards: userData[0], jobs: userData[1] }))
-        .catch((err) => `Error fetching homepage data: ${err}`);
-});
-
 // Returns the next 3 job events for the currently signed-in user
-const getUpcomingEvents = functions.https.onCall((data: object, context: any) => {
-    verifyIsAuthenticated(context);
-
+const getUpcomingEvents = (uid: string) => {
     return getCollection('deadlines')
-        .where('userId', '==', context.auth.uid)
+        .where('userId', '==', uid)
         .where('time', '>=', Date.now())
         .orderBy('time')
         .limit(3)
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
         .catch((err) => `Error fetching upcoming events: ${err}`);
+};
+
+// Returns all job boards for the current signed-in user (each has a name + array of job ids)
+const getHomepageData = functions.https.onCall((data: object, context: any) => {
+    verifyIsAuthenticated(context);
+
+    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoards(context.auth.uid)])
+        .then((userData) => ({ events: userData[0], boards: userData[1] }))
+        .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
 // Returns all the jobs that belong to the currently signed-in user
 const getJobs = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    return getCollection('jobs')
-        .where('userId', '==', context.auth.uid)
-        .get()
-        .then((jobs) => {
-            const jobList: any = [];
-            jobs.forEach((job) => {
-                // Remove the query helper fields (positionSearchable, userId) and add the job id
-                const jobData = job.data(); // TODO: inline this (can be cleaned up)
-                delete jobData.positionSearchable;
-                delete jobData.userId;
-                jobData.id = job.id;
-
-                jobList.push(jobData);
-            });
-            return jobList;
-        })
-        .catch((err) => `Error fetching user jobs: ${err}`);
+    return getUserJobs(context.auth.uid);
 });
 
 // Returns all job events (to display on the calendar) for the currently signed-in user
@@ -211,7 +187,6 @@ const interviewQuestionsSearch = functions.https.onCall(
 
 export {
     getHomepageData,
-    getUpcomingEvents,
     getJobs,
     getCalendarEvents,
     getAllCompanies,
