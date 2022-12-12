@@ -16,7 +16,6 @@ import { firestoreHelper, getCollection, getDoc } from './helpers';
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
-    data.userID = context.auth?.uid;
     const promises = [];
 
     // Add searchable job position field

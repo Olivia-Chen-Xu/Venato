@@ -419,6 +419,8 @@ const generateJobs = async (num: number) => {
                 stage: Math.floor(Math.random() * 4),
                 awaitingResponse: Math.random() < 0.5,
             },
+
+            userId: 'tjmZsPbwRcUauvzh0xPbxcu6NwZ2', // admin account (TODO: randomize with other accounts)
         };
         jobs.push(job);
     }
