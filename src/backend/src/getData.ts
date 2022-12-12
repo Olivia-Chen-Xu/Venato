@@ -115,7 +115,7 @@ const jobSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = getCollection('jobs');
+        let query = getCollection('jobs').where('userId', '!=', context.auth.uid);
         if (queries.position) {
             query = query.where(
                 'positionSearchable',
@@ -162,7 +162,7 @@ const interviewQuestionsSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = getCollection('jobs');
+        let query = getCollection('jobs').where('userId', '!=', context.auth.uid);
         if (queries.position) {
             query = query.where(
                 'positionSearchable',
