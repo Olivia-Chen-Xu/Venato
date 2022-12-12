@@ -15,13 +15,13 @@ import { firestoreHelper, getCollection, getDoc } from './helpers';
  * -Move interview question to it own collection and add the doc id to this job
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
-    const jobInfo = snap.data().info;
+    const data = snap.data();
     const promises = [];
 
     // Add searchable job position field
     promises.push(
         snap.ref.update({
-            positionSearchable: jobInfo.position
+            positionSearchable: data.info.position
                 .replace('/[!@#$%^&*()_-+=,:.]/g', '')
                 .toLowerCase()
                 .split(' '),
@@ -29,17 +29,17 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     );
 
     // Add company and location to db
-    promises.push(getDoc(`companies/${jobInfo.company}`).set({}));
-    promises.push(getDoc(`locations/${jobInfo.location}`).set({}));
+    promises.push(getDoc(`companies/${data.info.company}`).set({}));
+    promises.push(getDoc(`locations/${data.info.location}`).set({}));
 
-    // Move the interview question to its own collection
-    const { deadlines } = snap.data();
+    // Move the interview question to its own collection (with the user and job id)
+    const { deadlines } = data;
     promises.push(snap.ref.update({ deadlines: [] }));
 
     deadlines.forEach((deadline) => {
         promises.push(
             getCollection('deadlines')
-                .add(deadline)
+                .add({ ...deadline, userId: data.userId, jobId: context.params.jobId }
                 .then((docRef) => {
                     promises.push(
                         snap.ref.update({
