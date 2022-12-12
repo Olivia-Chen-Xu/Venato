@@ -15,13 +15,13 @@ import { firestoreHelper, getCollection, getDoc } from './helpers';
  * -Move interview question to it own collection and add the doc id to this job
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
-    const data = snap.data();
+    const jobInfo = snap.data().info;
     const promises = [];
 
     // Add searchable job position field
     promises.push(
         snap.ref.update({
-            positionSearchable: data.info.position
+            positionSearchable: jobInfo.position
                 .replace('/[!@#$%^&*()_-+=,:.]/g', '')
                 .toLowerCase()
                 .split(' '),
@@ -29,11 +29,11 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     );
 
     // Add company and location to db
-    promises.push(getDoc(`companies/${data.info.company}`).set({}));
-    promises.push(getDoc(`locations/${data.info.location}`).set({}));
+    promises.push(getDoc(`companies/${jobInfo.company}`).set({}));
+    promises.push(getDoc(`locations/${jobInfo.location}`).set({}));
 
     // Move the interview question to its own collection
-    const { deadlines } = data;
+    const { deadlines } = snap.data();
     promises.push(snap.ref.update({ deadlines: [] }));
 
     deadlines.forEach((deadline) => {
