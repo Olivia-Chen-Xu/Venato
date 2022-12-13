@@ -52,7 +52,7 @@ const Welcome = () => {
                 {'Bypass sign-in (dev only)'}
             </Button>
             <br />
-            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(20)}}>*/}
+            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(40)}}>*/}
             {/*    Generate jobs*/}
             {/*</Button>*/}
             <br />
