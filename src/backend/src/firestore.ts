@@ -39,8 +39,10 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
 
     const batch = db.batch();
     deadlines.forEach(
-        (deadline: { title: string; location: string; date: typeof firestoreTypes.Timestamp }) =>
-            batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), deadline)
+        (deadline: { title: string; location: string; date: typeof firestoreTypes.Timestamp }) => {
+            const newDoc = { ...deadline, userId: data.userId }; // userId added for easier querying
+            batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), newDoc);
+        }
     );
     promises.push(batch.commit());
 
@@ -68,6 +70,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, 
             if (querySnapshot.empty) {
                 promises.push(getDoc(`companies/${company}`).delete());
             }
+            return null;
         })
         .catch((err) => `Error getting company document: ${err}`);
 
