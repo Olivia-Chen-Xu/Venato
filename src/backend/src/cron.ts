@@ -30,6 +30,7 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
                 if (listUsersResult.pageToken) {
                     listAllUsers(listUsersResult.pageToken);
                 }
+                return null;
             })
             .catch((error) => {
                 console.log('Error listing users:', error);
@@ -53,6 +54,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((con
             snapshot.forEach((doc) => {
                 jobsToDelete.push(doc.ref.delete());
             });
+            return null;
         })
         .catch((err) => console.log(`Error getting expired jobs from firestore: ${err}`));
 

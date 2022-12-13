@@ -32,8 +32,8 @@ const getUserJobs = (uid: string) => {
 };
 
 // Returns the next 3 job events for the currently signed-in user
-const getUpcomingEvents = (uid: string) => {
-    return getCollection('deadlines')
+const getUpcomingEvents = async (uid: string) => {
+    const deadlines = await getCollection('deadlines')
         .where('userId', '==', uid)
         .where('time', '>=', Date.now())
         .orderBy('time')
@@ -41,6 +41,14 @@ const getUpcomingEvents = (uid: string) => {
         .get()
         .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
         .catch((err) => `Error fetching upcoming events: ${err}`);
+
+    if (typeof deadlines === 'string') {
+        throw new functions.https.HttpsError('internal', 'Error fetching');
+    }
+
+    return deadlines.forEach((deadline) => {
+
+    });
 };
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)

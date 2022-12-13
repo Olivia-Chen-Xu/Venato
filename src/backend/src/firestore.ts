@@ -36,16 +36,17 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     const { deadlines } = data;
     promises.push(snap.ref.update({ deadlines: [] }));
 
-    deadlines.forEach((deadline) => {
+    deadlines.forEach((deadline: { description: string; name: string }) => {
         promises.push(
             getCollection('deadlines')
-                .add({ ...deadline, userId: data.userId, jobId: context.params.jobId }
-                .then((docRef) => {
+                .add({ ...deadline, userId: data.userId, jobId: context.params.jobId })
+                .then((docRef: { id: string }) => {
                     promises.push(
                         snap.ref.update({
                             deadlines: firestoreHelper.FieldValue.arrayUnion(docRef.id),
                         })
                     );
+                    return null;
                 })
         );
     });

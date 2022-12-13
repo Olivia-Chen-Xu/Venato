@@ -9,42 +9,45 @@ import taskLine from '../../../assets/task-line.png';
 
 const Homepage = () => {
     const nav = useNavigate();
-    const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
-    const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
+    const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
 
-    if (jobs.loading || boards.loading) {
+    if (userData.loading) {
         return (
             <div>
                 <CircularProgress />
             </div>
         );
     }
-    if (jobs.error || boards.error) {
-        return <p>Error: {jobs.error.message}</p>;
+    if (userData.error) {
+        return <p>Error: {userData.error.message}</p>;
     }
 
     // Events loaded
-    CalendarState.addJobs(jobs.result.data);
+    // CalendarState.addJobs(jobs.result.data);
 
     // Get the 3 most immediate tasks
-    const taskDates = Object.entries(CalendarState.events)
-        .map((elem) => elem[0])
-        .sort()
-        .filter((e) => e >= dayjs().format('YY-MM-DD'))
-        .slice(0, 3);
-    const recent = [
-        ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
-        ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
-        ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
-    ].slice(0, 3);
+    // const taskDates = Object.entries(CalendarState.events)
+    //     .map((elem) => elem[0])
+    //     .sort()
+    //     .filter((e) => e >= dayjs().format('YY-MM-DD'))
+    //     .slice(0, 3);
+    // const recent = [
+    //     ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
+    //     ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
+    //     ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
+    // ].slice(0, 3);
     const formatDate = (date: string) => {
         const split = date.split('-');
         return `${split[1] === '11' ? 'Nov.' : 'Dec.'} ${(split[2] * 1).toString()}`;
     };
 
     const renderBoards = () => {
-        const boardsHtml = [];
-        Object.keys(boards.result.data).forEach((name: string) => {
+        if (!userData.result) {
+            return <p>Error: Invalid state</p>;
+        }
+
+        const boardsHtml: JSX.Element[] = [];
+        Object.keys(userData.result.data.boards).forEach((name: string) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -160,19 +163,19 @@ const Homepage = () => {
                     </div>
                 </div>
             </div>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
 
             <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
                 Job Boards
             </h1>
-            <br></br>
+            <br />
             <div className="flex justify-center">
                 <Button color="neutral" variant="contained" startIcon={<AddCircleOutline />}>
                     Create new board
                 </Button>
             </div>
-            <br></br>
+            <br />
             <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
                 {renderBoards()}
                 {/* <div className="grid place-content-center">
