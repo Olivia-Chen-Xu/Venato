@@ -1,5 +1,12 @@
 import * as functions from 'firebase-functions';
-import { getDoc, getCollection, verifyIsAuthenticated, verifyJobPermission, db } from './helpers';
+import {
+    getDoc,
+    getCollection,
+    verifyIsAuthenticated,
+    verifyJobPermission,
+    db,
+    getRelativeTimestamp
+} from './helpers';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)
@@ -42,7 +49,7 @@ const updateJob = functions.https.onCall(
 // In 30 days, a CRON job will permanently remove it from firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
     await verifyJobPermission(context, data.id);
-    return getDoc(`jobs/${data.id}`).update({ deletedTime: Date.now() });
+    return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
 });
 
 export { addJobs, addJob, updateJob, deleteJob };

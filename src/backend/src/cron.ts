@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, auth, getTimestamp } from './helpers';
+import { getCollection, auth, getRelativeTimestamp } from './helpers';
 
 /**
  * CRON jobs - automatically triggered on a set schedule
@@ -48,7 +48,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((con
     // Remove jobs that have been deleted for 30 days
     const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('jobs')
-        .where('deletedTime', '<', getTimestamp(30))
+        .where('deletedTime', '<', getRelativeTimestamp(30))
         .get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
@@ -61,7 +61,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((con
     // Remove emails have been sent at least a day ago
     const emailsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('emails')
-        .where('delivery.endTime', '<', getTimestamp(1))
+        .where('delivery.endTime', '<', getRelativeTimestamp(1))
         .where('delivery.state', '==', 'SUCCESS')
         .get()
         .then((snapshot) => {

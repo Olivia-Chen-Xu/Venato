@@ -55,10 +55,15 @@ const verifyJobPermission = async (context: functions.https.CallableContext, job
         });
 };
 
-// Gets a firebase timestamp for x days ago
+// Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-const getTimestamp = (days: number) => {
+const getRelativeTimestamp = (days: number) => {
     return admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
+};
+
+// Gets a firestore timestamp based on unix millis
+const getFirestoreTimestamp = (unixMillis: number) => {
+    return admin.firestore.Timestamp.fromMillis(unixMillis);
 };
 
 // For doing misc. tasks like deleting document keys
@@ -72,7 +77,8 @@ export {
     getCollection,
     verifyIsAuthenticated,
     verifyJobPermission,
-    getTimestamp,
+    getRelativeTimestamp,
+    getFirestoreTimestamp,
     firestoreHelper,
     firestoreTypes,
     db,

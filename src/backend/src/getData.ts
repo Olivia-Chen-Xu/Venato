@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { db, getCollection, getDoc, getTimestamp, verifyIsAuthenticated } from './helpers';
+import { db, getCollection, getDoc, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -36,7 +36,7 @@ const getUpcomingEvents = async (uid: string) => {
     return db
         .collectionGroup('deadlines')
         .where('userId', '==', uid)
-        .where('time', '>=', getTimestamp(0))
+        .where('time', '>=', getRelativeTimestamp(0))
         .orderBy('time')
         .limit(3)
         .get()

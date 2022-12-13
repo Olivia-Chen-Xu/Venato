@@ -1,5 +1,12 @@
 import * as functions from 'firebase-functions';
-import { db, firestoreHelper, firestoreTypes, getCollection, getDoc } from './helpers';
+import {
+    db,
+    firestoreHelper,
+    firestoreTypes,
+    getCollection,
+    getDoc,
+    getFirestoreTimestamp,
+} from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -38,12 +45,14 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     const batch = db.batch();
-    deadlines.forEach(
-        (deadline: { title: string; location: string; date: typeof firestoreTypes.Timestamp }) => {
-            const newDoc = { ...deadline, userId: data.userId }; // userId added for easier querying
-            batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), newDoc);
-        }
-    );
+    deadlines.forEach((deadline: { title: string; location: string; date: number }) => {
+        const newDoc = {
+            ...deadline,
+            userId: data.userId,
+            date: getFirestoreTimestamp(deadline.date),
+        }; // userId added for easier querying
+        batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), newDoc);
+    });
     promises.push(batch.commit());
 
     return Promise.all(promises);
@@ -81,6 +90,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, 
             if (querySnapshot.empty) {
                 promises.push(getDoc(`location/${location}`).delete());
             }
+            return null;
         })
         .catch((err) => `Error getting company document: ${err}`);
 
