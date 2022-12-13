@@ -14,7 +14,10 @@ const addJobs = functions.https.onCall((data: [], context: any) => {
     data.forEach((job: any) => {
         batch.set(db.collection('jobs').doc(), job);
     });
-    return batch.commit();
+    return batch
+        .commit()
+        .then(() => 'Jobs added successfully')
+        .catch((err) => `Error adding jobs: ${err}`);
 });
 
 // Adds a job to firestore

@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { firestoreHelper, getCollection, getDoc } from './helpers';
+import { db, firestoreHelper, firestoreTypes, getCollection, getDoc } from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -12,10 +12,11 @@ import { firestoreHelper, getCollection, getDoc } from './helpers';
  * On job create:
  * -Makes searchable fields for the job position
  * -Add company/location to db (if it doesn't already exist)
- * -Move interview question to it own collection and add the doc id to this job
+ * -Move deadlines to sub-collection
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
     const data = snap.data();
+    const docId = context.params.jobId;
     const promises = [];
 
     // Add searchable job position field
@@ -32,24 +33,16 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     promises.push(getDoc(`companies/${data.info.company}`).set({}));
     promises.push(getDoc(`locations/${data.info.location}`).set({}));
 
-    // Move the interview question to its own collection (with the user and job id)
+    // Move the deadlines to sub-collection
     const { deadlines } = data;
-    promises.push(snap.ref.update({ deadlines: [] }));
+    promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
-    deadlines.forEach((deadline: { description: string; name: string }) => {
-        promises.push(
-            getCollection('deadlines')
-                .add({ ...deadline, userId: data.userId, jobId: context.params.jobId })
-                .then((docRef: { id: string }) => {
-                    promises.push(
-                        snap.ref.update({
-                            deadlines: firestoreHelper.FieldValue.arrayUnion(docRef.id),
-                        })
-                    );
-                    return null;
-                })
-        );
-    });
+    const batch = db.batch();
+    deadlines.forEach(
+        (deadline: { title: string; location: string; date: typeof firestoreTypes.Timestamp }) =>
+            batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), deadline)
+    );
+    promises.push(batch.commit());
 
     return Promise.all(promises);
 });

@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
+import firebase from 'firebase/compat';
 
 /**
  * Initialize the app with admin permissions to be used in other functions
@@ -63,6 +64,9 @@ const getTimestamp = (days: number) => {
 // For doing misc. tasks like deleting document keys
 const firestoreHelper = admin.firestore;
 
+// For typescript types (e.g firestore's timestamp)
+const firestoreTypes = firebase.firestore;
+
 export {
     getDoc,
     getCollection,
@@ -70,6 +74,7 @@ export {
     verifyJobPermission,
     getTimestamp,
     firestoreHelper,
+    firestoreTypes,
     db,
     auth,
 };
