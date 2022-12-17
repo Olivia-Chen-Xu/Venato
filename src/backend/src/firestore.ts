@@ -2,7 +2,6 @@ import * as functions from 'firebase-functions';
 import {
     db,
     firestoreHelper,
-    getCollection,
     getDoc,
     getFirestoreTimestamp,
 } from './helpers';
@@ -20,7 +19,7 @@ import {
  * -Add company/location to db (if it doesn't already exist)
  * -Move deadlines to sub-collection
  */
-const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap, context) => {
+const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     const data = snap.data();
     const docId = context.params.jobId;
     const promises = [];
@@ -36,8 +35,8 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     );
 
     // Add company and location to db
-    promises.push(getDoc(`companies/${data.info.company}`).set({}));
-    promises.push(getDoc(`locations/${data.info.location}`).set({}));
+    promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+    promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: firestoreHelper.FieldValue.increment(1) }));
 
     // Move the deadlines to sub-collection
     const { deadlines } = data;
@@ -57,41 +56,14 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     return Promise.all(promises);
 });
 
-// On job purge (removed by a CRON after being deleted for 30 days):
-// - Remove the company and location from the db if no other jobs have that company/location
-// - Remove the job from the user's job board
+/**
+ * On job purge (removed by a CRON after being deleted for 30 days):
+ * - Remove the company and location from the db if no other jobs have that company/location
+ * - Remove the job from the user's job board
+ */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
-
-    const [id, userId, company, location] = [
-        snap.id,
-        snap.data().userId,
-        snap.data().info.company,
-        snap.data().info.location,
-    ];
-
-    // Remove the company and location from the db if no other jobs have that company/location
-    getCollection('companies')
-        .where('__name__', '==', company)
-        .get()
-        .then((querySnapshot) => {
-            if (querySnapshot.empty) {
-                promises.push(getDoc(`companies/${company}`).delete());
-            }
-            return null;
-        })
-        .catch((err) => `Error getting company document: ${err}`);
-
-    getCollection('locations')
-        .where('__name__', '==', location)
-        .get()
-        .then((querySnapshot) => {
-            if (querySnapshot.empty) {
-                promises.push(getDoc(`location/${location}`).delete());
-            }
-            return null;
-        })
-        .catch((err) => `Error getting company document: ${err}`);
+    const [id, userId] = [snap.id, snap.data().userId];
 
     // Remove the job id from the user's job board
     getDoc(`users/${userId}`)

@@ -44,7 +44,7 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
 });
 
 // Remove any old data in the db that's not needed anymore
-const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((context) => {
+const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
     // Remove jobs that have been deleted for 30 days
     const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('jobs')
@@ -71,15 +71,44 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun((con
         })
         .catch((err) => console.log(`Error getting sent emails from firestore: ${err}`));
 
+    // Purge companies and locations that don't have a job associated with them
+    const companiesToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
+    getCollection('companies')
+        .where('numJobs', '==', 0)
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                companiesToDelete.push(doc.ref.delete());
+            });
+        })
+        .catch((err) => `Error getting company document: ${err}`);
+
+    const locationsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
+    getCollection('locations')
+        .where('numJobs', '==', 0)
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                locationsToDelete.push(doc.ref.delete());
+            });
+        })
+        .catch((err) => `Error getting company document: ${err}`);
+
     // Make a response message and return all the promises
     let returnMessage = '';
+    const getDelim = () => returnMessage.length > 0 ? '. ' : '';
+
     if (jobsToDelete.length > 0) {
         returnMessage += `Successfully purged ${jobsToDelete.length} jobs (30+ days deleted)`;
     }
     if (emailsToDelete.length > 0) {
-        returnMessage +=
-            (jobsToDelete.length > 0 ? '. ' : '') +
-            `Successfully purged ${emailsToDelete.length} emails (sent at least a day ago)`;
+        returnMessage += getDelim() + `Successfully purged ${emailsToDelete.length} emails (sent at least a day ago)`;
+    }
+    if (companiesToDelete.length > 0) {
+        returnMessage += getDelim() + `Successfully purged ${companiesToDelete.length} companies (no jobs associated)`;
+    }
+    if (locationsToDelete.length > 0) {
+        returnMessage += getDelim() + `Successfully purged ${locationsToDelete.length} locations (no jobs associated)`;
     }
 
     return Promise.all([jobsToDelete.flat(), emailsToDelete.flat()])
