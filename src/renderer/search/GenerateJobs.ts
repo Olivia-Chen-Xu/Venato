@@ -264,57 +264,50 @@ const jobPositions = [
 // Add example jobs
 const generateJobs = async (num: number) => {
     const generateDeadlines = () => {
-        const deadlines = [];
-        const month = Math.random() < 0.5 ? '11' : '12';
+        const deadlines: { title: string; date: number; location: string }[] = [];
 
-        const generateDeadline = (title, date) => {
-            const time =
-                Math.random() < 0.5
-                    ? `${Math.floor(Math.random() * 3) + 9}:${Math.random() < 0.3 ? '30' : '00'} AM`
-                    : `${Math.floor(Math.random() * 4) + 1}:${
-                          Math.random() < 0.3 ? '30' : '00'
-                      } PM`;
+        const generateDeadline = (title, day) => {
+            const month = Math.floor(Math.random() * 4);
+            const hours = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 9 : Math.floor(Math.random() * 4) + 13;
+            const minutes = Math.random() < 0.3 ? 30 : 0;
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getMilliseconds();
+
             const location = Math.random() < 0.5 ? 'Zoom meeting' : 'In-person';
 
-            deadlines.push({ title, date, time, location });
+            deadlines.push({ title, date, location });
         };
 
         const numDeadlines = Math.floor(Math.random() * 3) + 1;
-        let title;
-        let date;
-        let temp;
+        let title, day;
         switch (numDeadlines) {
             case 1:
-                temp = Math.floor(Math.random() * 29) + 1;
                 title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
-                date = `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 29) + 1;
+                generateDeadline(title, day);
 
                 break;
             case 2:
-                temp = Math.floor(Math.random() * 14) + 1;
-                title =
-                    Math.random() < 0.5 ? 'Submit resume + cover letter' : 'Fill out application';
-                date = `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`;
-                generateDeadline(title, date);
+                title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
+                day = Math.floor(Math.random() * 14) + 1;
+                generateDeadline(title, day);
 
                 title = 'Interview';
-                date = `22-${month}-${Math.floor(Math.random() * 15) + 15}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 15) + 15;
+                generateDeadline(title, day);
 
                 break;
             case 3:
                 title = 'Initial application due';
-                date = `22-${month}-0${Math.floor(Math.random() * 9) + 1}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 9) + 1;
+                generateDeadline(title, day);
 
                 title = Math.random() < 0.5 ? 'First round interview' : 'Technical round';
-                date = `22-${month}-${Math.floor(Math.random() * 10) + 10}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 10) + 10;
+                generateDeadline(title, day);
 
                 title = '❗ Final interview ❗';
-                date = `22-${month}-${Math.floor(Math.random() * 10) + 20}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 10) + 20;
+                generateDeadline(title, day);
 
                 break;
             default:

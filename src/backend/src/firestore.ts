@@ -45,7 +45,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate((snap,
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     const batch = db.batch();
-    deadlines.forEach((deadline: { title: string; location: string; date: number }) => {
+    deadlines.forEach((deadline: { title: string; date: number; location: string }) => {
         const newDoc = {
             ...deadline,
             userId: data.userId,
