@@ -269,7 +269,7 @@ const generateJobs = async (num: number) => {
             const month = Math.floor(Math.random() * 4);
             const hours = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 9 : Math.floor(Math.random() * 4) + 13;
             const minutes = Math.random() < 0.3 ? 30 : 0;
-            const date = new Date(2023, month, day, hours, minutes, 0, 0).getMilliseconds();
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
             const location = Math.random() < 0.5 ? 'Zoom meeting' : 'In-person';
 
@@ -413,7 +413,7 @@ const generateJobs = async (num: number) => {
             },
 
             userId:
-                Math.random() < 0.5
+                Math.random() < 0.6
                     ? 'WAtTku8XDtUyu9XpjOW3yB8vF0R2' // 18rem8@queensu.ca (admin account)
                     : 'glTn3bNtAgX6Ahy7SeOSMmU2txy1', // reid.moffat9@gmail.com
         };
