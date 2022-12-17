@@ -63,7 +63,9 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
-    const [id, userId] = [snap.id, snap.data().userId];
+    const [id, userId, company, location] = [
+        snap.id, snap.data().userId, snap.data().company, snap.data().location
+    ];
 
     // Remove the job id from the user's job board
     getDoc(`users/${userId}`)
@@ -83,6 +85,21 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, 
             promises.push(getDoc(`users/${userId}`).update({ boards: newBoards }));
         })
         .catch((err) => `Error getting user document: ${err}`);
+
+    // Decrement the company and location counters
+    getDoc(`companies/${company}`)
+        .get()
+        .then((companyDoc) => {
+            promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+        })
+        .catch((err) => `Error getting company document: ${err}`);
+
+    getDoc(`locations/${location}`)
+        .get()
+        .then((locationDoc) => {
+            promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+        })
+        .catch((err) => `Error getting location document: ${err}`);
 
     return Promise.all(promises);
 });
