@@ -2,7 +2,6 @@ import * as functions from 'firebase-functions';
 import {
     db,
     firestoreHelper,
-    firestoreTypes,
     getCollection,
     getDoc,
     getFirestoreTimestamp,

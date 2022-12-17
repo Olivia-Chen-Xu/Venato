@@ -15,8 +15,7 @@ interface Job {
     notes: string;
     deadlines: {
         title: string;
-        date: string;
-        time: string;
+        date: number;
         location: string;
     }[];
     interviewQuestions: { name: string; description: string }[];
@@ -266,7 +265,7 @@ const generateJobs = async (num: number) => {
     const generateDeadlines = () => {
         const deadlines: { title: string; date: number; location: string }[] = [];
 
-        const generateDeadline = (title, day) => {
+        const generateDeadline = (title: string, day: number) => {
             const month = Math.floor(Math.random() * 4);
             const hours = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 9 : Math.floor(Math.random() * 4) + 13;
             const minutes = Math.random() < 0.3 ? 30 : 0;
