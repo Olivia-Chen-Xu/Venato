@@ -414,8 +414,8 @@ const generateJobs = async (num: number) => {
 
             userId:
                 Math.random() < 0.5
-                    ? 'tjmZsPbwRcUauvzh0xPbxcu6NwZ2' // 18rem8@queensu.ca (admin account)
-                    : 'Ir9I5zN3F7QO7DVmriAysPL561m1', // reid.moffat9@gmail.com
+                    ? 'WAtTku8XDtUyu9XpjOW3yB8vF0R2' // 18rem8@queensu.ca (admin account)
+                    : 'glTn3bNtAgX6Ahy7SeOSMmU2txy1', // reid.moffat9@gmail.com
         };
         jobs.push(job);
     }

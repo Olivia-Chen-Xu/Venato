@@ -138,6 +138,8 @@ const jobSearch = functions.https.onCall(
         return query
             .get()
             .then((jobs) => {
+                if (jobs.empty) return [];
+
                 return jobs.docs.map((doc) => ({
                     details: doc.data().details,
                     info: doc.data().info,
@@ -181,7 +183,11 @@ const interviewQuestionsSearch = functions.https.onCall(
         // Execute the query and return the result
         return query
             .get()
-            .then((jobs) => jobs.docs.map((job) => job.data().interviewQuestions).flat())
+            .then((questions) => {
+                if (questions.empty) return [];
+
+                return questions.docs.map((job) => job.data().interviewQuestions).flat()
+            })
             .catch((err) => `Error querying interview questions: ${err}`);
     }
 );
