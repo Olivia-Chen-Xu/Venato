@@ -271,7 +271,7 @@ const generateJobs = async (num: number) => {
             const minutes = Math.random() < 0.3 ? 30 : 0;
             const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
-            const location = Math.random() < 0.5 ? 'Zoom meeting' : 'In-person';
+            const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
 
             deadlines.push({ title, date, location });
         };
@@ -382,6 +382,7 @@ const generateJobs = async (num: number) => {
         contacts.push(newContact);
     });
 
+    const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
     const jobs: Job[] = [];
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
@@ -414,15 +415,15 @@ const generateJobs = async (num: number) => {
 
             userId:
                 Math.random() < 0.6
-                    ? 'WAtTku8XDtUyu9XpjOW3yB8vF0R2' // 18rem8@queensu.ca (admin account)
-                    : 'glTn3bNtAgX6Ahy7SeOSMmU2txy1', // reid.moffat9@gmail.com
+                    ? users[0] // 18rem8@queensu.ca (admin account)
+                    : users[1], // reid.moffat9@gmail.com
         };
         jobs.push(job);
     }
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs(jobs)
+    addJobs({ jobs, users })
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };

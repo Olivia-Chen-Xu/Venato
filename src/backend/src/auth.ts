@@ -49,9 +49,7 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
     const promises = [];
 
     // Create a default db document for the user
-    const defaultDoc = {
-        boards: {},
-    };
+    const defaultDoc = {};
     promises.push(
         getDoc(`users/${user.uid}`)
             .set(defaultDoc)

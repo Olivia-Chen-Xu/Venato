@@ -10,7 +10,16 @@ import { db, getCollection, getDoc, getRelativeTimestamp, verifyIsAuthenticated 
 const getJobBoards = (uid: string) => {
     return getDoc(`users/${uid}`)
         .get()
-        .then((doc) => doc.data()?.boards)
+        .then((doc) => {
+            if (!doc.exists) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    'Error getting job boards: user not found in db'
+                );
+            }
+
+            return doc.data()?.boards;
+        })
         .catch((err) => `Error fetching user job boards: ${err}`);
 };
 
@@ -20,7 +29,7 @@ const getUserJobs = (uid: string) => {
         .where('userId', '==', uid)
         .get()
         .then((jobs) => {
-            const jobList: any = [];
+            const jobList: any[] = [];
             jobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
                 const { userID: foo, positionSearchable: bar, ...jobData } = job.data();
@@ -40,7 +49,11 @@ const getUpcomingEvents = async (uid: string) => {
         .orderBy('time')
         .limit(3)
         .get()
-        .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
+        .then((snapshot) => {
+            if (snapshot.empty) return [];
+
+            return snapshot.docs.map((doc) => doc.data())
+        })
         .catch((err) => `Error fetching upcoming events: ${err}`);
 };
 

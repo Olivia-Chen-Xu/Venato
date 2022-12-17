@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress } from '@mui/material';
-import dayjs from 'dayjs';
 import { AddCircleOutline } from '@mui/icons-material';
 import CalendarState from '../calendar/context/CalendarState';
 import taskLine from '../../../assets/task-line.png';
@@ -22,20 +21,6 @@ const Homepage = () => {
         return <p>Error: {userData.error.message}</p>;
     }
 
-    // Events loaded
-    // CalendarState.addJobs(jobs.result.data);
-
-    // Get the 3 most immediate tasks
-    // const taskDates = Object.entries(CalendarState.events)
-    //     .map((elem) => elem[0])
-    //     .sort()
-    //     .filter((e) => e >= dayjs().format('YY-MM-DD'))
-    //     .slice(0, 3);
-    // const recent = [
-    //     ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
-    //     ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
-    //     ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
-    // ].slice(0, 3);
     const formatDate = (date: string) => {
         const split = date.split('-');
         return `${split[1] === '11' ? 'Nov.' : 'Dec.'} ${(split[2] * 1).toString()}`;
@@ -62,6 +47,15 @@ const Homepage = () => {
             );
         });
         return boardsHtml;
+    };
+
+    const renderEvents = () => {
+        if (!userData.result) {
+            return <p>Error: Invalid state</p>;
+        }
+
+        const eventsHtml: JSX.Element = [];
+
     };
 
     return (

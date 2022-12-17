@@ -14,17 +14,47 @@ import {
 
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
-const addJobs = functions.https.onCall((data: [], context: any) => {
+const addJobs = functions.https.onCall(async (data: { jobs: {}[], users: string[] }, context: any) => {
     verifyIsAuthenticated(context);
 
     const batch = db.batch();
-    data.forEach((job: any) => {
+    data.jobs.forEach((job: any) => {
         batch.set(db.collection('jobs').doc(), job);
     });
-    return batch
+    await batch
         .commit()
         .then(() => 'Jobs added successfully')
         .catch((err) => `Error adding jobs: ${err}`);
+
+    const promises = [];
+    promises.push(getCollection('jobs')
+        .get()
+        .then((jobs) => {
+            if (jobs.empty) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    'Error: no jobs in the db (not added correctly?)'
+                );
+            }
+
+            const boards = ['Summer 2021 internships', 'Summer 2022 internships', 'Summer 2023 internships'];
+            const jobIds = jobs.docs.map((job) => job.id);
+            jobIds.forEach((job) => {
+                const userId = data.users[~~(Math.random() * data.users.length)];
+                const board = boards[~~(Math.random() * boards.length)];
+
+                promises.push(getDoc(`users/${userId}`)
+                    .get()
+                    .then((doc) => {
+                        doc.ref.update({ boards: board });
+                    })
+                    .catch()
+                );
+            });
+        })
+        .catch()
+    );
+    return Promise.all(promises);
 });
 
 // Adds a job to firestore

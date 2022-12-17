@@ -35,8 +35,28 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     );
 
     // Add company and location to db
-    promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: firestoreHelper.FieldValue.increment(1) }));
-    promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+    promises.push(getDoc(`companies/${data.info.company}`)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                promises.push(doc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+            } else {
+                promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: 1 }));
+            }
+        })
+        .catch((err) => `Error setting company doc: ${err}`)
+    );
+    promises.push(getDoc(`locations/${data.info.location}`)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                promises.push(doc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+            } else {
+                promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: 1 }));
+            }
+        })
+        .catch((err) => `Error setting location doc: ${err}`)
+    );
 
     // Move the deadlines to sub-collection
     const { deadlines } = data;
