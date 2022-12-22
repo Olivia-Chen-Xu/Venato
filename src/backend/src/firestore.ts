@@ -125,7 +125,9 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
     if (locationDoc && locationDoc.data()?.numJobs === 1) {
         promises.push(locationDoc.ref.delete());
     } else if (locationDoc && locationDoc.data()?.numJobs > 1) {
-        promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+        promises.push(
+            locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
+        );
     }
 
     return Promise.all(promises);

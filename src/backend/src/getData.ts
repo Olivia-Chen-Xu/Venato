@@ -187,7 +187,7 @@ const interviewQuestionsSearch = functions.https.onCall(
             .then((questions) => {
                 if (questions.empty) return [];
 
-                return questions.docs.map((job) => job.data().interviewQuestions).flat()
+                return questions.docs.map((job) => job.data().interviewQuestions).flat();
             })
             .catch((err) => `Error querying interview questions: ${err}`);
     }
