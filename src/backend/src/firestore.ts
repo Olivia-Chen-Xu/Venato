@@ -1,10 +1,5 @@
 import * as functions from 'firebase-functions';
-import {
-    db,
-    firestoreHelper,
-    getDoc,
-    getFirestoreTimestamp,
-} from './helpers';
+import { db, firestoreHelper, getDoc, getFirestoreTimestamp } from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -35,28 +30,25 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     );
 
     // Add company and location to db
-    promises.push(getDoc(`companies/${data.info.company}`)
+    const companyDoc = await getDoc(`companies/${data.info.company}`)
         .get()
-        .then((doc) => {
-            if (doc.exists) {
-                promises.push(doc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
-            } else {
-                promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: 1 }));
-            }
-        })
-        .catch((err) => `Error setting company doc: ${err}`)
-    );
-    promises.push(getDoc(`locations/${data.info.location}`)
+        .then((doc) => doc)
+        .catch((err) => console.log(`Error getting company doc: ${err}`));
+    if (companyDoc && companyDoc.exists) {
+        promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+    } else {
+        promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: 1 }));
+    }
+
+    const locationDoc = await getDoc(`locations/${data.info.location}`)
         .get()
-        .then((doc) => {
-            if (doc.exists) {
-                promises.push(doc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
-            } else {
-                promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: 1 }));
-            }
-        })
-        .catch((err) => `Error setting location doc: ${err}`)
-    );
+        .then((doc) => doc)
+        .catch((err) => console.log(`Error getting location doc: ${err}`));
+    if (locationDoc && locationDoc.exists) {
+        promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+    } else {
+        promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: 1 }));
+    }
 
     // Move the deadlines to sub-collection
     const { deadlines } = data;
@@ -84,7 +76,10 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
     const [id, userId, company, location] = [
-        snap.id, snap.data().userId, snap.data().company, snap.data().location
+        snap.id,
+        snap.data().userId,
+        snap.data().company,
+        snap.data().location,
     ];
 
     // Remove the job id from the user's job board
@@ -110,14 +105,18 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, 
     getDoc(`companies/${company}`)
         .get()
         .then((companyDoc) => {
-            promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+            promises.push(
+                companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
+            );
         })
         .catch((err) => `Error getting company document: ${err}`);
 
     getDoc(`locations/${location}`)
         .get()
         .then((locationDoc) => {
-            promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+            promises.push(
+                locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
+            );
         })
         .catch((err) => `Error getting location document: ${err}`);
 

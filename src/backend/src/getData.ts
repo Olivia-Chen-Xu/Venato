@@ -49,11 +49,7 @@ const getUpcomingEvents = async (uid: string) => {
         .orderBy('time')
         .limit(3)
         .get()
-        .then((snapshot) => {
-            if (snapshot.empty) return [];
-
-            return snapshot.docs.map((doc) => doc.data())
-        })
+        .then((snapshot) => (snapshot.empty ? [] : snapshot.docs.map((doc) => doc.data())))
         .catch((err) => `Error fetching upcoming events: ${err}`);
 };
 
