@@ -32,7 +32,7 @@ const Homepage = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        Object.keys(userData.result.data.boards).forEach((name: string) => {
+        userData.result.data.boards.forEach((name: string) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -55,6 +55,42 @@ const Homepage = () => {
         }
 
         const eventsHtml: JSX.Element = [];
+        userdata.result.data.events.forEach(
+            (event: { title: string; date: number; location: string }) => {
+                eventsHtml.push(
+                    <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                        <div className="ml-5">
+                            <h1>
+                                <span className="text-3xl">{event.title}</span>
+                            </h1>
+                        </div>
+
+                        <div style={{ marginTop: '4%' }}>
+                            <img src={taskLine} alt="Horizontal divider" />
+                        </div>
+
+                        <div className="ml-5 mt-2">
+                            <h1 className="text-md align-middle">
+                                <span className="material-icons-outlined text-xl">work</span>{' '}
+                                position
+                            </h1>
+                        </div>
+                        <div className="ml-5 mt-1">
+                            <h1 className="text-md align-middle">
+                                <span className="material-icons-outlined text-xl">schedule</span>{' '}
+                                {event.date}
+                            </h1>
+                        </div>
+                        <div className="ml-5 mt-1">
+                            <h1 className="text-md align-middle">
+                                <span className="material-icons-outlined text-xl">location_on</span>{' '}
+                                company
+                            </h1>
+                        </div>
+                    </div>
+                );
+            }
+        );
 
     };
 
@@ -66,96 +102,7 @@ const Homepage = () => {
                 Upcoming Tasks
             </h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
-                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5">
-                        <h1>
-                            <span className="text-3xl">{recent[0].title}</span>
-                        </h1>
-                    </div>
-
-                    <div style={{ marginTop: '4%' }}>
-                        <img src={taskLine} alt="Horizontal divider" />
-                    </div>
-
-                    <div className="ml-5 mt-2">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[0].id].info.position}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[0].date)}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[0].id].info.company}
-                        </h1>
-                    </div>
-                </div>
-                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5">
-                        <h1>
-                            <span className="text-3xl">{recent[1].title}</span>
-                        </h1>
-                    </div>
-
-                    <div style={{ marginTop: '4%' }}>
-                        <img src={taskLine} alt="Horizontal divider" />
-                    </div>
-
-                    <div className="ml-5 mt-2">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[1].id].info.position}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[1].date)}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[1].id].info.company}
-                        </h1>
-                    </div>
-                </div>
-                <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
-                    <div className="ml-5">
-                        <h1>
-                            <span className="text-3xl">{recent[2].title}</span>
-                        </h1>
-                    </div>
-
-                    <div style={{ marginTop: '4%' }}>
-                        <img src={taskLine} alt="Horizontal divider" />
-                    </div>
-
-                    <div className="ml-5 mt-2">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[2].id].info.position}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[2].date)}
-                        </h1>
-                    </div>
-                    <div className="ml-5 mt-1">
-                        <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[2].id].info.company}
-                        </h1>
-                    </div>
-                </div>
+                {renderEvents()}
             </div>
             <br />
             <br />
