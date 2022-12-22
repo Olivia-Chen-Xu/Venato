@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { db, firestoreHelper, getDoc, getFirestoreTimestamp } from './helpers';
+import { db, firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -73,52 +73,60 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  * - Remove the company and location from the db if no other jobs have that company/location
  * - Remove the job from the user's job board
  */
-const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete((snap, context) => {
+const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
-    const [id, userId, company, location] = [
+    const [id, userId, company, location, boardName] = [
         snap.id,
         snap.data().userId,
-        snap.data().company,
-        snap.data().location,
+        snap.data().info.company,
+        snap.data().info.location,
+        snap.data().boardName,
     ];
 
     // Remove the job id from the user's job board
-    getDoc(`users/${userId}`)
+    getCollection('boards')
+        .where('userId', '==', userId)
+        .where('name', '==', boardName)
         .get()
-        .then((userDoc) => {
-            interface Boards {
-                [name: string]: string[];
+        .then((board) => {
+            if (board.empty) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    `Error: job board ${boardName} not found for user ${userId}`
+                );
             }
-            const newBoards: Boards = userDoc.data()?.boards;
 
-            Object.entries(newBoards).forEach((entry: [string, string[]]) => {
-                const [key, values] = entry;
-                if (values.includes(id)) {
-                    newBoards[key as keyof Boards] = values.filter((jobId: string) => jobId !== id);
-                }
-            });
-            promises.push(getDoc(`users/${userId}`).update({ boards: newBoards }));
+            if (board.docs.length > 1) {
+                throw new functions.https.HttpsError(
+                    'internal',
+                    `Error: more than one job board ${boardName} for user ${userId}`
+                );
+            }
+
+            board.docs[0].ref.update({ jobs: firestoreHelper.FieldValue.arrayRemove(id) });
         })
-        .catch((err) => `Error getting user document: ${err}`);
+        .catch((err) => console.log(`Error getting user boards to delete: ${err}`));
 
     // Decrement the company and location counters
-    getDoc(`companies/${company}`)
+    const companyDoc = await getDoc(`companies/${company}`)
         .get()
-        .then((companyDoc) => {
-            promises.push(
-                companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
-            );
-        })
-        .catch((err) => `Error getting company document: ${err}`);
+        .then((doc) => doc)
+        .catch((err) => console.log(`Error getting company document: ${err}`));
+    if (companyDoc && companyDoc.data()?.numJobs === 1) {
+        promises.push(companyDoc.ref.delete());
+    } else if (companyDoc && companyDoc.data()?.numJobs > 1) {
+        promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+    }
 
-    getDoc(`locations/${location}`)
+    const locationDoc = await getDoc(`locations/${location}`)
         .get()
-        .then((locationDoc) => {
-            promises.push(
-                locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
-            );
-        })
-        .catch((err) => `Error getting location document: ${err}`);
+        .then((doc) => doc)
+        .catch((err) => console.log(`Error getting company document: ${err}`));
+    if (locationDoc && locationDoc.data()?.numJobs === 1) {
+        promises.push(locationDoc.ref.delete());
+    } else if (locationDoc && locationDoc.data()?.numJobs > 1) {
+        promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) }));
+    }
 
     return Promise.all(promises);
 });

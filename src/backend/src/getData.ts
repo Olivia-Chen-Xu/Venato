@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { db, getCollection, getDoc, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import { db, getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -8,18 +8,10 @@ import { db, getCollection, getDoc, getRelativeTimestamp, verifyIsAuthenticated 
 
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
 const getJobBoards = (uid: string) => {
-    return getDoc(`users/${uid}`)
+    return getCollection(`boards`)
+        .where('userId', '==', uid)
         .get()
-        .then((doc) => {
-            if (!doc.exists) {
-                throw new functions.https.HttpsError(
-                    'not-found',
-                    'Error getting job boards: user not found in db'
-                );
-            }
-
-            return doc.data()?.boards;
-        })
+        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data())))
         .catch((err) => `Error fetching user job boards: ${err}`);
 };
 

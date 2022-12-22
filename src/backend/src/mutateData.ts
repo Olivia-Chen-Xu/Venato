@@ -43,7 +43,7 @@ const addJobs = functions.https.onCall(
                         const userJobs = jobs.docs
                             .filter((job) => job.data().userId === data.users[i])
                             .map((job) => ({ id: job.id, board: Math.floor(Math.random() * 3) }));
-                        const boards = {
+                        const boards: { [name: string]: { id: string; board: number }[] } = {
                             'Summer 2021 internships': userJobs.filter((job) => job.board === 0),
                             'Summer 2022 internships': userJobs.filter((job) => job.board === 1),
                             'Summer 2023 internships': userJobs.filter((job) => job.board === 2),
@@ -51,12 +51,17 @@ const addJobs = functions.https.onCall(
 
                         const keys = Object.keys(boards);
                         for (let j = 0; j < keys.length; ++j) {
+                            const name = keys[j];
                             promises.push(
                                 getCollection('boards').add({
-                                    name: keys[j],
-                                    jobs: boards[keys[j]],
+                                    name,
+                                    jobs: boards[name],
                                     userId: data.users[i],
                                 })
+                            );
+
+                            boards[name].forEach((job) =>
+                                promises.push(getDoc(`jobs/${job.id}`).update({ boardName: name }))
                             );
                         }
                     }
