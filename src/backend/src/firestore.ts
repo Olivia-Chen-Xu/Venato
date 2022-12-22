@@ -103,7 +103,12 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
                 );
             }
 
-            board.docs[0].ref.update({ jobs: firestoreHelper.FieldValue.arrayRemove(id) });
+            const doc = board.docs[0];
+            if (doc.data().jobIds.length === 0) {
+                promises.push(doc.ref.delete());
+            } else {
+                promises.push(doc.ref.update({ jobs: firestoreHelper.FieldValue.arrayRemove(id) }));
+            }
         })
         .catch((err) => console.log(`Error getting user boards to delete: ${err}`));
 

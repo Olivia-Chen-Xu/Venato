@@ -7,11 +7,11 @@ import { db, getCollection, getRelativeTimestamp, verifyIsAuthenticated } from '
  */
 
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
-const getJobBoards = (uid: string) => {
+const getJobBoardNames = (uid: string) => {
     return getCollection(`boards`)
         .where('userId', '==', uid)
         .get()
-        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data())))
+        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data().name)))
         .catch((err) => `Error fetching user job boards: ${err}`);
 };
 
@@ -49,7 +49,7 @@ const getUpcomingEvents = async (uid: string) => {
 const getHomepageData = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoards(context.auth.uid)])
+    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoardNames(context.auth.uid)])
         .then((userData) => ({ events: userData[0], boards: userData[1] }))
         .catch((err) => `Error fetching homepage data: ${err}`);
 });

@@ -55,7 +55,7 @@ const addJobs = functions.https.onCall(
                             promises.push(
                                 getCollection('boards').add({
                                     name,
-                                    jobs: boards[name],
+                                    jobs: boards[name].map((job) => job.id),
                                     userId: data.users[i],
                                 })
                             );
