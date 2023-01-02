@@ -83,6 +83,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  * On job purge (removed by a CRON after being deleted for 30 days):
  * - Remove the company and location from the db if no other jobs have that company/location
  * - Remove the job from the user's job board
+ * - Remove the deadlines and interview questions (in their own collection)
  */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
@@ -122,7 +123,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
             }
             return null;
         })
-        .catch((err) => console.log(`Error getting user boards to delete: ${err}`));
+        .catch((err) => functions.logger.log(`Error getting user boards to delete: ${err}`));
 
     // Decrement the company and location counters
     const companyDoc = await getDoc(`companies/${company}`)
@@ -146,6 +147,19 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
             locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(-1) })
         );
     }
+
+    // Remove deadlines and interview questions for this job
+    getCollection('deadlines')
+        .where('jobId', '==', id)
+        .get()
+        .then((deadlines) => deadlines.forEach((deadline) => promises.push(deadline.ref.delete())))
+        .catch((err) => functions.logger.log(`Error getting deadlines: ${err}`));
+
+    getCollection('interviewQuestions')
+        .where('jobId', '==', id)
+        .get()
+        .then((questions) => questions.forEach((question) => promises.push(question.ref.delete())))
+        .catch((err) => functions.logger.log(`Error getting interview questions: ${err}`));
 
     return Promise.all(promises);
 });
