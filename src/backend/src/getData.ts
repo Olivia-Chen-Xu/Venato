@@ -105,25 +105,16 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
     return getUserJobs(context.auth.uid);
 });
 
-// Returns all job deadlines (to display on the calendar) for the currently signed-in user
-const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
+// Returns all job deadlines for the currently signed-in user
+const getDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
+        .where('userId', '==', context.auth.uid)
         .get()
-        .then((jobs) => {
-            const events: { id: string; title: string; date: string }[] = [];
-            jobs.docs.forEach((job) => {
-                job.data().deadlines.forEach((event: { date: any }) => {
-                    events.push({
-                        id: job.id,
-                        title: job.data().position,
-                        date: event.date,
-                    });
-                });
-            });
-            return events;
-        })
+        .then((deadlines) =>
+            deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
+        )
         .catch((err) => `Error getting calendar events: ${err}`);
 });
 
@@ -228,10 +219,20 @@ const interviewQuestionsSearch = functions.https.onCall(
         // Execute the query and return the result
         return query
             .get()
-            .then((questions) => {
-                if (questions.empty) return [];
+            .then((jobs) => {
+                if (jobs.empty) return [];
 
-                return questions.docs.map((job) => job.data().interviewQuestions).flat();
+                // TODO: Query 10 at a time with array-contains-any for efficiency
+                return jobs.docs.map((job) =>
+                    getCollection('interviewQuestions')
+                        .where('jobId', '==', job.id)
+                        .get()
+                        .then((questions) => {
+                            if (questions.empty) return [];
+                            return questions.docs.map((question) => question.data());
+                        })
+                        .catch((err) => `Error querying interview questions: ${err}`)
+                );
             })
             .catch((err) => `Error querying interview questions: ${err}`);
     }
@@ -240,7 +241,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 export {
     getHomepageData,
     getJobs,
-    getCalendarDeadlines,
+    getDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
