@@ -18,6 +18,7 @@ const addJobs = functions.https.onCall(
     async (data: { jobs: object[]; users: string[] }, context: any) => {
         verifyIsAuthenticated(context);
 
+        // Add all the jobs to the db
         const batch = db.batch();
         data.jobs.forEach((job: any) => {
             batch.set(db.collection('jobs').doc(), job);
@@ -27,6 +28,7 @@ const addJobs = functions.https.onCall(
             .then(() => 'Jobs added successfully')
             .catch((err) => `Error adding jobs: ${err}`);
 
+        // Generate job boards
         const promises = [];
         promises.push(
             getCollection('jobs')
@@ -66,13 +68,13 @@ const addJobs = functions.https.onCall(
                         }
                     }
                 })
-                .catch()
+                .catch((err) => functions.logger.log(`Error adding jobs: ${err}`))
         );
         return Promise.all(promises);
     }
 );
 
-// Adds a job to firestore
+// Adds a job to firestore (structuring and back-end stuff is done with a trigger)
 const addJob = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 

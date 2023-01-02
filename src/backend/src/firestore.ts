@@ -33,7 +33,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const companyDoc = await getDoc(`companies/${data.info.company}`)
         .get()
         .then((doc) => doc)
-        .catch((err) => console.log(`Error getting company doc: ${err}`));
+        .catch((err) => functions.logger.log(`Error getting company doc: ${err}`));
     if (companyDoc && companyDoc.exists) {
         promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
     } else {
@@ -43,7 +43,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const locationDoc = await getDoc(`locations/${data.info.location}`)
         .get()
         .then((doc) => doc)
-        .catch((err) => console.log(`Error getting location doc: ${err}`));
+        .catch((err) => functions.logger.log(`Error getting location doc: ${err}`));
     if (locationDoc && locationDoc.exists) {
         promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
     } else {
@@ -99,16 +99,17 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
             if (board.docs.length > 1) {
                 throw new functions.https.HttpsError(
                     'internal',
-                    `Error: more than one job board ${boardName} for user ${userId}`
+                    `Error: more than one job board named ${boardName} for user ${userId}`
                 );
             }
 
             const doc = board.docs[0];
-            if (doc.data().jobIds.length === 0) {
+            if (doc.data().jobIds.length === 1 && doc.data().jobIds[0] === id) {
                 promises.push(doc.ref.delete());
             } else {
                 promises.push(doc.ref.update({ jobs: firestoreHelper.FieldValue.arrayRemove(id) }));
             }
+            return null;
         })
         .catch((err) => console.log(`Error getting user boards to delete: ${err}`));
 
