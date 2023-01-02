@@ -4,7 +4,7 @@ import { onJobCreate, onJobPurge } from './firestore';
 import {
     getHomepageData,
     getJobs,
-    getCalendarEvents,
+    getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
@@ -54,7 +54,7 @@ export {
     onJobPurge,
     getHomepageData,
     getJobs,
-    getCalendarEvents,
+    getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,

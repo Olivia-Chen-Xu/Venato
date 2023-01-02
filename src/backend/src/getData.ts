@@ -12,17 +12,37 @@ const getJobBoardNames = (uid: string) => {
         .where('userId', '==', uid)
         .get()
         .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data().name)))
-        .catch((err) => `Error fetching user job boards: ${err}`);
+        .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
+};
+
+const getJobDeadlines = (jobId: string) => {
+    return getCollection(`deadlines`)
+        .where('jobId', '==', jobId)
+        .get()
+        .then((deadlines) =>
+            deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
+        )
+        .catch((err) => `Error fetching job deadlines: ${err}`);
+};
+
+const getJobInterviewQuestions = (jobId: string) => {
+    return getCollection(`interviewQuestions`)
+        .where('jobId', '==', jobId)
+        .get()
+        .then((questions) =>
+            questions.empty ? [] : questions.docs.map((question) => question.data())
+        )
+        .catch((err) => `Error fetching job interview questions: ${err}`);
 };
 
 // Gets all jobs for the current user
-const getUserJobs = (uid: string) => {
-    return getCollection('jobs')
+const getUserJobs = async (uid: string) => {
+    const jobs = await getCollection('jobs')
         .where('userId', '==', uid)
         .get()
-        .then((jobs) => {
+        .then((userJobs) => {
             const jobList: any[] = [];
-            jobs.forEach((job) => {
+            userJobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
                 const { userID: foo, positionSearchable: bar, ...jobData } = job.data();
                 jobList.push({ ...jobData, id: job.id });
@@ -30,12 +50,36 @@ const getUserJobs = (uid: string) => {
             return jobList;
         })
         .catch((err) => `Error fetching user jobs: ${err}`);
+
+    if (typeof jobs === 'string') {
+        throw new functions.https.HttpsError('internal', jobs);
+    }
+
+    // Get the deadlines and interview questions for each job
+    const promises: Promise<null>[] = [];
+    jobs.forEach((job) => {
+        promises.push(
+            getJobDeadlines(job.id).then((deadlines) => {
+                job.deadlines = deadlines;
+                return null;
+            })
+        );
+        promises.push(
+            getJobInterviewQuestions(job.id).then((questions) => {
+                job.questions = questions;
+                return null;
+            })
+        );
+    });
+
+    return Promise.all(promises)
+        .then(() => jobs)
+        .catch((err) => functions.logger.log(`Error fetching user jobs: ${err}`));
 };
 
 // Returns the next 3 job events for the currently signed-in user
 const getUpcomingEvents = async (uid: string) => {
-    return db
-        .collectionGroup('deadlines')
+    return getCollection('deadlines')
         .where('userId', '==', uid)
         .where('time', '>=', getRelativeTimestamp(0))
         .orderBy('time')
@@ -61,11 +105,11 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
     return getUserJobs(context.auth.uid);
 });
 
-// Returns all job events (to display on the calendar) for the currently signed-in user
-const getCalendarEvents = functions.https.onCall((data: object, context: any) => {
+// Returns all job deadlines (to display on the calendar) for the currently signed-in user
+const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    return getCollection('jobs')
+    return getCollection('deadlines')
         .get()
         .then((jobs) => {
             const events: { id: string; title: string; date: string }[] = [];
@@ -196,7 +240,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 export {
     getHomepageData,
     getJobs,
-    getCalendarEvents,
+    getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
