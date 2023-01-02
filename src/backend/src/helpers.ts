@@ -65,7 +65,7 @@ const getFirestoreTimestamp = (unixMillis: number) => {
     return admin.firestore.Timestamp.fromMillis(unixMillis);
 };
 
-// For doing misc. tasks like deleting document keys
+// For doing misc. tasks like deleting or editing document keys
 const firestoreHelper = admin.firestore;
 
 export {

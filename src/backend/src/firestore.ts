@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { db, firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from './helpers';
+import { firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -50,20 +50,31 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: 1 }));
     }
 
-    // Move the deadlines to sub-collection
+    // Move the deadlines to its own collection
     const { deadlines } = data;
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
-    const batch = db.batch();
     deadlines.forEach((deadline: { title: string; date: number; location: string }) => {
         const newDoc = {
             ...deadline,
             userId: data.userId,
+            jobId: docId,
             date: getFirestoreTimestamp(deadline.date),
         }; // userId added for easier querying
-        batch.set(db.collection(`jobs/${docId}/deadlines`).doc(), newDoc);
+        promises.push(getCollection(`deadlines`).add(newDoc));
     });
-    promises.push(batch.commit());
+
+    // Move the interview questions to their own collection
+    const { interviewQuestions } = data;
+    promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
+
+    interviewQuestions.forEach((question: { name: string; description: string }) => {
+        const newQuestion = {
+            ...question,
+            jobId: docId,
+        };
+        promises.push(getCollection(`interviewQuestions`).add(newQuestion));
+    });
 
     return Promise.all(promises);
 });
