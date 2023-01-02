@@ -10,7 +10,7 @@ import { getCollection, auth, getRelativeTimestamp } from './helpers';
  * If there's bugs, try:
  * https://github.com/firebase/functions-samples/blob/main/delete-unused-accounts-cron/functions/index.js
  */
-const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
+const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async () => {
     const unVerifiedUsers: string[] = [];
 
     // Go through users in batches of 1000
@@ -36,20 +36,22 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
                 return null;
             })
             .catch((error) => {
-                console.log('Error listing users:', error);
+                functions.logger.log('Error listing users:', error);
             });
     };
     await listAllUsers(undefined);
 
     return Promise.all(unVerifiedUsers.map((user) => auth.deleteUser(user)))
-        .then(() => console.log(`Successfully deleted ${unVerifiedUsers.length} unverified users`))
-        .catch((err) => console.log(`Failed to delete unverified users: ${err}`));
+        .then(() =>
+            functions.logger.log(`Successfully deleted ${unVerifiedUsers.length} unverified users`)
+        )
+        .catch((err) => functions.logger.log(`Failed to delete unverified users: ${err}`));
 });
 
 /**
  * Remove any old data in the db that's not needed anymore
  */
-const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
+const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async () => {
     // Remove jobs that have been deleted for 30 days
     const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('jobs')
@@ -132,7 +134,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
         .catch((err) => functions.logger.log(`Error purging deleted jobs: ${err}`));
 });
 
-const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun((context) => {
+const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun(() => {
     functions.logger.log('Running data integrity check');
 
     // TODO (make sure that all db data makes sense (e.g. no users with more than the limit of jobs, no invalid ids, etc))
