@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { db, getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -19,9 +19,14 @@ const getJobDeadlines = (jobId: string) => {
     return getCollection(`deadlines`)
         .where('jobId', '==', jobId)
         .get()
-        .then((deadlines) =>
-            deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
-        )
+        .then((deadlines) => {
+            if (deadlines.empty) return [];
+
+            return deadlines.docs.map((doc) => {
+                const { metaData: foo, ...deadline } = doc.data();
+                return deadline;
+            });
+        })
         .catch((err) => `Error fetching job deadlines: ${err}`);
 };
 
@@ -29,10 +34,30 @@ const getJobInterviewQuestions = (jobId: string) => {
     return getCollection(`interviewQuestions`)
         .where('jobId', '==', jobId)
         .get()
-        .then((questions) =>
-            questions.empty ? [] : questions.docs.map((question) => question.data())
-        )
+        .then((questions) => {
+            if (questions.empty) return [];
+
+            return questions.docs.map((doc) => {
+                const { metaData: foo, ...question } = doc.data();
+                return question;
+            });
+        })
         .catch((err) => `Error fetching job interview questions: ${err}`);
+};
+
+const getJobcontacts = (jobId: string) => {
+    return getCollection(`contacts`)
+        .where('jobId', '==', jobId)
+        .get()
+        .then((contacts) => {
+            if (contacts.empty) return [];
+
+            return contacts.docs.map((doc) => {
+                const { metaData: foo, ...contact } = doc.data();
+                return contact;
+            });
+        })
+        .catch((err) => `Error fetching job contacts: ${err}`);
 };
 
 // Gets all jobs for the current user
@@ -67,6 +92,12 @@ const getUserJobs = async (uid: string) => {
         promises.push(
             getJobInterviewQuestions(job.id).then((questions) => {
                 job.questions = questions;
+                return null;
+            })
+        );
+        promises.push(
+            getJobcontacts(job.id).then((contacts) => {
+                job.contacts = contacts;
                 return null;
             })
         );
@@ -204,23 +235,32 @@ const interviewQuestionsSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query = getCollection('interviewQuestions').where('userId', '!=', context.auth.uid);
+        let query = getCollection('interviewQuestions').where(
+            'metaData.userId',
+            '!=',
+            context.auth.uid
+        );
         if (queries.position) {
             query = query.where(
-                'searchParams.positionSearchable',
+                'metaData.positionSearchable',
                 'array-contains-any',
                 data.position.toLowerCase().split(' ')
             );
         }
         if (queries.company) {
-            query = query.where('searchParams.company', '==', data.company);
+            query = query.where('metaData.company', '==', data.company);
         }
 
         // Execute the query and return the result
         return query
             .get()
             .then((questions) => {
-                return questions.empty ? [] : questions.docs.map((doc) => doc.data());
+                if (questions.empty) return [];
+
+                return questions.docs.map((doc) => {
+                    const { metaData: foo, ...question } = doc.data();
+                    return question;
+                });
             })
             .catch((err) => functions.logger.log(`Error querying interview questions: ${err}`));
     }

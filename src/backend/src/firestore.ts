@@ -12,7 +12,7 @@ import { firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from '.
  * On job create:
  * -Makes searchable fields for the job position
  * -Add company/location to db (if it doesn't already exist)
- * -Move deadlines to sub-collection
+ * -Move deadlines, interview questions and contacts to sub-collections
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     const data = snap.data();
@@ -54,9 +54,11 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     deadlines.forEach((deadline: { title: string; date: number; location: string }) => {
         const newDoc = {
             ...deadline,
-            userId: data.userId,
-            jobId: docId,
-            date: getFirestoreTimestamp(deadline.date),
+            metaData: {
+                userId: data.userId,
+                jobId: docId,
+                date: getFirestoreTimestamp(deadline.date),
+            },
         };
         promises.push(getCollection(`deadlines`).add(newDoc));
     });
@@ -68,15 +70,40 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     interviewQuestions.forEach((question: { name: string; description: string }) => {
         const newQuestion = {
             ...question,
-            userId: data.userId,
-            jobId: docId,
-            searchParams: {
+            metaData: {
+                userId: data.userId,
+                jobId: docId,
                 positionSearchable,
                 company: data.info.company,
             },
         };
         promises.push(getCollection(`interviewQuestions`).add(newQuestion));
     });
+
+    // Move the contacts to their own collection
+    const { contacts } = data;
+    promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
+
+    contacts.forEach(
+        (contact: {
+            name: string;
+            email: string;
+            phone: string;
+            company: string;
+            linkedin: string;
+            notes: string;
+            title: string;
+        }) => {
+            const newContact = {
+                ...contact,
+                metadata: {
+                    userId: data.userId,
+                    jobId: docId,
+                },
+            };
+            promises.push(getCollection(`contacts`).add(newContact));
+        }
+    );
 
     return Promise.all(promises);
 });
