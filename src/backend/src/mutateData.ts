@@ -43,7 +43,7 @@ const addJobs = functions.https.onCall(
 
                     for (let i = 0; i < data.users.length; ++i) {
                         const userJobs = jobs.docs
-                            .filter((job) => job.data().userId === data.users[i])
+                            .filter((job) => job.data().metaData.userId === data.users[i])
                             .map((job) => ({ id: job.id, board: Math.floor(Math.random() * 3) }));
                         const boards: { [name: string]: { id: string; board: number }[] } = {
                             'Summer 2021 internships': userJobs.filter((job) => job.board === 0),

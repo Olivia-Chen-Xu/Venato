@@ -24,7 +24,9 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         .replace('/[!@#$%^&*()_-+=,:.]/g', '')
         .toLowerCase()
         .split(' ');
-    promises.push(snap.ref.update({ positionSearchable }));
+    promises.push(
+        snap.ref.update({ metaData: { userId: data.metaData.userId, positionSearchable } })
+    );
 
     // Add company and location to db
     const companyDoc = await getDoc(`companies/${data.info.company}`)

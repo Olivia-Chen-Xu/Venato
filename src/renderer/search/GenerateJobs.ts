@@ -1,16 +1,13 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface Job {
-    info: {
-        company: string;
-        position: string;
-        location: string;
-    };
-
     details: {
+        position: string;
+        company: string;
         description: string;
-        link: string;
         salary: string;
+        location: string;
+        link: string;
     };
     notes: string;
     deadlines: {
@@ -29,7 +26,7 @@ interface Job {
         notes: string;
     }[];
 
-    metadata: {
+    status: {
         stage: number;
         awaitingResponse: boolean;
     };
@@ -387,13 +384,10 @@ const generateJobs = async (num: number) => {
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
         const job = {
-            info: {
+            details: {
                 company: companies[company],
                 position: jobPositions[~~(Math.random() * jobPositions.length)],
                 location: locations[~~(Math.random() * locations.length)],
-            },
-
-            details: {
                 description: descriptions[company],
                 link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
                 salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
@@ -408,15 +402,17 @@ const generateJobs = async (num: number) => {
                 .slice(0, Math.floor(Math.random() * 3) + 1)
                 .map((contact) => ({ ...contact, company: companies[company] })),
 
-            metadata: {
+            status: {
                 stage: Math.floor(Math.random() * 4),
                 awaitingResponse: Math.random() < 0.5,
             },
 
-            userId:
-                Math.random() < 0.6
-                    ? users[0] // 18rem8@queensu.ca (admin account)
-                    : users[1], // reid.moffat9@gmail.com
+            metaData: {
+                userId:
+                    Math.random() < 0.6
+                        ? users[0] // 18rem8@queensu.ca (admin account)
+                        : users[1], // reid.moffat9@gmail.com
+            },
         };
         jobs.push(job);
     }
