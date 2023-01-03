@@ -20,14 +20,11 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const promises = [];
 
     // Add searchable job position field
-    promises.push(
-        snap.ref.update({
-            positionSearchable: data.info.position
-                .replace('/[!@#$%^&*()_-+=,:.]/g', '')
-                .toLowerCase()
-                .split(' '),
-        })
-    );
+    const positionSearchable = data.info.position
+        .replace('/[!@#$%^&*()_-+=,:.]/g', '')
+        .toLowerCase()
+        .split(' ');
+    promises.push(snap.ref.update({ positionSearchable }));
 
     // Add company and location to db
     const companyDoc = await getDoc(`companies/${data.info.company}`)
@@ -60,18 +57,23 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
             userId: data.userId,
             jobId: docId,
             date: getFirestoreTimestamp(deadline.date),
-        }; // userId added for easier querying
+        };
         promises.push(getCollection(`deadlines`).add(newDoc));
     });
 
-    // Move the interview questions to their own collection
+    // Move the interview questions to their own collection (with search params for easy querying)
     const { interviewQuestions } = data;
     promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
 
     interviewQuestions.forEach((question: { name: string; description: string }) => {
         const newQuestion = {
             ...question,
+            userId: data.userId,
             jobId: docId,
+            searchParams: {
+                positionSearchable,
+                company: data.info.company,
+            },
         };
         promises.push(getCollection(`interviewQuestions`).add(newQuestion));
     });

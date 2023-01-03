@@ -204,37 +204,25 @@ const interviewQuestionsSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query = getCollection('jobs').where('userId', '!=', context.auth.uid);
+        let query = getCollection('interviewQuestions').where('userId', '!=', context.auth.uid);
         if (queries.position) {
             query = query.where(
-                'positionSearchable',
+                'searchParams.positionSearchable',
                 'array-contains-any',
                 data.position.toLowerCase().split(' ')
             );
         }
         if (queries.company) {
-            query = query.where('info.company', '==', data.company);
+            query = query.where('searchParams.company', '==', data.company);
         }
 
         // Execute the query and return the result
         return query
             .get()
-            .then((jobs) => {
-                if (jobs.empty) return [];
-
-                // TODO: Query 10 at a time with array-contains-any for efficiency
-                return jobs.docs.map((job) =>
-                    getCollection('interviewQuestions')
-                        .where('jobId', '==', job.id)
-                        .get()
-                        .then((questions) => {
-                            if (questions.empty) return [];
-                            return questions.docs.map((question) => question.data());
-                        })
-                        .catch((err) => `Error querying interview questions: ${err}`)
-                );
+            .then((questions) => {
+                return questions.empty ? [] : questions.docs.map((doc) => doc.data());
             })
-            .catch((err) => `Error querying interview questions: ${err}`);
+            .catch((err) => functions.logger.log(`Error querying interview questions: ${err}`));
     }
 );
 
