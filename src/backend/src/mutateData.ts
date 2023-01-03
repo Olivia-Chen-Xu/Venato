@@ -51,19 +51,13 @@ const addJobs = functions.https.onCall(
                             'Summer 2023 internships': userJobs.filter((job) => job.board === 2),
                         };
 
-                        const keys = Object.keys(boards);
-                        for (let j = 0; j < keys.length; ++j) {
-                            const name = keys[j];
+                        for (const name of Object.keys(boards)) {
                             promises.push(
                                 getCollection('boards').add({
                                     name,
                                     jobs: boards[name].map((job) => job.id),
                                     userId: data.users[i],
                                 })
-                            );
-
-                            boards[name].forEach((job) =>
-                                promises.push(getDoc(`jobs/${job.id}`).update({ boardName: name }))
                             );
                         }
                     }
