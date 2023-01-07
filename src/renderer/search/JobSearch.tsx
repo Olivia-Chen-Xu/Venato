@@ -18,14 +18,10 @@ const SearchBar = () => {
     const [errMsg, setErrMsg] = useState<string>('');
     const [currJob, setcurrJob] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
     const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
     const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
-
-    function handleLoad() {
-        setLoading(true);
-        handleSearch();
-    }
 
     const handleSearch = async () => {
         if (
@@ -47,7 +43,101 @@ const SearchBar = () => {
         setcurrJob(result.data[0]);
         setErrMsg('');
         setLoading(false);
+        setHasSearched(true);
         console.log(`Position: ${position}, Company: ${company}, Location: ${location}`);
+    };
+
+    function handleLoad() {
+        setLoading(true);
+        handleSearch();
+    }
+
+    const displayJobs = () => {
+        if (!hasSearched) {
+            return <p align="center">Select or enter a search category to search</p>;
+        }
+        if (jobs.length === 0) {
+            return <p align="center">⚠️No jobs found; please try another search.</p>;
+        }
+        return (
+            <div className="w-full flex flex-1">
+                <div id="res">
+                    {jobs.map((job: object, index: number) => {
+                        return (
+                            <div
+                                id="job"
+                                onClick={() => setcurrJob(job)}
+                                className="my-10 rounded-2xl text-white"
+                            >
+                                <div id="title">
+                                    <h1>
+                                        <span className="font-bold text-xl">
+                                            {' '}
+                                            {`${job.info.position}`}
+                                        </span>
+                                    </h1>
+                                </div>
+                                <img src={bar} alt="" className="w-full" />
+
+                                <div className="mt-3">
+                                    <h1 className="text-lg align-middle">
+                                        <span className="material-icons-outlined">
+                                            alternate_email
+                                        </span>{' '}
+                                        {`${job.info.company}`}
+                                    </h1>
+                                </div>
+                                <div className="mt-1">
+                                    <h1 className="text-lg align-middle">
+                                        <span className="material-icons-outlined">location_on</span>{' '}
+                                        {`${job.info.location}`}
+                                    </h1>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                {currJob && (
+                    <div id="top" className="w-full h-fit">
+                        <div className="mt-3 ml-5 mr-5 text-white">
+                            <h1 className="text-2xl font-bold mb-1">{currJob.info.position}</h1>
+                            <img src={bar} alt="" className="w-full" />
+                            <div className="flex mb-2">
+                                <div className="w-full text-xl">
+                                    <h3>
+                                        <span className="mt-1 material-icons-outlined">
+                                            alternate_email
+                                        </span>{' '}
+                                        {currJob.info.company}
+                                    </h3>
+                                    <h3>
+                                        {' '}
+                                        <span className="material-icons-outlined">
+                                            location_on
+                                        </span>{' '}
+                                        {currJob.info.location}
+                                    </h3>
+                                </div>
+                                <div className="w-full mt-2">
+                                    <button id="apply" className="px-5 text-xl">
+                                        Apply Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bottom" className="mt-2 h-fit">
+                            <div className="mt-5">
+                                <h1 className="ml-5 mr-5">Job Details</h1>
+                                <br />
+                                <h2 className="ml-5 mr-5">{currJob.details.description}</h2>
+                                <br />
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -143,87 +233,7 @@ const SearchBar = () => {
                     <div className="grid place-content-center">{errMsg}</div>
                     <br />
 
-                    <div className="w-full flex flex-1">
-                        <div id="res">
-                            {jobs.map((job: object, index: number) => {
-                                return (
-                                    <div
-                                        id="job"
-                                        onClick={() => setcurrJob(job)}
-                                        className="my-10 rounded-2xl text-white"
-                                    >
-                                        <div id="title">
-                                            <h1>
-                                                <span className="font-bold text-xl">
-                                                    {' '}
-                                                    {`${job.info.position}`}
-                                                </span>
-                                            </h1>
-                                        </div>
-                                        <img src={bar} alt="" className="w-full" />
-
-                                        <div className="mt-3">
-                                            <h1 className="text-lg align-middle">
-                                                <span className="material-icons-outlined">
-                                                    alternate_email
-                                                </span>{' '}
-                                                {`${job.info.company}`}
-                                            </h1>
-                                        </div>
-                                        <div className="mt-1">
-                                            <h1 className="text-lg align-middle">
-                                                <span className="material-icons-outlined">
-                                                    location_on
-                                                </span>{' '}
-                                                {`${job.info.location}`}
-                                            </h1>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        {currJob && (
-                            <div id="top" className="w-full h-fit">
-                                <div className="mt-3 ml-5 mr-5 text-white">
-                                    <h1 className="text-2xl font-bold mb-1">
-                                        {currJob.info.position}
-                                    </h1>
-                                    <img src={bar} alt="" className="w-full" />
-                                    <div className="flex mb-2">
-                                        <div className="w-full text-xl">
-                                            <h3>
-                                                <span className="mt-1 material-icons-outlined">
-                                                    alternate_email
-                                                </span>{' '}
-                                                {currJob.info.company}
-                                            </h3>
-                                            <h3>
-                                                {' '}
-                                                <span className="material-icons-outlined">
-                                                    location_on
-                                                </span>{' '}
-                                                {currJob.info.location}
-                                            </h3>
-                                        </div>
-                                        <div className="w-full mt-2">
-                                            <button id="apply" className="px-5 text-xl">
-                                                Apply Now
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="bottom" className="mt-2 h-fit">
-                                    <div className="mt-5">
-                                        <h1 className="ml-5 mr-5">Job Details</h1>
-                                        <br />
-                                        <h2 className="ml-5 mr-5">{currJob.details.description}</h2>
-                                        <br />
-                                        <br />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    {displayJobs()}
                 </div>
             )}
         </div>
