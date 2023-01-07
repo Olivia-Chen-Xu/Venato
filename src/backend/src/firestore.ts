@@ -127,6 +127,8 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
     ];
 
     // Remove the job id from the user's job board
+    // TODO: this will fail since jobs don't have a board name. Maybe make a sub-collection or
+    // another top-level collection for the job-board relationship?
     getCollection('boards')
         .where('userId', '==', userId)
         .where('name', '==', boardName)
