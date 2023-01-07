@@ -93,4 +93,10 @@ const deleteJob = functions.https.onCall(async (data: { id: string }, context: a
     return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
 });
 
-export { addJobs, addJob, updateJob, deleteJob };
+// Adds an empty job board to firestore
+const addJobBoard = functions.https.onCall((data: { name: string }, context: any) => {
+    verifyIsAuthenticated(context);
+    return getCollection('boards').add({ jobs: [], name: data.name, userID: context.auth.uid });
+});
+
+export { addJobs, addJob, updateJob, deleteJob, addJobBoard };

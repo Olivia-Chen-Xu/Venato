@@ -10,7 +10,7 @@ import {
     jobSearch,
     interviewQuestionsSearch,
 } from './getData';
-import { addJobs, addJob, updateJob, deleteJob } from './mutateData';
+import { addJobs, addJob, updateJob, deleteJob, addJobBoard } from './mutateData';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -63,4 +63,5 @@ export {
     addJob,
     updateJob,
     deleteJob,
+    addJobBoard,
 };

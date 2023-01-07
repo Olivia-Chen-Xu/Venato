@@ -51,6 +51,7 @@ const verifyJobPermission = async (context: functions.https.CallableContext, job
                     "You cannot edit this job as it doesn't belong to you"
                 );
             }
+            return null;
         });
 };
 
