@@ -14,11 +14,7 @@ const QuestionSearch = () => {
     const [jobs, setJobs] = useState<object[]>([]);
     const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-
-    function handleLoad() {
-        setLoading(true);
-        handleSearch();
-    }
+    const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
         if ((position?.trim()?.length || 0) === 0 && company === '') {
@@ -28,15 +24,31 @@ const QuestionSearch = () => {
         }
 
         setMessage('Loading questions...');
-        const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
+        const result = await httpsCallable(
+            getFunctions(),
+            'interviewQuestionsSearch'
+        )({ company, position });
 
         setJobs(result.data);
         setLoading(false);
         setMessage('');
+        setHasSearched(true);
         console.log(`Company: '${company}' Position: '${position}'`);
     };
 
+    function handleLoad() {
+        setLoading(true);
+        handleSearch();
+    }
+
     const displayQuestions = () => {
+        if (!hasSearched) {
+            return <p align="center">Select or enter a search category to search</p>;
+        }
+        if (jobs.length === 0) {
+            return <p align="center">⚠️No jobs found; please try another search.</p>;
+        }
+
         const unique = {};
         const questions = jobs
             .map((job) => job.interviewQuestions.map((question) => question.name))

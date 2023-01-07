@@ -20,7 +20,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const promises = [];
 
     // Add searchable job position field
-    const positionSearchable = data.info.position
+    const positionSearchable = data.details.position
         .replace('/[!@#$%^&*()_-+=,:.]/g', '')
         .toLowerCase()
         .split(' ');
@@ -29,24 +29,24 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     );
 
     // Add company and location to db
-    const companyDoc = await getDoc(`companies/${data.info.company}`)
+    const companyDoc = await getDoc(`companies/${data.details.company}`)
         .get()
         .then((doc) => doc)
         .catch((err) => functions.logger.log(`Error getting company doc: ${err}`));
     if (companyDoc && companyDoc.exists) {
         promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
     } else {
-        promises.push(getDoc(`companies/${data.info.company}`).set({ numJobs: 1 }));
+        promises.push(getDoc(`companies/${data.details.company}`).set({ numJobs: 1 }));
     }
 
-    const locationDoc = await getDoc(`locations/${data.info.location}`)
+    const locationDoc = await getDoc(`locations/${data.details.location}`)
         .get()
         .then((doc) => doc)
         .catch((err) => functions.logger.log(`Error getting location doc: ${err}`));
     if (locationDoc && locationDoc.exists) {
         promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
     } else {
-        promises.push(getDoc(`locations/${data.info.location}`).set({ numJobs: 1 }));
+        promises.push(getDoc(`locations/${data.details.location}`).set({ numJobs: 1 }));
     }
 
     // Move the deadlines to its own collection
@@ -57,7 +57,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         const newDoc = {
             ...deadline,
             metaData: {
-                userId: data.userId,
+                userId: data.metaData.userId,
                 jobId: docId,
                 date: getFirestoreTimestamp(deadline.date),
             },
@@ -73,10 +73,10 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         const newQuestion = {
             ...question,
             metaData: {
-                userId: data.userId,
+                userId: data.metaData.userId,
                 jobId: docId,
                 positionSearchable,
-                company: data.info.company,
+                company: data.details.company,
             },
         };
         promises.push(getCollection(`interviewQuestions`).add(newQuestion));
@@ -99,7 +99,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
             const newContact = {
                 ...contact,
                 metadata: {
-                    userId: data.userId,
+                    userId: data.metaData.userId,
                     jobId: docId,
                 },
             };

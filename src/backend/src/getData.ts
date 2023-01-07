@@ -186,19 +186,19 @@ const jobSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query = getCollection('jobs').where('userId', '!=', context.auth.uid);
+        let query = getCollection('jobs').where('metadata.userId', '!=', context.auth.uid);
         if (queries.position) {
             query = query.where(
-                'positionSearchable',
+                'metaData.positionSearchable',
                 'array-contains-any',
                 data.position.toLowerCase().split(' ')
             );
         }
         if (queries.company) {
-            query = query.where('info.company', '==', data.company);
+            query = query.where('details.company', '==', data.company);
         }
         if (queries.location) {
-            query = query.where('info.location', '==', data.location);
+            query = query.where('details.location', '==', data.location);
         }
 
         // Execute the query and return the result
