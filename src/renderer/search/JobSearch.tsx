@@ -73,7 +73,7 @@ const SearchBar = () => {
                                     <h1>
                                         <span className="font-bold text-xl">
                                             {' '}
-                                            {`${job.info.position}`}
+                                            {`${job.details.position}`}
                                         </span>
                                     </h1>
                                 </div>
@@ -84,13 +84,13 @@ const SearchBar = () => {
                                         <span className="material-icons-outlined">
                                             alternate_email
                                         </span>{' '}
-                                        {`${job.info.company}`}
+                                        {`${job.details.company}`}
                                     </h1>
                                 </div>
                                 <div className="mt-1">
                                     <h1 className="text-lg align-middle">
                                         <span className="material-icons-outlined">location_on</span>{' '}
-                                        {`${job.info.location}`}
+                                        {`${job.details.location}`}
                                     </h1>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@ const SearchBar = () => {
                 {currJob && (
                     <div id="top" className="w-full h-fit">
                         <div className="mt-3 ml-5 mr-5 text-white">
-                            <h1 className="text-2xl font-bold mb-1">{currJob.info.position}</h1>
+                            <h1 className="text-2xl font-bold mb-1">{currJob.details.position}</h1>
                             <img src={bar} alt="" className="w-full" />
                             <div className="flex mb-2">
                                 <div className="w-full text-xl">
@@ -108,14 +108,14 @@ const SearchBar = () => {
                                         <span className="mt-1 material-icons-outlined">
                                             alternate_email
                                         </span>{' '}
-                                        {currJob.info.company}
+                                        {currJob.details.company}
                                     </h3>
                                     <h3>
                                         {' '}
                                         <span className="material-icons-outlined">
                                             location_on
                                         </span>{' '}
-                                        {currJob.info.location}
+                                        {currJob.details.location}
                                     </h3>
                                 </div>
                                 <div className="w-full mt-2">

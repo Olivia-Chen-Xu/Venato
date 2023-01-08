@@ -186,7 +186,7 @@ const jobSearch = functions.https.onCall(
         }
 
         // Build the query
-        let query = getCollection('jobs').where('metadata.userId', '!=', context.auth.uid);
+        let query = getCollection('jobs').where('metaData.userId', '!=', context.auth.uid);
         if (queries.position) {
             query = query.where(
                 'metaData.positionSearchable',
@@ -222,6 +222,11 @@ const interviewQuestionsSearch = functions.https.onCall(
     (data: { position: string; company: string }, context: any) => {
         verifyIsAuthenticated(context);
 
+        return getCollection('interviewQuestions')
+            .where('metaData.userId', '!=', context.auth.uid)
+            .get()
+            .then((questions) => questions || []);
+        /*
         // Parse the search queries and verify at least one valid is given
         const queries: { position: string; company: string } = {
             position: data.position?.replace(/ +/g, ' ').trim() || '',
@@ -263,6 +268,7 @@ const interviewQuestionsSearch = functions.https.onCall(
                 });
             })
             .catch((err) => functions.logger.log(`Error querying interview questions: ${err}`));
+    */
     }
 );
 
