@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, verifyIsAuthenticated } from './helpers';
+import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -112,11 +112,19 @@ const getUserJobs = async (uid: string) => {
 const getUpcomingEvents = async (uid: string) => {
     return getCollection('deadlines')
         .where('metaData.userId', '==', uid)
-        // .where('time', '>=', getRelativeTimestamp(0))
-        //.orderBy('time')
-        //.limit(3)
+        .where('date', '>=', getRelativeTimestamp(0))
+        .orderBy('date')
+        .limit(3)
         .get()
-        .then((snapshot) => (snapshot.empty ? [] : snapshot.docs.map((doc) => doc.data())))
+        .then((snapshot) => {
+            if (snapshot.empty) return [];
+
+            return snapshot.docs.map((doc) => {
+                const data = doc.data();
+                // eslint-disable-next-line no-underscore-dangle
+                return { location: data.location, date: data.date._seconds, title: data.title };
+            });
+        })
         .catch((err) => `Error fetching upcoming events: ${err}`);
 };
 

@@ -77,7 +77,7 @@ const Homepage = () => {
                         <div className="ml-5 mt-1">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                {event.date}
+                                {new Date(event.date * 1000).toString()}
                             </h1>
                         </div>
                         <div className="ml-5 mt-1">
@@ -90,6 +90,7 @@ const Homepage = () => {
                 );
             }
         );
+        return eventsHtml;
     };
 
     return (

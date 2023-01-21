@@ -56,10 +56,10 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     deadlines.forEach((deadline: { title: string; date: number; location: string }) => {
         const newDoc = {
             ...deadline,
+            date: getFirestoreTimestamp(deadline.date),
             metaData: {
                 userId: data.metaData.userId,
                 jobId: docId,
-                date: getFirestoreTimestamp(deadline.date),
             },
         };
         promises.push(getCollection(`deadlines`).add(newDoc));
