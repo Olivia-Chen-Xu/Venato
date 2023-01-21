@@ -17,7 +17,7 @@ const getJobBoardNames = (uid: string) => {
 
 const getJobDeadlines = (jobId: string) => {
     return getCollection(`deadlines`)
-        .where('jobId', '==', jobId)
+        .where('metaData.jobId', '==', jobId)
         .get()
         .then((deadlines) => {
             if (deadlines.empty) return [];
@@ -32,7 +32,7 @@ const getJobDeadlines = (jobId: string) => {
 
 const getJobInterviewQuestions = (jobId: string) => {
     return getCollection(`interviewQuestions`)
-        .where('jobId', '==', jobId)
+        .where('metaData.jobId', '==', jobId)
         .get()
         .then((questions) => {
             if (questions.empty) return [];
@@ -47,7 +47,7 @@ const getJobInterviewQuestions = (jobId: string) => {
 
 const getJobcontacts = (jobId: string) => {
     return getCollection(`contacts`)
-        .where('jobId', '==', jobId)
+        .where('metaData.jobId', '==', jobId)
         .get()
         .then((contacts) => {
             if (contacts.empty) return [];
@@ -63,7 +63,7 @@ const getJobcontacts = (jobId: string) => {
 // Gets all jobs for the current user
 const getUserJobs = async (uid: string) => {
     const jobs = await getCollection('jobs')
-        .where('userId', '==', uid)
+        .where('metaData.userId', '==', uid)
         .get()
         .then((userJobs) => {
             const jobList: any[] = [];
@@ -222,11 +222,13 @@ const interviewQuestionsSearch = functions.https.onCall(
     (data: { position: string; company: string }, context: any) => {
         verifyIsAuthenticated(context);
 
+        /*
         return getCollection('interviewQuestions')
             .where('metaData.userId', '!=', context.auth.uid)
             .get()
             .then((questions) => questions || []);
-        /*
+        */
+
         // Parse the search queries and verify at least one valid is given
         const queries: { position: string; company: string } = {
             position: data.position?.replace(/ +/g, ' ').trim() || '',
@@ -268,7 +270,6 @@ const interviewQuestionsSearch = functions.https.onCall(
                 });
             })
             .catch((err) => functions.logger.log(`Error querying interview questions: ${err}`));
-    */
     }
 );
 
