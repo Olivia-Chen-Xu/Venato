@@ -51,21 +51,32 @@ const verifyJobPermission = async (context: functions.https.CallableContext, job
                     "You cannot edit this job as it doesn't belong to you"
                 );
             }
+            return null;
         });
 };
 
-// Gets a firebase timestamp for x days ago
+// Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-const getTimestamp = (days: number) => {
+const getRelativeTimestamp = (days: number) => {
     return admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
 };
+
+// Gets a firestore timestamp based on unix millis
+const getFirestoreTimestamp = (unixMillis: number) => {
+    return admin.firestore.Timestamp.fromMillis(unixMillis);
+};
+
+// For doing misc. tasks like deleting or editing document keys
+const firestoreHelper = admin.firestore;
 
 export {
     getDoc,
     getCollection,
     verifyIsAuthenticated,
     verifyJobPermission,
-    getTimestamp,
+    getRelativeTimestamp,
+    getFirestoreTimestamp,
+    firestoreHelper,
     db,
     auth,
 };

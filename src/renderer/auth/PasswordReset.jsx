@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InputLabel, TextField, Button } from '@mui/material';
 import { passwordResetEmail } from './auth-functions';
 import checkMark from '../../../assets/checkMark.png';
-import { InputLabel, TextField, Button } from '@mui/material';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 

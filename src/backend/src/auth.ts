@@ -2,20 +2,24 @@ import * as functions from 'firebase-functions';
 import { getCollection, getDoc, auth } from './helpers';
 
 /**
- * Auth triggers - automatically triggered based on auth events
+ * Creates a new user (client-side registration is blocked)
  */
-
-// Creates a new user (client-side registration is blocked)
 const createAccount = functions.https.onCall(
     async (data: { email: string; password: string }, context) => {
         // Verify input data
-        if (!data?.email) {
+        if (!data) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Signup data must be provided'
+            );
+        }
+        if (!data.email) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Email address is required to sign up'
             );
         }
-        if (!data?.password) {
+        if (!data.password) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Password is required to sign up'
@@ -31,27 +35,29 @@ const createAccount = functions.https.onCall(
                 disabled: false,
             })
             .then((userRecord) => {
-                console.log(`Successfully created new user: ${userRecord.uid}`);
+                functions.logger.log(`Successfully created new user: ${userRecord.uid}`);
+                return null;
             })
             .catch((error) => {
-                console.log(`Error creating new user: ${JSON.stringify(error)}`);
+                functions.logger.log(`Error creating new user: ${JSON.stringify(error)}`);
 
                 if (error.code === 'auth/email-already-exists') {
-                    throw new functions.https.HttpsError('already-exists', 'Email is in use');
+                    throw new functions.https.HttpsError('already-exists', 'Email in use');
                 }
                 throw new functions.https.HttpsError('internal', 'Error creating account');
             });
     }
 );
 
-// When a user signs up, create a default document for them in firestore
+/**
+ * When a user signs up, create a default document for them in firestore
+ * and sends them a verification email
+ */
 const onUserSignup = functions.auth.user().onCreate(async (user) => {
     const promises = [];
 
     // Create a default db document for the user
-    const defaultDoc = {
-        boards: {},
-    };
+    const defaultDoc = {};
     promises.push(
         getDoc(`users/${user.uid}`)
             .set(defaultDoc)
@@ -77,15 +83,17 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
                                <p style="font-size: 12px;">-The Venato Team</p>`,
                     },
                 })
-                .then(() => console.log(`Email successfully sent to: ${user.email}`))
-                .catch((err: string) => console.log(`Error sending email: ${err}`))
+                .then(() => functions.logger.log(`Email successfully sent to: ${user.email}`))
+                .catch((err: string) => functions.logger.log(`Error sending email: ${err}`))
         );
     }
 
     return Promise.all(promises);
 });
 
-// When a user tries to sign in, verify that their email is verified
+/**
+ * When a user tries to sign in, verify that their email is verified
+ */
 const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
     if (!user.emailVerified) {
         throw new functions.auth.HttpsError(
@@ -95,21 +103,22 @@ const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
     }
 });
 
-// On account deletion, delete user data in db
-// (Note: don't delete multiple users at the same time with the admin SDK, this won't trigger)
+/**
+ * On account deletion, delete user data in db
+ * (Note: don't delete multiple users at the same time with the admin SDK, this won't trigger)
+ */
 const onUserDeleted = functions.auth.user().onDelete((user) => {
     const promises = [];
 
     // Delete user's jobs
-    getDoc(`users/${user.uid}`)
+    getCollection('jobs')
+        .where('userId', '==', user.uid)
         .get()
-        .then((doc) => {
-            const jobIds = Object.values(doc.data()?.boards).flat();
-            jobIds.forEach((jobId) => {
-                promises.push(getDoc(`jobs/${jobId}`).delete());
-            });
+        .then((jobs) => {
+            jobs.forEach((job) => promises.push(job.ref.delete()));
+            return null;
         })
-        .catch((err) => `Error getting user document: ${err}`);
+        .catch((err) => functions.logger.log(`Error deleting user's jobs: ${err}`));
 
     // Delete user's document
     promises.push(getDoc(`users/${user.uid}`).delete());

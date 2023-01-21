@@ -2,16 +2,15 @@ import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cr
 import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
 import { onJobCreate, onJobPurge } from './firestore';
 import {
-    getJobBoards,
-    getUpcomingEvents,
+    getHomepageData,
     getJobs,
-    getCalendarEvents,
+    getDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
     interviewQuestionsSearch,
 } from './getData';
-import { addJobs, addJob, updateJob, deleteJob } from './mutateData';
+import { addJobs, addJob, updateJob, deleteJob, addJobBoard } from './mutateData';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -53,10 +52,9 @@ export {
     beforeSignIn,
     onJobCreate,
     onJobPurge,
-    getJobBoards,
-    getUpcomingEvents,
+    getHomepageData,
     getJobs,
-    getCalendarEvents,
+    getDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
@@ -65,4 +63,5 @@ export {
     addJob,
     updateJob,
     deleteJob,
+    addJobBoard,
 };

@@ -11,14 +11,10 @@ const QuestionSearch = () => {
 
     const [company, setCompany] = useState<string>('');
     const [position, setPosition] = useState<string>('');
-    const [jobs, setJobs] = useState<object[]>([]);
+    const [questions, setQuestions] = useState<object[]>([]);
     const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-
-    function handleLoad() {
-        setLoading(true);
-        handleSearch();
-    }
+    const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
         if ((position?.trim()?.length || 0) === 0 && company === '') {
@@ -28,31 +24,50 @@ const QuestionSearch = () => {
         }
 
         setMessage('Loading questions...');
-        const result = await httpsCallable(getFunctions(), 'jobSearch')({ company, position });
+        const result = await httpsCallable(
+            getFunctions(),
+            'interviewQuestionsSearch'
+        )({ company, position });
 
-        setJobs(result.data);
+        setQuestions(result.data);
         setLoading(false);
         setMessage('');
+        setHasSearched(true);
         console.log(`Company: '${company}' Position: '${position}'`);
     };
 
+    function handleLoad() {
+        setLoading(true);
+        handleSearch();
+    }
+
     const displayQuestions = () => {
+        if (!hasSearched) {
+            return <p align="center">Select or enter a search category to search</p>;
+        }
+        if (questions.length === 0) {
+            return <p align="center">⚠️No jobs found; please try another search.</p>;
+        }
+
+        /*
         const unique = {};
         const questions = jobs
             .map((job) => job.interviewQuestions.map((question) => question.name))
             .flat(1)
             .filter((e) => !(unique[e] = e in unique));
+         */
 
         return questions.map((question) => (
             <div className="ml-20">
                 <li>
                     <a
-                        href={`https://www.google.com/search?q=${question.replaceAll(
+                        href={`https://www.google.com/search?q=${question.name.replaceAll(
                             ' ',
                             '+'
                         )}`}
+                        title={question.description}
                     >
-                        {question}
+                        {question.name}
                     </a>
                 </li>
             </div>
@@ -102,7 +117,7 @@ const QuestionSearch = () => {
     const clearSearch = () => {
         setCompany('');
         setPosition('');
-        setJobs([]);
+        setQuestions([]);
         setMessage('');
     };
 

@@ -5,6 +5,7 @@ import { auth } from '../../config/firebase';
 import { InputLabel, TextField, Button } from '@mui/material';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
+import generateJobs from "../search/GenerateJobs";
 
 // Not in use yet
 const Profile = () => {
@@ -80,6 +81,9 @@ const Profile = () => {
                 onClick={handleSignOut}
             >
                 Delete account
+            </Button>
+            <Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(40)}}>
+                Generate jobs
             </Button>
             <text style={{ color: 'red' }}>{errMsg}</text>
         </div>

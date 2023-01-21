@@ -1,22 +1,18 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface Job {
-    info: {
-        company: string;
-        position: string;
-        location: string;
-    };
-
     details: {
+        position: string;
+        company: string;
         description: string;
-        link: string;
         salary: string;
+        location: string;
+        link: string;
     };
     notes: string;
     deadlines: {
         title: string;
-        date: string;
-        time: string;
+        date: number;
         location: string;
     }[];
     interviewQuestions: { name: string; description: string }[];
@@ -30,7 +26,7 @@ interface Job {
         notes: string;
     }[];
 
-    metadata: {
+    status: {
         stage: number;
         awaitingResponse: boolean;
     };
@@ -264,57 +260,50 @@ const jobPositions = [
 // Add example jobs
 const generateJobs = async (num: number) => {
     const generateDeadlines = () => {
-        const deadlines = [];
-        const month = Math.random() < 0.5 ? '11' : '12';
+        const deadlines: { title: string; date: number; location: string }[] = [];
 
-        const generateDeadline = (title, date) => {
-            const time =
-                Math.random() < 0.5
-                    ? `${Math.floor(Math.random() * 3) + 9}:${Math.random() < 0.3 ? '30' : '00'} AM`
-                    : `${Math.floor(Math.random() * 4) + 1}:${
-                          Math.random() < 0.3 ? '30' : '00'
-                      } PM`;
-            const location = Math.random() < 0.5 ? 'Zoom meeting' : 'In-person';
+        const generateDeadline = (title: string, day: number) => {
+            const month = Math.floor(Math.random() * 4);
+            const hours = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 9 : Math.floor(Math.random() * 4) + 13;
+            const minutes = Math.random() < 0.3 ? 30 : 0;
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
-            deadlines.push({ title, date, time, location });
+            const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
+
+            deadlines.push({ title, date, location });
         };
 
         const numDeadlines = Math.floor(Math.random() * 3) + 1;
-        let title;
-        let date;
-        let temp;
+        let title, day;
         switch (numDeadlines) {
             case 1:
-                temp = Math.floor(Math.random() * 29) + 1;
                 title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
-                date = `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 29) + 1;
+                generateDeadline(title, day);
 
                 break;
             case 2:
-                temp = Math.floor(Math.random() * 14) + 1;
-                title =
-                    Math.random() < 0.5 ? 'Submit resume + cover letter' : 'Fill out application';
-                date = `22-${month}-${temp < 10 ? `0${temp}` : `${temp}`}`;
-                generateDeadline(title, date);
+                title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
+                day = Math.floor(Math.random() * 14) + 1;
+                generateDeadline(title, day);
 
                 title = 'Interview';
-                date = `22-${month}-${Math.floor(Math.random() * 15) + 15}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 15) + 15;
+                generateDeadline(title, day);
 
                 break;
             case 3:
                 title = 'Initial application due';
-                date = `22-${month}-0${Math.floor(Math.random() * 9) + 1}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 9) + 1;
+                generateDeadline(title, day);
 
                 title = Math.random() < 0.5 ? 'First round interview' : 'Technical round';
-                date = `22-${month}-${Math.floor(Math.random() * 10) + 10}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 10) + 10;
+                generateDeadline(title, day);
 
                 title = '❗ Final interview ❗';
-                date = `22-${month}-${Math.floor(Math.random() * 10) + 20}`;
-                generateDeadline(title, date);
+                day = Math.floor(Math.random() * 10) + 20;
+                generateDeadline(title, day);
 
                 break;
             default:
@@ -390,20 +379,18 @@ const generateJobs = async (num: number) => {
         contacts.push(newContact);
     });
 
+    const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
     const jobs: Job[] = [];
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
         const job = {
-            info: {
+            details: {
                 company: companies[company],
                 position: jobPositions[~~(Math.random() * jobPositions.length)],
                 location: locations[~~(Math.random() * locations.length)],
-            },
-
-            details: {
                 description: descriptions[company],
                 link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
-                salary: `${Math.floor(Math.random() * 100000) + 50000}USD`,
+                salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
             },
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
             deadlines: generateDeadlines(),
@@ -415,9 +402,16 @@ const generateJobs = async (num: number) => {
                 .slice(0, Math.floor(Math.random() * 3) + 1)
                 .map((contact) => ({ ...contact, company: companies[company] })),
 
-            metadata: {
+            status: {
                 stage: Math.floor(Math.random() * 4),
                 awaitingResponse: Math.random() < 0.5,
+            },
+
+            metaData: {
+                userId:
+                    Math.random() < 0.6
+                        ? users[0] // 18rem8@queensu.ca (admin account)
+                        : users[1], // reid.moffat9@gmail.com
             },
         };
         jobs.push(job);
@@ -425,7 +419,7 @@ const generateJobs = async (num: number) => {
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs(jobs)
+    addJobs({ jobs, users })
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };
