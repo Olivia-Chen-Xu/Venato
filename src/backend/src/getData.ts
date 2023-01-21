@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import { getCollection, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -7,11 +7,11 @@ import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './he
  */
 
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
-const getJobBoardNames = (uid: string) => {
+const getJobBoards = (uid: string) => {
     return getCollection(`boards`)
         .where('userId', '==', uid)
         .get()
-        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data().name)))
+        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data())))
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 };
 
@@ -45,9 +45,9 @@ const getJobInterviewQuestions = (jobId: string) => {
         .catch((err) => `Error fetching job interview questions: ${err}`);
 };
 
-const getJobcontacts = (jobId: string) => {
+const getJobContacts = (jobId: string) => {
     return getCollection(`contacts`)
-        .where('metaData.jobId', '==', jobId)
+        .where('metadata.jobId', '==', jobId)
         .get()
         .then((contacts) => {
             if (contacts.empty) return [];
@@ -69,7 +69,7 @@ const getUserJobs = async (uid: string) => {
             const jobList: any[] = [];
             userJobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
-                const { userID: foo, positionSearchable: bar, ...jobData } = job.data();
+                const { metaData: foo, ...jobData } = job.data();
                 jobList.push({ ...jobData, id: job.id });
             });
             return jobList;
@@ -96,7 +96,7 @@ const getUserJobs = async (uid: string) => {
             })
         );
         promises.push(
-            getJobcontacts(job.id).then((contacts) => {
+            getJobContacts(job.id).then((contacts) => {
                 job.contacts = contacts;
                 return null;
             })
@@ -111,10 +111,10 @@ const getUserJobs = async (uid: string) => {
 // Returns the next 3 job events for the currently signed-in user
 const getUpcomingEvents = async (uid: string) => {
     return getCollection('deadlines')
-        .where('userId', '==', uid)
-        .where('time', '>=', getRelativeTimestamp(0))
-        .orderBy('time')
-        .limit(3)
+        .where('metaData.userId', '==', uid)
+        // .where('time', '>=', getRelativeTimestamp(0))
+        //.orderBy('time')
+        //.limit(3)
         .get()
         .then((snapshot) => (snapshot.empty ? [] : snapshot.docs.map((doc) => doc.data())))
         .catch((err) => `Error fetching upcoming events: ${err}`);
@@ -124,7 +124,7 @@ const getUpcomingEvents = async (uid: string) => {
 const getHomepageData = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoardNames(context.auth.uid)])
+    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoards(context.auth.uid)])
         .then((userData) => ({ events: userData[0], boards: userData[1] }))
         .catch((err) => `Error fetching homepage data: ${err}`);
 });

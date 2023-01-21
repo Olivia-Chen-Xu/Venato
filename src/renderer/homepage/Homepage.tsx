@@ -3,7 +3,6 @@ import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
-import CalendarState from '../calendar/context/CalendarState';
 import taskLine from '../../../assets/task-line.png';
 
 const Homepage = () => {
@@ -32,7 +31,7 @@ const Homepage = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((name: string) => {
+        userData.result.data.boards.forEach((board: string) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -41,7 +40,7 @@ const Homepage = () => {
                             nav('/kanban');
                         }}
                     >
-                        <span className="absolute bottom-5 left-5 ">{name}</span>
+                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
                     </button>
                 </div>
             );
@@ -55,7 +54,7 @@ const Homepage = () => {
         }
 
         const eventsHtml: JSX.Element = [];
-        userdata.result.data.events.forEach(
+        userData.result.data.events.forEach(
             (event: { title: string; date: number; location: string }) => {
                 eventsHtml.push(
                     <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
@@ -91,7 +90,6 @@ const Homepage = () => {
                 );
             }
         );
-
     };
 
     return (
