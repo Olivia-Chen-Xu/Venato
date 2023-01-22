@@ -121,8 +121,13 @@ const getUpcomingEvents = async (uid: string) => {
 
             return snapshot.docs.map((doc) => {
                 const data = doc.data();
-                // eslint-disable-next-line no-underscore-dangle
-                return { location: data.location, date: data.date._seconds, title: data.title };
+                return {
+                    location: data.location,
+                    // eslint-disable-next-line no-underscore-dangle
+                    date: data.date._seconds,
+                    title: data.title,
+                    company: data.company,
+                };
             });
         })
         .catch((err) => `Error fetching upcoming events: ${err}`);

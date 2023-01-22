@@ -57,6 +57,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         const newDoc = {
             ...deadline,
             date: getFirestoreTimestamp(deadline.date),
+            company: data.details.company,
             metaData: {
                 userId: data.metaData.userId,
                 jobId: docId,

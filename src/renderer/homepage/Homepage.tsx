@@ -48,6 +48,11 @@ const Homepage = () => {
         return boardsHtml;
     };
 
+    const formatEventDate = (date: Date) => {
+        const dateStr = date.toDateString().split(' ');
+        return `${dateStr[1]} ${dateStr[2]}`;
+    };
+
     const renderEvents = () => {
         if (!userData.result) {
             return <p>Error: Invalid state</p>;
@@ -55,7 +60,7 @@ const Homepage = () => {
 
         const eventsHtml: JSX.Element = [];
         userData.result.data.events.forEach(
-            (event: { title: string; date: number; location: string }) => {
+            (event: { title: string; date: number; location: string; company: string }) => {
                 eventsHtml.push(
                     <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                         <div className="ml-5">
@@ -77,13 +82,19 @@ const Homepage = () => {
                         <div className="ml-5 mt-1">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                {new Date(event.date * 1000).toString()}
+                                {new Date(event.date * 1000).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                                <br />
+                                {new Date(event.date * 1000).toLocaleTimeString('en-US')}
                             </h1>
                         </div>
                         <div className="ml-5 mt-1">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                                company
+                                {event.company}
                             </h1>
                         </div>
                     </div>
