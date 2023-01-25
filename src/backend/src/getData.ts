@@ -1,5 +1,10 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import {
+    getCollection,
+    getRelativeTimestamp,
+    verifyIsAuthenticated,
+    verifyDocPermission,
+} from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -140,6 +145,40 @@ const getHomepageData = functions.https.onCall((data: object, context: any) => {
     return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoards(context.auth.uid)])
         .then((userData) => ({ events: userData[0], boards: userData[1] }))
         .catch((err) => `Error fetching homepage data: ${err}`);
+});
+
+// Gets all the jobs for a given kanban board
+const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, context: any) => {
+    if (!data.boardId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            "A 'boardId' is required to call this function"
+        );
+    }
+    await verifyDocPermission(context.auth.uid, `boards/${data.boardId}`);
+
+    return getCollection('boards')
+        .where('__name__', '==', data.boardId)
+        .where('userId', '==', context.auth.uid)
+        .get()
+        .then((query) => {
+            if (query.docs.length === 0) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    `No board with id ${data.boardId} found for user ${context.auth.uid}`
+                );
+            }
+            if (query.docs.length !== 1) {
+                throw new functions.https.HttpsError(
+                    'internal',
+                    `Multiple boards with id ${data.boardId} found for user ${context.auth.uid}`
+                );
+            }
+
+            const board = query.docs[0].data();
+            return { jobs: board.jobs, name: board.name };
+        })
+        .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
 
 // Returns all the jobs that belong to the currently signed-in user
@@ -288,6 +327,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 
 export {
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,

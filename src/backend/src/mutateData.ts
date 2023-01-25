@@ -3,7 +3,7 @@ import {
     getDoc,
     getCollection,
     verifyIsAuthenticated,
-    verifyJobPermission,
+    verifyDocPermission,
     db,
     getRelativeTimestamp,
 } from './helpers';
@@ -44,8 +44,20 @@ const addJobs = functions.https.onCall(
                     for (let i = 0; i < data.users.length; ++i) {
                         const userJobs = jobs.docs
                             .filter((job) => job.data().metaData.userId === data.users[i])
-                            .map((job) => ({ id: job.id, board: Math.floor(Math.random() * 3) }));
-                        const boards: { [name: string]: { id: string; board: number }[] } = {
+                            .map((job) => ({
+                                id: job.id,
+                                board: Math.floor(Math.random() * 3),
+                                company: job.data().details.company,
+                                position: job.data().details.position,
+                            }));
+                        const boards: {
+                            [name: string]: {
+                                id: string;
+                                board: number;
+                                company: string;
+                                position: string;
+                            }[];
+                        } = {
                             'Summer 2021 internships': userJobs.filter((job) => job.board === 0),
                             'Summer 2022 internships': userJobs.filter((job) => job.board === 1),
                             'Summer 2023 internships': userJobs.filter((job) => job.board === 2),
@@ -55,7 +67,11 @@ const addJobs = functions.https.onCall(
                             promises.push(
                                 getCollection('boards').add({
                                     name,
-                                    jobs: boards[name].map((job) => job.id),
+                                    jobs: boards[name].map((job) => ({
+                                        id: job.id,
+                                        position: job.position,
+                                        company: job.company,
+                                    })),
                                     userId: data.users[i],
                                 })
                             );
@@ -81,7 +97,7 @@ const addJob = functions.https.onCall((data: object, context: any) => {
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
     async (data: { id: string; newFields: object }, context: any) => {
-        await verifyJobPermission(context, data.id);
+        await verifyDocPermission(context, `jobs/${data.id}`);
         return getDoc(`jobs/${data.id}`).update(data.newFields);
     }
 );
@@ -89,7 +105,7 @@ const updateJob = functions.https.onCall(
 // Deactivates a job in firestore (it's NOT removed, it can still be restored since just a flag is set)
 // In 30 days, a CRON job will permanently remove it from firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
-    await verifyJobPermission(context, data.id);
+    await verifyDocPermission(context, `jobs/${data.id}`);
     return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
 });
 

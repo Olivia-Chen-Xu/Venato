@@ -3,6 +3,7 @@ import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth
 import { onJobCreate, onJobPurge } from './firestore';
 import {
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,
@@ -53,6 +54,7 @@ export {
     onJobCreate,
     onJobPurge,
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,
