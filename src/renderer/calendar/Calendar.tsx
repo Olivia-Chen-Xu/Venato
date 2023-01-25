@@ -23,7 +23,7 @@ const getMonth = (month = dayjs().month()) => {
 };
 
 const Calendar = () => {
-    const jobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
+    const getJobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
@@ -31,36 +31,41 @@ const Calendar = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
     const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
+    const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
-    if (jobs.loading) {
+    if (getJobs.loading) {
         return (
             <div>
                 <CircularProgress />
             </div>
         );
     }
-    if (jobs.error) {
-        return <p>Error: {jobs.error.message}</p>;
+    if (getJobs.error) {
+        return <p>Error: {getJobs.error.message}</p>;
     }
 
+    // console.log(JSON.stringify(getJobs.result.data, null, 4));
     // Events loaded
-    CalendarState.addJobs(jobs.result.data);
+    // CalendarState.addJobs(getJobs.result.data);
 
+    setJobs(getJobs.result.data.jobs);
+    const { events } = getJobs.result.data;
     // Get the 3 most immediate tasks
-    const taskDates = Object.entries(CalendarState.events)
-        .map((elem) => elem[0])
-        .sort()
-        .filter((e) => e >= dayjs().format('YY-MM-DD'))
-        .slice(0, 3);
-    const recent = [
-        ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
-        ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
-        ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
-    ].slice(0, 3);
+    // const taskDates = Object.entries(CalendarState.events)
+    //     .map((elem) => elem[0])
+    //     .sort()
+    //     .filter((e) => e >= dayjs().format('YY-MM-DD'))
+    //     .slice(0, 3);
+    // const recent = [
+    //     ...CalendarState.events[taskDates[0]].map((e) => ({ ...e, date: taskDates[0] })),
+    //     ...CalendarState.events[taskDates[1]].map((e) => ({ ...e, date: taskDates[1] })),
+    //     ...CalendarState.events[taskDates[2]].map((e) => ({ ...e, date: taskDates[2] })),
+    // ].slice(0, 3);
+
     const formatDate = (date) => {
         const split = date.split('-');
         return `${split[1] === '11' ? 'Nov. ' : 'Dec. '} ${(split[2] * 1).toString()}`;
@@ -193,13 +198,13 @@ const Calendar = () => {
                     </div>
                 </div>
             </div>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
 
             <h2 className="ml-20 text-2xl">
                 {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
             </h2>
-            <br></br>
+            <br />
             <div className="flex flex-1 mb-10">
                 <button type="button" onClick={() => setMonthIndex(monthIndex - 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">
