@@ -49,6 +49,7 @@ const addJobs = functions.https.onCall(
                                 board: Math.floor(Math.random() * 3),
                                 company: job.data().details.company,
                                 position: job.data().details.position,
+                                stage: job.data().status.stage,
                             }));
                         const boards: {
                             [name: string]: {
@@ -56,6 +57,7 @@ const addJobs = functions.https.onCall(
                                 board: number;
                                 company: string;
                                 position: string;
+                                stage: number;
                             }[];
                         } = {
                             'Summer 2021 internships': userJobs.filter((job) => job.board === 0),
@@ -71,6 +73,7 @@ const addJobs = functions.https.onCall(
                                         id: job.id,
                                         position: job.position,
                                         company: job.company,
+                                        stage: job.stage,
                                     })),
                                     userId: data.users[i],
                                 })

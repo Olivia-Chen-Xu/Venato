@@ -1,10 +1,5 @@
 import * as functions from 'firebase-functions';
-import {
-    getCollection,
-    getRelativeTimestamp,
-    verifyIsAuthenticated,
-    verifyDocPermission,
-} from './helpers';
+import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -149,13 +144,18 @@ const getHomepageData = functions.https.onCall((data: object, context: any) => {
 
 // Gets all the jobs for a given kanban board
 const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, context: any) => {
-    if (!data.boardId) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            "A 'boardId' is required to call this function"
-        );
+    if (!data || !data.boardId) {
+        return getCollection('boards')
+            .where('userId', '==', context.auth.uid)
+            .get()
+            .then((result) => {
+                if (result.empty) return null;
+
+                const board = result.docs[0].data();
+                return { jobs: board.jobs, name: board.name, stage: board.stage };
+            })
+            .catch((err) => `Error getting kanban board: ${err}`);
     }
-    await verifyDocPermission(context.auth.uid, `boards/${data.boardId}`);
 
     return getCollection('boards')
         .where('__name__', '==', data.boardId)
