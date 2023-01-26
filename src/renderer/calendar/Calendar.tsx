@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { CircularProgress } from '@mui/material';
 import Month from './components/Month';
-import CalendarState from './context/CalendarState';
 import JobDialog from '../job/JobDialog';
 import taskLine from '../../../assets/task-line.png';
 
@@ -23,7 +22,7 @@ const getMonth = (month = dayjs().month()) => {
 };
 
 const Calendar = () => {
-    const getJobs = useAsync(httpsCallable(getFunctions(), 'getJobs'), []);
+    const getDeadlines = useAsync(httpsCallable(getFunctions(), 'getDeadlines'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
@@ -31,29 +30,28 @@ const Calendar = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
     const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
-    const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
     }, [monthIndex]);
 
-    if (getJobs.loading) {
+    if (getDeadlines.loading) {
         return (
             <div>
                 <CircularProgress />
             </div>
         );
     }
-    if (getJobs.error) {
-        return <p>Error: {getJobs.error.message}</p>;
+    if (getDeadlines.error) {
+        return <p>Error: {getDeadlines.error.message}</p>;
     }
 
-    // console.log(JSON.stringify(getJobs.result.data, null, 4));
+    const deadlines: object[] = getDeadlines.result.data;
+    console.log(JSON.stringify(deadlines, null, 4));
+
     // Events loaded
     // CalendarState.addJobs(getJobs.result.data);
 
-    setJobs(getJobs.result.data.jobs);
-    const { events } = getJobs.result.data;
     // Get the 3 most immediate tasks
     // const taskDates = Object.entries(CalendarState.events)
     //     .map((elem) => elem[0])
@@ -89,14 +87,14 @@ const Calendar = () => {
                 <div
                     className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
-                        setCurrentJob(CalendarState.jobs[recent[0].id]);
+                        // setCurrentJob(CalendarState.jobs[recent[0].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
                     <div className="ml-5">
                         <h1>
-                            <span className="text-3xl">{recent[0].title}</span>
+                            <span className="text-3xl">title</span>
                         </h1>
                     </div>
 
@@ -106,34 +104,32 @@ const Calendar = () => {
 
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[0].id].info.position}
+                            <span className="material-icons-outlined text-xl">work</span> position
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
-                            <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[0].date)}
+                            <span className="material-icons-outlined text-xl">schedule</span> date
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[0].id].info.company}
+                            {'company'}
                         </h1>
                     </div>
                 </div>
                 <div
                     className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
-                        setCurrentJob(CalendarState.jobs[recent[1].id]);
+                        // setCurrentJob(CalendarState.jobs[recent[1].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
                     <div className="ml-5">
                         <h1>
-                            <span className="text-3xl">{recent[1].title}</span>
+                            <span className="text-3xl">title</span>
                         </h1>
                     </div>
 
@@ -144,33 +140,33 @@ const Calendar = () => {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[1].id].info.position}
+                            position
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[1].date)}
+                            date
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[1].id].info.company}
+                            company
                         </h1>
                     </div>
                 </div>
                 <div
                     className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                     onClick={() => {
-                        setCurrentJob(CalendarState.jobs[recent[2].id]);
+                        // setCurrentJob(CalendarState.jobs[recent[2].id]);
                         setModalOpen(true);
                         setIsEdit(true);
                     }}
                 >
                     <div className="ml-5">
                         <h1>
-                            <span className="text-3xl">{recent[2].title}</span>
+                            <span className="text-3xl">title</span>
                         </h1>
                     </div>
 
@@ -181,19 +177,19 @@ const Calendar = () => {
                     <div className="ml-5 mt-2">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">work</span>{' '}
-                            {CalendarState.jobs[recent[2].id].info.position}
+                            position
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                            {formatDate(recent[2].date)}
+                            date
                         </h1>
                     </div>
                     <div className="ml-5 mt-1">
                         <h1 className="text-md align-middle">
                             <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                            {CalendarState.jobs[recent[2].id].info.company}
+                            company
                         </h1>
                     </div>
                 </div>

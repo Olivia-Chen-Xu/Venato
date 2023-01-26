@@ -193,7 +193,7 @@ const getDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
-        .where('userId', '==', context.auth.uid)
+        .where('metaData.userId', '==', context.auth.uid)
         .get()
         .then((deadlines) =>
             deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
