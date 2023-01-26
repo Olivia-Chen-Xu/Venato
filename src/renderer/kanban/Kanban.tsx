@@ -161,9 +161,9 @@ export default function Kanban() {
         const fetchJobs = async () => {
             setLoading(true);
             const newState = [[], [], [], []];
-            await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
-                //console.log(res.data);
-                res.data.forEach((job) => newState[job.metadata.stage].push({ ...job, id: job.id }));
+            await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
+                console.log(JSON.stringify(res, null, 4));
+                res.data.jobs.forEach((job) => newState[job.stage].push(job));
                 setState(newState);
                 setLoading(false);
             });
@@ -284,7 +284,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.info.position}
+                                                                    {job.position}
                                                                 </text>
                                                                 <text
                                                                     style={{
@@ -294,7 +294,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.info.company}
+                                                                    {job.company}
                                                                 </text>
                                                                 {/* <div
                                                                     style={{
