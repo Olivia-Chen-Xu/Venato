@@ -144,39 +144,35 @@ const getHomepageData = functions.https.onCall((data: object, context: any) => {
 
 // Gets all the jobs for a given kanban board
 const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, context: any) => {
-    if (!data || !data.boardId) {
-        return getCollection('boards')
+    let boardId: string | null = data ? data.boardId : null;
+
+    // If no board id is provided, get the first board for the user
+    if (!boardId) {
+        boardId = await getCollection('boards')
             .where('userId', '==', context.auth.uid)
             .get()
             .then((result) => {
                 if (result.empty) return null;
-
-                const board = result.docs[0].data();
-                return { jobs: board.jobs, name: board.name, stage: board.stage };
-            })
-            .catch((err) => `Error getting kanban board: ${err}`);
+                return result.docs[0].id;
+            });
+        if (boardId == null) {
+            return null;
+        }
     }
 
-    return getCollection('boards')
-        .where('__name__', '==', data.boardId)
-        .where('userId', '==', context.auth.uid)
+    functions.logger.log(`Data: ${JSON.stringify(data)} | Context: ${JSON.stringify(context)} | BoardId: ${boardId}`);
+
+    return getCollection('jobs')
+        .where('metaData.userId', '==', context.auth.uid)
+        .where('metaData.boardId', '==', boardId)
         .get()
         .then((query) => {
-            if (query.docs.length === 0) {
-                throw new functions.https.HttpsError(
-                    'not-found',
-                    `No board with id ${data.boardId} found for user ${context.auth.uid}`
-                );
-            }
-            if (query.docs.length !== 1) {
-                throw new functions.https.HttpsError(
-                    'internal',
-                    `Multiple boards with id ${data.boardId} found for user ${context.auth.uid}`
-                );
-            }
+            if (query.empty) return [];
 
-            const board = query.docs[0].data();
-            return { jobs: board.jobs, name: board.name };
+            return query.docs.map((job) => {
+                const { metaData: foo, ...jobData } = job.data();
+                return jobData;
+            });
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
