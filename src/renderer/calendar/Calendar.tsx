@@ -20,7 +20,7 @@ const getMonth = (month = Math.floor(dayjs().month())) => {
 };
 
 const Calendar = () => {
-    const getDeadlines = useAsync(httpsCallable(getFunctions(), 'getDeadlines'), []);
+    const getDeadlines = useAsync(httpsCallable(getFunctions(), 'getCalendarDeadlines'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     const [monthIndex, setMonthIndex] = useState<number>(10);
@@ -44,7 +44,13 @@ const Calendar = () => {
         return <p>Error: {getDeadlines.error.message}</p>;
     }
 
-    const deadlines: object[] = getDeadlines.result.data;
+    const deadlines: {
+        company: string;
+        date: { year: number; month: number; day: number };
+        title: string;
+        jobId: string;
+        link: string;
+    }[] = getDeadlines.result.data;
     // console.log(JSON.stringify(deadlines, null, 4));
 
     // Events loaded
@@ -82,7 +88,7 @@ const Calendar = () => {
                     setState={false}
                 />
             )}
-            <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
+            {/* <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1> */}
             {/* <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}> */}
             {/*    <div */}
             {/*        className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl" */}
@@ -212,6 +218,14 @@ const Calendar = () => {
                     setOpen={setModalOpen}
                     setJob={setCurrentJob}
                     setIsEdit={setIsEdit}
+                    deadlines={deadlines.filter((deadline) => {
+                        let exampleDay = JSON.stringify(currentMonth[1][0]);
+                        exampleDay = exampleDay.replaceAll('"', '');
+                        return (
+                            parseInt(exampleDay.split('-')[0], 10) === deadline.date.year &&
+                            parseInt(exampleDay.split('-')[1], 10) === deadline.date.month
+                        );
+                    })}
                 />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">

@@ -28,6 +28,9 @@ const addJobs = functions.https.onCall(
             .then(() => 'Jobs added successfully')
             .catch((err) => `Error adding jobs: ${err}`);
 
+        // Wait for the db trigger to take effect - otherwise it will override the boardId we add later
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+
         // Generate job boards
         const jobs = await getCollection('jobs').get();
 
@@ -38,7 +41,6 @@ const addJobs = functions.https.onCall(
             );
         }
 
-        const batch2 = db.batch();
         for (let i = 0; i < data.users.length; ++i) {
             const userJobs = jobs.docs
                 .filter((job) => job.data().metaData.userId === data.users[i])
@@ -71,16 +73,17 @@ const addJobs = functions.https.onCall(
                     })
                     .then((doc) => doc.id);
 
-                boards[name].forEach((job) => {
-                    batch2.update(getDoc(`jobs/${job.id}`), { [`metaData.boardId`]: boardId });
-                });
+                for (const job of boards[name]) {
+                    await getDoc(`jobs/${job.id}`)
+                        .update({ 'metaData.boardId': boardId })
+                        .then(() =>
+                            functions.logger.log(`Board '${boardId}' added to job '${job.id}'`)
+                        );
+                }
             }
         }
 
-        return batch2
-            .commit()
-            .then(() => `Successfully added jobs`)
-            .catch((err) => `Error adding job boards: ${err}`);
+        functions.logger.log('Job boards generated successfully');
     }
 );
 

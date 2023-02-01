@@ -1,8 +1,8 @@
 import React from 'react';
-import dayjs from 'dayjs';
-import CalendarState from '../context/CalendarState';
+import dayjs, { Dayjs } from 'dayjs';
+// import CalendarState from '../context/CalendarState';
 
-const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
+const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
             ? 'bg-[#C8ADD8] text-white rounded-full w-7'
@@ -10,30 +10,29 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
     };
 
     const getDayEvents = () => {
-        let dayEvents = CalendarState.events[day.format('YY-MM-DD')];
-        if (!dayEvents) {
+        if (!deadlines) {
             return [];
         }
 
         let overLimit = false;
-        const size = dayEvents.length;
+        const size = deadlines.length;
         if (size > 2) {
-            dayEvents = dayEvents.slice(0, 2);
+            deadlines.splice(2);
             overLimit = true;
         }
 
-        const jsx = dayEvents.map((evt, idx) => (
+        const jsx = deadlines.map((deadline, idx) => (
             <div
                 key={idx}
                 onClick={(event) => {
                     event.stopPropagation(); // So the day div onClick won't be triggered also
-                    setJob(CalendarState.jobs[evt.id]);
+                    setJob(null);
                     setIsEdit(true);
                     setOpen(true);
                 }}
                 className="bg-200 bg-slate-100 p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate"
             >
-                {evt.title}
+                {deadline.title}
             </div>
         ));
         if (overLimit) {
@@ -93,23 +92,32 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit }) => {
     );
 };
 
-const Month = ({ month, setOpen, setJob, setIsEdit }) => (
-    <div className="flex-1 grid grid-cols-7 grid-rows-5">
-        {month.map((row, i) => (
-            <React.Fragment key={i}>
-                {row.map((day, idx) => (
-                    <Day
-                        day={day}
-                        key={idx}
-                        rowIdx={i}
-                        setOpen={setOpen}
-                        setJob={setJob}
-                        setIsEdit={setIsEdit}
-                    />
-                ))}
-            </React.Fragment>
-        ))}
-    </div>
-);
+const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
+    return (
+        <div className="flex-1 grid grid-cols-7 grid-rows-5">
+            {month.map((row: dayjs.Dayjs[], i) => (
+                <React.Fragment key={i}>
+                    {row.map((day: dayjs.Dayjs, idx) => (
+                        <Day
+                            day={day}
+                            key={idx}
+                            rowIdx={i}
+                            setOpen={setOpen}
+                            setJob={setJob}
+                            setIsEdit={setIsEdit}
+                            deadlines={deadlines.filter((deadline) => {
+                                let dayString = JSON.stringify(day);
+                                dayString.replaceAll('"', '');
+                                return (
+                                    parseInt(dayString.split('-')[2].slice(0, 2), 10) ===
+                                    deadline.date.day
+                                );
+                            })}
+                        />
+                    ))}
+                </React.Fragment>
+            ))}
+        </div>
+    )};
 
 export default Month;

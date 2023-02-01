@@ -160,8 +160,8 @@ export default function Kanban() {
             setLoading(true);
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
-                //console.log(JSON.stringify(res, null, 4));
-                res.data.jobs.forEach((job) => newState[job.stage].push(job));
+                // console.log(JSON.stringify(res, null, 4));
+                res.data.forEach((job) => newState[job.status.stage].push(job));
                 setState(newState);
                 setLoading(false);
             });
@@ -282,7 +282,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.position}
+                                                                    {job.details.position}
                                                                 </text>
                                                                 <text
                                                                     style={{
@@ -292,7 +292,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.company}
+                                                                    {job.details.company}
                                                                 </text>
                                                                 {/* <div
                                                                     style={{

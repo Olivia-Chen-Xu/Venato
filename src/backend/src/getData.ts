@@ -160,8 +160,6 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
         }
     }
 
-    functions.logger.log(`Data: ${JSON.stringify(data)} | Context: ${JSON.stringify(context)} | BoardId: ${boardId}`);
-
     return getCollection('jobs')
         .where('metaData.userId', '==', context.auth.uid)
         .where('metaData.boardId', '==', boardId)
@@ -171,7 +169,7 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
 
             return query.docs.map((job) => {
                 const { metaData: foo, ...jobData } = job.data();
-                return jobData;
+                return { ...jobData, id: job.id };
             });
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
@@ -185,15 +183,29 @@ const getJobs = functions.https.onCall((data: object, context: any) => {
 });
 
 // Returns all job deadlines for the currently signed-in user
-const getDeadlines = functions.https.onCall((data: object, context: any) => {
+const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
         .where('metaData.userId', '==', context.auth.uid)
         .get()
-        .then((deadlines) =>
-            deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
-        )
+        .then((deadlines) => {
+            if (deadlines.empty) {
+                return [];
+            }
+
+            return deadlines.docs.map((deadline) => {
+                const { metaData, ...deadlineData } = deadline.data();
+                const deadlineDate: Date = deadlineData.date.toDate();
+                const date = {
+                    year: deadlineDate.getFullYear(),
+                    month: deadlineDate.getMonth() + 1,
+                    day: deadlineDate.getDate(),
+                };
+
+                return { ...deadlineData, date, jobId: metaData.jobId };
+            });
+        })
         .catch((err) => `Error getting calendar events: ${err}`);
 });
 
@@ -325,7 +337,7 @@ export {
     getHomepageData,
     getKanbanBoard,
     getJobs,
-    getDeadlines,
+    getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
