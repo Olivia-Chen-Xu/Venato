@@ -7,11 +7,11 @@ import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './he
  */
 
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
-const getJobBoardNames = (uid: string) => {
+const getJobBoards = (uid: string) => {
     return getCollection(`boards`)
         .where('userId', '==', uid)
         .get()
-        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data().name)))
+        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data())))
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 };
 
@@ -45,9 +45,9 @@ const getJobInterviewQuestions = (jobId: string) => {
         .catch((err) => `Error fetching job interview questions: ${err}`);
 };
 
-const getJobcontacts = (jobId: string) => {
+const getJobContacts = (jobId: string) => {
     return getCollection(`contacts`)
-        .where('metaData.jobId', '==', jobId)
+        .where('metadata.jobId', '==', jobId)
         .get()
         .then((contacts) => {
             if (contacts.empty) return [];
@@ -69,7 +69,7 @@ const getUserJobs = async (uid: string) => {
             const jobList: any[] = [];
             userJobs.forEach((job) => {
                 // Remove the query helper fields (positionSearchable, userId) and add the job id
-                const { userID: foo, positionSearchable: bar, ...jobData } = job.data();
+                const { metaData: foo, ...jobData } = job.data();
                 jobList.push({ ...jobData, id: job.id });
             });
             return jobList;
@@ -96,7 +96,7 @@ const getUserJobs = async (uid: string) => {
             })
         );
         promises.push(
-            getJobcontacts(job.id).then((contacts) => {
+            getJobContacts(job.id).then((contacts) => {
                 job.contacts = contacts;
                 return null;
             })
@@ -111,12 +111,25 @@ const getUserJobs = async (uid: string) => {
 // Returns the next 3 job events for the currently signed-in user
 const getUpcomingEvents = async (uid: string) => {
     return getCollection('deadlines')
-        .where('userId', '==', uid)
-        .where('time', '>=', getRelativeTimestamp(0))
-        .orderBy('time')
+        .where('metaData.userId', '==', uid)
+        .where('date', '>=', getRelativeTimestamp(0))
+        .orderBy('date')
         .limit(3)
         .get()
-        .then((snapshot) => (snapshot.empty ? [] : snapshot.docs.map((doc) => doc.data())))
+        .then((snapshot) => {
+            if (snapshot.empty) return [];
+
+            return snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    location: data.location,
+                    // eslint-disable-next-line no-underscore-dangle
+                    date: data.date._seconds,
+                    title: data.title,
+                    company: data.company,
+                };
+            });
+        })
         .catch((err) => `Error fetching upcoming events: ${err}`);
 };
 
@@ -124,9 +137,44 @@ const getUpcomingEvents = async (uid: string) => {
 const getHomepageData = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
-    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoardNames(context.auth.uid)])
+    return Promise.all([getUpcomingEvents(context.auth.uid), getJobBoards(context.auth.uid)])
         .then((userData) => ({ events: userData[0], boards: userData[1] }))
         .catch((err) => `Error fetching homepage data: ${err}`);
+});
+
+// Gets all the jobs for a given kanban board
+const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, context: any) => {
+    let boardId: string | null = data ? data.boardId : null;
+
+    // If no board id is provided, get the first board for the user
+    if (!boardId) {
+        boardId = await getCollection('boards')
+            .where('userId', '==', context.auth.uid)
+            .get()
+            .then((result) => {
+                if (result.empty) return null;
+                return result.docs[0].id;
+            });
+        if (boardId == null) {
+            return null;
+        }
+    }
+
+    functions.logger.log(`Data: ${JSON.stringify(data)} | Context: ${JSON.stringify(context)} | BoardId: ${boardId}`);
+
+    return getCollection('jobs')
+        .where('metaData.userId', '==', context.auth.uid)
+        .where('metaData.boardId', '==', boardId)
+        .get()
+        .then((query) => {
+            if (query.empty) return [];
+
+            return query.docs.map((job) => {
+                const { metaData: foo, ...jobData } = job.data();
+                return jobData;
+            });
+        })
+        .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
 
 // Returns all the jobs that belong to the currently signed-in user
@@ -141,7 +189,7 @@ const getDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
-        .where('userId', '==', context.auth.uid)
+        .where('metaData.userId', '==', context.auth.uid)
         .get()
         .then((deadlines) =>
             deadlines.empty ? [] : deadlines.docs.map((deadline) => deadline.data())
@@ -275,6 +323,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 
 export {
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,

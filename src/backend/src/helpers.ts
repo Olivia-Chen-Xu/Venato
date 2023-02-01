@@ -39,16 +39,16 @@ const verifyIsAuthenticated = (context: functions.https.CallableContext) => {
 };
 
 // Verify the user who called the function has access to the specified job
-const verifyJobPermission = async (context: functions.https.CallableContext, jobId: string) => {
+const verifyDocPermission = async (context: functions.https.CallableContext, path: string) => {
     verifyIsAuthenticated(context);
 
-    await getDoc(`jobs/${jobId}`)
+    await getDoc(path)
         .get()
         .then((doc) => {
-            if (doc.data()?.userId !== context.auth?.uid) {
+            if (doc.data()?.metaData.userId !== context.auth?.uid) {
                 throw new functions.https.HttpsError(
                     'permission-denied',
-                    "You cannot edit this job as it doesn't belong to you"
+                    `You cannot view the document '${path}' as it doesn't belong to you`
                 );
             }
             return null;
@@ -73,7 +73,7 @@ export {
     getDoc,
     getCollection,
     verifyIsAuthenticated,
-    verifyJobPermission,
+    verifyDocPermission,
     getRelativeTimestamp,
     getFirestoreTimestamp,
     firestoreHelper,

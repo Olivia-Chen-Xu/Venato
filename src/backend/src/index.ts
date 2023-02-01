@@ -3,6 +3,7 @@ import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth
 import { onJobCreate, onJobPurge } from './firestore';
 import {
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,
@@ -10,7 +11,7 @@ import {
     jobSearch,
     interviewQuestionsSearch,
 } from './getData';
-import { addJobs, addJob, updateJob, deleteJob, addJobBoard } from './mutateData';
+import { addJobs, addJob, updateJob, dragKanbanJob, deleteJob, addJobBoard } from './mutateData';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -53,6 +54,7 @@ export {
     onJobCreate,
     onJobPurge,
     getHomepageData,
+    getKanbanBoard,
     getJobs,
     getDeadlines,
     getAllCompanies,
@@ -62,6 +64,7 @@ export {
     addJobs,
     addJob,
     updateJob,
+    dragKanbanJob,
     deleteJob,
     addJobBoard,
 };

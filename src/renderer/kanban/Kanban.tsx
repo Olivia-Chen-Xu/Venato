@@ -4,7 +4,6 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ControlPoint } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from 'renderer/job/JobDialog';
-import { color } from '@mui/system';
 
 const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
@@ -148,12 +147,10 @@ export default function Kanban() {
             // });
             await httpsCallable(
                 getFunctions(),
-                'updateJobs'
+                'dragKanbanJob'
             )({
                 id: removed.id,
-                newFields: {
-                    stage: dInd,
-                },
+                newStage: dInd,
             });
         }
     }
@@ -162,9 +159,9 @@ export default function Kanban() {
         const fetchJobs = async () => {
             setLoading(true);
             const newState = [[], [], [], []];
-            await httpsCallable(getFunctions(), 'getJobs')().then((res) => {
-                //console.log(res.data);
-                res.data.forEach((job) => newState[job.metadata.stage].push({ ...job, id: job.id }));
+            await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
+                //console.log(JSON.stringify(res, null, 4));
+                res.data.jobs.forEach((job) => newState[job.stage].push(job));
                 setState(newState);
                 setLoading(false);
             });
@@ -285,7 +282,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.info.position}
+                                                                    {job.position}
                                                                 </text>
                                                                 <text
                                                                     style={{
@@ -295,7 +292,7 @@ export default function Kanban() {
                                                                         textAlign: 'right',
                                                                     }}
                                                                 >
-                                                                    {job.info.company}
+                                                                    {job.company}
                                                                 </text>
                                                                 {/* <div
                                                                     style={{

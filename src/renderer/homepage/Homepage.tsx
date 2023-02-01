@@ -3,7 +3,6 @@ import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
-import CalendarState from '../calendar/context/CalendarState';
 import taskLine from '../../../assets/task-line.png';
 
 const Homepage = () => {
@@ -32,7 +31,7 @@ const Homepage = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((name: string) => {
+        userData.result.data.boards.forEach((board: string) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -41,12 +40,17 @@ const Homepage = () => {
                             nav('/kanban');
                         }}
                     >
-                        <span className="absolute bottom-5 left-5 ">{name}</span>
+                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
                     </button>
                 </div>
             );
         });
         return boardsHtml;
+    };
+
+    const formatEventDate = (date: Date) => {
+        const dateStr = date.toDateString().split(' ');
+        return `${dateStr[1]} ${dateStr[2]}`;
     };
 
     const renderEvents = () => {
@@ -55,8 +59,8 @@ const Homepage = () => {
         }
 
         const eventsHtml: JSX.Element = [];
-        userdata.result.data.events.forEach(
-            (event: { title: string; date: number; location: string }) => {
+        userData.result.data.events.forEach(
+            (event: { title: string; date: number; location: string; company: string }) => {
                 eventsHtml.push(
                     <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                         <div className="ml-5">
@@ -78,20 +82,26 @@ const Homepage = () => {
                         <div className="ml-5 mt-1">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">schedule</span>{' '}
-                                {event.date}
+                                {new Date(event.date * 1000).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                                <br />
+                                {new Date(event.date * 1000).toLocaleTimeString('en-US')}
                             </h1>
                         </div>
                         <div className="ml-5 mt-1">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">location_on</span>{' '}
-                                company
+                                {event.company}
                             </h1>
                         </div>
                     </div>
                 );
             }
         );
-
+        return eventsHtml;
     };
 
     return (
