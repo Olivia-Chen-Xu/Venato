@@ -53,18 +53,20 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const { deadlines } = data;
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
-    deadlines.forEach((deadline: { title: string; date: number; location: string }) => {
-        const newDoc = {
-            ...deadline,
-            date: getFirestoreTimestamp(deadline.date),
-            company: data.details.company,
-            metaData: {
-                userId: data.metaData.userId,
-                jobId: docId,
-            },
-        };
-        promises.push(getCollection(`deadlines`).add(newDoc));
-    });
+    deadlines.forEach(
+        (deadline: { title: string; date: number; location: string; link: string }) => {
+            const newDoc = {
+                ...deadline,
+                date: getFirestoreTimestamp(deadline.date),
+                company: data.details.company,
+                metaData: {
+                    userId: data.metaData.userId,
+                    jobId: docId,
+                },
+            };
+            promises.push(getCollection(`deadlines`).add(newDoc));
+        }
+    );
 
     // Move the interview questions to their own collection (with search params for easy querying)
     const { interviewQuestions } = data;
