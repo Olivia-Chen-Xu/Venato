@@ -82,7 +82,7 @@ const Calendar = () => {
                     setState={false}
                 />
             )}
-            <h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>
+            {/*<h1 className="grid place-content-center text-3xl mt-5">Upcoming Tasks</h1>*/}
             {/* <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}> */}
             {/*    <div */}
             {/*        className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl" */}
