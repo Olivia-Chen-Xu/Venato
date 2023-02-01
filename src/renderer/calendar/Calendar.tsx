@@ -44,8 +44,13 @@ const Calendar = () => {
         return <p>Error: {getDeadlines.error.message}</p>;
     }
 
-    console.log(JSON.stringify(getDeadlines.result.data, null, 4));
-    const deadlines: object[] = getDeadlines.result.data;
+    const deadlines: {
+        company: string;
+        date: { year: number; month: number; day: number };
+        title: string;
+        jobId: string;
+        link: string;
+    }[] = getDeadlines.result.data;
     // console.log(JSON.stringify(deadlines, null, 4));
 
     // Events loaded
@@ -213,6 +218,14 @@ const Calendar = () => {
                     setOpen={setModalOpen}
                     setJob={setCurrentJob}
                     setIsEdit={setIsEdit}
+                    deadlines={deadlines.filter((deadline) => {
+                        let exampleDay = JSON.stringify(currentMonth[1][0]);
+                        exampleDay = exampleDay.replaceAll('"', '');
+                        return (
+                            parseInt(exampleDay.split('-')[0], 10) === deadline.date.year &&
+                            parseInt(exampleDay.split('-')[1], 10) === deadline.date.month
+                        );
+                    })}
                 />
                 <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
                     <span className="material-icons-outlined cursor-pointer text-6xl text-gray-600 mx-2">

@@ -195,7 +195,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
             }
 
             return deadlines.docs.map((deadline) => {
-                const deadlineData = deadline.data();
+                const { metaData, ...deadlineData } = deadline.data();
                 const deadlineDate: Date = deadlineData.date.toDate();
                 const date = {
                     year: deadlineDate.getFullYear(),
@@ -203,7 +203,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
                     day: deadlineDate.getDate(),
                 };
 
-                return { ...deadlineData, date };
+                return { ...deadlineData, date, jobId: metaData.jobId };
             });
         })
         .catch((err) => `Error getting calendar events: ${err}`);
