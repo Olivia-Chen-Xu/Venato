@@ -30,7 +30,44 @@ import {
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import CalendarState from '../calendar/context/CalendarState';
 
-const Headings = ({ job, setJob }) => {
+interface Job {
+    details: {
+        company: string;
+        position: string;
+        location: string;
+        description: string;
+        link: string;
+        salary: string;
+    };
+
+    notes: string;
+    deadlines: {
+        title: string;
+        date: number;
+        location: string;
+    }[];
+    interviewQuestions: {
+        name: string;
+        description: string;
+    }[];
+    contacts: {
+        name: string;
+        title: string;
+        company: string;
+        email: string;
+        phone: string;
+        linkedin: string;
+        notes: string;
+    }[];
+
+    status: {
+        stage: number;
+        awaitingResponse: boolean;
+        priority: string;
+    };
+}
+
+const Headings = ({ job: Job, setJob }) => {
     return (
         <>
             <Input
@@ -76,7 +113,7 @@ const Headings = ({ job, setJob }) => {
     );
 };
 
-const Details = ({ value, index, job, setJob }) => {
+const Details = ({ value, index, job: Job, setJob }) => {
     return (
         <div
             style={{
@@ -117,7 +154,7 @@ const Details = ({ value, index, job, setJob }) => {
     );
 };
 
-const Notes = ({ value, index, job, setJob }) => {
+const Notes = ({ value, index, job: Job, setJob }) => {
     return (
         <div
             style={{
@@ -142,7 +179,7 @@ const Notes = ({ value, index, job, setJob }) => {
     );
 };
 
-const Deadlines = ({ value, index, job, setJob }) => {
+const Deadlines = ({ value, index, job: Job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({ date: null, position: '' });
 
@@ -187,7 +224,7 @@ const Deadlines = ({ value, index, job, setJob }) => {
     );
 };
 
-const Questions = ({ value, index, job, setJob }) => {
+const Questions = ({ value, index, job: Job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState('');
 
@@ -275,7 +312,7 @@ const Questions = ({ value, index, job, setJob }) => {
     );
 };
 
-const Contacts = ({ value, index, job, setJob }) => {
+const Contacts = ({ value, index, job: Job, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState('');
 
@@ -350,8 +387,8 @@ const Contacts = ({ value, index, job, setJob }) => {
     );
 };
 
-export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
-    const [job, setJob] = useState({
+export default function JobDialog({ jobData: Job, isEdit, setOpen, state, setState, index }) {
+    const [job, setJob] = useState<JobStructure>({
         details: {
             company: '',
             position: '',
