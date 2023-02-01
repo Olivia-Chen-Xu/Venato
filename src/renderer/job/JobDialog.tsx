@@ -36,7 +36,7 @@ const Headings = ({ job, setJob }) => {
             <Input
                 className="focus-only"
                 placeholder="Job Title"
-                value={job.info.position}
+                value={job.details.position}
                 onChange={(e) => {
                     setJob({ ...job, position: e.target.value });
                 }}
@@ -46,7 +46,7 @@ const Headings = ({ job, setJob }) => {
                 <Input
                     placeholder="Company"
                     style={styles.Company}
-                    value={job.info.company}
+                    value={job.details.company}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, company: e.target.value });
@@ -59,7 +59,7 @@ const Headings = ({ job, setJob }) => {
                 />
                 <Input
                     placeholder="Location"
-                    value={job.info.location}
+                    value={job.details.location}
                     disableUnderline
                     onChange={(e) => {
                         setJob({ ...job, location: e.target.value });
@@ -352,25 +352,24 @@ const Contacts = ({ value, index, job, setJob }) => {
 
 export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
     const [job, setJob] = useState({
-        info: {
+        details: {
             company: '',
             position: '',
             location: '',
-        },
-
-        details: {
             description: '',
             link: '',
             salary: '',
         },
+
         notes: '',
         deadlines: [],
         interviewQuestions: [],
         contacts: [],
 
-        metadata: {
+        status: {
             stage: index,
             awaitingResponse: false,
+            priority: '',
         },
     });
 
@@ -419,7 +418,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     useEffect(() => {
         setJob(jobData ? jobData : { ...job, stage: index });
-        console.log(job.stage);
+        console.log(job.status.stage);
     }, [jobData]);
 
     return (

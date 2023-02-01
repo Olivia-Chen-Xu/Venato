@@ -160,8 +160,6 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
         }
     }
 
-    functions.logger.log(`Data: ${JSON.stringify(data)} | Context: ${JSON.stringify(context)} | BoardId: ${boardId}`);
-
     return getCollection('jobs')
         .where('metaData.userId', '==', context.auth.uid)
         .where('metaData.boardId', '==', boardId)
@@ -171,7 +169,7 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
 
             return query.docs.map((job) => {
                 const { metaData: foo, ...jobData } = job.data();
-                return jobData;
+                return { ...jobData, id: job.id };
             });
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
