@@ -15,7 +15,10 @@ interface Job {
         date: number;
         location: string;
     }[];
-    interviewQuestions: { name: string; description: string }[];
+    interviewQuestions: {
+        name: string;
+        description: string;
+    }[];
     contacts: {
         name: string;
         title: string;
@@ -29,6 +32,7 @@ interface Job {
     status: {
         stage: number;
         awaitingResponse: boolean;
+        priority: string;
     };
 }
 
@@ -378,6 +382,18 @@ const generateJobs = async (num: number) => {
         };
         contacts.push(newContact);
     });
+    const getRandomPriority = () => {
+        const rand = Math.random();
+        if (rand < 0.25) {
+            return 'High';
+        } else if (rand < 0.5) {
+            return 'Medium';
+        } else if (rand < 0.75) {
+            return 'Low';
+        } else {
+            return '';
+        }
+    };
 
     const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
     const jobs: Job[] = [];
@@ -405,6 +421,7 @@ const generateJobs = async (num: number) => {
             status: {
                 stage: Math.floor(Math.random() * 4),
                 awaitingResponse: Math.random() < 0.5,
+                priority: getRandomPriority(),
             },
 
             metaData: {
