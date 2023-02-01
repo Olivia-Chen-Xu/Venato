@@ -14,6 +14,7 @@ interface Job {
         title: string;
         date: number;
         location: string;
+        link: string;
     }[];
     interviewQuestions: {
         name: string;
@@ -264,21 +265,33 @@ const jobPositions = [
 // Add example jobs
 const generateJobs = async (num: number) => {
     const generateDeadlines = () => {
-        const deadlines: { title: string; date: number; location: string }[] = [];
+        const deadlines: {
+            title: string;
+            date: number;
+            location: string;
+            link: string;
+        }[] = [];
 
         const generateDeadline = (title: string, day: number) => {
             const month = Math.floor(Math.random() * 4);
-            const hours = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 9 : Math.floor(Math.random() * 4) + 13;
+            const hours =
+                Math.random() < 0.5
+                    ? Math.floor(Math.random() * 3) + 9
+                    : Math.floor(Math.random() * 4) + 13;
             const minutes = Math.random() < 0.3 ? 30 : 0;
-            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getDate();
 
             const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
+            const link = `https://queensu.zoom.us/j/${[...Array(11)]
+                .map(() => Math.floor(Math.random() * 10))
+                .join(``)}`;
 
-            deadlines.push({ title, date, location });
+            deadlines.push({ title, date, location, link });
         };
 
         const numDeadlines = Math.floor(Math.random() * 3) + 1;
-        let title, day;
+        let title;
+        let day;
         switch (numDeadlines) {
             case 1:
                 title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
@@ -311,7 +324,7 @@ const generateJobs = async (num: number) => {
 
                 break;
             default:
-                throw `Invalid num deadlines: ${numDeadlines}`;
+                throw new Error(`Invalid num deadlines: ${numDeadlines}`);
         }
         return deadlines;
     };
@@ -372,12 +385,14 @@ const generateJobs = async (num: number) => {
     contactNames.forEach((contact) => {
         const newContact = {
             name: contact.name,
+            // eslint-disable-next-line no-bitwise
             title: jobPositions[~~(Math.random() * jobPositions.length)]
                 .replace('Intern', '')
                 .trimEnd(),
             email: `${contact.name.toLowerCase().replace(' ', '.')}@gmail.com`,
             phone: Math.floor(Math.random() * 10000000000) < 1000000000 ? `0${num}` : `${num}`,
             linkedin: contact.linkedin,
+            // eslint-disable-next-line no-bitwise
             notes: Math.random() < 0.7 ? contactNotes[~~(Math.random() * contactNotes.length)] : '',
         };
         contacts.push(newContact);
@@ -386,28 +401,33 @@ const generateJobs = async (num: number) => {
         const rand = Math.random();
         if (rand < 0.25) {
             return 'High';
-        } else if (rand < 0.5) {
-            return 'Medium';
-        } else if (rand < 0.75) {
-            return 'Low';
-        } else {
-            return '';
         }
+        if (rand < 0.5) {
+            return 'Medium';
+        }
+        if (rand < 0.75) {
+            return 'Low';
+        }
+        return '';
     };
 
     const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
     const jobs: Job[] = [];
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
         const job = {
             details: {
                 company: companies[company],
+                // eslint-disable-next-line no-bitwise
                 position: jobPositions[~~(Math.random() * jobPositions.length)],
+                // eslint-disable-next-line no-bitwise
                 location: locations[~~(Math.random() * locations.length)],
                 description: descriptions[company],
                 link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
                 salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
             },
+            // eslint-disable-next-line no-bitwise
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
             deadlines: generateDeadlines(),
             interviewQuestions: [...questions]
