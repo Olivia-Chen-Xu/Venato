@@ -173,7 +173,11 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
             });
             const boardName = await getDoc(`boards/${boardId}`)
                 .get()
-                .then((doc) => doc.data().name);
+                .then((doc) => {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    return doc.data().name;
+                });
             return { name: boardName, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
