@@ -93,6 +93,13 @@ const addJobs = functions.https.onCall(
 const addJob = functions.https.onCall(async (data: string, context: any) => {
     await verifyDocPermission(context, `boards/${data}`);
 
+    if (!data || Object.prototype.toString.call(data) !== '[object String]') {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide a board id (string)'
+        );
+    }
+
     const defaultJob = {
         details: {
             position: '',
@@ -115,6 +122,7 @@ const addJob = functions.https.onCall(async (data: string, context: any) => {
 
         metaData: {
             userId: context.auth.uid,
+            boardId: data,
         },
     };
 

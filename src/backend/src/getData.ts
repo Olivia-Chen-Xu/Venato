@@ -222,7 +222,7 @@ const getKanbanBoard = functions.https.onCall(async (data: any, context: any) =>
                     // @ts-ignore
                     return doc.data().name;
                 });
-            return { name: boardName, jobs };
+            return { name: boardName, id: boardId, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
