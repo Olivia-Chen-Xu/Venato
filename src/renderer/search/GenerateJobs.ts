@@ -283,7 +283,7 @@ const generateJobs = async (num: number) => {
                     ? Math.floor(Math.random() * 3) + 9
                     : Math.floor(Math.random() * 4) + 13;
             const minutes = Math.random() < 0.3 ? 30 : 0;
-            const date = new Date(2023, month, day, hours, minutes, 0, 0).getDate();
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
             const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
             const link = `https://queensu.zoom.us/j/${[...Array(11)]
