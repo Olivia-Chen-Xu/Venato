@@ -141,22 +141,36 @@ const updateJob = functions.https.onCall(
         }
         await verifyDocPermission(context, `jobs/${data.id}`);
 
-        let updatePromise: Promise<FirebaseFirestore.WriteResult>;
+        const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
         switch (data.tab) {
             case 1:
-                updatePromise = getDoc(`jobs/${data.id}`).update(data.newFields);
+                updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
                 break;
             case 2:
-                updatePromise = getDoc(`jobs/${data.id}`).update({ notes: data.newFields });
+                updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
                 break;
             case 3:
-                updatePromise = getDoc(`jobs/${data.id}`).update({ deadlines: data.newFields });
+                data.newFields.forEach((deadline) => {
+                    if (deadline.edited) {
+                        updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
+                    }
+                });
                 break;
             case 4:
-                updatePromise = getDoc(`jobs/${data.id}`).update({ interviewQuestions: data.newFields });
+                data.newFields.forEach((question) => {
+                    if (question.edited) {
+                        updatePromises.push(
+                            getDoc(`interviewQuestions/${question.id}`).update(question)
+                        );
+                    }
+                });
                 break;
             case 5:
-                updatePromise = getDoc(`jobs/${data.id}`).update({ contacts: data.newFields });
+                data.newFields.forEach((contact) => {
+                    if (contact.edited) {
+                        updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
+                    }
+                });
                 break;
             default:
                 throw new functions.https.HttpsError(
@@ -165,7 +179,9 @@ const updateJob = functions.https.onCall(
                 );
         }
 
-        return updatePromise.then().catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
+        return Promise.all(updatePromises)
+            .then(() => `Successfully updated job '${data.id}`)
+            .catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
     }
 );
 
