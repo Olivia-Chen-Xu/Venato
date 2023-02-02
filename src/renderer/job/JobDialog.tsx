@@ -102,7 +102,10 @@ const Details = ({ value, index, jobData, setJob }) => {
                     placeholder="Job Title"
                     value={jobData.details.position}
                     onChange={(e) => {
-                        setJob({ ...jobData, details: { ...jobData.details, position: e.target.value } });
+                        setJob({
+                            ...jobData,
+                            details: { ...jobData.details, position: e.target.value },
+                        });
                     }}
                     style={styles.jobTitle}
                 />
@@ -161,7 +164,10 @@ const Details = ({ value, index, jobData, setJob }) => {
                 rows={10}
                 value={jobData.details.description}
                 onChange={(e) => {
-                    setJob({ ...jobData, details: { ...jobData.details, description: e.target.value } });
+                    setJob({
+                        ...jobData,
+                        details: { ...jobData.details, description: e.target.value },
+                    });
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
@@ -203,7 +209,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         link: '',
     });
     const addNewDdl = () => {
-        setJob({ ...jobData, interviewQuestions: [newDdl, ...jobData.deadlines] });
+        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
         setOpen(false);
         setNewDdl({ title: '', date: null, time: null, location: '', link: '' });
     };
@@ -541,6 +547,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         const newState = [...state];
         // Extract id from job
         const { id } = job;
+        console.log(id);
         const jobCopy = structuredClone(job);
         delete jobCopy.id;
 
@@ -569,10 +576,15 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     useEffect(() => {
-        setJob(jobData || { ...job, stage: index });
+        const fetchJob = async () => {
+            setJob(jobData || { ...job, stage: index });
+            if (jobData) {
+            }
+        };
+        fetchJob();
     }, [jobData]);
 
-    console.log(JSON.stringify(job, null, 4));
+    //console.log(JSON.stringify(job, null, 4));
     return (
         <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
             <DialogContent
