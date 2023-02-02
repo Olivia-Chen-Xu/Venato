@@ -253,12 +253,6 @@ const deleteJob = functions.https.onCall(async (data: { id: string }, context: a
     return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
 });
 
-// Adds an empty job board to firestore
-const addJobBoard = functions.https.onCall((data: { name: string }, context: any) => {
-    verifyIsAuthenticated(context);
-    return getCollection('boards').add({ jobs: [], name: data.name, userID: context.auth.uid });
-});
-
 // Set the current kanban board for the user
 const setKanbanBoard = functions.https.onCall(async (data: string, context: any) => {
     if (!data || Object.prototype.toString.call(data) !== '[object String]') {
@@ -276,6 +270,5 @@ export {
     updateJob,
     dragKanbanJob,
     deleteJob,
-    addJobBoard,
     setKanbanBoard,
 };
