@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import { getDoc, getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -164,13 +164,17 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
         .where('metaData.userId', '==', context.auth.uid)
         .where('metaData.boardId', '==', boardId)
         .get()
-        .then((query) => {
+        .then(async (query) => {
             if (query.empty) return [];
 
-            return query.docs.map((job) => {
+            const jobs = query.docs.map((job) => {
                 const { metaData: foo, ...jobData } = job.data();
                 return { ...jobData, id: job.id };
             });
+            const boardName = await getDoc(`boards/${boardId}`)
+                .get()
+                .then((doc) => doc.data().name);
+            return { name: boardName, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
