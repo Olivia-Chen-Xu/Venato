@@ -88,11 +88,36 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall((data: object, context: any) => {
+const addJob = functions.https.onCall((data: null, context: any) => {
     verifyIsAuthenticated(context);
 
+    const defaultJob = {
+        details: {
+            position: '',
+            company: '',
+            description: '',
+            salary: '',
+            location: '',
+            link: '',
+        },
+        notes: '',
+        deadlines: [],
+        interviewQuestions: [],
+        contacts: [],
+
+        status: {
+            stage: 0,
+            awaitingResponse: false,
+            priority: '',
+        },
+
+        metaData: {
+            userId: context.auth.uid,
+        },
+    };
+
     return getCollection('jobs')
-        .add(data)
+        .add(defaultJob)
         .then((docRef) => docRef.id)
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
