@@ -387,6 +387,7 @@ const generateJobs = async (num: number) => {
         'They are a friend of a friend of a friend of a friend of a friend of a friend of a friend',
     ];
     contactNames.forEach((contact) => {
+        const randomPhone = Math.floor(Math.random() * 10000000000);
         const newContact = {
             name: contact.name,
             // eslint-disable-next-line no-bitwise
@@ -394,7 +395,7 @@ const generateJobs = async (num: number) => {
                 .replace('Intern', '')
                 .trimEnd(),
             email: `${contact.name.toLowerCase().replace(' ', '.')}@gmail.com`,
-            phone: Math.floor(Math.random() * 10000000000) < 1000000000 ? `0${num}` : `${num}`,
+            phone: randomPhone < 1000000000 ? `0${randomPhone}` : `${randomPhone}`,
             linkedin: contact.linkedin,
             // eslint-disable-next-line no-bitwise
             notes: Math.random() < 0.7 ? contactNotes[~~(Math.random() * contactNotes.length)] : '',
