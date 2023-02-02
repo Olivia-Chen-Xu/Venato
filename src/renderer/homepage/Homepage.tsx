@@ -37,6 +37,7 @@ const Homepage = () => {
                     <button
                         className="relative w-full h-full py-16"
                         onClick={async () => {
+                            console.log(JSON.stringify(board, null, 4));
                             await httpsCallable(getFunctions(), 'setKanbanBoard')(board.id);
                             nav('/kanban');
                         }}
