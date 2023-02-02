@@ -15,7 +15,7 @@ import {
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
 const getJobBoards = (uid: string) => {
     return getCollection(`boards`)
-        .where('userId', '==', uid)
+        .where('metaData.userId', '==', uid)
         .get()
         .then((boards) => {
             if (boards.empty) {
@@ -74,6 +74,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const { metaData: foo, ...jobData } = doc.data();
+            jobData.id = doc.id;
             return jobData;
         });
 
@@ -102,7 +103,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
 
     promises.push(
         getCollection(`contacts`)
-            .where('metadata.jobId', '==', data.jobId)
+            .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((contacts) => {
                 job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => doc.data());
@@ -189,7 +190,7 @@ const getKanbanBoard = functions.https.onCall(async (data: any, context: any) =>
                 return result.data().kanbanBoard;
             }
             const randomBoardId = await getCollection('boards')
-                .where('userId', '==', context.auth.uid)
+                .where('metaData.userId', '==', context.auth.uid)
                 .get()
                 .then((res) => {
                     if (res.empty) return null;
@@ -222,7 +223,7 @@ const getKanbanBoard = functions.https.onCall(async (data: any, context: any) =>
                     // @ts-ignore
                     return doc.data().name;
                 });
-            return { name: boardName, jobs };
+            return { name: boardName, id: boardId, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });

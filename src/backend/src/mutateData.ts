@@ -69,7 +69,9 @@ const addJobs = functions.https.onCall(
                 const boardId = await getCollection('boards')
                     .add({
                         name,
-                        userId: data.users[i],
+                        metaData: {
+                            userId: data.users[i],
+                        },
                     })
                     .then((doc) => doc.id);
 
@@ -88,8 +90,15 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall((data: null, context: any) => {
-    verifyIsAuthenticated(context);
+const addJob = functions.https.onCall(async (data: string, context: any) => {
+    await verifyDocPermission(context, `boards/${data}`);
+
+    if (!data || Object.prototype.toString.call(data) !== '[object String]') {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide a board id (string)'
+        );
+    }
 
     const defaultJob = {
         details: {
@@ -113,6 +122,7 @@ const addJob = functions.https.onCall((data: null, context: any) => {
 
         metaData: {
             userId: context.auth.uid,
+            boardId: data,
         },
     };
 
@@ -133,19 +143,21 @@ const addJobObject = functions.https.onCall(
                 `Invalid type provided: '${data.type}'`
             );
         }
+        const obj = {
+            ...data.data,
+            metaData: {
+                userId: context.auth.uid,
+                jobId: data.id,
+            },
+        };
 
         return getCollection(`${data.type}`)
-            .add(data.data)
-            .then(
-                () =>
-                    `Added ${data.type} to database for job '${data.id}':  ${JSON.stringify(
-                        data.data
-                    )}`
-            )
+            .add(obj)
+            .then((result) => result.id)
             .catch(
                 (e) =>
                     `Failed to add ${data.type} to database for job '${data.id}':  ${JSON.stringify(
-                        data.data
+                        obj
                     )}, error was: ${JSON.stringify(e)}`
             );
     }
@@ -251,23 +263,14 @@ const deleteJob = functions.https.onCall(async (data: { id: string }, context: a
     return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
 });
 
-// Adds an empty job board to firestore
-const addJobBoard = functions.https.onCall((data: { name: string }, context: any) => {
-    verifyIsAuthenticated(context);
-    return getCollection('boards').add({ jobs: [], name: data.name, userID: context.auth.uid });
-});
-
 // Set the current kanban board for the user
-const setKanbanBoard = functions.https.onCall(async (data: { id: string }, context: any) => {
-    if (!data || !data.id) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'A board id is required'
-        );
+const setKanbanBoard = functions.https.onCall(async (data: string, context: any) => {
+    if (!data || Object.prototype.toString.call(data) !== '[object String]') {
+        throw new functions.https.HttpsError('invalid-argument', 'A board id is required');
     }
-    await verifyDocPermission(context, `boards/${data.id}`);
+    await verifyDocPermission(context, `boards/${data}`);
 
-    return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data.id });
+    return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data });
 });
 
-export { addJobs, addJob, addJobObject, updateJob, dragKanbanJob, deleteJob, addJobBoard, setKanbanBoard };
+export { addJobs, addJob, addJobObject, updateJob, dragKanbanJob, deleteJob, setKanbanBoard };

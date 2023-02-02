@@ -32,6 +32,7 @@ const GlobalContext = React.createContext({
 });
 */
 
+// depreciated
 class CalendarState {
     static monthIndex: number = 0;
 
@@ -90,4 +91,4 @@ class CalendarState {
     static events: { [date: string]: { id: string; title: string }[] } = {};
 }
 
-export default CalendarState;
+// export default CalendarState;
