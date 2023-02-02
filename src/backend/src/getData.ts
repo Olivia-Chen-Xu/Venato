@@ -83,12 +83,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((deadlines) => {
-                job.deadlines = deadlines.empty
-                    ? []
-                    : deadlines.docs.map((doc) => {
-                          const { metaData: foo, ...deadline } = doc.data();
-                          return deadline;
-                      });
+                job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => doc.data());
                 return null;
             })
     );
@@ -100,10 +95,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .then((questions) => {
                 job.interviewQuestions = questions.empty
                     ? []
-                    : questions.docs.map((doc) => {
-                          const { metaData: foo, ...question } = doc.data();
-                          return question;
-                      });
+                    : questions.docs.map((doc) => doc.data());
                 return null;
             })
     );
@@ -113,12 +105,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metadata.jobId', '==', data.jobId)
             .get()
             .then((contacts) => {
-                job.contacts = contacts.empty
-                    ? []
-                    : contacts.docs.map((doc) => {
-                          const { metaData: foo, ...contact } = doc.data();
-                          return contact;
-                      });
+                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => doc.data());
                 return null;
             })
     );
