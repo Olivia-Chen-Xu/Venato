@@ -88,8 +88,8 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall((data: null, context: any) => {
-    verifyIsAuthenticated(context);
+const addJob = functions.https.onCall(async (data: string, context: any) => {
+    await verifyDocPermission(context, `boards/${data}`);
 
     const defaultJob = {
         details: {
