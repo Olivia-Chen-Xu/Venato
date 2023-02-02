@@ -101,7 +101,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         }) => {
             const newContact = {
                 ...contact,
-                metadata: {
+                metaData: {
                     userId: data.metaData.userId,
                     jobId: docId,
                 },
