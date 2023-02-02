@@ -30,8 +30,8 @@ import {
     AddCircleOutline,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import CalendarState from '../calendar/context/CalendarState';
 import { DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import CalendarState from '../calendar/context/CalendarState';
 
 const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
@@ -105,7 +105,7 @@ const Details = ({ value, index, job: Job, setJob }) => {
                         setJob({ ...job, details: { ...job.details, position: e.target.value } });
                     }}
                     style={styles.jobTitle}
-                ></Input>
+                />
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Input
                         placeholder="Company"
@@ -153,7 +153,7 @@ const Details = ({ value, index, job: Job, setJob }) => {
                     disableUnderline: true, // <== added this
                 }}
             />
-            <br></br>
+            <br />
             <TextField
                 label="Job details"
                 style={styles.jobDescription}
@@ -221,7 +221,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                 height: '100%',
             }}
         >
-            <br></br>
+            <br />
             <Button
                 variant="contained"
                 onClick={() => setOpen(true)}
@@ -229,8 +229,8 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
             >
                 Add Deadline
             </Button>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
             {job.deadlines &&
                 job.deadlines.map((deadline) => (
                     <div>
@@ -267,7 +267,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                             onChange={(e) => setNewDdl({ ...newDdl, date: e.target.value })}
                             renderInput={(params) => <TextField {...params} />}
                         />
-                        <br></br>
+                        <br />
                         <p>Time</p>
                         <TimePicker
                             label="Time"
@@ -287,7 +287,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                         }}
                     />
                     <p>Date</p>
-                    <br></br>
+                    <br />
                     <p>Link to meeting (if applicable)</p>
                     <TextField
                         label="Link"
@@ -350,7 +350,7 @@ const Questions = ({ value, index, job: Job, setJob }) => {
                             setNewQuestion({ ...newQuestion, name: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Enter question description</p>
                     <TextField
                         label="Interview Question"
@@ -360,15 +360,15 @@ const Questions = ({ value, index, job: Job, setJob }) => {
                             setNewQuestion({ ...newQuestion, description: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
 
                     <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
 
             {job.interviewQuestions &&
                 /* job.interviewQuestions.map((question: string) => (
@@ -453,7 +453,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, name: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Job title</p>
                     <TextField
                         label="Job title"
@@ -463,7 +463,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, title: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Company</p>
                     <TextField
                         label="Company"
@@ -473,7 +473,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, company: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Link to LinkedIn</p>
                     <TextField
                         label="Link to LinkedIn"
@@ -483,7 +483,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, linkedin: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
                         Add
                     </Button>
@@ -569,11 +569,12 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     useEffect(() => {
-        setJob(jobData ? jobData : { ...job, stage: index });
+        setJob(jobData || { ...job, stage: index });
     }, [jobData]);
 
+    console.log(JSON.stringify(job, null, 4));
     return (
-        <Dialog fullWidth maxWidth={'xl'} open={true} onClose={handleClose}>
+        <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
             <DialogContent
                 style={{
                     display: 'flex',
@@ -582,7 +583,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     height: 800,
                 }}
             >
-                <Headings job={job} setJob={setJob}></Headings>
+                <Headings job={job} setJob={setJob} />
                 <Tabs
                     variant="scrollable"
                     value={tabValue}
@@ -599,15 +600,13 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     <Tab icon={<QuizOutlined />} iconPosition="end" label="Interview Questions" />
                     <Tab icon={<ContactPageOutlined />} iconPosition="end" label="Contacts" />
                 </Tabs>
-                <Details value={tabValue} index={0} job={job} setJob={setJob}></Details>
-                <Notes value={tabValue} index={1} job={job} setJob={setJob}></Notes>
-                <Deadlines value={tabValue} index={2} job={job} setJob={setJob}></Deadlines>
-                <Questions value={tabValue} index={3} job={job} setJob={setJob}></Questions>
-                <Contacts value={tabValue} index={4} job={job} setJob={setJob}></Contacts>
+                <Details value={tabValue} index={0} job={job} setJob={setJob} />
+                <Notes value={tabValue} index={1} job={job} setJob={setJob} />
+                <Deadlines value={tabValue} index={2} job={job} setJob={setJob} />
+                <Questions value={tabValue} index={3} job={job} setJob={setJob} />
+                <Contacts value={tabValue} index={4} job={job} setJob={setJob} />
                 {loading ? (
-                    <CircularProgress
-                        style={{ position: 'absolute', right: 30 }}
-                    ></CircularProgress>
+                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
                 ) : (
                     <div style={{ position: 'absolute', right: 50, top: 20 }}>
                         <Button
