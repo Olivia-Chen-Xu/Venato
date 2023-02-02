@@ -103,7 +103,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
 
     promises.push(
         getCollection(`contacts`)
-            .where('metadata.jobId', '==', data.jobId)
+            .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((contacts) => {
                 job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => doc.data());
