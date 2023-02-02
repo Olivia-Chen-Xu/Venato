@@ -189,7 +189,7 @@ const getKanbanBoard = functions.https.onCall(async (data: any, context: any) =>
                 return result.data().kanbanBoard;
             }
             const randomBoardId = await getCollection('boards')
-                .where('userId', '==', context.auth.uid)
+                .where('metaData.userId', '==', context.auth.uid)
                 .get()
                 .then((res) => {
                     if (res.empty) return null;
