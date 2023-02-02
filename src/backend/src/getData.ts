@@ -1,5 +1,11 @@
 import * as functions from 'firebase-functions';
-import { getDoc, getCollection, getRelativeTimestamp, verifyIsAuthenticated } from './helpers';
+import {
+    getDoc,
+    getCollection,
+    getRelativeTimestamp,
+    verifyIsAuthenticated,
+    verifyDocPermission,
+} from './helpers';
 
 /**
  * Callable functions for getting data from firestore
@@ -15,9 +21,105 @@ const getJobBoards = (uid: string) => {
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 };
 
-const getJobDeadlines = (jobId: string) => {
+// Returns the next 3 job events for the currently signed-in user
+const getUpcomingEvents = async (uid: string) => {
+    return getCollection('deadlines')
+        .where('metaData.userId', '==', uid)
+        .where('date', '>=', getRelativeTimestamp(0))
+        .orderBy('date')
+        .limit(3)
+        .get()
+        .then((snapshot) => {
+            if (snapshot.empty) return [];
+
+            return snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    location: data.location,
+                    // eslint-disable-next-line no-underscore-dangle
+                    date: data.date._seconds,
+                    title: data.title,
+                    company: data.company,
+                };
+            });
+        })
+        .catch((err) => `Error fetching upcoming events: ${err}`);
+};
+
+const getJobData = functions.https.onCall(async (data: { jobId: string }, context: any) => {
+    if (!data || !data.jobId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'The function must be called with a jobId'
+        );
+    }
+
+    await verifyDocPermission(context, `jobs/${data.jobId}`);
+
+    const job = await getDoc(`jobs/${data.jobId}`)
+        .get()
+        .then((doc) => {
+            if (!doc.exists) {
+                throw new functions.https.HttpsError('not-found', 'Job not found');
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const { metaData: foo, ...jobData } = doc.data();
+            return jobData;
+        });
+
+    const promises = [];
+    promises.push(
+        getCollection(`deadlines`)
+            .where('metaData.jobId', '==', data.jobId)
+            .get()
+            .then((deadlines) => {
+                const deadlineData = deadlines.empty
+                    ? []
+                    : deadlines.docs.map((doc) => {
+                          const { metaData: foo, ...deadline } = doc.data();
+                          return deadline;
+                      });
+                job.deadlines = deadlineData;
+                return null;
+            })
+    );
+
+    promises.push(
+        getCollection(`interviewQuestions`)
+            .where('metaData.jobId', '==', data.jobId)
+            .get()
+            .then((questions) => {
+                const questionData = questions.empty
+                    ? []
+                    : questions.docs.map((doc) => {
+                          const { metaData: foo, ...question } = doc.data();
+                          return question;
+                      });
+                job.deadlines = questionData;
+                return null;
+            })
+    );
+
+    promises.push(
+        getCollection(`contacts`)
+            .where('metadata.jobId', '==', data.jobId)
+            .get()
+            .then((contacts) => {
+                if (contacts.empty) return [];
+
+                return contacts.docs.map((doc) => {
+                    const { metaData: foo, ...contact } = doc.data();
+                    return contact;
+                });
+                return null;
+            })
+    );
+});
+
+const getJobDeadlines = functions.https.onCall((data: { jobId: string }, context: any) => {
     return getCollection(`deadlines`)
-        .where('metaData.jobId', '==', jobId)
+        .where('metaData.jobId', '==', data.jobId)
         .get()
         .then((deadlines) => {
             if (deadlines.empty) return [];
@@ -28,11 +130,11 @@ const getJobDeadlines = (jobId: string) => {
             });
         })
         .catch((err) => `Error fetching job deadlines: ${err}`);
-};
+});
 
-const getJobInterviewQuestions = (jobId: string) => {
+const getJobInterviewQuestions = functions.https.onCall((data: { jobId: string }, context: any) => {
     return getCollection(`interviewQuestions`)
-        .where('metaData.jobId', '==', jobId)
+        .where('metaData.jobId', '==', data.jobId)
         .get()
         .then((questions) => {
             if (questions.empty) return [];
@@ -43,11 +145,11 @@ const getJobInterviewQuestions = (jobId: string) => {
             });
         })
         .catch((err) => `Error fetching job interview questions: ${err}`);
-};
+});
 
-const getJobContacts = (jobId: string) => {
+const getJobContacts = functions.https.onCall((data: { jobId: string }, context: any) => {
     return getCollection(`contacts`)
-        .where('metadata.jobId', '==', jobId)
+        .where('metadata.jobId', '==', data.jobId)
         .get()
         .then((contacts) => {
             if (contacts.empty) return [];
@@ -58,8 +160,9 @@ const getJobContacts = (jobId: string) => {
             });
         })
         .catch((err) => `Error fetching job contacts: ${err}`);
-};
+});
 
+/*
 // Gets all jobs for the current user
 const getUserJobs = async (uid: string) => {
     const jobs = await getCollection('jobs')
@@ -107,31 +210,7 @@ const getUserJobs = async (uid: string) => {
         .then(() => jobs)
         .catch((err) => functions.logger.log(`Error fetching user jobs: ${err}`));
 };
-
-// Returns the next 3 job events for the currently signed-in user
-const getUpcomingEvents = async (uid: string) => {
-    return getCollection('deadlines')
-        .where('metaData.userId', '==', uid)
-        .where('date', '>=', getRelativeTimestamp(0))
-        .orderBy('date')
-        .limit(3)
-        .get()
-        .then((snapshot) => {
-            if (snapshot.empty) return [];
-
-            return snapshot.docs.map((doc) => {
-                const data = doc.data();
-                return {
-                    location: data.location,
-                    // eslint-disable-next-line no-underscore-dangle
-                    date: data.date._seconds,
-                    title: data.title,
-                    company: data.company,
-                };
-            });
-        })
-        .catch((err) => `Error fetching upcoming events: ${err}`);
-};
+*/
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
 const getHomepageData = functions.https.onCall((data: object, context: any) => {
@@ -143,21 +222,35 @@ const getHomepageData = functions.https.onCall((data: object, context: any) => {
 });
 
 // Gets all the jobs for a given kanban board
-const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, context: any) => {
-    let boardId: string | null = data ? data.boardId : null;
+const getKanbanBoard = functions.https.onCall(async (data: any, context: any) => {
+    const boardId = await getDoc(`users/${context.auth.uid}`)
+        .get()
+        .then(async (result) => {
+            if (!result.exists) {
+                throw new functions.https.HttpsError('not-found', 'User not found');
+            }
 
-    // If no board id is provided, get the first board for the user
-    if (!boardId) {
-        boardId = await getCollection('boards')
-            .where('userId', '==', context.auth.uid)
-            .get()
-            .then((result) => {
-                if (result.empty) return null;
-                return result.docs[0].id;
-            });
-        if (boardId == null) {
-            return null;
-        }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (result.data().kanbanBoard) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return result.data().kanbanBoard;
+            }
+            const randomBoardId = await getCollection('boards')
+                .where('userId', '==', context.auth.uid)
+                .get()
+                .then((res) => {
+                    if (res.empty) return null;
+                    return res.docs[0].id;
+                });
+            if (randomBoardId == null) {
+                return null;
+            }
+            return randomBoardId;
+        });
+    if (boardId == null) {
+        return null;
     }
 
     return getCollection('jobs')
@@ -183,12 +276,14 @@ const getKanbanBoard = functions.https.onCall(async (data: { boardId: string }, 
         .catch((err) => `Error getting kanban board with id ${data.boardId}: ${err}`);
 });
 
+/*
 // Returns all the jobs that belong to the currently signed-in user
 const getJobs = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getUserJobs(context.auth.uid);
 });
+*/
 
 // Returns all job deadlines for the currently signed-in user
 const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
@@ -342,9 +437,11 @@ const interviewQuestionsSearch = functions.https.onCall(
 );
 
 export {
+    getUpcomingEvents,
+    getJobDeadlines,
+    getJobContacts,
     getHomepageData,
     getKanbanBoard,
-    getJobs,
     getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
