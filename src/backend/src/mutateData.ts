@@ -124,9 +124,48 @@ const addJob = functions.https.onCall((data: null, context: any) => {
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
-    async (data: { id: string; newFields: object }, context: any) => {
+    async (data: { id: string; tab: number; newFields: object }, context: any) => {
+        // Verify params
+        let errMSg = '';
+        if (!data) {
+            errMSg = 'No data provided';
+        } else if (!data.id) {
+            errMSg = 'No job id provided';
+        } else if (!data.tab) {
+            errMSg = 'No tab number provided';
+        } else if (!data.newFields) {
+            errMSg = 'No new fields provided';
+        }
+        if (errMSg !== '') {
+            throw new functions.https.HttpsError('invalid-argument', errMSg);
+        }
         await verifyDocPermission(context, `jobs/${data.id}`);
-        return getDoc(`jobs/${data.id}`).update(data.newFields);
+
+        let updatePromise: Promise<FirebaseFirestore.WriteResult>;
+        switch (data.tab) {
+            case 1:
+                updatePromise = getDoc(`jobs/${data.id}`).update(data.newFields);
+                break;
+            case 2:
+                updatePromise = getDoc(`jobs/${data.id}`).update({ notes: data.newFields });
+                break;
+            case 3:
+                updatePromise = getDoc(`jobs/${data.id}`).update({ deadlines: data.newFields });
+                break;
+            case 4:
+                updatePromise = getDoc(`jobs/${data.id}`).update({ interviewQuestions: data.newFields });
+                break;
+            case 5:
+                updatePromise = getDoc(`jobs/${data.id}`).update({ contacts: data.newFields });
+                break;
+            default:
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'Tab number must an integer between 1 and 5 inclusive'
+                );
+        }
+
+        return updatePromise.then().catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
     }
 );
 
