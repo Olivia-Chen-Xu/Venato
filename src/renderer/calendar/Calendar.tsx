@@ -23,7 +23,7 @@ const Calendar = () => {
     const getDeadlines = useAsync(httpsCallable(getFunctions(), 'getCalendarDeadlines'), []);
 
     const [currentMonth, setCurrentMonth] = useState(getMonth());
-    const [monthIndex, setMonthIndex] = useState<number>(10);
+    const [monthIndex, setMonthIndex] = useState(1);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
