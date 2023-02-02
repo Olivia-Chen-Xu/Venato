@@ -15,7 +15,7 @@ import {
 // Gets all the job boards (name + list of jobs) for the currently signed-in user
 const getJobBoards = (uid: string) => {
     return getCollection(`boards`)
-        .where('userId', '==', uid)
+        .where('metaData.userId', '==', uid)
         .get()
         .then((boards) => {
             if (boards.empty) {
@@ -74,6 +74,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const { metaData: foo, ...jobData } = doc.data();
+            jobData.id = doc.id;
             return jobData;
         });
 
