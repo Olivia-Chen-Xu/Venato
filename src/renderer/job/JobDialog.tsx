@@ -30,8 +30,8 @@ import {
     AddCircleOutline,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import CalendarState from '../calendar/context/CalendarState';
 import { DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import CalendarState from '../calendar/context/CalendarState';
 
 const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
@@ -73,12 +73,12 @@ interface Job {
     };
 }
 
-const Headings = ({ job: Job, setJob }) => {
+const Headings = ({ jobData, setJob }) => {
     return (
         <>
-            <h1>{job.details.position}</h1>
-            <h3>{job.details.company}</h3>
-            <Select value={colTitles[job.status.stage]}>
+            <h1>{jobData.details.position}</h1>
+            <h3>{jobData.details.company}</h3>
+            <Select value={colTitles[jobData.status.stage]}>
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
                 ))}
@@ -87,7 +87,7 @@ const Headings = ({ job: Job, setJob }) => {
     );
 };
 
-const Details = ({ value, index, job: Job, setJob }) => {
+const Details = ({ value, index, jobData, setJob }) => {
     return (
         <div
             style={{
@@ -100,20 +100,20 @@ const Details = ({ value, index, job: Job, setJob }) => {
                 <Input
                     className="focus-only"
                     placeholder="Job Title"
-                    value={job.details.position}
+                    value={jobData.details.position}
                     onChange={(e) => {
-                        setJob({ ...job, details: { ...job.details, position: e.target.value } });
+                        setJob({ ...jobData, details: { ...jobData.details, position: e.target.value } });
                     }}
                     style={styles.jobTitle}
-                ></Input>
+                />
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <Input
                         placeholder="Company"
                         style={styles.Company}
-                        value={job.details.company}
+                        value={jobData.details.company}
                         disableUnderline
                         onChange={(e) => {
-                            setJob({ ...job, company: e.target.value });
+                            setJob({ ...jobData, company: e.target.value });
                         }}
                         startAdornment={
                             <InputAdornment position="start">
@@ -123,10 +123,10 @@ const Details = ({ value, index, job: Job, setJob }) => {
                     />
                     <Input
                         placeholder="Location"
-                        value={job.details.location}
+                        value={jobData.details.location}
                         disableUnderline
                         onChange={(e) => {
-                            setJob({ ...job, location: e.target.value });
+                            setJob({ ...jobData, location: e.target.value });
                         }}
                         style={styles.Location}
                         startAdornment={
@@ -137,31 +137,31 @@ const Details = ({ value, index, job: Job, setJob }) => {
                     />
                 </div>
             </>
-            <Select value={job.status.priority} label="Priority">
+            <Select value={jobData.status.priority} label="Priority">
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
             </Select>
             <TextField
                 label="Posting link"
-                value={job.details.link}
+                value={jobData.details.link}
                 style={styles.applicationLink}
                 onChange={(e) => {
-                    setJob({ ...job, details: { ...job.details, url: e.target.value } });
+                    setJob({ ...jobData, details: { ...jobData.details, url: e.target.value } });
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
                 }}
             />
-            <br></br>
+            <br />
             <TextField
                 label="Job details"
                 style={styles.jobDescription}
                 multiline
                 rows={10}
-                value={job.details.description}
+                value={jobData.details.description}
                 onChange={(e) => {
-                    setJob({ ...job, details: { ...job.details, description: e.target.value } });
+                    setJob({ ...jobData, details: { ...jobData.details, description: e.target.value } });
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
@@ -171,7 +171,7 @@ const Details = ({ value, index, job: Job, setJob }) => {
     );
 };
 
-const Notes = ({ value, index, job: Job, setJob }) => {
+const Notes = ({ value, index, jobData, setJob }) => {
     return (
         <div
             style={{
@@ -184,16 +184,16 @@ const Notes = ({ value, index, job: Job, setJob }) => {
                 label="Notes"
                 multiline
                 rows={10}
-                value={job.notes}
+                value={jobData.notes}
                 onChange={(e) => {
-                    setJob({ ...job, notes: e.target.value });
+                    setJob({ ...jobData, notes: e.target.value });
                 }}
             />
         </div>
     );
 };
 
-const Deadlines = ({ value, index, job: Job, setJob }) => {
+const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({
         title: '',
@@ -203,7 +203,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
         link: '',
     });
     const addNewDdl = () => {
-        setJob({ ...job, interviewQuestions: [newDdl, ...job.deadlines] });
+        setJob({ ...jobData, interviewQuestions: [newDdl, ...jobData.deadlines] });
         setOpen(false);
         setNewDdl({ title: '', date: null, time: null, location: '', link: '' });
     };
@@ -221,7 +221,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                 height: '100%',
             }}
         >
-            <br></br>
+            <br />
             <Button
                 variant="contained"
                 onClick={() => setOpen(true)}
@@ -229,10 +229,10 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
             >
                 Add Deadline
             </Button>
-            <br></br>
-            <br></br>
-            {job.deadlines &&
-                job.deadlines.map((deadline) => (
+            <br />
+            <br />
+            {jobData.deadlines &&
+                jobData.deadlines.map((deadline) => (
                     <div>
                         {' '}
                         <h2>{deadline.title}</h2>
@@ -267,7 +267,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                             onChange={(e) => setNewDdl({ ...newDdl, date: e.target.value })}
                             renderInput={(params) => <TextField {...params} />}
                         />
-                        <br></br>
+                        <br />
                         <p>Time</p>
                         <TimePicker
                             label="Time"
@@ -287,7 +287,7 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
                         }}
                     />
                     <p>Date</p>
-                    <br></br>
+                    <br />
                     <p>Link to meeting (if applicable)</p>
                     <TextField
                         label="Link"
@@ -307,12 +307,12 @@ const Deadlines = ({ value, index, job: Job, setJob }) => {
     );
 };
 
-const Questions = ({ value, index, job: Job, setJob }) => {
+const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState({ name: '', description: '' });
 
     const addNewQuestion = () => {
-        setJob({ ...job, interviewQuestions: [newQuestion, ...job.interviewQuestions] });
+        setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         setNewQuestion({ name: '', description: '' });
     };
@@ -350,7 +350,7 @@ const Questions = ({ value, index, job: Job, setJob }) => {
                             setNewQuestion({ ...newQuestion, name: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Enter question description</p>
                     <TextField
                         label="Interview Question"
@@ -360,17 +360,17 @@ const Questions = ({ value, index, job: Job, setJob }) => {
                             setNewQuestion({ ...newQuestion, description: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
 
                     <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
-            <br></br>
-            <br></br>
+            <br />
+            <br />
 
-            {job.interviewQuestions &&
+            {jobData.interviewQuestions &&
                 /* job.interviewQuestions.map((question: string) => (
                     <li>
                         <a
@@ -382,7 +382,7 @@ const Questions = ({ value, index, job: Job, setJob }) => {
                             {question}
                         </a>
                     </li> */
-                job.interviewQuestions.map((question) => (
+                jobData.interviewQuestions.map((question) => (
                     <div style={{ marginBottom: 10 }}>
                         <h2>{question.name}</h2>
                         <p>{question.description}</p>
@@ -392,7 +392,7 @@ const Questions = ({ value, index, job: Job, setJob }) => {
     );
 };
 
-const Contacts = ({ value, index, job: Job, setJob }) => {
+const Contacts = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState({
         name: '',
@@ -405,7 +405,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
     });
 
     const addNewContact = () => {
-        setJob({ ...job, contacts: [newContact, ...job.contacts] });
+        setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
         setOpen(false);
         setNewContact({
             name: '',
@@ -453,7 +453,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, name: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Job title</p>
                     <TextField
                         label="Job title"
@@ -463,7 +463,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, title: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Company</p>
                     <TextField
                         label="Company"
@@ -473,7 +473,7 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, company: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <p>Link to LinkedIn</p>
                     <TextField
                         label="Link to LinkedIn"
@@ -483,14 +483,14 @@ const Contacts = ({ value, index, job: Job, setJob }) => {
                             setNewContact({ ...newContact, linkedin: e.target.value });
                         }}
                     />
-                    <br></br>
+                    <br />
                     <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
                         Add
                     </Button>
                 </DialogContent>
             </Dialog>
-            {job.contacts &&
-                job.contacts.map((contact) => (
+            {jobData.contacts &&
+                jobData.contacts.map((contact) => (
                     <div style={{ marginBottom: 10 }}>
                         <h2>{contact.name}</h2>
                         <p>{contact.title}</p>
@@ -569,11 +569,12 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     useEffect(() => {
-        setJob(jobData ? jobData : { ...job, stage: index });
+        setJob(jobData || { ...job, stage: index });
     }, [jobData]);
 
+    console.log(JSON.stringify(job, null, 4));
     return (
-        <Dialog fullWidth maxWidth={'xl'} open={true} onClose={handleClose}>
+        <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
             <DialogContent
                 style={{
                     display: 'flex',
@@ -582,7 +583,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     height: 800,
                 }}
             >
-                <Headings job={job} setJob={setJob}></Headings>
+                <Headings jobData={job} setJob={setJob} />
                 <Tabs
                     variant="scrollable"
                     value={tabValue}
@@ -599,15 +600,13 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     <Tab icon={<QuizOutlined />} iconPosition="end" label="Interview Questions" />
                     <Tab icon={<ContactPageOutlined />} iconPosition="end" label="Contacts" />
                 </Tabs>
-                <Details value={tabValue} index={0} job={job} setJob={setJob}></Details>
-                <Notes value={tabValue} index={1} job={job} setJob={setJob}></Notes>
-                <Deadlines value={tabValue} index={2} job={job} setJob={setJob}></Deadlines>
-                <Questions value={tabValue} index={3} job={job} setJob={setJob}></Questions>
-                <Contacts value={tabValue} index={4} job={job} setJob={setJob}></Contacts>
+                <Details value={tabValue} index={0} jobData={job} setJob={setJob} />
+                <Notes value={tabValue} index={1} jobData={job} setJob={setJob} />
+                <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob} />
+                <Questions value={tabValue} index={3} jobData={job} setJob={setJob} />
+                <Contacts value={tabValue} index={4} jobData={job} setJob={setJob} />
                 {loading ? (
-                    <CircularProgress
-                        style={{ position: 'absolute', right: 30 }}
-                    ></CircularProgress>
+                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
                 ) : (
                     <div style={{ position: 'absolute', right: 50, top: 20 }}>
                         <Button
