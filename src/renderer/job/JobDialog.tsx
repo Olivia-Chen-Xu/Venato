@@ -74,11 +74,17 @@ interface Job {
 }
 
 const Headings = ({ jobData, setJob }) => {
+    const handleChange = (e) => {
+        setJob({
+            ...jobData,
+            status: { ...jobData.status, stage: colTitles.indexOf(e.target.value) },
+        });
+    };
     return (
         <>
             <h1>{jobData.details.position}</h1>
             <h3>{jobData.details.company}</h3>
-            <Select value={colTitles[jobData.status.stage]}>
+            <Select value={colTitles[jobData.status.stage]} onChange={handleChange}>
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
                 ))}
@@ -88,6 +94,9 @@ const Headings = ({ jobData, setJob }) => {
 };
 
 const Details = ({ value, index, jobData, setJob }) => {
+    const handleChange = (e) => {
+        setJob({ ...jobData, status: { ...jobData.status, priority: e.target.value } });
+    };
     return (
         <div
             style={{
@@ -140,7 +149,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                     />
                 </div>
             </>
-            <Select value={jobData.status.priority} label="Priority">
+            <Select value={jobData.status.priority} label="Priority" onChange={handleChange}>
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
@@ -579,6 +588,13 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         const fetchJob = async () => {
             setJob(jobData || { ...job, stage: index });
             if (jobData) {
+                await httpsCallable(
+                    getFunctions(),
+                    'getJobData'
+                )({ jobId: jobData.id }).then((res) => {
+                    setJob(res.data);
+                    console.log(res.data);
+                });
             }
         };
         fetchJob();
