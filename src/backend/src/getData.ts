@@ -1,10 +1,10 @@
 import * as functions from 'firebase-functions';
 import {
-    getDoc,
     getCollection,
+    getDoc,
     getRelativeTimestamp,
-    verifyIsAuthenticated,
     verifyDocPermission,
+    verifyIsAuthenticated,
 } from './helpers';
 
 /**
@@ -74,13 +74,12 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((deadlines) => {
-                const deadlineData = deadlines.empty
+                job.deadlines = deadlines.empty
                     ? []
                     : deadlines.docs.map((doc) => {
                           const { metaData: foo, ...deadline } = doc.data();
                           return deadline;
                       });
-                job.deadlines = deadlineData;
                 return null;
             })
     );
@@ -90,13 +89,12 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((questions) => {
-                const questionData = questions.empty
+                job.interviewQuestions = questions.empty
                     ? []
                     : questions.docs.map((doc) => {
                           const { metaData: foo, ...question } = doc.data();
                           return question;
                       });
-                job.deadlines = questionData;
                 return null;
             })
     );
@@ -106,60 +104,17 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metadata.jobId', '==', data.jobId)
             .get()
             .then((contacts) => {
-                if (contacts.empty) return [];
-
-                return contacts.docs.map((doc) => {
-                    const { metaData: foo, ...contact } = doc.data();
-                    return contact;
-                });
+                job.contacts = contacts.empty
+                    ? []
+                    : contacts.docs.map((doc) => {
+                          const { metaData: foo, ...contact } = doc.data();
+                          return contact;
+                      });
                 return null;
             })
     );
-});
 
-const getJobDeadlines = functions.https.onCall((data: { jobId: string }, context: any) => {
-    return getCollection(`deadlines`)
-        .where('metaData.jobId', '==', data.jobId)
-        .get()
-        .then((deadlines) => {
-            if (deadlines.empty) return [];
-
-            return deadlines.docs.map((doc) => {
-                const { metaData: foo, ...deadline } = doc.data();
-                return deadline;
-            });
-        })
-        .catch((err) => `Error fetching job deadlines: ${err}`);
-});
-
-const getJobInterviewQuestions = functions.https.onCall((data: { jobId: string }, context: any) => {
-    return getCollection(`interviewQuestions`)
-        .where('metaData.jobId', '==', data.jobId)
-        .get()
-        .then((questions) => {
-            if (questions.empty) return [];
-
-            return questions.docs.map((doc) => {
-                const { metaData: foo, ...question } = doc.data();
-                return question;
-            });
-        })
-        .catch((err) => `Error fetching job interview questions: ${err}`);
-});
-
-const getJobContacts = functions.https.onCall((data: { jobId: string }, context: any) => {
-    return getCollection(`contacts`)
-        .where('metadata.jobId', '==', data.jobId)
-        .get()
-        .then((contacts) => {
-            if (contacts.empty) return [];
-
-            return contacts.docs.map((doc) => {
-                const { metaData: foo, ...contact } = doc.data();
-                return contact;
-            });
-        })
-        .catch((err) => `Error fetching job contacts: ${err}`);
+    return Promise.all(promises).then((jobData) => jobData);
 });
 
 /*
@@ -438,8 +393,7 @@ const interviewQuestionsSearch = functions.https.onCall(
 
 export {
     getUpcomingEvents,
-    getJobDeadlines,
-    getJobContacts,
+    getJobData,
     getHomepageData,
     getKanbanBoard,
     getCalendarDeadlines,
