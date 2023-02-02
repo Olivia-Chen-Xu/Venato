@@ -4,14 +4,23 @@ import { onJobCreate, onJobPurge } from './firestore';
 import {
     getHomepageData,
     getKanbanBoard,
-    getJobs,
+    getUpcomingEvents,
+    getJobData,
     getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
     jobSearch,
     interviewQuestionsSearch,
 } from './getData';
-import { addJobs, addJob, updateJob, dragKanbanJob, deleteJob, addJobBoard } from './mutateData';
+import {
+    addJobs,
+    addJob,
+    updateJob,
+    dragKanbanJob,
+    deleteJob,
+    addJobBoard,
+    setKanbanBoard,
+} from './mutateData';
 
 /**
  * Entry point for cloud firestore functions deployment
@@ -55,7 +64,8 @@ export {
     onJobPurge,
     getHomepageData,
     getKanbanBoard,
-    getJobs,
+    getUpcomingEvents,
+    getJobData,
     getCalendarDeadlines,
     getAllCompanies,
     getAllLocations,
@@ -67,4 +77,5 @@ export {
     dragKanbanJob,
     deleteJob,
     addJobBoard,
+    setKanbanBoard,
 };

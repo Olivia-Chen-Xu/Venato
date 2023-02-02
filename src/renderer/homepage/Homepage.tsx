@@ -31,7 +31,7 @@ const Homepage = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((board: string) => {
+        userData.result.data.boards.forEach((board: { name: string; userId: string }) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -46,11 +46,6 @@ const Homepage = () => {
             );
         });
         return boardsHtml;
-    };
-
-    const formatEventDate = (date: Date) => {
-        const dateStr = date.toDateString().split(' ');
-        return `${dateStr[1]} ${dateStr[2]}`;
     };
 
     const renderEvents = () => {

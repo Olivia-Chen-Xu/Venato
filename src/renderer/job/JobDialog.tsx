@@ -584,7 +584,6 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         fetchJob();
     }, [jobData]);
 
-    //console.log(JSON.stringify(job, null, 4));
     return (
         <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
             <DialogContent

@@ -142,4 +142,17 @@ const addJobBoard = functions.https.onCall((data: { name: string }, context: any
     return getCollection('boards').add({ jobs: [], name: data.name, userID: context.auth.uid });
 });
 
-export { addJobs, addJob, updateJob, dragKanbanJob, deleteJob, addJobBoard };
+// Set the current kanban board for the user
+const setKanbanBoard = functions.https.onCall(async (data: { id: string }, context: any) => {
+    if (!data || !data.id) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'A board id is required'
+        );
+    }
+    await verifyDocPermission(context, `boards/${data.id}`);
+
+    return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data.id });
+});
+
+export { addJobs, addJob, updateJob, dragKanbanJob, deleteJob, addJobBoard, setKanbanBoard };
