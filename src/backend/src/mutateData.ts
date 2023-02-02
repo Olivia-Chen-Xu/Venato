@@ -143,19 +143,21 @@ const addJobObject = functions.https.onCall(
                 `Invalid type provided: '${data.type}'`
             );
         }
+        const obj = {
+            ...data.data,
+            metaData: {
+                userId: context.auth.uid,
+                jobId: data.id,
+            },
+        };
 
         return getCollection(`${data.type}`)
-            .add(data.data)
-            .then(
-                () =>
-                    `Added ${data.type} to database for job '${data.id}':  ${JSON.stringify(
-                        data.data
-                    )}`
-            )
+            .add(obj)
+            .then((result) => result.id)
             .catch(
                 (e) =>
                     `Failed to add ${data.type} to database for job '${data.id}':  ${JSON.stringify(
-                        data.data
+                        obj
                     )}, error was: ${JSON.stringify(e)}`
             );
     }
@@ -271,12 +273,4 @@ const setKanbanBoard = functions.https.onCall(async (data: string, context: any)
     return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data });
 });
 
-export {
-    addJobs,
-    addJob,
-    addJobObject,
-    updateJob,
-    dragKanbanJob,
-    deleteJob,
-    setKanbanBoard,
-};
+export { addJobs, addJob, addJobObject, updateJob, dragKanbanJob, deleteJob, setKanbanBoard };
