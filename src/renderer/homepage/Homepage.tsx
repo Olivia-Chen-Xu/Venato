@@ -48,11 +48,6 @@ const Homepage = () => {
         return boardsHtml;
     };
 
-    const formatEventDate = (date: Date) => {
-        const dateStr = date.toDateString().split(' ');
-        return `${dateStr[1]} ${dateStr[2]}`;
-    };
-
     const renderEvents = () => {
         if (!userData.result) {
             return <p>Error: Invalid state</p>;
