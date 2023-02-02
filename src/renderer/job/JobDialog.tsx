@@ -572,7 +572,6 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         setJob(jobData || { ...job, stage: index });
     }, [jobData]);
 
-    console.log(JSON.stringify(job, null, 4));
     return (
         <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
             <DialogContent
