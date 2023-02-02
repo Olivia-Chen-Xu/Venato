@@ -69,7 +69,9 @@ const addJobs = functions.https.onCall(
                 const boardId = await getCollection('boards')
                     .add({
                         name,
-                        userId: data.users[i],
+                        metaData: {
+                            userId: data.users[i],
+                        },
                     })
                     .then((doc) => doc.id);
 
