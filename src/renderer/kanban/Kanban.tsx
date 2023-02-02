@@ -89,6 +89,7 @@ export default function Kanban() {
     const [index, setIndex] = useState(0);
     const [currentJob, setCurrentJob] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [boardName, setBoardName] = useState<string>('');
 
     const addJob = async (index) => {
         const newState = [...state];
@@ -161,8 +162,9 @@ export default function Kanban() {
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
                 // console.log(JSON.stringify(res, null, 4));
-                res.data.forEach((job) => newState[job.status.stage].push(job));
+                res.data.jobs.forEach((job) => newState[job.status.stage].push(job));
                 setState(newState);
+                setBoardName(res.data.name);
                 setLoading(false);
             });
 
@@ -215,7 +217,7 @@ export default function Kanban() {
                     color: '#676767',
                 }}
             >
-                2023 Summer Internship
+                {boardName}
             </h4>
             <br></br>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
