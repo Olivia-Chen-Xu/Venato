@@ -35,6 +35,10 @@ interface Job {
         awaitingResponse: boolean;
         priority: string;
     };
+
+    metaData: {
+        userId: string;
+    };
 }
 
 const companies = [

@@ -88,20 +88,135 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall((data: object, context: any) => {
+const addJob = functions.https.onCall((data: null, context: any) => {
     verifyIsAuthenticated(context);
 
+    const defaultJob = {
+        details: {
+            position: '',
+            company: '',
+            description: '',
+            salary: '',
+            location: '',
+            link: '',
+        },
+        notes: '',
+        deadlines: [],
+        interviewQuestions: [],
+        contacts: [],
+
+        status: {
+            stage: 0,
+            awaitingResponse: false,
+            priority: '',
+        },
+
+        metaData: {
+            userId: context.auth.uid,
+        },
+    };
+
     return getCollection('jobs')
-        .add(data)
+        .add(defaultJob)
         .then((docRef) => docRef.id)
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
+const addJobObject = functions.https.onCall(
+    async (data: { id: string; type: string; data: object }, context: any) => {
+        await verifyDocPermission(context, `jobs/${data.id}`);
+
+        const types = ['deadlines', 'interviewQuestions', 'contacts'];
+        if (!types.includes(data.type)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                `Invalid type provided: '${data.type}'`
+            );
+        }
+
+        return getCollection(`${data.type}`)
+            .add(data.data)
+            .then(
+                () =>
+                    `Added ${data.type} to database for job '${data.id}':  ${JSON.stringify(
+                        data.data
+                    )}`
+            )
+            .catch(
+                (e) =>
+                    `Failed to add ${data.type} to database for job '${data.id}':  ${JSON.stringify(
+                        data.data
+                    )}, error was: ${JSON.stringify(e)}`
+            );
+    }
+);
+
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
-    async (data: { id: string; newFields: object }, context: any) => {
+    async (data: { id: string; tab: number; newFields: object }, context: any) => {
+        // Verify params
+        let errMSg = '';
+        if (!data) {
+            errMSg = 'No data provided';
+        } else if (!data.id) {
+            errMSg = 'No job id provided';
+        } else if (!data.tab) {
+            errMSg = 'No tab number provided';
+        } else if (!data.newFields) {
+            errMSg = 'No new fields provided';
+        }
+        if (errMSg !== '') {
+            throw new functions.https.HttpsError('invalid-argument', errMSg);
+        }
         await verifyDocPermission(context, `jobs/${data.id}`);
-        return getDoc(`jobs/${data.id}`).update(data.newFields);
+
+        const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
+        switch (data.tab) {
+            case 1:
+                updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
+                break;
+            case 2:
+                updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
+                break;
+            case 3:
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                data.newFields.forEach((deadline: { edited: boolean; id: string }) => {
+                    if (deadline.edited) {
+                        updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
+                    }
+                });
+                break;
+            case 4:
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                data.newFields.forEach((question: { edited: boolean; id: string }) => {
+                    if (question.edited) {
+                        updatePromises.push(
+                            getDoc(`interviewQuestions/${question.id}`).update(question)
+                        );
+                    }
+                });
+                break;
+            case 5:
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                data.newFields.forEach((contact: { edited: boolean; id: string }) => {
+                    if (contact.edited) {
+                        updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
+                    }
+                });
+                break;
+            default:
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'Tab number must an integer between 1 and 5 inclusive'
+                );
+        }
+
+        return Promise.all(updatePromises)
+            .then(() => `Successfully updated job '${data.id}`)
+            .catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
     }
 );
 
@@ -155,4 +270,4 @@ const setKanbanBoard = functions.https.onCall(async (data: { id: string }, conte
     return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data.id });
 });
 
-export { addJobs, addJob, updateJob, dragKanbanJob, deleteJob, addJobBoard, setKanbanBoard };
+export { addJobs, addJob, addJobObject, updateJob, dragKanbanJob, deleteJob, addJobBoard, setKanbanBoard };

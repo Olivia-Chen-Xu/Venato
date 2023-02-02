@@ -17,7 +17,16 @@ const getJobBoards = (uid: string) => {
     return getCollection(`boards`)
         .where('userId', '==', uid)
         .get()
-        .then((boards) => (boards.empty ? [] : boards.docs.map((board) => board.data())))
+        .then((boards) => {
+            if (boards.empty) {
+                return [];
+            }
+            return boards.docs.map((board) => {
+                const { userId: foo, ...data } = board.data();
+                data.id = board.id;
+                return data;
+            });
+        })
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 };
 
@@ -74,12 +83,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metaData.jobId', '==', data.jobId)
             .get()
             .then((deadlines) => {
-                job.deadlines = deadlines.empty
-                    ? []
-                    : deadlines.docs.map((doc) => {
-                          const { metaData: foo, ...deadline } = doc.data();
-                          return deadline;
-                      });
+                job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => doc.data());
                 return null;
             })
     );
@@ -91,10 +95,7 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .then((questions) => {
                 job.interviewQuestions = questions.empty
                     ? []
-                    : questions.docs.map((doc) => {
-                          const { metaData: foo, ...question } = doc.data();
-                          return question;
-                      });
+                    : questions.docs.map((doc) => doc.data());
                 return null;
             })
     );
@@ -104,17 +105,12 @@ const getJobData = functions.https.onCall(async (data: { jobId: string }, contex
             .where('metadata.jobId', '==', data.jobId)
             .get()
             .then((contacts) => {
-                job.contacts = contacts.empty
-                    ? []
-                    : contacts.docs.map((doc) => {
-                          const { metaData: foo, ...contact } = doc.data();
-                          return contact;
-                      });
+                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => doc.data());
                 return null;
             })
     );
 
-    return Promise.all(promises).then((jobData) => jobData);
+    return Promise.all(promises).then(() => job);
 });
 
 /*

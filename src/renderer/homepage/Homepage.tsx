@@ -31,12 +31,13 @@ const Homepage = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((board: { name: string; userId: string }) => {
+        userData.result.data.boards.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
-                        onClick={() => {
+                        onClick={async () => {
+                            await httpsCallable(getFunctions(), 'setKanbanBoard')(board.id);
                             nav('/kanban');
                         }}
                     >

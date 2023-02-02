@@ -15,6 +15,7 @@ import {
 import {
     addJobs,
     addJob,
+    addJobObject,
     updateJob,
     dragKanbanJob,
     deleteJob,
@@ -73,6 +74,7 @@ export {
     interviewQuestionsSearch,
     addJobs,
     addJob,
+    addJobObject,
     updateJob,
     dragKanbanJob,
     deleteJob,
