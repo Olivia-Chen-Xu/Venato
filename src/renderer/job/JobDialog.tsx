@@ -74,11 +74,17 @@ interface Job {
 }
 
 const Headings = ({ jobData, setJob }) => {
+    const handleChange = (e) => {
+        setJob({
+            ...jobData,
+            status: { ...jobData.status, stage: colTitles.indexOf(e.target.value) },
+        });
+    };
     return (
         <>
             <h1>{jobData.details.position}</h1>
             <h3>{jobData.details.company}</h3>
-            <Select value={colTitles[jobData.status.stage]}>
+            <Select value={colTitles[jobData.status.stage]} onChange={handleChange}>
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
                 ))}
@@ -88,6 +94,9 @@ const Headings = ({ jobData, setJob }) => {
 };
 
 const Details = ({ value, index, jobData, setJob }) => {
+    const handleChange = (e) => {
+        setJob({ ...jobData, status: { ...jobData.status, priority: e.target.value } });
+    };
     return (
         <div
             style={{
@@ -102,7 +111,10 @@ const Details = ({ value, index, jobData, setJob }) => {
                     placeholder="Job Title"
                     value={jobData.details.position}
                     onChange={(e) => {
-                        setJob({ ...jobData, details: { ...jobData.details, position: e.target.value } });
+                        setJob({
+                            ...jobData,
+                            details: { ...jobData.details, position: e.target.value },
+                        });
                     }}
                     style={styles.jobTitle}
                 />
@@ -137,7 +149,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                     />
                 </div>
             </>
-            <Select value={jobData.status.priority} label="Priority">
+            <Select value={jobData.status.priority} label="Priority" onChange={handleChange}>
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
@@ -161,7 +173,10 @@ const Details = ({ value, index, jobData, setJob }) => {
                 rows={10}
                 value={jobData.details.description}
                 onChange={(e) => {
-                    setJob({ ...jobData, details: { ...jobData.details, description: e.target.value } });
+                    setJob({
+                        ...jobData,
+                        details: { ...jobData.details, description: e.target.value },
+                    });
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
@@ -203,7 +218,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         link: '',
     });
     const addNewDdl = () => {
-        setJob({ ...jobData, interviewQuestions: [newDdl, ...jobData.deadlines] });
+        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
         setOpen(false);
         setNewDdl({ title: '', date: null, time: null, location: '', link: '' });
     };
@@ -541,6 +556,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         const newState = [...state];
         // Extract id from job
         const { id } = job;
+        console.log(id);
         const jobCopy = structuredClone(job);
         delete jobCopy.id;
 
@@ -569,7 +585,19 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
     };
 
     useEffect(() => {
-        setJob(jobData || { ...job, stage: index });
+        const fetchJob = async () => {
+            setJob(jobData || { ...job, stage: index });
+            if (jobData) {
+                await httpsCallable(
+                    getFunctions(),
+                    'getJobData'
+                )({ jobId: jobData.id }).then((res) => {
+                    setJob(res.data);
+                    console.log(res.data);
+                });
+            }
+        };
+        fetchJob();
     }, [jobData]);
 
     return (
