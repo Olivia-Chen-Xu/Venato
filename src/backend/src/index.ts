@@ -10,7 +10,7 @@ import {
     getAllCompanies,
     getAllLocations,
     jobSearch,
-    interviewQuestionsSearch,
+    interviewQuestionsSearch
 } from './getData';
 import {
     addJobs,
@@ -20,6 +20,7 @@ import {
     dragKanbanJob,
     deleteJob,
     setKanbanBoard,
+    addBoard
 } from './mutateData';
 
 /**
@@ -78,4 +79,5 @@ export {
     dragKanbanJob,
     deleteJob,
     setKanbanBoard,
+    addBoard
 };
