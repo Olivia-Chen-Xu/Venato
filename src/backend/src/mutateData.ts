@@ -1,10 +1,11 @@
 import * as functions from 'firebase-functions';
 import {
-    getDoc,
-    getCollection,
-    verifyIsAuthenticated,
-    verifyDocPermission,
     db,
+    getCollection,
+    getDoc,
+    isValidObjectStructure,
+    verifyDocPermission,
+    verifyIsAuthenticated
 } from './helpers';
 
 /**
@@ -97,95 +98,79 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall(async (data: { boardId: string, stage: number }, context: any) => {
-    if (!data) {
+const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: number }, context: any) => {
+    const structure = {
+        boardId: '',
+        stage: 0
+    };
+    if (!isValidObjectStructure(jobData, structure)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Must provide a board id and stage as arguments'
+            'Must provide only a board id (string) and stage (number) as arguments'
         );
     }
 
-    if (!data.boardId) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Must provide a board id (string)'
-        );
-    }
-
-    if (![0, 1, 2, 3].includes(data.stage)) {
+    if (![0, 1, 2, 3].includes(jobData.stage)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Must provide a valid stage (0, 1, 2 or 3)'
         );
     }
 
-    await verifyDocPermission(context, `boards/${data.boardId}`);
+    await verifyDocPermission(context, `boards/${jobData.boardId}`);
 
     const defaultJob = {
-        details: {
-            position: '',
-            company: '',
-            description: '',
-            salary: '',
-            location: '',
-            link: ''
-        },
+        position: '',
+        company: '',
+        description: '',
+        salary: '',
+        location: '',
+        link: '',
         notes: '',
+        stage: jobData.stage,
+        awaitingResponse: false,
+        priority: '',
+
         deadlines: [],
         interviewQuestions: [],
         contacts: [],
 
-        status: {
-            stage: data.stage,
-            awaitingResponse: false,
-            priority: ''
-        },
-
-        metaData: {
-            userId: context.auth.uid,
-            boardId: data.boardId
-        }
+        userId: context.auth.uid,
+        boardId: jobData.boardId
     };
 
     return getCollection('jobs')
         .add(defaultJob)
-        .then((docRef) => {
-            const { metaData: foo, ...job } = defaultJob;
-            return { ...job, id: docRef.id };
-        })
+        .then((docRef) => ({ ...defaultJob, id: docRef.id }))
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
-const addJobObject = functions.https.onCall(
-    async (data: { id: string; type: string; data: object }, context: any) => {
-        await verifyDocPermission(context, `jobs/${data.id}`);
+const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: any) => {
+    await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
-        const types = ['deadlines', 'interviewQuestions', 'contacts'];
-        if (!types.includes(data.type)) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                `Invalid type provided: '${data.type}'`
-            );
-        }
-        const obj = {
-            ...data.data,
-            metaData: {
-                userId: context.auth.uid,
-                jobId: data.id
-            }
-        };
+    return getCollection(`deadlines`)
+        .add({ ...deadline, userId: context.auth.uid })
+        .then((result) => result.id)
+        .catch((err) => `Failed to add deadline: ${err}`);
+});
 
-        return getCollection(`${data.type}`)
-            .add(obj)
-            .then((result) => result.id)
-            .catch(
-                (e) =>
-                    `Failed to add ${data.type} to database for job '${data.id}':  ${JSON.stringify(
-                        obj
-                    )}, error was: ${JSON.stringify(e)}`
-            );
-    }
-);
+const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
+    await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
+
+    return getCollection(`interviewQuestions`)
+        .add({ ...interviewQuestion, userId: context.auth.uid })
+        .then((result) => result.id)
+        .catch((err) => `Failed to add interview question: ${err}`);
+});
+
+const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
+    await verifyDocPermission(context, `jobs/${contact.jobId}`);
+
+    return getCollection(`contacts`)
+        .add({ ...contact, userId: context.auth.uid })
+        .then((result) => result.id)
+        .catch((err) => `Failed to add contact: ${err}`);
+});
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
@@ -311,7 +296,9 @@ const addBoard = functions.https.onCall(async (data: string, context: any) => {
 export {
     addJobs,
     addJob,
-    addJobObject,
+    addDeadline,
+    addInterviewQuestion,
+    addContact,
     updateJob,
     dragKanbanJob,
     deleteJob,

@@ -3,8 +3,7 @@ import {
     firestoreHelper,
     getCollection,
     getDoc,
-    getFirestoreTimestamp,
-    isValidObjectStructure
+    getFirestoreTimestamp
 } from './helpers';
 
 /**

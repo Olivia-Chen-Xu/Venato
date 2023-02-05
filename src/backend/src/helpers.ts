@@ -41,7 +41,7 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
     await getDoc(path)
         .get()
         .then((doc) => {
-            if (doc.data()?.metaData.userId !== context.auth?.uid) {
+            if (doc.data()?.userId !== context.auth?.uid) {
                 throw new functions.https.HttpsError(
                     'permission-denied',
                     `You cannot view the document '${path}' as it doesn't belong to you`
