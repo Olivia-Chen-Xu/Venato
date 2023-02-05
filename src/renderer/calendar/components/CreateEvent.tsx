@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import plusImg from '../../../../assets/icons/256x256.png';
 import CalendarState from '../context/CalendarState';
 
-export default function CreateEvent() {
+const CreateEvent = () => {
     // const { setShowEventModal } = useContext(GlobalContext);
     return (
         <button
@@ -14,3 +14,5 @@ export default function CreateEvent() {
         </button>
     );
 }
+
+export default CreateEvent;

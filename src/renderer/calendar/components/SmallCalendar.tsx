@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import CalendarState from '../context/CalendarState';
 import { getMonth } from '../getMonth';
 
-export default function SmallCalendar() {
+const SmallCalendar = () => {
     const [currentMonthIdx, setCurrentMonthIdx] = useState(dayjs().month());
     const [currentMonth, setCurrentMonth] = useState(getMonth());
     useEffect(() => {
@@ -83,3 +83,5 @@ export default function SmallCalendar() {
         </div>
     );
 }
+
+export default SmallCalendar;

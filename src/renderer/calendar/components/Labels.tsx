@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import CalendarState from '../context/CalendarState';
 
-export default function Labels() {
+const Labels = () => {
     //const { labels, updateLabel } = useContext(GlobalContext);
     return (
         <>
@@ -20,3 +20,5 @@ export default function Labels() {
         </>
     );
 }
+
+export default Labels;
