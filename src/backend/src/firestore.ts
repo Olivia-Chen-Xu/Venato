@@ -35,24 +35,28 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     );
 
     // Add company and location to db
-    const companyDoc = await getDoc(`companies/${data.details.company}`)
-        .get()
-        .then((doc: any) => doc)
-        .catch((err: any) => functions.logger.log(`Error getting company doc: ${err}`));
-    if (companyDoc && companyDoc.exists) {
-        promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
-    } else {
-        promises.push(getDoc(`companies/${data.details.company}`).set({ numJobs: 1 }));
+    if (data.details.company !== '') {
+        const companyDoc = await getDoc(`companies/${data.details.company}`)
+            .get()
+            .then((doc: any) => doc)
+            .catch((err: any) => functions.logger.log(`Error getting company doc: ${err}`));
+        if (companyDoc && companyDoc.exists) {
+            promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+        } else {
+            promises.push(getDoc(`companies/${data.details.company}`).set({ numJobs: 1 }));
+        }
     }
 
-    const locationDoc = await getDoc(`locations/${data.details.location}`)
-        .get()
-        .then((doc) => doc)
-        .catch((err) => functions.logger.log(`Error getting location doc: ${err}`));
-    if (locationDoc && locationDoc.exists) {
-        promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
-    } else {
-        promises.push(getDoc(`locations/${data.details.location}`).set({ numJobs: 1 }));
+    if (data.details.location !== '') {
+        const locationDoc = await getDoc(`locations/${data.details.location}`)
+            .get()
+            .then((doc) => doc)
+            .catch((err) => functions.logger.log(`Error getting location doc: ${err}`));
+        if (locationDoc && locationDoc.exists) {
+            promises.push(locationDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
+        } else {
+            promises.push(getDoc(`locations/${data.details.location}`).set({ numJobs: 1 }));
+        }
     }
 
     // Move the deadlines to its own collection
