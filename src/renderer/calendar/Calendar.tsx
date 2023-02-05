@@ -3,7 +3,7 @@ import { useAsync } from 'react-async-hook';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { CircularProgress } from '@mui/material';
-import Month from './components/Month';
+import Month from './Month';
 import JobDialog from '../job/JobDialog';
 
 const getMonth = (month = Math.floor(dayjs().month())) => {

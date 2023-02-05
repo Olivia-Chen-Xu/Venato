@@ -90,13 +90,20 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall(async (data: string, context: any) => {
+const addJob = functions.https.onCall(async (data: { boardId: string, stage: number }, context: any) => {
     await verifyDocPermission(context, `boards/${data}`);
 
     if (!data || Object.prototype.toString.call(data) !== '[object String]') {
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Must provide a board id (string)'
+        );
+    }
+
+    if (![0, 1, 2, 3].includes(data.stage)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide a valid stage (0, 1, 2 or 3)'
         );
     }
 
