@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
-import algoliaSearch from 'algoliasearch';
 
 /**
  * Initialize the app with admin permissions to be used in other functions
