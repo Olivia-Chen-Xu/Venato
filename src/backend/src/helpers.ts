@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import admin = require('firebase-admin');
+import algoliaSearch from 'algoliasearch';
 
 /**
  * Initialize the app with admin permissions to be used in other functions
@@ -82,6 +83,8 @@ const isValidObjectStructure = (obj: any, structure: any) => {
     return true;
 }
 
+const AlgoliaClient = algoliaSearch("XL9UWEBC8Y", "");
+
 // Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 const getRelativeTimestamp = (days: number) => {
@@ -102,9 +105,10 @@ export {
     verifyIsAuthenticated,
     verifyDocPermission,
     isValidObjectStructure,
+    AlgoliaClient,
     getRelativeTimestamp,
     getFirestoreTimestamp,
     firestoreHelper,
     db,
-    auth
+    auth,
 };

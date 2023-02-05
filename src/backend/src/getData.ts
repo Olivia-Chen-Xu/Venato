@@ -1,10 +1,11 @@
 import * as functions from 'firebase-functions';
 import {
+    AlgoliaClient,
     getCollection,
     getDoc,
     getRelativeTimestamp,
     verifyDocPermission,
-    verifyIsAuthenticated,
+    verifyIsAuthenticated
 } from './helpers';
 
 /**
@@ -334,16 +335,15 @@ const jobSearch = functions.https.onCall(
 
 // Search for interview questions based on a company and/or position
 const interviewQuestionsSearch = functions.https.onCall(
-    (data: { position: string; company: string }, context: any) => {
+    (query: string, context: any) => {
         verifyIsAuthenticated(context);
 
-        /*
-        return getCollection('interviewQuestions')
-            .where('metaData.userId', '!=', context.auth.uid)
-            .get()
-            .then((questions) => questions || []);
-        */
+        return AlgoliaClient.initIndex("interviewQuestions")
+            .search(query)
+            .then(({ hits }) => JSON.stringify(hits))
+            .catch(err => `Error querying interview questions: ${err}`);
 
+        /*
         // Parse the search queries and verify at least one valid is given
         const queries: { position: string; company: string } = {
             position: data.position?.replace(/ +/g, ' ').trim() || '',
@@ -385,6 +385,8 @@ const interviewQuestionsSearch = functions.https.onCall(
                 });
             })
             .catch((err) => functions.logger.log(`Error querying interview questions: ${err}`));
+
+         */
     }
 );
 
