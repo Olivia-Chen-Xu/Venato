@@ -84,14 +84,10 @@ const isValidObjectStructure = (obj: any, structure: any) => {
 
 // Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-const getRelativeTimestamp = (days: number) => {
-    return admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
-};
+const getRelativeTimestamp = (days: number) => admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
 
 // Gets a firestore timestamp based on unix millis
-const getFirestoreTimestamp = (unixMillis: number) => {
-    return admin.firestore.Timestamp.fromMillis(unixMillis);
-};
+const getFirestoreTimestamp = (unixMillis: number) => admin.firestore.Timestamp.fromMillis(unixMillis);
 
 // For doing misc. tasks like deleting or editing document keys
 const firestoreHelper = admin.firestore;

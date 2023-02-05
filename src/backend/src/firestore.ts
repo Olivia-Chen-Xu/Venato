@@ -50,8 +50,6 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const docId = context.params.jobId;
     const promises = [];
 
-    isValidObjectStructure(data, jobStructure);
-
     // Add searchable job position field
     const positionSearchable = data.details.position
         .replace('/[!@#$%^&*()_-+=,:.]/g', '')
