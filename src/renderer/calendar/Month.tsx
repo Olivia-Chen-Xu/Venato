@@ -26,7 +26,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
                 key={idx}
                 onClick={async (event) => {
                     event.stopPropagation(); // So the day div onClick won't be triggered also
-                    setJob(await httpsCallable(getFunctions(), 'addJob')().then());
+                    setJob(await httpsCallable(getFunctions(), 'addJob')().then((result) => result.data));
                     setIsEdit(true);
                     setOpen(true);
                 }}
