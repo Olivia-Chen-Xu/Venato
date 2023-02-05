@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions';
 import {
-    AlgoliaClient,
     getCollection,
     getDoc,
     getRelativeTimestamp,
     verifyDocPermission,
     verifyIsAuthenticated
 } from './helpers';
+import algoliaSearch from 'algoliasearch';
 
 /**
  * Callable functions for getting data from firestore
@@ -284,10 +284,32 @@ const getAllLocations = functions.https.onCall((data: object, context: any) => {
 });
 
 // Search for a job by position, company, or location
-const jobSearch = functions.https.onCall(
-    (data: { company: string; position: string; location: string }, context: any) => {
+const jobSearch = functions.runWith({ secrets: ["ALGOLIA_API_KEY", "ALGOLIA_APP_ID"]}).https.onCall(
+    (query, context: any) => {
         verifyIsAuthenticated(context);
 
+        const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
+        const AlgoliaAppId = process.env.ALGOLIA_APP_ID;
+        if (AlgoliaApiKey == null) {
+            throw new functions.https.HttpsError(
+                'internal',
+                'Algolia API key not found. Check Google cloud secrets for ALGOLIA_API_KEY'
+            );
+        }
+        if (AlgoliaAppId == null) {
+            throw new functions.https.HttpsError(
+                'internal',
+                'Algolia App ID not found. Check google cloud secrets for ALGOLIA_APP_ID'
+            );
+        }
+
+        return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
+            .initIndex("jobs")
+            .search(query)
+            .then(({ hits }) => hits)
+            .catch(err => `Error querying interview questions: ${err}`);
+
+        /*
         // Check which of the three inputs are given
         const queries: { position: string; company: string; location: string } = {
             position: data.position?.replace(/ +/g, ' ').trim() || '',
@@ -330,17 +352,34 @@ const jobSearch = functions.https.onCall(
                 }));
             })
             .catch((err) => `Error querying jobs questions: ${err}`);
+         */
     }
 );
 
 // Search for interview questions based on a company and/or position
-const interviewQuestionsSearch = functions.https.onCall(
+const interviewQuestionsSearch = functions.runWith({ secrets: ["ALGOLIA_API_KEY", "ALGOLIA_APP_ID"]}).https.onCall(
     (query: string, context: any) => {
         verifyIsAuthenticated(context);
 
-        return AlgoliaClient.initIndex("interviewQuestions")
+        const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
+        const AlgoliaAppId = process.env.ALGOLIA_APP_ID;
+        if (AlgoliaApiKey == null) {
+            throw new functions.https.HttpsError(
+                'internal',
+                'Algolia API key not found. Check Google cloud secrets for ALGOLIA_API_KEY'
+            );
+        }
+        if (AlgoliaAppId == null) {
+            throw new functions.https.HttpsError(
+                'internal',
+                'Algolia App ID not found. Check google cloud secrets for ALGOLIA_APP_ID'
+            );
+        }
+
+        return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
+            .initIndex("interviewQuestions")
             .search(query)
-            .then(({ hits }) => JSON.stringify(hits))
+            .then(({ hits }) => hits)
             .catch(err => `Error querying interview questions: ${err}`);
 
         /*
