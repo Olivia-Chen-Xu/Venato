@@ -1,6 +1,5 @@
 import React from 'react';
-import dayjs, { Dayjs } from 'dayjs';
-// import CalendarState from '../context/CalendarState';
+import dayjs from 'dayjs';
 
 const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
