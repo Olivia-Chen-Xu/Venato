@@ -41,6 +41,13 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
     await getDoc(path)
         .get()
         .then((doc) => {
+            if (!doc.exists) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    `The document '${path}' does not exist`
+                );
+            }
+
             if (doc.data()?.userId !== context.auth?.uid) {
                 throw new functions.https.HttpsError(
                     'permission-denied',

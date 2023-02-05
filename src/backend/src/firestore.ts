@@ -21,7 +21,7 @@ import {
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     // @ts-ignore
     const job: IJob = snap.data();
-    const promises = [];
+    const promises: Promise<any>[] = [];
 
     promises.push(
         snap.ref.update({
