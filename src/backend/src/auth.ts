@@ -1,42 +1,29 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getDoc, auth } from './helpers';
+import { getCollection, getDoc, auth, isValidObjectStructure } from './helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
  */
-const createAccount = functions.https.onCall(
-    async (data: { email: string; password: string }, context) => {
+const createAccount = functions.https.onCall(async (credentials: { email: string; password: string }, context) => {
         // Verify input data
-        if (!data) {
+        if (!isValidObjectStructure(credentials, { email: '', password: '' })) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'Signup data must be provided'
-            );
-        }
-        if (!data.email) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Email address is required to sign up'
-            );
-        }
-        if (!data.password) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Password is required to sign up'
+                'Signup data must be provided: { email: string, password: string }'
             );
         }
 
         // Create user (will throw an error if the email is already in use)
         return auth
             .createUser({
-                email: data.email,
+                email: credentials.email,
                 emailVerified: false,
-                password: data.password,
+                password: credentials.password,
                 disabled: false,
             })
             .then((userRecord) => {
                 functions.logger.log(`Successfully created new user: ${userRecord.uid}`);
-                return null;
+                return `Successfully created new user: ${userRecord.uid}`;
             })
             .catch((error) => {
                 functions.logger.log(`Error creating new user: ${JSON.stringify(error)}`);
@@ -66,27 +53,31 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
     );
 
     // Adds a verification email to the db (will be sent by the 'Trigger Email' extension)
-    if (user.email) {
-        const verifyLink = await auth
-            .generateEmailVerificationLink(user.email)
-            .then((link) => link);
-        promises.push(
-            getCollection('emails')
-                .add({
-                    to: user.email,
-                    message: {
-                        subject: 'Verify your email for Venato',
-                        html: `<p style="font-size: 16px;">Thanks for signing up!</p>
-                               <p style="font-size: 16px;">Verify your account here: ${verifyLink}</p>
-                               <p style="font-size: 12px;">If you didn't sign up, please disregard this email</p>
-                               <p style="font-size: 12px;">Best Regards,</p>
-                               <p style="font-size: 12px;">-The Venato Team</p>`,
-                    },
-                })
-                .then(() => functions.logger.log(`Email successfully sent to: ${user.email}`))
-                .catch((err: string) => functions.logger.log(`Error sending email: ${err}`))
+    if (user.email == null) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            `User email is null: ${JSON.stringify(user, null, 4)}`
         );
     }
+    const verifyLink = await auth
+        .generateEmailVerificationLink(user.email)
+        .then((link) => link);
+    promises.push(
+        getCollection('emails')
+            .add({
+                to: user.email,
+                message: {
+                    subject: 'Verify your email for Venato',
+                    html: `<p style="font-size: 16px;">Thanks for signing up!</p>
+                           <p style="font-size: 16px;">Verify your account here: ${verifyLink}</p>
+                           <p style="font-size: 12px;">If you didn't sign up, please disregard this email</p>
+                           <p style="font-size: 12px;">Best Regards,</p>
+                           <p style="font-size: 12px;">-The Venato Team</p>`,
+                },
+            })
+            .then(() => functions.logger.log(`Email successfully sent to: ${user.email}`))
+            .catch((err: string) => functions.logger.log(`Error sending email: ${err}`))
+    );
 
     return Promise.all(promises);
 });

@@ -52,6 +52,7 @@ const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(
  * Remove any old data in the db that's not needed anymore
  */
 const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async () => {
+    /*
     // Remove jobs that have been deleted for 30 days
     const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('jobs')
@@ -64,12 +65,13 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
             return null;
         })
         .catch((err) => functions.logger.log(`Error getting expired jobs from firestore: ${err}`));
+     */
 
-    // Remove emails have been sent at least a day ago
+    // Remove emails have been sent at least a month ago
     const emailsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('emails')
         .where('delivery.state', '==', 'SUCCESS')
-        .where('delivery.endTime', '<', getRelativeTimestamp(1))
+        .where('delivery.endTime', '<', getRelativeTimestamp(30))
         .get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
@@ -79,6 +81,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
         })
         .catch((err) => functions.logger.log(`Error getting sent emails from firestore: ${err}`));
 
+    /*
     // Purge companies and locations that don't have a job associated with them
     const companiesToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
     getCollection('companies')
@@ -103,11 +106,16 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
             return null;
         })
         .catch((err) => `Error getting company document: ${err}`);
+     */
 
+    /*
     // Make a response message and return all the promises
     let returnMessage = '';
     const getDelim = () => (returnMessage.length > 0 ? '. ' : '');
 
+     */
+
+    /*
     if (jobsToDelete.length > 0) {
         returnMessage += `Successfully purged ${jobsToDelete.length} jobs (30+ days deleted)`;
     }
@@ -126,18 +134,24 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
             locationsToDelete.length
         } locations (no jobs associated)`;
     }
+     */
 
-    return Promise.all([jobsToDelete.flat(), emailsToDelete.flat()])
-        .then(() =>
-            functions.logger.log(returnMessage || 'No jobs or emails to purge from firestore')
-        )
+    let returnMessage = 'No emails to purge from firestore';
+    if (emailsToDelete.length > 0) {
+        returnMessage = `Successfully purged ${emailsToDelete.length} emails (sent at least 30 days ago)`;
+    }
+
+    return Promise.all(emailsToDelete)
+        .then(() => functions.logger.log(returnMessage))
         .catch((err) => functions.logger.log(`Error purging deleted jobs: ${err}`));
 });
 
+/*
 const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun(() => {
     functions.logger.log('Running data integrity check');
 
     // TODO (make sure that all db data makes sense (e.g. no users with more than the limit of jobs, no invalid ids, etc))
 });
+ */
 
-export { purgeUnverifiedUsers, purgeExpiredData, dataIntegrityCheck };
+export { purgeUnverifiedUsers, purgeExpiredData };
