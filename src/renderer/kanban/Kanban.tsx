@@ -10,29 +10,24 @@ const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 const newJob = (idx: number) => {
     return {
         details: {
-            description: 'Will be working on the Facebook Cloud Platform team',
-            url: 'https://www.facebook.com/jobs/949752',
+            position: '',
+            company: '',
+            description: '',
+            salary: '',
+            location: '',
+            link: '',
         },
-        company: 'Facebook',
-        stage: idx,
-        location: 'San Jose, California',
-        interviewQuestions: ['Binary search', 'Merge sort', 'Greedy algorithm', 'Prim algorithm'],
-        contacts: [
-            'https://www.linkedin.com/in/reid-moffat/',
-            'https://www.linkedin.com/in/krishaan-thyagarajan/',
-        ],
-        notes: 'Have to travel to the US for this one',
-        position: 'Data Engineer',
-        deadlines: [
-            {
-                title: 'Submit resume + cover letter',
-                date: 'December 14, 2022',
-            },
-            {
-                title: 'Interview',
-                date: 'December 29, 2022',
-            },
-        ],
+
+        notes: '',
+        deadlines: [],
+        interviewQuestions: [],
+        contacts: [],
+
+        status: {
+            stage: idx,
+            awaitingResponse: false,
+            priority: '',
+        },
     };
 };
 
@@ -90,6 +85,7 @@ export default function Kanban() {
     const [currentJob, setCurrentJob] = useState(null);
     const [loading, setLoading] = useState(false);
     const [boardName, setBoardName] = useState<string>('');
+    const [boardID, setBoardID] = useState(null);
 
     const addJob = async (index) => {
         const newState = [...state];
@@ -97,9 +93,11 @@ export default function Kanban() {
         await httpsCallable(
             getFunctions(),
             'addJob'
-        )(job).then((res) => {
-            newState[index] = [{ ...job, id: res.data }, ...state[index]];
+        )({ boardId: boardID, stage: index }).then((res) => {
+            newState[index] = [{ ...job, id: res.data.id }, ...state[index]];
             setState(newState);
+            setCurrentJob({ ...job, id: res.data.id });
+            // console.log(currentJob);
         });
     };
 
@@ -107,6 +105,7 @@ export default function Kanban() {
         setIndex(idx);
         setCurrentJob(null);
         setIsEdit(false);
+        addJob(idx);
         setModalOpen(true);
     };
 
@@ -165,6 +164,7 @@ export default function Kanban() {
                 res.data.jobs.forEach((job) => newState[job.status.stage].push(job));
                 setState(newState);
                 setBoardName(res.data.name);
+                setBoardID(res.data.id);
                 setLoading(false);
             });
 

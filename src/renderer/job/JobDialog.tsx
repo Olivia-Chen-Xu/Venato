@@ -569,6 +569,14 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         await httpsCallable(getFunctions(), 'addJob')();
     };
 
+    const deleteJob = async (jobData) => {
+        const newState = [...state];
+        newState[index] = state[index].filter((j) => j.id !== jobData.id);
+        await httpsCallable(getFunctions(), 'deleteJob')({ id: jobData.id });
+        setState(newState);
+        setOpen(false);
+    };
+
     const updateJob = async (jobData) => {
         const newState = [...state];
         let jobDataNew;
@@ -631,6 +639,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     useEffect(() => {
         const fetchJob = async () => {
+            console.log(jobData, index);
             setJob(jobData || { ...job, stage: index });
             if (jobData) {
                 await httpsCallable(
@@ -689,6 +698,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                                 borderRadius: '4px',
                                 marginInlineEnd: 5,
                             }}
+                            onClick={() => deleteJob(job)}
                         >
                             <Delete />
                         </Button>
