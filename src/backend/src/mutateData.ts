@@ -15,7 +15,7 @@ import {
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall(
-    async (data: { jobs: object[]; boards: { userId: string, name: string, id: number }[] }, context: any) => {
+    async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
         verifyIsAuthenticated(context);
 
         for (const board of data.boards) {
@@ -268,6 +268,7 @@ const dragKanbanJob = functions.https.onCall(
 // Deletes a job in firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
     await verifyDocPermission(context, `jobs/${data.id}`);
+
     return getDoc(`jobs/${data.id}`)
         .delete()
         .then(() => `Successfully deleted job '${data.id}'`)

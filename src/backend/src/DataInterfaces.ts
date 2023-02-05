@@ -1,3 +1,22 @@
+interface IJob {
+    position: string;
+    company: string;
+    description: string;
+    salary: string;
+    location: string;
+    link: string;
+    notes: string;
+    stage: number;
+    awaitingResponse: boolean;
+    priority: string;
+
+    deadlines: IDeadline[];
+    interviewQuestions: IInterviewQuestion[];
+    contacts: IContact[];
+
+    boardId: string;
+}
+
 interface IDeadline {
     title: string;
     date: number;

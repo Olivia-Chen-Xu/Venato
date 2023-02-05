@@ -23,6 +23,7 @@ interface Job {
     interviewQuestions: {
         name: string;
         description: string;
+        company: string;
     }[];
     contacts: {
         name: string;
@@ -36,7 +37,7 @@ interface Job {
 
     // To link this job to a user and board
     userId: string;
-    boardId: number; // Temporary: we need to add to the db to get the actual id
+    boardId: string;
 }
 
 const companies = [
@@ -425,19 +426,19 @@ const generateJobs = async (num: number) => {
     const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
 
     const boardNames = ['Summer 2021 internships', 'Summer 2022 internships', 'Summer 2023 internships'];
-    const boards: { userId: string, name: string, id: number }[] = [];
+    const boards: { userId: string, name: string, id: string }[] = [];
     let id = 0;
     for (const name of boardNames) {
         boards.push({
             userId: users[0],
             name: name,
-            id: id,
+            id: id.toString(),
         });
         id++;
         boards.push({
             userId: users[1],
             name: name,
-            id: id,
+            id: id.toString(),
         });
         id++;
     }
@@ -461,12 +462,13 @@ const generateJobs = async (num: number) => {
             priority: getRandomPriority(),
 
             userId: userId,
-            boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id,
+            boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
 
-            deadlines: generateDeadlines(),
+            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[company] })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
-                .slice(0, Math.floor(Math.random() * 5) + 1),
+                .slice(0, Math.floor(Math.random() * 5) + 1)
+                .map((question) => ({ ...question, company: companies[company] })),
             contacts: generateContacts()
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 3) + 1)
