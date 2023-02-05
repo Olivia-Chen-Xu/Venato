@@ -25,14 +25,20 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
         .toLowerCase()
         .split(' ');
     promises.push(
-        snap.ref.update({ metaData: { userId: data.metaData.userId, positionSearchable } })
+        snap.ref.update({
+            metaData: {
+                userId: data.metaData.userId,
+                positionSearchable,
+                boardId: data.metaData.boardId
+            }
+        })
     );
 
     // Add company and location to db
     const companyDoc = await getDoc(`companies/${data.details.company}`)
         .get()
-        .then((doc) => doc)
-        .catch((err) => functions.logger.log(`Error getting company doc: ${err}`));
+        .then((doc: any) => doc)
+        .catch((err: any) => functions.logger.log(`Error getting company doc: ${err}`));
     if (companyDoc && companyDoc.exists) {
         promises.push(companyDoc.ref.update({ numJobs: firestoreHelper.FieldValue.increment(1) }));
     } else {
@@ -61,8 +67,8 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 company: data.details.company,
                 metaData: {
                     userId: data.metaData.userId,
-                    jobId: docId,
-                },
+                    jobId: docId
+                }
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
         }
@@ -79,8 +85,8 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 userId: data.metaData.userId,
                 jobId: docId,
                 positionSearchable,
-                company: data.details.company,
-            },
+                company: data.details.company
+            }
         };
         promises.push(getCollection(`interviewQuestions`).add(newQuestion));
     });
@@ -103,8 +109,8 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 ...contact,
                 metaData: {
                     userId: data.metaData.userId,
-                    jobId: docId,
-                },
+                    jobId: docId
+                }
             };
             promises.push(getCollection(`contacts`).add(newContact));
         }
@@ -126,7 +132,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
         snap.data().userId,
         snap.data().info.company,
         snap.data().info.location,
-        snap.data().boardName,
+        snap.data().boardName
     ];
 
     // Remove the job id from the user's job board
