@@ -31,7 +31,6 @@ import {
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
-import CalendarState from '../calendar/context/CalendarState';
 
 const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
