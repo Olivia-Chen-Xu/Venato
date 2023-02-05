@@ -5,7 +5,7 @@ import {
     verifyIsAuthenticated,
     verifyDocPermission,
     db,
-    getRelativeTimestamp,
+    getRelativeTimestamp
 } from './helpers';
 
 /**
@@ -49,7 +49,7 @@ const addJobs = functions.https.onCall(
                     board: Math.floor(Math.random() * 3),
                     company: job.data().details.company,
                     position: job.data().details.position,
-                    stage: job.data().status.stage,
+                    stage: job.data().status.stage
                 }));
             const boards: {
                 [name: string]: {
@@ -62,7 +62,7 @@ const addJobs = functions.https.onCall(
             } = {
                 'Summer 2021 internships': userJobs.filter((job) => job.board === 0),
                 'Summer 2022 internships': userJobs.filter((job) => job.board === 1),
-                'Summer 2023 internships': userJobs.filter((job) => job.board === 2),
+                'Summer 2023 internships': userJobs.filter((job) => job.board === 2)
             };
 
             for (const name of Object.keys(boards)) {
@@ -70,8 +70,8 @@ const addJobs = functions.https.onCall(
                     .add({
                         name,
                         metaData: {
-                            userId: data.users[i],
-                        },
+                            userId: data.users[i]
+                        }
                     })
                     .then((doc) => doc.id);
 
@@ -107,7 +107,7 @@ const addJob = functions.https.onCall(async (data: string, context: any) => {
             description: '',
             salary: '',
             location: '',
-            link: '',
+            link: ''
         },
         notes: '',
         deadlines: [],
@@ -117,13 +117,13 @@ const addJob = functions.https.onCall(async (data: string, context: any) => {
         status: {
             stage: 0,
             awaitingResponse: false,
-            priority: '',
+            priority: ''
         },
 
         metaData: {
             userId: context.auth.uid,
-            boardId: data,
-        },
+            boardId: data
+        }
     };
 
     return getCollection('jobs')
@@ -147,8 +147,8 @@ const addJobObject = functions.https.onCall(
             ...data.data,
             metaData: {
                 userId: context.auth.uid,
-                jobId: data.id,
-            },
+                jobId: data.id
+            }
         };
 
         return getCollection(`${data.type}`)
@@ -273,4 +273,19 @@ const setKanbanBoard = functions.https.onCall(async (data: string, context: any)
     return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data });
 });
 
-export { addJobs, addJob, addJobObject, updateJob, dragKanbanJob, deleteJob, setKanbanBoard };
+const createBoard = functions.https.onCall(async (data: { name: string }, context: any) => {
+    return getCollection('boards').add({ name: data.name })
+        .then()
+        .catch();
+});
+
+export {
+    addJobs,
+    addJob,
+    addJobObject,
+    updateJob,
+    dragKanbanJob,
+    deleteJob,
+    setKanbanBoard,
+    createBoard
+};
