@@ -51,6 +51,37 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
         });
 };
 
+// Returns true if the object has the same structure as the structure object
+// Conditions:
+//  - Both the original object and structure are of type object
+//  - Both objects have the same number of keys
+//  - Each key in the structure object exists in the original object and has the same type
+//    (if the value is an object, recursively check the structure of that object too)
+const isValidObjectStructure = (obj: any, structure: any) => {
+    if (typeof obj !== 'object' || typeof structure !== 'object') {
+        return false;
+    }
+
+    if (Object.keys(obj).length !== Object.keys(structure).length) {
+        return false;
+    }
+
+    for (const key in structure) {
+        if (structure.hasOwnProperty(key)) {
+            if (typeof obj[key] !== typeof structure[key]) {
+                return false;
+            }
+            if (typeof obj[key] === 'object') {
+                if (!isValidObjectStructure(obj[key], structure[key])) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
 // Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 const getRelativeTimestamp = (days: number) => {
@@ -70,6 +101,7 @@ export {
     getCollection,
     verifyIsAuthenticated,
     verifyDocPermission,
+    isValidObjectStructure,
     getRelativeTimestamp,
     getFirestoreTimestamp,
     firestoreHelper,

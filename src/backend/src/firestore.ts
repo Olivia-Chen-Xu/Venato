@@ -1,5 +1,36 @@
 import * as functions from 'firebase-functions';
-import { firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from './helpers';
+import {
+    firestoreHelper,
+    getCollection,
+    getDoc,
+    getFirestoreTimestamp,
+    isValidObjectStructure
+} from './helpers';
+
+/**
+ * Db object structures: when adding data to the db, they must follow these structures
+ * Note: Value doesn't matter, just use the default
+ */
+
+const jobStructure = {
+    details: {
+        position: '',
+        company: '',
+        location: '',
+        link: '',
+        description: '',
+        salary: '',
+    },
+    metaData: {
+        jobId: '',
+    },
+    notes: '',
+    status: {
+        awaitingResponse: false,
+        priority: '',
+        stage: 0,
+    },
+};
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -18,6 +49,8 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const data = snap.data();
     const docId = context.params.jobId;
     const promises = [];
+
+    isValidObjectStructure(data, jobStructure);
 
     // Add searchable job position field
     const positionSearchable = data.details.position
