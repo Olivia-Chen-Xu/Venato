@@ -217,9 +217,13 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         location: '',
         link: '',
     });
-    const addNewDdl = () => {
+    const addNewDdl = async () => {
         setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
         setOpen(false);
+        await httpsCallable(
+            getFunctions(),
+            'addJobObject'
+        )({ id: jobData.id, type: 'deadlines', data: newDdl });
         setNewDdl({ title: '', date: null, time: null, location: '', link: '' });
     };
 
@@ -326,9 +330,13 @@ const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState({ name: '', description: '' });
 
-    const addNewQuestion = () => {
+    const addNewQuestion = async () => {
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
+        await httpsCallable(
+            getFunctions(),
+            'addJobObject'
+        )({ id: jobData.id, type: 'interviewQuestions', data: newQuestion });
         setNewQuestion({ name: '', description: '' });
     };
 
@@ -419,9 +427,13 @@ const Contacts = ({ value, index, jobData, setJob }) => {
         notes: '',
     });
 
-    const addNewContact = () => {
+    const addNewContact = async () => {
         setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
         setOpen(false);
+        await httpsCallable(
+            getFunctions(),
+            'addJobObject'
+        )({ id: jobData.id, type: 'contacts', data: newContact });
         setNewContact({
             name: '',
             title: '',
@@ -461,7 +473,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 >
                     <p>Contact name</p>
                     <TextField
-                        label="Interview Question"
+                        label="Name"
                         value={newContact.name}
                         fullWidth
                         onChange={(e) => {
@@ -549,43 +561,85 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
 
     const handleClose = () => {
         setOpen(false);
+        console.log(job);
+        updateJob(job);
     };
 
     const addNewJob = async () => {
-        setLoading(true);
+        await httpsCallable(getFunctions(), 'addJob')();
+    };
+
+    const deleteJob = async (jobData) => {
         const newState = [...state];
-        // Extract id from job
-        const { id } = job;
-        console.log(id);
-        const jobCopy = structuredClone(job);
-        delete jobCopy.id;
-
-        const functionName = isEdit ? 'updateJob' : 'addJob';
-        const params = isEdit ? { id, newFields: jobCopy } : jobCopy;
-        await httpsCallable(
-            getFunctions(),
-            functionName
-        )(params).then((res) => {
-            if (setState === false) {
-                CalendarState.updateJob(job);
-            } else {
-                if (isEdit) {
-                    // console.log(index);
-                    newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
-                } else {
-                    newState[index] = [{ ...job, id: res.data }, ...state[index]];
-                }
-
-                setState(newState);
-            }
-        });
-
-        setLoading(false);
+        newState[index] = state[index].filter((j) => j.id !== jobData.id);
+        await httpsCallable(getFunctions(), 'deleteJob')({ id: jobData.id });
+        setState(newState);
         setOpen(false);
     };
 
+    const updateJob = async (jobData) => {
+        const newState = [...state];
+        let jobDataNew;
+        switch (tabValue) {
+            case 0:
+                jobDataNew = { details: jobData.details, status: jobData.status };
+                break;
+            case 1:
+                jobDataNew = jobData.notes;
+                break;
+            case 2:
+                jobDataNew = [];
+                break;
+            case 3:
+                jobDataNew = [];
+            case 4:
+                jobDataNew = [];
+        }
+
+        await httpsCallable(
+            getFunctions(),
+            'updateJob'
+        )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+        newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+        setState(newState);
+    };
+
+    // const addNewJob = async () => {
+    //     setLoading(true);
+    //     const newState = [...state];
+    //     // Extract id from job
+    //     const { id } = job;
+    //     console.log(id);
+    //     const jobCopy = structuredClone(job);
+    //     delete jobCopy.id;
+
+    //     const functionName = isEdit ? 'updateJob' : 'addJob';
+    //     const params = isEdit ? { id, newFields: jobCopy } : jobCopy;
+    //     await httpsCallable(
+    //         getFunctions(),
+    //         functionName
+    //     )(params).then((res) => {
+    //         if (setState === false) {
+    //             CalendarState.updateJob(job);
+    //         } else {
+    //             if (isEdit) {
+    //                 // console.log(index);
+    //                 newState[index] = state[index].map((j) => (j.id === params.id ? job : j));
+    //             } else {
+    //                 newState[index] = [{ ...job, id: res.data }, ...state[index]];
+    //             }
+
+    //             setState(newState);
+    //         }
+    //     });
+
+    //     setLoading(false);
+    //     setOpen(false);
+    // };
+
     useEffect(() => {
         const fetchJob = async () => {
+            console.log(jobData, index);
             setJob(jobData || { ...job, stage: index });
             if (jobData) {
                 await httpsCallable(
@@ -593,7 +647,6 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                     'getJobData'
                 )({ jobId: jobData.id }).then((res) => {
                     setJob(res.data);
-                    console.log(res.data);
                 });
             }
         };
@@ -645,6 +698,7 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                                 borderRadius: '4px',
                                 marginInlineEnd: 5,
                             }}
+                            onClick={() => deleteJob(job)}
                         >
                             <Delete />
                         </Button>
