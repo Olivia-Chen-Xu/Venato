@@ -26,7 +26,7 @@ const addJobs = functions.https.onCall(
         await batch
             .commit()
             .then(() => 'Jobs added successfully')
-            .catch((err) => `Error adding jobs: ${err}`);
+            .catch((err: any) => `Error adding jobs: ${err}`);
 
         // Wait for the db trigger to take effect - otherwise it will override the boardId we add later
         await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -277,7 +277,9 @@ const addBoard = functions.https.onCall(async (data: { name: string }, context: 
     return getCollection('boards')
         .add({ name: data.name, metaData: { userId: context.auth.uid } })
         .then((result) => result.id)
-        .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
+        .catch(
+            (e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`
+        );
 });
 
 export {
