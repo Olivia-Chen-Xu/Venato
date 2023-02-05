@@ -27,13 +27,13 @@ const QuestionSearch = () => {
         const result = await httpsCallable(
             getFunctions(),
             'interviewQuestionsSearch'
-        )({ company, position });
+        )(position);
 
-        setQuestions(result.data);
+        //setQuestions(result.data);
+        console.log(result);
         setLoading(false);
         setMessage('');
         setHasSearched(true);
-        console.log(`Company: '${company}' Position: '${position}'`);
     };
 
     function handleLoad() {
