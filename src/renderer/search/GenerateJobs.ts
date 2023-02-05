@@ -283,7 +283,7 @@ const generateJobs = async (num: number) => {
                     ? Math.floor(Math.random() * 3) + 9
                     : Math.floor(Math.random() * 4) + 13;
             const minutes = Math.random() < 0.3 ? 30 : 0;
-            const date = new Date(2023, month, day, hours, minutes, 0, 0).getDate();
+            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
             const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
             const link = `https://queensu.zoom.us/j/${[...Array(11)]
@@ -387,6 +387,7 @@ const generateJobs = async (num: number) => {
         'They are a friend of a friend of a friend of a friend of a friend of a friend of a friend',
     ];
     contactNames.forEach((contact) => {
+        const randomPhone = Math.floor(Math.random() * 10000000000);
         const newContact = {
             name: contact.name,
             // eslint-disable-next-line no-bitwise
@@ -394,7 +395,7 @@ const generateJobs = async (num: number) => {
                 .replace('Intern', '')
                 .trimEnd(),
             email: `${contact.name.toLowerCase().replace(' ', '.')}@gmail.com`,
-            phone: Math.floor(Math.random() * 10000000000) < 1000000000 ? `0${num}` : `${num}`,
+            phone: randomPhone < 1000000000 ? `0${randomPhone}` : `${randomPhone}`,
             linkedin: contact.linkedin,
             // eslint-disable-next-line no-bitwise
             notes: Math.random() < 0.7 ? contactNotes[~~(Math.random() * contactNotes.length)] : '',

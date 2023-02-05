@@ -21,12 +21,8 @@ const auth = admin.auth();
  */
 
 // Shorthand for the very common requirement of getting a document or collection
-const getDoc = (doc: string) => {
-    return admin.firestore().doc(doc);
-};
-const getCollection = (collection: string) => {
-    return admin.firestore().collection(collection);
-};
+const getDoc = (doc: string) => admin.firestore().doc(doc);
+const getCollection = (collection: string) => admin.firestore().collection(collection);
 
 // Confirm a function call comes from a logged-in user
 const verifyIsAuthenticated = (context: functions.https.CallableContext) => {
@@ -78,5 +74,5 @@ export {
     getFirestoreTimestamp,
     firestoreHelper,
     db,
-    auth,
+    auth
 };
