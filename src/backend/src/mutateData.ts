@@ -14,19 +14,28 @@ import {
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall(
-    async (data: { jobs: object[]; users: string[] }, context: any) => {
+    async (data: { jobs: object[]; boards: { userId: string, name: string, id: number }[] }, context: any) => {
         verifyIsAuthenticated(context);
 
+        for (const board of data.boards) {
+            await getCollection('boards').add(board).then((doc) => {
+                data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
+                    job.boardId = doc.id;
+                });
+            });
+        }
+
         // Add all the jobs to the db
-        const batch = db.batch();
+        const jobsBatch = db.batch();
         data.jobs.forEach((job: any) => {
-            batch.set(db.collection('jobs').doc(), job);
+            jobsBatch.set(db.collection('jobs').doc(), job);
         });
-        await batch
+        return jobsBatch
             .commit()
             .then(() => 'Jobs added successfully')
             .catch((err: any) => `Error adding jobs: ${err}`);
 
+        /*
         // Wait for the db trigger to take effect - otherwise it will override the boardId we add later
         await new Promise((resolve) => setTimeout(resolve, 10000));
 
@@ -83,8 +92,7 @@ const addJobs = functions.https.onCall(
                 }
             }
         }
-
-        functions.logger.log('Job boards generated successfully');
+         */
     }
 );
 
