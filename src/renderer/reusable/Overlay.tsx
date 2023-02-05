@@ -1,4 +1,3 @@
-import React from 'react';
 import Calendar from 'renderer/calendar/Calendar';
 import Homepage from 'renderer/homepage/Homepage';
 import Kanban from 'renderer/kanban/Kanban';
@@ -7,7 +6,7 @@ import Questions from 'renderer/search/QuestionSearch';
 import ReusableHeader from './ReusableHeader';
 import ReusableSideBar from './ReusableSideBar';
 
-export default function Overlay(props) {
+const Overlay = (props) => {
     const { page } = props;
     let elem; // By default show home?
     if (page === 'jobs') {
@@ -33,3 +32,5 @@ export default function Overlay(props) {
         </>
     );
 }
+
+export default Overlay;

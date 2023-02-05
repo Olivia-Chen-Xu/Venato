@@ -5,7 +5,6 @@ import {
     verifyIsAuthenticated,
     verifyDocPermission,
     db,
-    getRelativeTimestamp
 } from './helpers';
 
 /**
@@ -90,15 +89,29 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall(async (data: string, context: any) => {
-    await verifyDocPermission(context, `boards/${data}`);
+const addJob = functions.https.onCall(async (data: { boardId: string, stage: number }, context: any) => {
+    if (!data) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide a board id and stage as arguments'
+        );
+    }
 
-    if (!data || Object.prototype.toString.call(data) !== '[object String]') {
+    if (!data.boardId) {
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Must provide a board id (string)'
         );
     }
+
+    if (![0, 1, 2, 3].includes(data.stage)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide a valid stage (0, 1, 2 or 3)'
+        );
+    }
+
+    await verifyDocPermission(context, `boards/${data.boardId}`);
 
     const defaultJob = {
         details: {
@@ -115,20 +128,23 @@ const addJob = functions.https.onCall(async (data: string, context: any) => {
         contacts: [],
 
         status: {
-            stage: 0,
+            stage: data.stage,
             awaitingResponse: false,
             priority: ''
         },
 
         metaData: {
             userId: context.auth.uid,
-            boardId: data
+            boardId: data.boardId
         }
     };
 
     return getCollection('jobs')
         .add(defaultJob)
-        .then((docRef) => docRef.id)
+        .then((docRef) => {
+            const { metaData: foo, ...job } = defaultJob;
+            return { ...job, id: docRef.id };
+        })
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
@@ -256,11 +272,13 @@ const dragKanbanJob = functions.https.onCall(
     }
 );
 
-// Deactivates a job in firestore (it's NOT removed, it can still be restored since just a flag is set)
-// In 30 days, a CRON job will permanently remove it from firestore
+// Deletes a job in firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
     await verifyDocPermission(context, `jobs/${data.id}`);
-    return getDoc(`jobs/${data.id}`).update({ deletedTime: getRelativeTimestamp(0) });
+    return getDoc(`jobs/${data.id}`)
+        .delete()
+        .then(() => `Successfully deleted job '${data.id}'`)
+        .catch((err) => `Error deleting job '${data.id}': ${err}`);
 });
 
 // Set the current kanban board for the user

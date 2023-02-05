@@ -1,6 +1,6 @@
 import React from 'react';
-import dayjs, { Dayjs } from 'dayjs';
-// import CalendarState from '../context/CalendarState';
+import dayjs from 'dayjs';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
@@ -24,9 +24,10 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
         const jsx = deadlines.map((deadline, idx) => (
             <div
                 key={idx}
-                onClick={(event) => {
+                onClick={async (event) => {
                     event.stopPropagation(); // So the day div onClick won't be triggered also
-                    setJob(null);
+                    setJob(await httpsCallable(getFunctions(), 'getJobData')({ jobId: deadline.jobId })
+                        .then((result) => result.data));
                     setIsEdit(true);
                     setOpen(true);
                 }}
@@ -63,27 +64,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
                     </p>
                 </header>
                 <div
-                    className="flex-1 cursor-pointer "
-                    onClick={() => {
-                        setJob({
-                            awaitingResponse: false,
-                            company: '',
-                            contacts: [],
-                            deadlines: [],
-                            details: {
-                                description: '',
-                                url: '',
-                            },
-                            id: '', // Id is needed to identify the job in the database
-                            interviewQuestions: [],
-                            location: '',
-                            notes: '',
-                            stage: 0,
-                            position: '',
-                        });
-                        setIsEdit(false);
-                        setOpen(true);
-                    }}
+                    className="flex-1 cursor-pointer"
                 >
                     {getDayEvents()}
                 </div>
