@@ -273,7 +273,7 @@ const setKanbanBoard = functions.https.onCall(async (data: string, context: any)
     return getDoc(`users/${context.auth.uid}`).update({ kanbanBoard: data });
 });
 
-const addBoard = functions.https.onCall(async (data: { name: string }, context: any) => {
+const addBoard = functions.https.onCall(async (data: string, context: any) => {
     return getCollection('boards')
         .add({ name: data.name, metaData: { userId: context.auth.uid } })
         .then((result) => result.id)
