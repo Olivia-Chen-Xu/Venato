@@ -275,7 +275,7 @@ const setKanbanBoard = functions.https.onCall(async (data: string, context: any)
 
 const addBoard = functions.https.onCall(async (data: string, context: any) => {
     return getCollection('boards')
-        .add({ name: data.name, metaData: { userId: context.auth.uid } })
+        .add({ name: data, metaData: { userId: context.auth.uid } })
         .then((result) => result.id)
         .catch(
             (e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`
