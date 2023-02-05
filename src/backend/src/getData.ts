@@ -249,7 +249,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
                 return [];
             }
 
-            return deadlines.docs.map((deadline) => {
+            return deadlines.docs.filter((d) => d.data().date != null).map((deadline) => {
                 const { metaData, ...deadlineData } = deadline.data();
                 const deadlineDate: Date = deadlineData.date.toDate();
                 const date = {
