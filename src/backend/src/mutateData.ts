@@ -135,13 +135,16 @@ const addJob = functions.https.onCall(async (data: { boardId: string, stage: num
 
         metaData: {
             userId: context.auth.uid,
-            boardId: data
+            boardId: data.boardId
         }
     };
 
     return getCollection('jobs')
         .add(defaultJob)
-        .then((docRef) => docRef.id)
+        .then((docRef) => {
+            const { metaData: foo, ...job } = defaultJob;
+            return { ...job, id: docRef.id };
+        })
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
@@ -269,11 +272,13 @@ const dragKanbanJob = functions.https.onCall(
     }
 );
 
-// Deactivates a job in firestore (it's NOT removed, it can still be restored since just a flag is set)
-// In 30 days, a CRON job will permanently remove it from firestore
+// Deletes a job in firestore
 const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
     await verifyDocPermission(context, `jobs/${data.id}`);
-    return getDoc(`jobs/${data.id}`).delete();
+    return getDoc(`jobs/${data.id}`)
+        .delete()
+        .then(() => `Successfully deleted job '${data.id}'`)
+        .catch((err) => `Error deleting job '${data.id}': ${err}`);
 });
 
 // Set the current kanban board for the user
