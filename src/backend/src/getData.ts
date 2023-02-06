@@ -139,10 +139,12 @@ const getKanbanBoard = functions.https.onCall(async (boardId: string, context: a
         .then(async (query) => {
             if (query.empty) return [];
 
-            const jobs = query.docs.map((job) => ({ ...job.data(), id: job.id, }));
+            const jobs = query.docs.map((job) => ({ ...job.data(), id: job.id }));
+
             const boardName = await getDoc(`boards/${boardId}`)
                 .get()
-                .then((doc) => doc.data().name);
+                .then((doc) => // @ts-ignore
+                    doc.data().name);
             return { name: boardName, id: boardId, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${boardId}: ${err}`);
