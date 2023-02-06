@@ -178,7 +178,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
 
 // Search for a job by position, company, or location
 const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (query, context: any) => {
+    (query: string, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
