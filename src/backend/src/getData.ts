@@ -124,8 +124,8 @@ const getJobBoards = functions.https.onCall((data: null, context: any) => {
     return getCollection(`boards`)
         .where('userId', '==', context.auth.uid)
         .get()
-        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => doc.data()))
-        .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`))
+        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+        .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 });
 
 // Gets all the jobs for a given kanban board

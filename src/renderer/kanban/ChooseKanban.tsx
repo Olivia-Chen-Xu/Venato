@@ -23,6 +23,7 @@ const ChooseKanban = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
+        console.log(JSON.stringify(boards.result.data, null, 4));
         boards.result.data.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
