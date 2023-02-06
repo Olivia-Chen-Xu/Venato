@@ -6,18 +6,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Search from '@mui/icons-material/Search';
 
 const QuestionSearch = () => {
-    const companies = useAsync(httpsCallable(getFunctions(), 'getAllCompanies'), []);
-    const locations = useAsync(httpsCallable(getFunctions(), 'getAllLocations'), []);
-
-    const [company, setCompany] = useState<string>('');
-    const [position, setPosition] = useState<string>('');
+    const [query, setQuery] = useState<string>('');
     const [questions, setQuestions] = useState<object[]>([]);
     const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
-        if ((position?.trim()?.length || 0) === 0 && company === '') {
+        setLoading(true);
+        if (query.trim().length === 0) {
             setMessage('Please enter a position or company');
             setLoading(false);
             return;

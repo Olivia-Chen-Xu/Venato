@@ -7,10 +7,9 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import bar from '../../../assets/bar.png';
 
 const SearchBar = () => {
-    let elem;
     const [query, setQuery] = useState<string>('');
     const [jobs, setJobs] = useState<object[]>([]);
-    const [errMsg, setErrMsg] = useState<string>('');
+    const [message, setMessage] = useState<string>('');
     const [currJob, setcurrJob] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [hasSearched, setHasSearched] = useState(false);
@@ -18,16 +17,17 @@ const SearchBar = () => {
     const handleSearch = async () => {
         setLoading(true);
         if (query.trim().length === 0) {
-            setErrMsg('Please enter a position, company, or location');
+            setMessage('Please enter a position, company, or location');
             setLoading(false);
             return;
         }
 
+        setMessage('Loading jobs...');
         const result = await httpsCallable(getFunctions(), 'jobSearch')(query);
 
         setJobs(result.data);
         setcurrJob(result.data[0]);
-        setErrMsg('');
+        setMessage('');
         setLoading(false);
         setHasSearched(true);
     };
@@ -135,7 +135,7 @@ const SearchBar = () => {
                                     // value={position}
                                     placeholder="Search by position, location or company"
                                     onChange={(e) => {
-                                        setQuery(e.target.value.trim());
+                                        setQuery(e.target.value);
                                     }}
                                 />
                             </label>
@@ -197,7 +197,7 @@ const SearchBar = () => {
             </div>
 
             <br />
-            <div className="grid place-content-center">{errMsg}</div>
+            <div className="grid place-content-center">{message}</div>
             <br />
 
             {displayJobs()}
