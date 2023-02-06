@@ -15,6 +15,7 @@ interface IJob {
     contacts: IContact[];
 
     boardId: string;
+    userId: string;
 }
 
 interface IDeadline {

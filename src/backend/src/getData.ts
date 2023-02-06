@@ -121,7 +121,7 @@ const getKanbanBoard = functions.https.onCall(async (boardId: string, context: a
                 }
             });
         if (lastBoardId != null) {
-            return lastBoardId;
+            return lastBoardId; // TODO
         }
 
         throw new functions.https.HttpsError(
@@ -170,7 +170,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
                     day: deadlineDate.getDate()
                 };
 
-                return { ...deadline.data(), newDate };
+                return { ...deadline.data(), date: newDate };
             });
         })
         .catch((err) => `Error getting calendar events: ${err}`);

@@ -479,7 +479,7 @@ const generateJobs = async (num: number) => {
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs({ jobs, users })
+    addJobs({ jobs, boards })
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };

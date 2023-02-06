@@ -19,12 +19,15 @@ const addJobs = functions.https.onCall(
         verifyIsAuthenticated(context);
 
         for (const board of data.boards) {
-            await getCollection('boards').add(board).then((doc) => {
+            await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
                 data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
                     job.boardId = doc.id;
                 });
             });
         }
+
+        // @ts-ignore
+        data.jobs.forEach((job) => job.userId = context.auth.uid);
 
         // Add all the jobs to the db
         const jobsBatch = db.batch();
@@ -35,65 +38,6 @@ const addJobs = functions.https.onCall(
             .commit()
             .then(() => 'Jobs added successfully')
             .catch((err: any) => `Error adding jobs: ${err}`);
-
-        /*
-        // Wait for the db trigger to take effect - otherwise it will override the boardId we add later
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-
-        // Generate job boards
-        const jobs = await getCollection('jobs').get();
-
-        if (jobs.empty) {
-            throw new functions.https.HttpsError(
-                'not-found',
-                'Error: no jobs in the db (not added correctly?)'
-            );
-        }
-
-        for (let i = 0; i < data.users.length; ++i) {
-            const userJobs = jobs.docs
-                .filter((job) => job.data().metaData.userId === data.users[i])
-                .map((job) => ({
-                    id: job.id,
-                    board: Math.floor(Math.random() * 3),
-                    company: job.data().details.company,
-                    position: job.data().details.position,
-                    stage: job.data().status.stage
-                }));
-            const boards: {
-                [name: string]: {
-                    id: string;
-                    board: number;
-                    company: string;
-                    position: string;
-                    stage: number;
-                }[];
-            } = {
-                'Summer 2021 internships': userJobs.filter((job) => job.board === 0),
-                'Summer 2022 internships': userJobs.filter((job) => job.board === 1),
-                'Summer 2023 internships': userJobs.filter((job) => job.board === 2)
-            };
-
-            for (const name of Object.keys(boards)) {
-                const boardId = await getCollection('boards')
-                    .add({
-                        name,
-                        metaData: {
-                            userId: data.users[i]
-                        }
-                    })
-                    .then((doc) => doc.id);
-
-                for (const job of boards[name]) {
-                    await getDoc(`jobs/${job.id}`)
-                        .update({ 'metaData.boardId': boardId })
-                        .then(() =>
-                            functions.logger.log(`Board '${boardId}' added to job '${job.id}'`)
-                        );
-                }
-            }
-        }
-         */
     }
 );
 

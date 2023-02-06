@@ -21,16 +21,11 @@ import {
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     // @ts-ignore
     const job: IJob = snap.data();
+    const jobId = snap.id;
     const promises: Promise<any>[] = [];
 
-    promises.push(
-        snap.ref.update({
-            userId: context.auth?.uid,
-        })
-    );
-
     // Move the deadlines to its own collection
-    const { deadlines } = job;
+    const deadlines = job.deadlines;
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     deadlines.forEach(
@@ -39,34 +34,37 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 ...deadline,
                 date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
-                userId: context.auth?.uid,
+                userId: job.userId,
+                jobId: jobId,
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
         }
     );
 
     // Move the interview questions to their own collection (with search params for easy querying)
-    const { interviewQuestions } = job;
+    const interviewQuestions = job.interviewQuestions;
     promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
 
     interviewQuestions.forEach((question: IInterviewQuestion) => {
         const newQuestion = {
             ...question,
-            userId: context.auth?.uid,
+            userId: job.userId,
             company: job.company,
+            jobId: jobId,
         };
         promises.push(getCollection(`interviewQuestions`).add(newQuestion));
     });
 
     // Move the contacts to their own collection
-    const { contacts } = job;
+    const contacts = job.contacts;
     promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
 
     contacts.forEach(
         (contact: IContact) => {
             const newContact = {
                 ...contact,
-                userId: context.auth?.uid,
+                userId: job.userId,
+                jobId: jobId,
             };
             promises.push(getCollection(`contacts`).add(newContact));
         }
