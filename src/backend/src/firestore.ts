@@ -80,8 +80,6 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  * - Remove the deadlines and interview questions (in their own collection)
  */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
-    // @ts-ignore
-    const job: IJob = snap.data();
     const jobId = snap.id;
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
@@ -107,4 +105,17 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
     return Promise.all(promises);
 });
 
-export { onJobCreate, onJobPurge };
+const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(async (snap, context) => {
+    const boardId = snap.id;
+
+    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
+    await getCollection('jobs')
+        .where('boardId', '==', boardId)
+        .get()
+        .then((jobs) => jobs.forEach((job) => promises.push(job.ref.delete())))
+        .catch((err) => functions.logger.log(`Error getting jobs: ${err}`));
+
+    return Promise.all(promises);
+});
+
+export { onJobCreate, onJobPurge, onBoardPurge };

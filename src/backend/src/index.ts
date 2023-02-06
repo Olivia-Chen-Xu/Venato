@@ -1,6 +1,6 @@
 import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
 import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth';
-import { onJobCreate, onJobPurge } from './firestore';
+import { onJobCreate, onJobPurge, onBoardPurge } from './firestore';
 import {
     getCalendarDeadlines,
     getHomepageData,
@@ -60,6 +60,7 @@ export {
     beforeSignIn,
     onJobCreate,
     onJobPurge,
+    onBoardPurge,
     getHomepageData,
     getKanbanBoard,
     getJobData,
