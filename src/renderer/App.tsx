@@ -32,6 +32,7 @@ export default function App() {
                     <Route path="/home" element={<Overlay page={'home'} />} />
                     <Route path="/job" element={<Overlay page={'jobs'} />} />
                     <Route path="/questions" element={<Overlay page={'questions'} />} />
+                    <Route path="/chooseKanban" element={<Overlay page={'chooseKanban'} />} />
                     <Route path="/kanban" element={<Overlay page={'kanban'} />} />
                     <Route path="/calendar" element={<Overlay page={'cal'} />} />
                 </Routes>
