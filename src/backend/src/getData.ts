@@ -99,10 +99,7 @@ const getHomepageData = functions.https.onCall((data: null, context: any) => {
         getCollection(`boards`)
             .where('userId', '==', context.auth.uid)
             .get()
-            .then((boards) =>
-                boards.empty
-                    ? []
-                    : boards.docs.map((doc) => doc.data()))
+            .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
             .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`))
     );
 

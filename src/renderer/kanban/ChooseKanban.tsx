@@ -2,8 +2,10 @@ import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const ChooseKanban = () => {
+    const nav = useNavigate();
     const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
 
     if (boards.loading) {
@@ -23,15 +25,14 @@ const ChooseKanban = () => {
         }
 
         const boardsHtml: JSX.Element[] = [];
-        console.log(JSON.stringify(boards.result.data, null, 4));
         boards.result.data.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
                         onClick={async () => {
-                            console.log(JSON.stringify(board, null, 4));
                             await httpsCallable(getFunctions(), 'setKanbanBoard')(board.id);
+                            nav('/kanban');
                         }}
                     >
                         <span className="absolute bottom-5 left-5 ">{board.name}</span>
