@@ -130,22 +130,29 @@ const getKanbanBoard = functions.https.onCall(async (boardId: string, context: a
         );
     }
 
-    await verifyDocPermission(context, `boards/${boardId}`);
+    const board = await getDoc(`boards/${boardId}`).get().then((doc) => doc.data());
+
+    if (board == null) {
+        throw new functions.https.HttpsError(
+            'not-found',
+            `Board with id '${boardId}' not found`
+        );
+    }
+    if (board.userId !== context.auth.uid) {
+        throw new functions.https.HttpsError(
+            'permission-denied',
+            `You do not have permission to access board with id '${boardId}'`
+        );
+    }
 
     return getCollection('jobs')
         .where('userId', '==', context.auth.uid)
         .where('boardId', '==', boardId)
         .get()
         .then(async (query) => {
-            if (query.empty) return [];
+            const jobs = query.empty? [] : query.docs.map((job) => ({ ...job.data(), id: job.id }));
 
-            const jobs = query.docs.map((job) => ({ ...job.data(), id: job.id }));
-
-            const boardName = await getDoc(`boards/${boardId}`)
-                .get()
-                .then((doc) => // @ts-ignore
-                    doc.data().name);
-            return { name: boardName, id: boardId, jobs };
+            return { name: board.name, id: boardId, jobs };
         })
         .catch((err) => `Error getting kanban board with id ${boardId}: ${err}`);
 });

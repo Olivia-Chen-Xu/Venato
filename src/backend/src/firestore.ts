@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import {
     firestoreHelper,
-    getCollection,
+    getCollection, getDoc,
     getFirestoreTimestamp
 } from './helpers';
 
@@ -109,6 +109,21 @@ const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(a
     const boardId = snap.id;
 
     const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
+
+    await getDoc(`users/${snap.data().userId}`)
+        .get()
+        .then((userDoc) => {
+            if (!userDoc.exists) {
+                return Promise.reject(`User ${snap.data().userId} does not exist`);
+            }
+
+            if (userDoc.data()?.kanbanBoard === boardId) {
+                promises.push(userDoc.ref.update({ kanbanBoard: firestoreHelper.FieldValue.delete() }));
+            }
+            return null;
+        })
+        .catch((err) => functions.logger.log(`Error getting user: ${err}`));
+
     await getCollection('jobs')
         .where('boardId', '==', boardId)
         .get()

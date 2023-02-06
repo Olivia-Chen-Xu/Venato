@@ -110,7 +110,7 @@ const QuestionSearch = () => {
                                     type="email"
                                     name="email"
                                     // value={position}
-                                    placeholder="Position"
+                                    placeholder="Search by position or company"
                                     onChange={(e) => {
                                         setQuery(e.target.value);
                                     }}
