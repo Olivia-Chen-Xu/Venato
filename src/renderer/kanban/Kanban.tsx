@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ControlPoint } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
@@ -15,7 +15,7 @@ const newJob = (idx: number) => {
             description: '',
             salary: '',
             location: '',
-            link: '',
+            link: ''
         },
 
         notes: '',
@@ -26,8 +26,8 @@ const newJob = (idx: number) => {
         status: {
             stage: idx,
             awaitingResponse: false,
-            priority: '',
-        },
+            priority: ''
+        }
     };
 };
 
@@ -68,13 +68,13 @@ const getJobStyle = (isDragging, draggableStyle) => ({
     //border: '1px solid #676767',
     borderRadius: 10,
     boxShadow: '2px 5px 5px #BEBEBE',
-    ...draggableStyle,
+    ...draggableStyle
 });
 const getListStyle = (isDraggingOver) => ({
     padding: grid,
     width: (window.innerWidth - 200) / 4,
     height: window.innerHeight - 100,
-    overflowY: 'scroll',
+    overflowY: 'scroll'
 });
 
 export default function Kanban() {
@@ -150,7 +150,7 @@ export default function Kanban() {
                 'dragKanbanJob'
             )({
                 id: removed.id,
-                newStage: dInd,
+                newStage: dInd
             });
         }
     }
@@ -160,8 +160,7 @@ export default function Kanban() {
             setLoading(true);
             const newState = [[], [], [], []];
             await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
-                // console.log(JSON.stringify(res, null, 4));
-                res.data.jobs.forEach((job) => newState[job.status.stage].push(job));
+                res.data.jobs.forEach((job) => newState[job.stage].push(job));
                 setState(newState);
                 setBoardName(res.data.name);
                 setBoardID(res.data.id);
@@ -170,8 +169,11 @@ export default function Kanban() {
 
             return newState;
         };
+
         fetchJobs();
     }, []);
+
+
 
     return (
         <div
@@ -179,25 +181,25 @@ export default function Kanban() {
                 paddingLeft: 40,
                 display: 'flex',
                 justifyContent: 'center',
-                flexDirection: 'column',
+                flexDirection: 'column'
             }}
         >
             {/* <button
-                type="button"
-                onClick={() => {
-                    setState([...state, []]);
-                }}
-            >
-                Add new group
-            </button> */}
+            type="button"
+            onClick={() => {
+                setState([...state, []]);
+            }}
+        >
+            Add new group
+        </button> */}
             {/* <button
-                type="button"
-                onClick={() => {
-                    setState([...state, getJobs(1)]);
-                }}
-            >
-                Add new job
-            </button> */}
+            type="button"
+            onClick={() => {
+                setState([...state, getJobs(1)]);
+            }}
+        >
+            Add new job
+        </button> */}
             {modalOpen && (
                 <JobDialog
                     setCurrentJob={setCurrentJob}
@@ -214,7 +216,7 @@ export default function Kanban() {
                     alignSelf: 'flex-start',
                     fontSize: 32,
                     fontWeight: 'bold',
-                    color: '#676767',
+                    color: '#676767'
                 }}
             >
                 {boardName}
@@ -222,8 +224,8 @@ export default function Kanban() {
             <br></br>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 {/* {jobs.map((job) => (
-                    <div>{JSON.stringify(job)}</div>
-                ))} */}
+                <div>{JSON.stringify(job)}</div>
+            ))} */}
 
                 {loading ? (
                     <CircularProgress />
@@ -235,7 +237,7 @@ export default function Kanban() {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexDirection: 'column',
-                                    display: 'flex',
+                                    display: 'flex'
                                 }}
                             >
                                 <p
@@ -244,7 +246,7 @@ export default function Kanban() {
                                         width: '80%',
                                         textAlign: 'center',
                                         fontSize: 20,
-                                        color: '#676767',
+                                        color: '#676767'
                                     }}
                                 >
                                     {colTitles[ind]}
@@ -281,43 +283,43 @@ export default function Kanban() {
                                                                         fontSize: 20,
                                                                         fontWeight: 300,
                                                                         color: '#633175',
-                                                                        textAlign: 'right',
+                                                                        textAlign: 'right'
                                                                     }}
                                                                 >
-                                                                    {job.details.position}
+                                                                    {job.position}
                                                                 </text>
                                                                 <text
                                                                     style={{
                                                                         fontSize: 14,
                                                                         fontWeight: 300,
                                                                         color: '#633175',
-                                                                        textAlign: 'right',
+                                                                        textAlign: 'right'
                                                                     }}
                                                                 >
-                                                                    {job.details.company}
+                                                                    {job.company}
                                                                 </text>
                                                                 {/* <div
-                                                                    style={{
-                                                                        display: 'flex',
-                                                                        justifyContent:
-                                                                            'space-around',
-                                                                    }}
-                                                                >
-                                                                    {colTitles[job.metadata.stage]}
-                                                                </div>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        const newState = [...state];
-                                                                        newState[ind].splice(
-                                                                            index,
-                                                                            1
-                                                                        );
-                                                                        setState(newState);
-                                                                    }}
-                                                                >
-                                                                    delete
-                                                                </button> */}
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent:
+                                                                        'space-around',
+                                                                }}
+                                                            >
+                                                                {colTitles[job.metadata.stage]}
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const newState = [...state];
+                                                                    newState[ind].splice(
+                                                                        index,
+                                                                        1
+                                                                    );
+                                                                    setState(newState);
+                                                                }}
+                                                            >
+                                                                delete
+                                                            </button> */}
                                                             </div>
                                                         )}
                                                     </Draggable>

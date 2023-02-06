@@ -5,6 +5,7 @@ import JobSearch from 'renderer/search/JobSearch';
 import Questions from 'renderer/search/QuestionSearch';
 import ReusableHeader from './ReusableHeader';
 import ReusableSideBar from './ReusableSideBar';
+import ChooseKanban from '../kanban/ChooseKanban';
 
 const Overlay = (props) => {
     const { page } = props;
@@ -13,6 +14,8 @@ const Overlay = (props) => {
         elem = <JobSearch />;
     } else if (page === 'cal') {
         elem = <Calendar />;
+    } else if (page === 'chooseKanban') {
+        elem = <ChooseKanban />;
     } else if (page === 'kanban') {
         elem = <Kanban />;
     } else if (page === 'questions') {

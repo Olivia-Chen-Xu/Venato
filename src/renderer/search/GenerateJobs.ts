@@ -1,15 +1,19 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface Job {
-    details: {
-        position: string;
-        company: string;
-        description: string;
-        salary: string;
-        location: string;
-        link: string;
-    };
+    // Core job data
+    position: string;
+    company: string;
+    description: string;
+    salary: string;
+    location: string;
+    link: string;
     notes: string;
+    stage: number;
+    awaitingResponse: boolean;
+    priority: string;
+
+    // These will go in their own collections
     deadlines: {
         title: string;
         date: number;
@@ -19,6 +23,7 @@ interface Job {
     interviewQuestions: {
         name: string;
         description: string;
+        company: string;
     }[];
     contacts: {
         name: string;
@@ -30,15 +35,9 @@ interface Job {
         notes: string;
     }[];
 
-    status: {
-        stage: number;
-        awaitingResponse: boolean;
-        priority: string;
-    };
-
-    metaData: {
-        userId: string;
-    };
+    // To link this job to a user and board
+    userId: string;
+    boardId: string;
 }
 
 const companies = [
@@ -266,74 +265,82 @@ const jobPositions = [
     'Product Analyst',
 ];
 
-// Add example jobs
-const generateJobs = async (num: number) => {
-    const generateDeadlines = () => {
-        const deadlines: {
-            title: string;
-            date: number;
-            location: string;
-            link: string;
-        }[] = [];
+const generateDeadlines = () => {
+    const deadlines: {
+        title: string;
+        date: number;
+        location: string;
+        link: string;
+    }[] = [];
 
-        const generateDeadline = (title: string, day: number) => {
-            const month = Math.floor(Math.random() * 4);
-            const hours =
-                Math.random() < 0.5
-                    ? Math.floor(Math.random() * 3) + 9
-                    : Math.floor(Math.random() * 4) + 13;
-            const minutes = Math.random() < 0.3 ? 30 : 0;
-            const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
+    const generateDeadline = (title: string, day: number) => {
+        const month = Math.floor(Math.random() * 4);
+        const hours =
+            Math.random() < 0.5
+                ? Math.floor(Math.random() * 3) + 9
+                : Math.floor(Math.random() * 4) + 13;
+        const minutes = Math.random() < 0.3 ? 30 : 0;
+        const date = new Date(2023, month, day, hours, minutes, 0, 0).getTime();
 
-            const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
-            const link = `https://queensu.zoom.us/j/${[...Array(11)]
-                .map(() => Math.floor(Math.random() * 10))
-                .join(``)}`;
+        const location = Math.random() < 0.6 ? 'Zoom meeting' : 'In-person';
+        const link = `https://queensu.zoom.us/j/${[...Array(11)]
+            .map(() => Math.floor(Math.random() * 10))
+            .join(``)}`;
 
-            deadlines.push({ title, date, location, link });
-        };
-
-        const numDeadlines = Math.floor(Math.random() * 3) + 1;
-        let title;
-        let day;
-        switch (numDeadlines) {
-            case 1:
-                title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
-                day = Math.floor(Math.random() * 29) + 1;
-                generateDeadline(title, day);
-
-                break;
-            case 2:
-                title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
-                day = Math.floor(Math.random() * 14) + 1;
-                generateDeadline(title, day);
-
-                title = 'Interview';
-                day = Math.floor(Math.random() * 15) + 15;
-                generateDeadline(title, day);
-
-                break;
-            case 3:
-                title = 'Initial application due';
-                day = Math.floor(Math.random() * 9) + 1;
-                generateDeadline(title, day);
-
-                title = Math.random() < 0.5 ? 'First round interview' : 'Technical round';
-                day = Math.floor(Math.random() * 10) + 10;
-                generateDeadline(title, day);
-
-                title = '❗ Final interview ❗';
-                day = Math.floor(Math.random() * 10) + 20;
-                generateDeadline(title, day);
-
-                break;
-            default:
-                throw new Error(`Invalid num deadlines: ${numDeadlines}`);
-        }
-        return deadlines;
+        deadlines.push({ title, date, location, link });
     };
 
-    // Generate list of potential contacts
+    const numDeadlines = Math.floor(Math.random() * 3) + 1;
+    let title;
+    let day;
+    switch (numDeadlines) {
+        case 1:
+            title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
+            day = Math.floor(Math.random() * 29) + 1;
+            generateDeadline(title, day);
+
+            break;
+        case 2:
+            title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
+            day = Math.floor(Math.random() * 14) + 1;
+            generateDeadline(title, day);
+
+            title = 'Interview';
+            day = Math.floor(Math.random() * 15) + 15;
+            generateDeadline(title, day);
+
+            break;
+        case 3:
+            title = 'Initial application due';
+            day = Math.floor(Math.random() * 9) + 1;
+            generateDeadline(title, day);
+
+            title = Math.random() < 0.5 ? 'First round interview' : 'Technical round';
+            day = Math.floor(Math.random() * 10) + 10;
+            generateDeadline(title, day);
+
+            title = '❗ Final interview ❗';
+            day = Math.floor(Math.random() * 10) + 20;
+            generateDeadline(title, day);
+
+            break;
+        default:
+            throw new Error(`Invalid num deadlines: ${numDeadlines}`);
+    }
+    return deadlines;
+};
+
+const generateContacts = () => {
+    const contacts: {
+        // Note: company is added later with the job
+        name: string;
+        title: string;
+        email: string;
+        phone: string;
+        linkedin: string;
+        notes: string;
+    }[] = [];
+
     const contactNames = [
         {
             name: 'Olivia Xu',
@@ -360,15 +367,7 @@ const generateJobs = async (num: number) => {
             linkedin: 'https://www.linkedin.com/in/wasiq-wadud/',
         },
     ];
-    const contacts: {
-        // Note: company is added later with the job
-        name: string;
-        title: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-        notes: string;
-    }[] = [];
+
     const contactNotes = [
         'I know this person through a mutual friend',
         'I met this person at a hackathon',
@@ -386,6 +385,7 @@ const generateJobs = async (num: number) => {
         'They are a friend of a friend of a friend of a friend of a friend of a friend',
         'They are a friend of a friend of a friend of a friend of a friend of a friend of a friend',
     ];
+
     contactNames.forEach((contact) => {
         const randomPhone = Math.floor(Math.random() * 10000000000);
         const newContact = {
@@ -402,66 +402,84 @@ const generateJobs = async (num: number) => {
         };
         contacts.push(newContact);
     });
-    const getRandomPriority = () => {
-        const rand = Math.random();
-        if (rand < 0.25) {
-            return 'High';
-        }
-        if (rand < 0.5) {
-            return 'Medium';
-        }
-        if (rand < 0.75) {
-            return 'Low';
-        }
-        return '';
-    };
 
+    return contacts;
+}
+
+const getRandomPriority = () => {
+    const rand = Math.random();
+    if (rand < 0.25) {
+        return 'High';
+    }
+    if (rand < 0.5) {
+        return 'Medium';
+    }
+    if (rand < 0.75) {
+        return 'Low';
+    }
+    return '';
+};
+
+// Add example jobs
+const generateJobs = async (num: number) => {
+    // 18rem8@queensu.ca (admin account) and reid.moffat9@gmail.com respectively
     const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
+
+    const boardNames = ['Summer 2021 internships', 'Summer 2022 internships', 'Summer 2023 internships'];
+    const boards: { userId: string, name: string, id: string }[] = [];
+    let id = 0;
+    for (const name of boardNames) {
+        boards.push({
+            userId: users[0],
+            name: name,
+            id: id.toString(),
+        });
+        id++;
+        boards.push({
+            userId: users[1],
+            name: name,
+            id: id.toString(),
+        });
+        id++;
+    }
+
     const jobs: Job[] = [];
-    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < num; ++i) {
         const company = Math.floor(Math.random() * companies.length);
+        const userId = Math.random() < 0.6 ? users[0] : users[1];
+
         const job = {
-            details: {
-                company: companies[company],
-                // eslint-disable-next-line no-bitwise
-                position: jobPositions[~~(Math.random() * jobPositions.length)],
-                // eslint-disable-next-line no-bitwise
-                location: locations[~~(Math.random() * locations.length)],
-                description: descriptions[company],
-                link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
-                salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
-            },
-            // eslint-disable-next-line no-bitwise
+            company: companies[company],
+            position: jobPositions[~~(Math.random() * jobPositions.length)],
+            location: locations[~~(Math.random() * locations.length)],
+            description: descriptions[company],
+            link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
+            salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
-            deadlines: generateDeadlines(),
+
+            stage: Math.floor(Math.random() * 4),
+            awaitingResponse: Math.random() < 0.5,
+            priority: getRandomPriority(),
+
+            userId: userId,
+            boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
+
+            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[company] })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
-                .slice(0, Math.floor(Math.random() * 5) + 1),
-            contacts: [...contacts]
+                .slice(0, Math.floor(Math.random() * 5) + 1)
+                .map((question) => ({ ...question, company: companies[company] })),
+            contacts: generateContacts()
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 3) + 1)
                 .map((contact) => ({ ...contact, company: companies[company] })),
-
-            status: {
-                stage: Math.floor(Math.random() * 4),
-                awaitingResponse: Math.random() < 0.5,
-                priority: getRandomPriority(),
-            },
-
-            metaData: {
-                userId:
-                    Math.random() < 0.6
-                        ? users[0] // 18rem8@queensu.ca (admin account)
-                        : users[1], // reid.moffat9@gmail.com
-            },
         };
         jobs.push(job);
     }
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs({ jobs, users })
+    addJobs({ jobs, boards })
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };

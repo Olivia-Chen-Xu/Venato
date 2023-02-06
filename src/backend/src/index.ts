@@ -1,26 +1,24 @@
-import { purgeExpiredData, purgeUnverifiedUsers, dataIntegrityCheck } from './cron';
-import { createAccount, onUserSignup, onUserDeleted, beforeSignIn } from './auth';
-import { onJobCreate, onJobPurge } from './firestore';
+import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
+import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth';
+import { onJobCreate, onJobPurge, onBoardPurge } from './firestore';
 import {
-    getHomepageData,
-    getKanbanBoard,
-    getUpcomingEvents,
-    getJobData,
     getCalendarDeadlines,
-    getAllCompanies,
-    getAllLocations,
-    jobSearch,
-    interviewQuestionsSearch
+    getHomepageData,getJobBoards,
+    getJobData,
+    getKanbanBoard,
+    jobSearch
 } from './getData';
 import {
-    addJobs,
+    addBoard,
+    addContact,
+    addDeadline,
+    addInterviewQuestion,
     addJob,
-    addJobObject,
-    updateJob,
-    dragKanbanJob,
+    addJobs,
     deleteJob,
+    dragKanbanJob,
     setKanbanBoard,
-    addBoard
+    updateJob
 } from './mutateData';
 
 /**
@@ -56,25 +54,24 @@ import {
 export {
     purgeExpiredData,
     purgeUnverifiedUsers,
-    dataIntegrityCheck,
     createAccount,
     onUserSignup,
     onUserDeleted,
     beforeSignIn,
     onJobCreate,
     onJobPurge,
+    onBoardPurge,
     getHomepageData,
+    getJobBoards,
     getKanbanBoard,
-    getUpcomingEvents,
     getJobData,
     getCalendarDeadlines,
-    getAllCompanies,
-    getAllLocations,
     jobSearch,
-    interviewQuestionsSearch,
     addJobs,
     addJob,
-    addJobObject,
+    addDeadline,
+    addInterviewQuestion,
+    addContact,
     updateJob,
     dragKanbanJob,
     deleteJob,

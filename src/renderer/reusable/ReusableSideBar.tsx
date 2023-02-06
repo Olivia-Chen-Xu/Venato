@@ -19,7 +19,7 @@ export default function ReusableSideBar() {
                     <button
                         className="material-icons-outlined text-5xl"
                         onClick={() => {
-                            nav('/kanban');
+                            nav('/chooseKanban');
                         }}
                     >
                         dashboard
