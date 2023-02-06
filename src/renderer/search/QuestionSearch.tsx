@@ -15,28 +15,19 @@ const QuestionSearch = () => {
     const handleSearch = async () => {
         setLoading(true);
         if (query.trim().length === 0) {
-            setMessage('Please enter a position or company');
+            setMessage('Please enter a search query');
             setLoading(false);
             return;
         }
 
         setMessage('Loading questions...');
-        const result = await httpsCallable(
-            getFunctions(),
-            'interviewQuestionsSearch'
-        )(position);
+        const result = await httpsCallable(getFunctions(), 'interviewQuestionsSearch')(query);
 
-        //setQuestions(result.data);
-        console.log(result);
+        setQuestions(result.data);
         setLoading(false);
         setMessage('');
         setHasSearched(true);
     };
-
-    function handleLoad() {
-        setLoading(true);
-        handleSearch();
-    }
 
     const displayQuestions = () => {
         if (!hasSearched) {
@@ -45,14 +36,6 @@ const QuestionSearch = () => {
         if (questions.length === 0) {
             return <p align="center">⚠️No jobs found; please try another search.</p>;
         }
-
-        /*
-        const unique = {};
-        const questions = jobs
-            .map((job) => job.interviewQuestions.map((question) => question.name))
-            .flat(1)
-            .filter((e) => !(unique[e] = e in unique));
-         */
 
         return questions.map((question) => (
             <div className="ml-20">
@@ -111,146 +94,132 @@ const QuestionSearch = () => {
         ));
     };
 
-    const clearSearch = () => {
-        setCompany('');
-        setPosition('');
-        setQuestions([]);
-        setMessage('');
-    };
-
     const inputBoxStyle = { outline: '1px solid black', width: '30%' };
     return (
         <div>
-            {(companies.error || locations.error || companies.loading || locations.loading) && (
-                <CircularProgress />
-            )}
-            {companies.result && locations.result && (
-                <div>
-                    <div className="grid place-content-center">
-                        <h1 className="grid place-content-center text-2xl mb-1">
-                            Interview Question Search
-                        </h1>
-                        <div className="flex flex-1">
-                            <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
-                                <div>
-                                    <label htmlFor="position">
-                                        <input
-                                            id="position"
-                                            type="email"
-                                            name="email"
-                                            // value={position}
-                                            placeholder="Position"
-                                            onChange={(e) => {
-                                                setPosition(e.target.value);
-                                            }}
-                                        />
-                                    </label>
-                                </div>
-                                <div>
-                                    <label htmlFor="company">
-                                        <select
-                                            id="company"
-                                            name="company"
-                                            select
-                                            label="Company"
-                                            value={company}
-                                            onChange={(e) => setCompany(e.target.value)}
-                                        >
-                                            <option value="" selected>
-                                                Company
-                                            </option>
-                                            {companies.result.data.map((c) => (
-                                                <option value={c}>{c}</option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="h-full bg-transparent align-middle">
-                                <LoadingButton
-                                    id="searchBtn"
-                                    onClick={handleLoad}
-                                    variant="contained"
-                                    loading={loading}
-                                    disableElevation
-                                    size="small"
-                                    sx={{
-                                        height: '80%',
+            <div className="grid place-content-center">
+                <h1 className="grid place-content-center text-2xl mb-1">
+                    Interview Question Search
+                </h1>
+                <div className="flex flex-1">
+                    <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
+                        <div>
+                            <label htmlFor="position">
+                                <input
+                                    id="position"
+                                    type="email"
+                                    name="email"
+                                    // value={position}
+                                    placeholder="Position"
+                                    onChange={(e) => {
+                                        setQuery(e.target.value);
                                     }}
-                                    endIcon={<Search />}
-                                >
-                                    {' '}
-                                    Search
-                                </LoadingButton>
-                            </div>
+                                />
+                            </label>
                         </div>
+                        {/*<div>*/}
+                        {/*    <label htmlFor="company">*/}
+                        {/*        <select*/}
+                        {/*            id="company"*/}
+                        {/*            name="company"*/}
+                        {/*            select*/}
+                        {/*            label="Company"*/}
+                        {/*            value={company}*/}
+                        {/*            onChange={(e) => setCompany(e.target.value)}*/}
+                        {/*        >*/}
+                        {/*            <option value="" selected>*/}
+                        {/*                Company*/}
+                        {/*            </option>*/}
+                        {/*            {companies.result.data.map((c) => (*/}
+                        {/*                <option value={c}>{c}</option>*/}
+                        {/*            ))}*/}
+                        {/*        </select>*/}
+                        {/*    </label>*/}
+                        {/*</div>*/}
                     </div>
-
-                    <br />
-
-                    <div>
-                        {/*
-
-                    <br />
-                    Interview question search
-                    <br />
-                    <label htmlFor="position">
-                        Position
-                        <input
-                            type="email"
-                            name="email"
-                            value={position}
-                            placeholder=""
-                            style={inputBoxStyle}
-                            onChange={(e) => {
-                                setPosition(e.target.value);
+                    <div className="h-full bg-transparent align-middle">
+                        <LoadingButton
+                            id="searchBtn"
+                            onClick={handleSearch}
+                            variant="contained"
+                            loading={loading}
+                            disableElevation
+                            size="small"
+                            sx={{
+                                height: '80%',
                             }}
-                        />
-                    </label>
-                    <label htmlFor="company">
-                        Company:{' '}
-                        <select
-                            name="company"
-                            onChange={(e) => setCompany(e.target.value)}
-                            style={{ outline: '1px solid black', borderRadius: '2px' }}
+                            endIcon={<Search />}
                         >
-                            <option value="" />
-                            {companies.result.data.map((c) => (
-                                <option
-                                    style={{ outline: '1px solid black', borderRadius: '2px' }}
-                                    value={c}
-                                >
-                                    {c}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                    {'  '}
-                    <button
-                        type="submit"
-                        onClick={handleSearch}
-                        style={{ outline: '1px solid black', borderRadius: '2px' }}
-                    >
-                        Search
-                    </button>
-                    <button
-                        type="submit"
-                        onClick={clearSearch}
-                        style={{
-                            outline: '1px solid black',
-                            borderRadius: '2px',
-                            marginLeft: '1em',
-                        }}
-                    >
-                        Clear search
-                    </button> */}
-                        <br />
-                        <div className="grid place-content-center">{message}</div>
-                        <br />
-                        {displayQuestions()}
+                            {' '}
+                            Search
+                        </LoadingButton>
                     </div>
                 </div>
-            )}
+            </div>
+
+            <br />
+
+            <div>
+                {/*
+
+            <br />
+            Interview question search
+            <br />
+            <label htmlFor="position">
+                Position
+                <input
+                    type="email"
+                    name="email"
+                    value={position}
+                    placeholder=""
+                    style={inputBoxStyle}
+                    onChange={(e) => {
+                        setPosition(e.target.value);
+                    }}
+                />
+            </label>
+            <label htmlFor="company">
+                Company:{' '}
+                <select
+                    name="company"
+                    onChange={(e) => setCompany(e.target.value)}
+                    style={{ outline: '1px solid black', borderRadius: '2px' }}
+                >
+                    <option value="" />
+                    {companies.result.data.map((c) => (
+                        <option
+                            style={{ outline: '1px solid black', borderRadius: '2px' }}
+                            value={c}
+                        >
+                            {c}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            {'  '}
+            <button
+                type="submit"
+                onClick={handleSearch}
+                style={{ outline: '1px solid black', borderRadius: '2px' }}
+            >
+                Search
+            </button>
+            <button
+                type="submit"
+                onClick={clearSearch}
+                style={{
+                    outline: '1px solid black',
+                    borderRadius: '2px',
+                    marginLeft: '1em',
+                }}
+            >
+                Clear search
+            </button> */}
+                <br />
+                <div className="grid place-content-center">{message}</div>
+                <br />
+                {displayQuestions()}
+            </div>
         </div>
     );
 };

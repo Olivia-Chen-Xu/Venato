@@ -17,7 +17,7 @@ const SearchBar = () => {
     const handleSearch = async () => {
         setLoading(true);
         if (query.trim().length === 0) {
-            setMessage('Please enter a position, company, or location');
+            setMessage('Please enter a search query');
             setLoading(false);
             return;
         }
