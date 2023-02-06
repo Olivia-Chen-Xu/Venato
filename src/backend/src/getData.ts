@@ -65,8 +65,15 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
 });
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getHomepageData = functions.https.onCall((data: object, context: any) => {
+const getHomepageData = functions.https.onCall((data: null, context: any) => {
     verifyIsAuthenticated(context);
+
+    if (data != null) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'The function must be called with no arguments'
+        );
+    }
 
     const promises: Promise<any>[] = [];
 
@@ -104,30 +111,42 @@ const getHomepageData = functions.https.onCall((data: object, context: any) => {
         .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
+const getJobBoards = functions.https.onCall((data: null, context: any) => {
+    verifyIsAuthenticated(context);
+
+    if (data != null) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'The function must be called with no arguments'
+        );
+    }
+
+    return getCollection(`boards`)
+        .where('userId', '==', context.auth.uid)
+        .get()
+        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => doc.data()))
+        .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`))
+});
+
 // Gets all the jobs for a given kanban board
 const getKanbanBoard = functions.https.onCall(async (boardId: string, context: any) => {
     if (!boardId) {
-        const lastBoardId = await getDoc(`users/${context.auth.uid}`)
+        boardId = await getDoc(`users/${context.auth.uid}`)
             .get()
             .then((result) => {
                 if (!result.exists) {
                     throw new functions.https.HttpsError('not-found', 'User not found');
                 }
 
-                // @ts-ignore
-                if (result.data().kanbanBoard) {
-                    // @ts-ignore
-                    return result.data().kanbanBoard;
+                if (result.data()?.kanbanBoard) {
+                    return result.data()?.kanbanBoard;
                 }
-            });
-        if (lastBoardId != null) {
-            return lastBoardId; // TODO
-        }
 
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'The function must be called with a boardId or you must have clicked from the homepage'
-        );
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'The function must be called with a boardId or you must have clicked from the homepage'
+                );
+            });
     }
 
     const board = await getDoc(`boards/${boardId}`).get().then((doc) => doc.data());
@@ -242,6 +261,7 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
 export {
     getJobData,
     getHomepageData,
+    getJobBoards,
     getKanbanBoard,
     getCalendarDeadlines,
     jobSearch,
