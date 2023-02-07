@@ -127,23 +127,11 @@ const getJobBoards = functions.https.onCall((data: null, context: any) => {
 
 // Gets all the jobs for a given kanban board
 const getKanbanBoard = functions.https.onCall(async (boardId: string, context: any) => {
-    if (!boardId) {
-        boardId = await getDoc(`users/${context.auth.uid}`)
-            .get()
-            .then((result) => {
-                if (!result.exists) {
-                    throw new functions.https.HttpsError('not-found', 'User not found');
-                }
-
-                if (result.data()?.kanbanBoard) {
-                    return result.data()?.kanbanBoard;
-                }
-
-                throw new functions.https.HttpsError(
-                    'invalid-argument',
-                    'The function must be called with a boardId or you must have clicked from the homepage'
-                );
-            });
+    if (!boardId || String(boardId) !== boardId || boardId.trim().length === 0) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            `The function must be called with a boardId. Parameter: '${boardId}'`
+        );
     }
 
     const board = await getDoc(`boards/${boardId}`).get().then((doc) => doc.data());

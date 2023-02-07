@@ -4,6 +4,7 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { ControlPoint } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from 'renderer/reusable/JobDialog';
+import { useLocation } from 'react-router-dom';
 
 const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
@@ -78,7 +79,7 @@ const getListStyle = (isDraggingOver) => ({
 });
 
 export default function Kanban() {
-    const [state, setState] = useState([[], [], [], []]);
+    const [kanbanState, setKanbanState] = useState([[], [], [], []]);
     const [modalOpen, setModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [index, setIndex] = useState(0);
@@ -87,15 +88,17 @@ export default function Kanban() {
     const [boardName, setBoardName] = useState<string>('');
     const [boardID, setBoardID] = useState(null);
 
+    const boardId = useLocation().state.boardId;
+
     const addJob = async (index) => {
-        const newState = [...state];
+        const newState = [...kanbanState];
         const job = newJob(index);
         await httpsCallable(
             getFunctions(),
             'addJob'
         )({ boardId: boardID, stage: index }).then((res) => {
-            newState[index] = [{ ...job, id: res.data.id }, ...state[index]];
-            setState(newState);
+            newState[index] = [{ ...job, id: res.data.id }, ...kanbanState[index]];
+            setKanbanState(newState);
             setCurrentJob({ ...job, id: res.data.id });
             // console.log(currentJob);
         });
@@ -127,17 +130,17 @@ export default function Kanban() {
         const dInd = +destination.droppableId;
 
         if (sInd === dInd) {
-            const jobs = reorder(state[sInd], source.index, destination.index);
-            const newState = [...state];
+            const jobs = reorder(kanbanState[sInd], source.index, destination.index);
+            const newState = [...kanbanState];
             newState[sInd] = jobs;
-            setState(newState);
+            setKanbanState(newState);
         } else {
-            const [result, removed] = move(state[sInd], state[dInd], source, destination);
-            const newState = [...state];
+            const [result, removed] = move(kanbanState[sInd], kanbanState[dInd], source, destination);
+            const newState = [...kanbanState];
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
 
-            setState(newState);
+            setKanbanState(newState);
             // await move(state[sInd], state[dInd], source, destination).then((res) => {
             //     const newState = [...state];
             //     newState[sInd] = res[sInd];
@@ -159,9 +162,9 @@ export default function Kanban() {
         const fetchJobs = async () => {
             setLoading(true);
             const newState = [[], [], [], []];
-            await httpsCallable(getFunctions(), 'getKanbanBoard')().then((res) => {
+            await httpsCallable(getFunctions(), 'getKanbanBoard')(boardId).then((res) => {
                 res.data.jobs.forEach((job) => newState[job.stage].push(job));
-                setState(newState);
+                setKanbanState(newState);
                 setBoardName(res.data.name);
                 setBoardID(res.data.id);
                 setLoading(false);
@@ -207,8 +210,8 @@ export default function Kanban() {
                     jobData={currentJob}
                     isEdit={isEdit}
                     index={index}
-                    state={state}
-                    setState={setState}
+                    state={kanbanState}
+                    setState={setKanbanState}
                 />
             )}
             <h4
@@ -231,7 +234,7 @@ export default function Kanban() {
                     <CircularProgress />
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
-                        {state.map((el, ind) => (
+                        {kanbanState.map((el, ind) => (
                             <div
                                 style={{
                                     alignItems: 'center',

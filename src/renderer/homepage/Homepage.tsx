@@ -36,11 +36,7 @@ const Homepage = () => {
                 <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
-                        onClick={async () => {
-                            console.log(JSON.stringify(board, null, 4));
-                            await httpsCallable(getFunctions(), 'setKanbanBoard')(board.id);
-                            nav('/kanban');
-                        }}
+                        onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
                         <span className="absolute bottom-5 left-5 ">{board.name}</span>
                     </button>
