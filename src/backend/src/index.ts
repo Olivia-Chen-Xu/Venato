@@ -3,10 +3,12 @@ import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth
 import { onJobCreate, onJobPurge, onBoardPurge } from './firestore';
 import {
     getCalendarDeadlines,
-    getHomepageData,getJobBoards,
+    getHomepageData,
+    getJobBoards,
     getJobData,
     getKanbanBoard,
-    jobSearch
+    jobSearch,
+    interviewQuestionSearch,
 } from './getData';
 import {
     addBoard,
@@ -66,6 +68,7 @@ export {
     getJobData,
     getCalendarDeadlines,
     jobSearch,
+    interviewQuestionSearch,
     addJobs,
     addJob,
     addDeadline,

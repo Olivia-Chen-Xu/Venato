@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { useAsync } from 'react-async-hook';
-import { CircularProgress, Button } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Search from '@mui/icons-material/Search';
 
@@ -21,7 +19,7 @@ const QuestionSearch = () => {
         }
 
         setMessage('Loading questions...');
-        const result = await httpsCallable(getFunctions(), 'interviewQuestionsSearch')(query);
+        const result = await httpsCallable(getFunctions(), 'interviewQuestionSearch')(query);
 
         setQuestions(result.data);
         setLoading(false);
@@ -41,13 +39,13 @@ const QuestionSearch = () => {
             <div className="ml-20">
                 <li>
                     <a
-                        href={`https://www.google.com/search?q=${question.name.replaceAll(
-                            ' ',
-                            '+'
-                        )}`}
-                        title={question.description}
+                        // href={`https://www.google.com/search?q=${question.name.replaceAll(
+                        //     ' ',
+                        //     '+'
+                        // )}`}
+                        title={"question description"}
                     >
-                        {question.name}
+                        question name
                     </a>
                 </li>
             </div>
