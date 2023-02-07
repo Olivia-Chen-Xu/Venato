@@ -73,13 +73,62 @@ const Headings = ({ jobData, setJob }) => {
     };
     return (
         <>
-            <h1>{jobData.position}</h1>
-            <h3>{jobData.company}</h3>
-            <Select value={colTitles[jobData.stage]} onChange={handleChange}>
-                {colTitles.map((title) => (
-                    <MenuItem value={title}>{title}</MenuItem>
-                ))}
-            </Select>
+                    
+        <Input
+                    className="focus-only "
+                    placeholder="Job Title"
+                    value={jobData.position}
+                    onChange={(e) => {
+                        setJob({
+                            ...jobData,
+                            position: e.target.value,
+                        });
+                    }}
+                    style={styles.jobTitle}
+                />
+                {/* <h1 
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: "20px",
+                    margin: '0 1vw',
+                }}>
+                    @
+                </h1> */}
+         <div style={{ display: 'flex', flexDirection: 'row' }}>
+
+                <Input
+                        placeholder="Company"
+                        style={styles.Company}
+                        value={jobData.company}
+                        disableUnderline
+                        onChange={(e) => {
+                            setJob({ ...jobData, company: e.target.value });
+                        }}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <AlternateEmailOutlined style={{ fontSize: 20 }} />
+                            </InputAdornment>
+                        }
+                    />
+                     <Input
+                        placeholder="Location"
+                        value={jobData.location}
+                        disableUnderline
+                        onChange={(e) => {
+                            setJob({ ...jobData, location: e.target.value });
+                        }}
+                        style={styles.Location}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <LocationOnOutlined style={{ fontSize: 20 }} />
+                            </InputAdornment>
+                        }
+                    />
+                </div>
+            {/* <h1>{jobData.position}</h1>
+            <h3>{jobData.company}</h3> */}
+            
         </>
     );
 };
@@ -98,56 +147,23 @@ const Details = ({ value, index, jobData, setJob }) => {
             }}
         >
             <>
-                <Input
-                    className="focus-only"
-                    placeholder="Job Title"
-                    value={jobData.position}
-                    onChange={(e) => {
-                        setJob({
-                            ...jobData,
-                            position: e.target.value,
-                        });
-                    }}
-                    style={styles.jobTitle}
-                />
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Input
-                        placeholder="Company"
-                        style={styles.Company}
-                        value={jobData.company}
-                        disableUnderline
-                        onChange={(e) => {
-                            setJob({ ...jobData, company: e.target.value });
-                        }}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <AlternateEmailOutlined style={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        }
-                    />
-                    <Input
-                        placeholder="Location"
-                        value={jobData.location}
-                        disableUnderline
-                        onChange={(e) => {
-                            setJob({ ...jobData, location: e.target.value });
-                        }}
-                        style={styles.Location}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <LocationOnOutlined style={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        }
-                    />
-                </div>
+                
+               
+                   
+                {/* </div> */}
             </>
-            <Select value={jobData.priority} label="Priority" onChange={handleChange}>
+            <TextField select label="Column" value={colTitles[jobData.stage]} onChange={handleChange}  style={{marginTop:"2vh"}}>
+                {colTitles.map((title) => (
+                    <MenuItem value={title}>{title}</MenuItem>
+                ))}
+            </TextField>
+            <TextField select value={jobData.priority} label="Priority" onChange={handleChange} style={{marginTop:"2vh"}}>
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
-            </Select>
+            </TextField>
             <TextField
-                label="Posting link"
+                label="Posting Link"
                 value={jobData.link}
                 style={styles.applicationLink}
                 onChange={(e) => {
@@ -157,7 +173,6 @@ const Details = ({ value, index, jobData, setJob }) => {
                     disableUnderline: true, // <== added this
                 }}
             />
-            <br />
             <TextField
                 label="Job details"
                 style={styles.jobDescription}
@@ -188,6 +203,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
             }}
         >
             <TextField
+                style={{marginTop: "2vh"}}
                 label="Notes"
                 multiline
                 rows={10}
@@ -230,25 +246,25 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 flexDirection: 'column',
                 display: value == index ? 'flex' : 'none',
                 height: '100%',
+
             }}
         >
-            <br />
             <Button
+            style={{marginTop:'2vh', marginBottom:'2vh'}}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
             >
                 Add Deadline
             </Button>
-            <br />
-            <br />
             {jobData.deadlines &&
                 jobData.deadlines.map((deadline) => (
-                    <div>
+                    <div style={{marginBottom: '2vh'}}>
                         {' '}
                         <h2>{deadline.title}</h2>
                         <p>{deadline.time}</p>
                         <p>{deadline.link}</p>
+                        <hr />
                     </div>
                 ))}
             <Dialog open={open} onClose={() => setOpen(false)}>
@@ -341,6 +357,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
             }}
         >
             <Button
+            style={{marginTop:'2vh', marginBottom: '2vh'}}
+
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -382,8 +400,6 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     </Button>
                 </DialogContent>
             </Dialog>
-            <br />
-            <br />
 
             {jobData.interviewQuestions &&
                 /* job.interviewQuestions.map((question: string) => (
@@ -398,9 +414,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         </a>
                     </li> */
                 jobData.interviewQuestions.map((question) => (
-                    <div style={{ marginBottom: 10 }}>
+                    <div style={{marginBottom: '2vh'}}>
                         <h2>{question.name}</h2>
                         <p>{question.description}</p>
+                        <hr />
                     </div>
                 ))}
         </div>
@@ -446,14 +463,14 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             }}
         >
             <Button
+            style={{marginTop:'2vh', marginBottom: '2vh'}}
+
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
             >
                 Add Contact
             </Button>
-            <br />
-            <br />
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent
                     style={{
@@ -510,12 +527,14 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             </Dialog>
             {jobData.contacts &&
                 jobData.contacts.map((contact) => (
-                    <div style={{ marginBottom: 10 }}>
+                    <div style={{marginBottom: '2vh'}}>
                         <h2>{contact.name}</h2>
                         <p>{contact.title}</p>
                         <p>{contact.company}</p>
                         <p>{contact.linkedin}</p>
+                        <hr />
                     </div>
+                    
                 ))}
         </div>
     );
@@ -683,7 +702,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
                 {loading ? (
                     <CircularProgress style={{ position: 'absolute', right: 30 }} />
                 ) : (
-                    <div style={{ position: 'absolute', right: 50, top: 20 }}>
+                    <div style={{ position: 'absolute', right: '2vw', top: '4vh' }}>
                         <Button
                             variant="outlined"
                             style={{
@@ -726,6 +745,7 @@ const styles = {
         fontSize: '36px',
         lineHeight: '44px',
         color: '#676767',
+        margin: ".5vh 0",
     },
 
     jobDescription: {
@@ -736,22 +756,22 @@ const styles = {
     applicationLink: {
         border: 'none',
         outline: 'none',
+        margin: '2vh 0px',
     },
 
     Company: {
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '14px',
-
+        fontSize: '20px',
+        marginBottom: '.5vh',
         color: '#676767',
     },
     Location: {
         outline: 'none',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '14px',
-        marginLeft: 20,
+        fontSize: '20px',
         color: '#676767',
     },
 
