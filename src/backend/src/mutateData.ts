@@ -128,7 +128,7 @@ const updateJob = functions.https.onCall(
         } else if (!data.tab) {
             errMSg = 'No tab number provided';
         } else if (!data.newFields) {
-            errMSg = 'No new fields provided';
+            errMSg = 'No new field(s) provided';
         }
         if (errMSg !== '') {
             throw new functions.https.HttpsError('invalid-argument', errMSg);
@@ -144,7 +144,6 @@ const updateJob = functions.https.onCall(
                 updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
                 break;
             case 3:
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 data.newFields.forEach((deadline: { edited: boolean; id: string }) => {
                     if (deadline.edited) {
@@ -153,7 +152,6 @@ const updateJob = functions.https.onCall(
                 });
                 break;
             case 4:
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 data.newFields.forEach((question: { edited: boolean; id: string }) => {
                     if (question.edited) {
@@ -164,7 +162,6 @@ const updateJob = functions.https.onCall(
                 });
                 break;
             case 5:
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 data.newFields.forEach((contact: { edited: boolean; id: string }) => {
                     if (contact.edited) {
@@ -203,7 +200,7 @@ const dragKanbanJob = functions.https.onCall(
         await verifyDocPermission(context, `jobs/${data.id}`);
 
         return getDoc(`jobs/${data.id}`)
-            .update({ [`status.stage`]: data.newStage })
+            .update({ stage: data.newStage })
             .then(() => `Successfully updated job stage`)
             .catch((err) => `Error updating job stage: ${err}`);
     }
@@ -220,12 +217,18 @@ const deleteJob = functions.https.onCall(async (data: { id: string }, context: a
 });
 
 const addBoard = functions.https.onCall(async (data: string, context: any) => {
-    return getCollection('boards')
-        .add({ name: data, metaData: { userId: context.auth.uid } })
-        .then((result) => result.id)
-        .catch(
-            (e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`
+    if (!data) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'No board name provided'
         );
+    }
+
+    const newBoard = { name: data, userId: context.auth.uid };
+    return getCollection('boards')
+        .add({ name: data, userId: context.auth.uid })
+        .then((result) => ({ id: result.id, ...newBoard }))
+        .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 
 export {
@@ -237,5 +240,5 @@ export {
     updateJob,
     dragKanbanJob,
     deleteJob,
-    addBoard
+    addBoard,
 };

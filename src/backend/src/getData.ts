@@ -52,7 +52,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
 
     promises.push(
         getCollection(`contacts`)
-            .where('metaData.jobId', '==', jobId)
+            .where('jobId', '==', jobId)
             .get()
             .then((contacts) => {
                 // @ts-ignore
