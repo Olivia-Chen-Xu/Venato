@@ -24,6 +24,7 @@ interface Job {
         name: string;
         description: string;
         company: string;
+        position: string;
     }[];
     contacts: {
         name: string;
@@ -445,15 +446,16 @@ const generateJobs = async (num: number) => {
 
     const jobs: Job[] = [];
     for (let i = 0; i < num; ++i) {
-        const company = Math.floor(Math.random() * companies.length);
+        const companyNumber = Math.floor(Math.random() * companies.length);
+        const position = jobPositions[~~(Math.random() * jobPositions.length)];
         const userId = Math.random() < 0.6 ? users[0] : users[1];
 
         const job = {
-            company: companies[company],
-            position: jobPositions[~~(Math.random() * jobPositions.length)],
+            company: companies[companyNumber],
+            position: position,
             location: locations[~~(Math.random() * locations.length)],
-            description: descriptions[company],
-            link: `${urls[company]}/jobs/${Math.floor(Math.random() * 1000000)}`,
+            description: descriptions[companyNumber],
+            link: `${urls[companyNumber]}/jobs/${Math.floor(Math.random() * 1000000)}`,
             salary: `${Math.floor(Math.random() * 100000) + 50000} USD`,
             notes: jobNotes[~~(Math.random() * jobNotes.length)],
 
@@ -464,15 +466,15 @@ const generateJobs = async (num: number) => {
             userId: userId,
             boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
 
-            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[company] })),
+            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[companyNumber] })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 5) + 1)
-                .map((question) => ({ ...question, company: companies[company] })),
+                .map((question) => ({ ...question, company: companies[companyNumber], position: position })),
             contacts: generateContacts()
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 3) + 1)
-                .map((contact) => ({ ...contact, company: companies[company] })),
+                .map((contact) => ({ ...contact, company: companies[companyNumber] })),
         };
         jobs.push(job);
     }
