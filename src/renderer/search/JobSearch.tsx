@@ -80,7 +80,7 @@ const SearchBar = () => {
                 {currJob && (
                     <div id="top" className="w-full h-fit">
                         <div className="mt-3 ml-5 mr-5 text-white">
-                            <h1 className="text-2xl font-bold mb-1">{currJob.details.position}</h1>
+                            <h1 className="text-2xl font-bold mb-1">{currJob.position}</h1>
                             <img src={bar} alt="" className="w-full" />
                             <div className="flex mb-2">
                                 <div className="w-full text-xl">
@@ -88,14 +88,14 @@ const SearchBar = () => {
                                         <span className="mt-1 material-icons-outlined">
                                             alternate_email
                                         </span>{' '}
-                                        {currJob.details.company}
+                                        {currJob.company}
                                     </h3>
                                     <h3>
                                         {' '}
                                         <span className="material-icons-outlined">
                                             location_on
                                         </span>{' '}
-                                        {currJob.details.location}
+                                        {currJob.location}
                                     </h3>
                                 </div>
                                 <div className="w-full mt-2">
@@ -109,7 +109,7 @@ const SearchBar = () => {
                             <div className="mt-5">
                                 <h1 className="ml-5 mr-5">Job Details</h1>
                                 <br />
-                                <h2 className="ml-5 mr-5">{currJob.details.description}</h2>
+                                <h2 className="ml-5 mr-5">job description</h2>
                                 <br />
                                 <br />
                             </div>
