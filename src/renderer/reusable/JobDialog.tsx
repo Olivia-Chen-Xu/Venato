@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import { useEffect,  useState } from 'react';
 import {
     DialogContent,
     Tabs,
@@ -8,14 +8,10 @@ import {
     InputAdornment,
     Button,
     Dialog,
-    Backdrop,
     CircularProgress,
-    Box,
-    IconButton,
     Select,
     MenuItem,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
@@ -36,14 +32,12 @@ const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
 
 interface Job {
-    details: {
-        company: string;
-        position: string;
-        location: string;
-        description: string;
-        link: string;
-        salary: string;
-    };
+    company: string;
+    position: string;
+    location: string;
+    description: string;
+    link: string;
+    salary: string;
 
     notes: string;
     deadlines: {
@@ -65,25 +59,23 @@ interface Job {
         notes: string;
     }[];
 
-    status: {
-        stage: number;
-        awaitingResponse: boolean;
-        priority: string;
-    };
+    stage: number;
+    awaitingResponse: boolean;
+    priority: string;
 }
 
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
             ...jobData,
-            status: { ...jobData.status, stage: colTitles.indexOf(e.target.value) },
+            stage: colTitles.indexOf(e.target.value),
         });
     };
     return (
         <>
-            <h1>{jobData.details.position}</h1>
-            <h3>{jobData.details.company}</h3>
-            <Select value={colTitles[jobData.status.stage]} onChange={handleChange}>
+            <h1>{jobData.position}</h1>
+            <h3>{jobData.company}</h3>
+            <Select value={colTitles[jobData.stage]} onChange={handleChange}>
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
                 ))}
@@ -94,8 +86,9 @@ const Headings = ({ jobData, setJob }) => {
 
 const Details = ({ value, index, jobData, setJob }) => {
     const handleChange = (e) => {
-        setJob({ ...jobData, status: { ...jobData.status, priority: e.target.value } });
+        setJob({ ...jobData, priority: e.target.value });
     };
+
     return (
         <div
             style={{
@@ -108,11 +101,11 @@ const Details = ({ value, index, jobData, setJob }) => {
                 <Input
                     className="focus-only"
                     placeholder="Job Title"
-                    value={jobData.details.position}
+                    value={jobData.position}
                     onChange={(e) => {
                         setJob({
                             ...jobData,
-                            details: { ...jobData.details, position: e.target.value },
+                            position: e.target.value,
                         });
                     }}
                     style={styles.jobTitle}
@@ -121,7 +114,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                     <Input
                         placeholder="Company"
                         style={styles.Company}
-                        value={jobData.details.company}
+                        value={jobData.company}
                         disableUnderline
                         onChange={(e) => {
                             setJob({ ...jobData, company: e.target.value });
@@ -134,7 +127,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                     />
                     <Input
                         placeholder="Location"
-                        value={jobData.details.location}
+                        value={jobData.location}
                         disableUnderline
                         onChange={(e) => {
                             setJob({ ...jobData, location: e.target.value });
@@ -148,17 +141,17 @@ const Details = ({ value, index, jobData, setJob }) => {
                     />
                 </div>
             </>
-            <Select value={jobData.status.priority} label="Priority" onChange={handleChange}>
+            <Select value={jobData.priority} label="Priority" onChange={handleChange}>
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
             </Select>
             <TextField
                 label="Posting link"
-                value={jobData.details.link}
+                value={jobData.link}
                 style={styles.applicationLink}
                 onChange={(e) => {
-                    setJob({ ...jobData, details: { ...jobData.details, url: e.target.value } });
+                    setJob({ ...jobData, link: e.target.value });
                 }}
                 InputProps={{
                     disableUnderline: true, // <== added this
@@ -170,11 +163,11 @@ const Details = ({ value, index, jobData, setJob }) => {
                 style={styles.jobDescription}
                 multiline
                 rows={10}
-                value={jobData.details.description}
+                value={jobData.description}
                 onChange={(e) => {
                     setJob({
                         ...jobData,
-                        details: { ...jobData.details, description: e.target.value },
+                         description: e.target.value,
                     });
                 }}
                 InputProps={{
@@ -528,27 +521,22 @@ const Contacts = ({ value, index, jobData, setJob }) => {
     );
 };
 
-export default function JobDialog({ jobData, isEdit, setOpen, state, setState, index }) {
-    const [job, setJob] = useState({
-        details: {
-            position: '',
-            company: '',
-            description: '',
-            salary: '',
-            location: '',
-            link: '',
-        },
-
+const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
+    const [job, setJob] = useState<Job>({
+        position: '',
+        company: '',
+        description: '',
+        salary: '',
+        location: '',
+        link: '',
         notes: '',
+        stage: jobData.stage,
+        awaitingResponse: false,
+        priority: '',
+
         deadlines: [],
         interviewQuestions: [],
         contacts: [],
-
-        status: {
-            stage: 0,
-            awaitingResponse: false,
-            priority: '',
-        },
     });
 
     const [tabValue, setTabValue] = useState(0);
@@ -581,7 +569,15 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         let jobDataNew;
         switch (tabValue) {
             case 0:
-                jobDataNew = { details: jobData.details, status: jobData.status };
+                jobDataNew = structuredClone(jobData);
+                delete jobDataNew.deadlines;
+                delete jobDataNew.interviewQuestions;
+                delete jobDataNew.contacts;
+                delete jobDataNew.notes;
+                delete jobDataNew.id;
+                delete jobDataNew.boardId;
+                delete jobDataNew.userId;
+
                 break;
             case 1:
                 jobDataNew = jobData.notes;
@@ -591,14 +587,17 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
                 break;
             case 3:
                 jobDataNew = [];
+                break;
             case 4:
                 jobDataNew = [];
+                break;
+            default:
+                throw new Error(`Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`);
         }
 
-        await httpsCallable(
-            getFunctions(),
-            'updateJob'
-        )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+        await httpsCallable(getFunctions(), 'updateJob')
+            ({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+
         newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
         setState(newState);
     };
@@ -641,14 +640,11 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
             console.log(jobData, index);
             setJob(jobData || { ...job, stage: index });
             if (jobData) {
-                await httpsCallable(
-                    getFunctions(),
-                    'getJobData'
-                )({ jobId: jobData.id }).then((res) => {
-                    setJob(res.data);
-                });
+                await httpsCallable(getFunctions(), 'getJobData')(jobData.id)
+                    .then((res) => setJob(res.data));
             }
         };
+
         fetchJob();
     }, [jobData]);
 
@@ -720,6 +716,8 @@ export default function JobDialog({ jobData, isEdit, setOpen, state, setState, i
         </Dialog>
     );
 }
+
+export default JobDialog;
 
 const styles = {
     jobTitle: {
