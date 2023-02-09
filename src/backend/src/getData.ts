@@ -34,7 +34,9 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .get()
             .then((deadlines) => {
                 // @ts-ignore
-                job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => doc.data());
+                job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => {
+                    return { ...doc.data(), date: doc.data().date._seconds };
+                });
                 return null;
             })
     );
@@ -217,7 +219,7 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
 
 // Search for interview questions based on a company and/or position
 const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (query: string, context: any) => {
+    (queryData: { searchAll: string; company: string; position: string; }, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -235,13 +237,38 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             );
         }
 
-        return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
-            .initIndex('interviewQuestions')
-            .search(query)
-            .then(({ hits }) => hits)
-            .catch(err => `Error querying interview questions: ${err}`);
+        const searchAll = { query: queryData.searchAll, valid: !nullOrWhitespace(queryData.searchAll) };
+        const company = { query: queryData.company, valid: !nullOrWhitespace(queryData.company) };
+        const position = { query: queryData.position, valid: !nullOrWhitespace(queryData.position) };
+
+        if (searchAll.valid) {
+            if (company.valid || position.valid) {
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'You can either perform a full search (searchAll), or search by company and/or position. ' +
+                    'You cannot define both searchAll and company/position'
+                );
+            }
+
+            return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
+                .initIndex('interviewQuestions')
+                .search(queryData.searchAll)
+                .then(({ hits }) => hits)
+                .catch(err => `Error querying interview questions: ${err}`);
+        }
+
+        if (!company.valid && !position.valid) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Please include either a searchAll query, or a company and/or position query'
+            );
+        }
+
+        // TODO: Facet search
     }
 );
+
+const nullOrWhitespace = (str: string) => str == null || str.trim().length === 0;
 
 export {
     getJobData,

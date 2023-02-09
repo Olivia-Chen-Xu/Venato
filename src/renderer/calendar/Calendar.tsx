@@ -62,6 +62,7 @@ const Calendar = () => {
                     index={0}
                     state={[]}
                     setState={false}
+                    isKanban={false}
                 />
             )}
             <h2 className="ml-20 text-2xl">
