@@ -25,7 +25,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
     // @ts-ignore
     const job: IJob = await getDoc(`jobs/${jobId}`)
         .get()
-        .then((doc) => doc.data());
+        .then((doc) => ({ ...doc.data(), id: doc.id }));
 
     const promises = [];
     promises.push(
