@@ -25,7 +25,7 @@ const ChooseKanban = () => {
 
     const addNewBoard = async () => {
         const boardData = await httpsCallable(getFunctions(), 'addBoard')(boardName);
-        boards.result.data.boards.push(boardData.data);
+        boards.result.data.push(boardData.data);
         setDialogOpen(false);
     }
 
@@ -57,7 +57,12 @@ const ChooseKanban = () => {
             </h1>
             <br />
             <div className="flex justify-center">
-                <Button color="neutral" variant="contained" startIcon={<AddCircleOutline />}>
+                <Button
+                    color="neutral"
+                    variant="contained"
+                    startIcon={<AddCircleOutline />}
+                    onClick={() => setDialogOpen(true)}
+                >
                     Create new board
                 </Button>
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
