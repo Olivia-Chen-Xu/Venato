@@ -104,11 +104,11 @@ export default function Kanban() {
         });
     };
 
-    const handleAddClick = (idx) => {
+    const handleAddClick = async (idx) => {
         setIndex(idx);
         setCurrentJob(null);
         setIsEdit(false);
-        addJob(idx);
+        await addJob(idx);
         setModalOpen(true);
     };
 
@@ -254,7 +254,7 @@ export default function Kanban() {
                                 >
                                     {colTitles[ind]}
                                 </p>
-                                <IconButton onClick={() => handleAddClick(ind)}>
+                                <IconButton onClick={async () => await handleAddClick(ind)}>
                                     <ControlPoint />
                                 </IconButton>
                                 <Droppable key={ind} droppableId={`${ind}`}>
