@@ -19,7 +19,7 @@ const QuestionSearch = () => {
         }
 
         setMessage('Loading questions...');
-        const result = await httpsCallable(getFunctions(), 'interviewQuestionSearch')(query);
+        const result = await httpsCallable(getFunctions(), 'interviewQuestionSearch')({ searchAll: query });
 
         setQuestions(result.data);
         setLoading(false);

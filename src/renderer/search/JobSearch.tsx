@@ -23,7 +23,7 @@ const SearchBar = () => {
         }
 
         setMessage('Loading jobs...');
-        const result = await httpsCallable(getFunctions(), 'jobSearch')(query);
+        const result = await httpsCallable(getFunctions(), 'jobSearch')({ searchAll: query });
 
         setJobs(result.data);
         setcurrJob(result.data[0]);
