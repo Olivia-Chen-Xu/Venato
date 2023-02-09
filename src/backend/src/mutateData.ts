@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import {
     db,
     getCollection,
-    getDoc,
+    getDoc, getFirestoreTimestamp,
     isValidObjectStructure,
     verifyDocPermission,
     verifyIsAuthenticated
@@ -93,7 +93,7 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
     await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
     return getCollection(`deadlines`)
-        .add({ ...deadline, userId: context.auth.uid })
+        .add({ ...deadline, userId: context.auth.uid, date: getFirestoreTimestamp(deadline.date * 1000) })
         .then((result) => result.id)
         .catch((err) => `Failed to add deadline: ${err}`);
 });
