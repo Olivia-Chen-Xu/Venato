@@ -73,7 +73,7 @@ const Headings = ({ jobData, setJob }) => {
     };
     return (
         <>
-                    
+
         <Input
                     className="focus-only "
                     placeholder="Job Title"
@@ -86,7 +86,7 @@ const Headings = ({ jobData, setJob }) => {
                     }}
                     style={styles.jobTitle}
                 />
-                {/* <h1 
+                {/* <h1
                 style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -128,7 +128,7 @@ const Headings = ({ jobData, setJob }) => {
                 </div>
             {/* <h1>{jobData.position}</h1>
             <h3>{jobData.company}</h3> */}
-            
+
         </>
     );
 };
@@ -147,9 +147,9 @@ const Details = ({ value, index, jobData, setJob }) => {
             }}
         >
             <>
-                
-               
-                   
+
+
+
                 {/* </div> */}
             </>
             <TextField select label="Column" value={colTitles[jobData.stage]} onChange={handleChange}  style={{marginTop:"2vh"}}>
@@ -357,8 +357,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             }}
         >
             <Button
-            style={{marginTop:'2vh', marginBottom: '2vh'}}
-
+                style={{marginTop:'2vh', marginBottom: '2vh'}}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -534,7 +533,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         <p>{contact.linkedin}</p>
                         <hr />
                     </div>
-                    
+
                 ))}
         </div>
     );
