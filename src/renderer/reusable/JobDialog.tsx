@@ -239,11 +239,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         setNewDdl({ title: '', date: dayjs().unix(), location: '', link: '' });
     };
 
-    const dateToString = (date: string) => {
-        const parts = date.split('-');
-        return (parts[1] === '11' ? 'Nov. ' : 'Dec. ') + (parts[2] * 1).toString();
-    };
-
     return (
         <div
             style={{

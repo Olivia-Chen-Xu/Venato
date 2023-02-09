@@ -227,7 +227,7 @@ const addBoard = functions.https.onCall(async (data: string, context: any) => {
     const newBoard = { name: data, userId: context.auth.uid };
     return getCollection('boards')
         .add({ name: data, userId: context.auth.uid })
-        .then((result) => ({ id: result.id, ...newBoard }))
+        .then((result) => ({ id: result.id, name: newBoard.name }))
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 

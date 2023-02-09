@@ -25,7 +25,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
     // @ts-ignore
     const job: IJob = await getDoc(`jobs/${jobId}`)
         .get()
-        .then((doc) => doc.data());
+        .then((doc) => ({ ...doc.data(), id: doc.id }));
 
     const promises = [];
     promises.push(
@@ -99,7 +99,7 @@ const getHomepageData = functions.https.onCall((data: null, context: any) => {
         getCollection(`boards`)
             .where('userId', '==', context.auth.uid)
             .get()
-            .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+            .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
             .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`))
     );
 
@@ -121,7 +121,7 @@ const getJobBoards = functions.https.onCall((data: null, context: any) => {
     return getCollection(`boards`)
         .where('userId', '==', context.auth.uid)
         .get()
-        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, ...doc.data()})))
+        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 });
 
