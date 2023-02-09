@@ -237,8 +237,12 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             );
         }
 
-        if (queryData.searchAll != null) {
-            if (queryData.company != null || queryData.position != null) {
+        const searchAll = { query: queryData.searchAll, valid: !nullOrWhitespace(queryData.searchAll) };
+        const company = { query: queryData.company, valid: !nullOrWhitespace(queryData.company) };
+        const position = { query: queryData.position, valid: !nullOrWhitespace(queryData.position) };
+
+        if (searchAll.valid) {
+            if (company.valid || position.valid) {
                 throw new functions.https.HttpsError(
                     'invalid-argument',
                     'You can either perform a full search (searchAll), or search by company and/or position. ' +
@@ -253,14 +257,18 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
-        if (queryData.company == null && queryData.position == null) {
+        if (!company.valid && !position.valid) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'Please include '
+                'Please include either a searchAll query, or a company and/or position query'
             );
         }
+
+        // TODO: Facet search
     }
 );
+
+const nullOrWhitespace = (str: string) => str == null || str.trim().length === 0;
 
 export {
     getJobData,
