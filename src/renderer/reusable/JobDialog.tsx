@@ -1,4 +1,4 @@
-import { useEffect,  useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     DialogContent,
     Tabs,
@@ -26,7 +26,8 @@ import {
     AddCircleOutline,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import { DateTimePicker, DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 
 const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
@@ -73,20 +74,19 @@ const Headings = ({ jobData, setJob }) => {
     };
     return (
         <>
-                    
-        <Input
-                    className="focus-only "
-                    placeholder="Job Title"
-                    value={jobData.position}
-                    onChange={(e) => {
-                        setJob({
-                            ...jobData,
-                            position: e.target.value,
-                        });
-                    }}
-                    style={styles.jobTitle}
-                />
-                {/* <h1 
+            <Input
+                className="focus-only "
+                placeholder="Job Title"
+                value={jobData.position}
+                onChange={(e) => {
+                    setJob({
+                        ...jobData,
+                        position: e.target.value,
+                    });
+                }}
+                style={styles.jobTitle}
+            />
+            {/* <h1
                 style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -95,40 +95,38 @@ const Headings = ({ jobData, setJob }) => {
                 }}>
                     @
                 </h1> */}
-         <div style={{ display: 'flex', flexDirection: 'row' }}>
-
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Input
-                        placeholder="Company"
-                        style={styles.Company}
-                        value={jobData.company}
-                        disableUnderline
-                        onChange={(e) => {
-                            setJob({ ...jobData, company: e.target.value });
-                        }}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <AlternateEmailOutlined style={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        }
-                    />
-                     <Input
-                        placeholder="Location"
-                        value={jobData.location}
-                        disableUnderline
-                        onChange={(e) => {
-                            setJob({ ...jobData, location: e.target.value });
-                        }}
-                        style={styles.Location}
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <LocationOnOutlined style={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        }
-                    />
-                </div>
+                    placeholder="Company"
+                    style={styles.Company}
+                    value={jobData.company}
+                    disableUnderline
+                    onChange={(e) => {
+                        setJob({ ...jobData, company: e.target.value });
+                    }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <AlternateEmailOutlined style={{ fontSize: 20 }} />
+                        </InputAdornment>
+                    }
+                />
+                <Input
+                    placeholder="Location"
+                    value={jobData.location}
+                    disableUnderline
+                    onChange={(e) => {
+                        setJob({ ...jobData, location: e.target.value });
+                    }}
+                    style={styles.Location}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <LocationOnOutlined style={{ fontSize: 20 }} />
+                        </InputAdornment>
+                    }
+                />
+            </div>
             {/* <h1>{jobData.position}</h1>
             <h3>{jobData.company}</h3> */}
-            
         </>
     );
 };
@@ -146,18 +144,25 @@ const Details = ({ value, index, jobData, setJob }) => {
                 height: '100%',
             }}
         >
-            <>
-                
-               
-                   
-                {/* </div> */}
-            </>
-            <TextField select label="Column" value={colTitles[jobData.stage]} onChange={handleChange}  style={{marginTop:"2vh"}}>
+            <>{/* </div> */}</>
+            <TextField
+                select
+                label="Column"
+                value={colTitles[jobData.stage]}
+                onChange={handleChange}
+                style={{ marginTop: '2vh' }}
+            >
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
                 ))}
             </TextField>
-            <TextField select value={jobData.priority} label="Priority" onChange={handleChange} style={{marginTop:"2vh"}}>
+            <TextField
+                select
+                value={jobData.priority}
+                label="Priority"
+                onChange={handleChange}
+                style={{ marginTop: '2vh' }}
+            >
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
                 ))}
@@ -182,7 +187,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                 onChange={(e) => {
                     setJob({
                         ...jobData,
-                         description: e.target.value,
+                        description: e.target.value,
                     });
                 }}
                 InputProps={{
@@ -203,7 +208,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
             }}
         >
             <TextField
-                style={{marginTop: "2vh"}}
+                style={{ marginTop: '2vh' }}
                 label="Notes"
                 multiline
                 rows={10}
@@ -220,8 +225,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({
         title: '',
-        date: null,
-        time: null,
+        date: dayjs().unix(),
         location: '',
         link: '',
     });
@@ -230,9 +234,9 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         setOpen(false);
         await httpsCallable(
             getFunctions(),
-            'addJobObject'
-        )({ id: jobData.id, type: 'deadlines', data: newDdl });
-        setNewDdl({ title: '', date: null, time: null, location: '', link: '' });
+            'addDeadline'
+        )({ ...newDdl, jobId: jobData.id, company: jobData.company });
+        setNewDdl({ title: '', date: dayjs().unix(), location: '', link: '' });
     };
 
     const dateToString = (date: string) => {
@@ -246,11 +250,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 flexDirection: 'column',
                 display: value == index ? 'flex' : 'none',
                 height: '100%',
-
             }}
         >
             <Button
-            style={{marginTop:'2vh', marginBottom:'2vh'}}
+                style={{ marginTop: '2vh', marginBottom: '2vh' }}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -259,10 +262,11 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             </Button>
             {jobData.deadlines &&
                 jobData.deadlines.map((deadline) => (
-                    <div style={{marginBottom: '2vh'}}>
+                    <div style={{ marginBottom: '2vh' }}>
                         {' '}
                         <h2>{deadline.title}</h2>
-                        <p>{deadline.time}</p>
+                        <p>{dayjs.unix(deadline.date).toString()}</p>
+                        <p>{deadline.location}</p>
                         <p>{deadline.link}</p>
                         <hr />
                     </div>
@@ -285,26 +289,19 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             setNewDdl({ ...newDdl, title: e.target.value });
                         }}
                     />
+                    <br />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <p>Date</p>
-                        <DesktopDatePicker
-                            label="Date"
-                            inputFormat="MM/DD/YYYY"
-                            value={value}
-                            onChange={(e) => setNewDdl({ ...newDdl, date: e.target.value })}
+                        <p>Date and time</p>
+                        <br />
+                        <DateTimePicker
+                            label="Date and time"
+                            value={dayjs.unix(newDdl.date)}
+                            onChange={(val) => setNewDdl({ ...newDdl, date: val.unix() })}
                             renderInput={(params) => <TextField {...params} />}
                         />
-                        <br />
-                        <p>Time</p>
-                        <TimePicker
-                            label="Time"
-                            value={value}
-                            onChange={(e) => setNewDdl({ ...newDdl, time: e.target.value })}
-                            renderInput={(params) => <TextField {...params} />}
-                        />{' '}
                     </LocalizationProvider>
-
-                    <p>Task title</p>
+                    <br />
+                    <p>Location</p>
                     <TextField
                         label="Location"
                         value={newDdl.location}
@@ -313,7 +310,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             setNewDdl({ ...newDdl, location: e.target.value });
                         }}
                     />
-                    <p>Date</p>
                     <br />
                     <p>Link to meeting (if applicable)</p>
                     <TextField
@@ -324,7 +320,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             setNewDdl({ ...newDdl, link: e.target.value });
                         }}
                     />
-                    <p>Date</p>
                     <Button variant="contained" onClick={addNewDdl} style={{ width: 100 }}>
                         Add
                     </Button>
@@ -343,8 +338,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
         setOpen(false);
         await httpsCallable(
             getFunctions(),
-            'addJobObject'
-        )({ id: jobData.id, type: 'interviewQuestions', data: newQuestion });
+            'addInterviewQuestion'
+        )({ jobId: jobData.id, ...newQuestion });
         setNewQuestion({ name: '', description: '' });
     };
 
@@ -357,8 +352,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             }}
         >
             <Button
-            style={{marginTop:'2vh', marginBottom: '2vh'}}
-
+                style={{ marginTop: '2vh', marginBottom: '2vh' }}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -414,7 +408,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         </a>
                     </li> */
                 jobData.interviewQuestions.map((question) => (
-                    <div style={{marginBottom: '2vh'}}>
+                    <div style={{ marginBottom: '2vh' }}>
                         <h2>{question.name}</h2>
                         <p>{question.description}</p>
                         <hr />
@@ -439,10 +433,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
     const addNewContact = async () => {
         setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
         setOpen(false);
-        await httpsCallable(
-            getFunctions(),
-            'addJobObject'
-        )({ id: jobData.id, type: 'contacts', data: newContact });
+        await httpsCallable(getFunctions(), 'addContact')({ jobId: jobData.id, ...newContact });
         setNewContact({
             name: '',
             title: '',
@@ -463,8 +454,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             }}
         >
             <Button
-            style={{marginTop:'2vh', marginBottom: '2vh'}}
-
+                style={{ marginTop: '2vh', marginBottom: '2vh' }}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -527,14 +517,13 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             </Dialog>
             {jobData.contacts &&
                 jobData.contacts.map((contact) => (
-                    <div style={{marginBottom: '2vh'}}>
+                    <div style={{ marginBottom: '2vh' }}>
                         <h2>{contact.name}</h2>
                         <p>{contact.title}</p>
                         <p>{contact.company}</p>
                         <p>{contact.linkedin}</p>
                         <hr />
                     </div>
-                    
                 ))}
         </div>
     );
@@ -611,11 +600,15 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
                 jobDataNew = [];
                 break;
             default:
-                throw new Error(`Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`);
+                throw new Error(
+                    `Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`
+                );
         }
 
-        await httpsCallable(getFunctions(), 'updateJob')
-            ({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+        await httpsCallable(
+            getFunctions(),
+            'updateJob'
+        )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
 
         newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
         setState(newState);
@@ -659,8 +652,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
             console.log(jobData, index);
             setJob(jobData || { ...job, stage: index });
             if (jobData) {
-                await httpsCallable(getFunctions(), 'getJobData')(jobData.id)
-                    .then((res) => setJob(res.data));
+                await httpsCallable(
+                    getFunctions(),
+                    'getJobData'
+                )(jobData.id).then((res) => setJob(res.data));
             }
         };
 
@@ -734,7 +729,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
             </DialogContent>
         </Dialog>
     );
-}
+};
 
 export default JobDialog;
 
@@ -745,7 +740,7 @@ const styles = {
         fontSize: '36px',
         lineHeight: '44px',
         color: '#676767',
-        margin: ".5vh 0",
+        margin: '.5vh 0',
     },
 
     jobDescription: {
