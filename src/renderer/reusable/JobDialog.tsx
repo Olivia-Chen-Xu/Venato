@@ -534,7 +534,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
+const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
     const [job, setJob] = useState<Job>({
         position: '',
         company: '',
@@ -611,8 +611,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
         await httpsCallable(getFunctions(), 'updateJob')
             ({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
 
-        newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
-        setState(newState);
+        if (isKanban) {
+            newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+            setState(newState);
+        }
     };
 
     // const addNewJob = async () => {

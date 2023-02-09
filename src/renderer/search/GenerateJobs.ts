@@ -19,6 +19,8 @@ interface Job {
         date: number;
         location: string;
         link: string;
+        company: string;
+        position: string;
     }[];
     interviewQuestions: {
         name: string;
@@ -466,7 +468,7 @@ const generateJobs = async (num: number) => {
             userId: userId,
             boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
 
-            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[companyNumber] })),
+            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[companyNumber], position: position })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 5) + 1)

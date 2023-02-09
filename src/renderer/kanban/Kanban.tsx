@@ -212,6 +212,7 @@ export default function Kanban() {
                     index={index}
                     state={kanbanState}
                     setState={setKanbanState}
+                    isKanban={true}
                 />
             )}
             <h4
