@@ -76,7 +76,7 @@ const Homepage = () => {
 
         const eventsHtml: JSX.Element = [];
         userData.result.data.events.forEach(
-            (event: { title: string; date: number; location: string; company: string }) => {
+            (event: { title: string; date: number; location: string; company: string; position: string; }) => {
                 eventsHtml.push(
                     <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
                         <div className="ml-5">
@@ -92,7 +92,7 @@ const Homepage = () => {
                         <div className="ml-5 mt-2">
                             <h1 className="text-md align-middle">
                                 <span className="material-icons-outlined text-xl">work</span>{' '}
-                                position
+                                {event.position}
                             </h1>
                         </div>
                         <div className="ml-5 mt-1">
