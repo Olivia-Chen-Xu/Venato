@@ -559,10 +559,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
         setTabValue(newValue);
     };
 
-    const handleClose = () => {
+    const handleClose = async () => {
         setOpen(false);
         console.log(job);
-        updateJob(job);
+        await updateJob(job);
     };
 
     const addNewJob = async () => {
@@ -662,7 +662,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index }) => {
     }, [jobData]);
 
     return (
-        <Dialog fullWidth maxWidth="xl" open onClose={handleClose}>
+        <Dialog fullWidth maxWidth="xl" open onClose={async () => await handleClose()}>
             <DialogContent
                 style={{
                     display: 'flex',
