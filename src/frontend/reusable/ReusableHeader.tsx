@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Drawer } from '@mui/material';
-import Profile from 'renderer/auth/Profile';
+import Profile from '../auth/Profile';
 import logo from '../../../assets/logo.png';
 
 export default function ReusableHeader() {
