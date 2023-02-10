@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 import { signin } from './auth-functions';
 import { btnStyle } from './authStyles';
-import logo from '../../../assets/logo.png';
-import generateJobs from '../search/GenerateJobs';
+import logo from '../../images/logo.png';
+// import generateJobs from '../search/GenerateJobs';
 
 const Welcome = () => {
     const navigate = useNavigate();

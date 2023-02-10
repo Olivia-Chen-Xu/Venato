@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import '../App.css';
+import '../../App.css';
 import './job.css';
 import Search from '@mui/icons-material/Search';
 import LoadingButton from '@mui/lab/LoadingButton';
-import bar from '../../../assets/bar.png';
+import bar from '../../images/bar.png';
 
 const SearchBar = () => {
     const [query, setQuery] = useState<string>('');

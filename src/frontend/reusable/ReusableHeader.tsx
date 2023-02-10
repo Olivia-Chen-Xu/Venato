@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Drawer } from '@mui/material';
 import Profile from '../auth/Profile';
-import logo from '../../../assets/logo.png';
+import logo from '../../images/logo.png';
 
 export default function ReusableHeader() {
     const [isOpen, setIsOpen] = useState(false);

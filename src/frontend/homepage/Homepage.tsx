@@ -3,7 +3,7 @@ import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
-import taskLine from '../../../assets/task-line.png';
+import taskLine from '../../images/task-line.png';
 import { useState } from 'react';
 
 const Homepage = () => {
@@ -38,7 +38,7 @@ const Homepage = () => {
         const boardsHtml: JSX.Element[] = [];
         userData.result.data.boards.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
-                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
