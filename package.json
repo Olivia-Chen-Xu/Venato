@@ -2,7 +2,7 @@
     "name": "venato",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://olivia-chen-xu.github.io/venato",
+    "homepage": "https://olivia-chen-xu.github.io/Venato/",
     "dependencies": {
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
@@ -22,6 +22,7 @@
         "firebase": "^9.17.1",
         "firebase-admin": "^11.5.0",
         "firebase-functions": "^4.2.1",
+        "javascript": "^1.0.0",
         "react": "^18.2.0",
         "react-async-hook": "^4.0.0",
         "react-beautiful-dnd": "^13.1.1",

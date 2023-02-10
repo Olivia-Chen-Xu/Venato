@@ -1,33 +1,33 @@
-import { useState } from 'react';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import '../../App.css';
-import './job.css';
-import Search from '@mui/icons-material/Search';
-import LoadingButton from '@mui/lab/LoadingButton';
-import bar from '../../images/bar.png';
+import { useState } from "react";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import "../../App.css";
+import "./job.css";
+import Search from "@mui/icons-material/Search";
+import LoadingButton from "@mui/lab/LoadingButton";
+import bar from "../../images/bar.png";
 
 const SearchBar = () => {
-    const [query, setQuery] = useState<string>('');
-    const [jobs, setJobs] = useState<object[]>([]);
-    const [message, setMessage] = useState<string>('');
-    const [currJob, setcurrJob] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [query, setQuery] = useState("");
+    const [jobs, setJobs] = useState([]);
+    const [message, setMessage] = useState("");
+    const [currJob, setcurrJob] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
         setLoading(true);
         if (query.trim().length === 0) {
-            setMessage('Please enter a search query');
+            setMessage("Please enter a search query");
             setLoading(false);
             return;
         }
 
-        setMessage('Loading jobs...');
-        const result = await httpsCallable(getFunctions(), 'jobSearch')({ searchAll: query });
+        setMessage("Loading jobs...");
+        const result = await httpsCallable(getFunctions(), "jobSearch")({ searchAll: query });
 
         setJobs(result.data);
         setcurrJob(result.data[0]);
-        setMessage('');
+        setMessage("");
         setLoading(false);
         setHasSearched(true);
     };
@@ -42,7 +42,7 @@ const SearchBar = () => {
         return (
             <div className="w-full flex flex-1">
                 <div id="res">
-                    {jobs.map((job: object, index: number) => {
+                    {jobs.map((job, index) => {
                         return (
                             <div
                                 id="job"
@@ -52,7 +52,7 @@ const SearchBar = () => {
                                 <div id="title">
                                     <h1>
                                         <span className="font-bold text-xl">
-                                            {' '}
+                                            {" "}
                                             {`${job.position}`}
                                         </span>
                                     </h1>
@@ -63,13 +63,13 @@ const SearchBar = () => {
                                     <h1 className="text-lg align-middle">
                                         <span className="material-icons-outlined">
                                             alternate_email
-                                        </span>{' '}
+                                        </span>{" "}
                                         {`${job.company}`}
                                     </h1>
                                 </div>
                                 <div className="mt-1">
                                     <h1 className="text-lg align-middle">
-                                        <span className="material-icons-outlined">location_on</span>{' '}
+                                        <span className="material-icons-outlined">location_on</span>{" "}
                                         {`${job.location}`}
                                     </h1>
                                 </div>
@@ -87,14 +87,14 @@ const SearchBar = () => {
                                     <h3>
                                         <span className="mt-1 material-icons-outlined">
                                             alternate_email
-                                        </span>{' '}
+                                        </span>{" "}
                                         {currJob.company}
                                     </h3>
                                     <h3>
-                                        {' '}
+                                        {" "}
                                         <span className="material-icons-outlined">
                                             location_on
-                                        </span>{' '}
+                                        </span>{" "}
                                         {currJob.location}
                                     </h3>
                                 </div>
@@ -185,11 +185,11 @@ const SearchBar = () => {
                             disableElevation
                             size="small"
                             sx={{
-                                height: '80%',
+                                height: "80%",
                             }}
                             endIcon={<Search />}
                         >
-                            {' '}
+                            {" "}
                             Search
                         </LoadingButton>
                     </div>

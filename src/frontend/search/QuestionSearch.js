@@ -1,29 +1,32 @@
-import { useState } from 'react';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import LoadingButton from '@mui/lab/LoadingButton';
-import Search from '@mui/icons-material/Search';
+import { useState } from "react";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Search from "@mui/icons-material/Search";
 
 const QuestionSearch = () => {
-    const [query, setQuery] = useState<string>('');
-    const [questions, setQuestions] = useState<object[]>([]);
-    const [message, setMessage] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [query, setQuery] = useState("");
+    const [questions, setQuestions] = useState([]);
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
         setLoading(true);
         if (query.trim().length === 0) {
-            setMessage('Please enter a search query');
+            setMessage("Please enter a search query");
             setLoading(false);
             return;
         }
 
-        setMessage('Loading questions...');
-        const result = await httpsCallable(getFunctions(), 'interviewQuestionSearch')({ searchAll: query });
+        setMessage("Loading questions...");
+        const result = await httpsCallable(
+            getFunctions(),
+            "interviewQuestionSearch"
+        )({ searchAll: query });
 
         setQuestions(result.data);
         setLoading(false);
-        setMessage('');
+        setMessage("");
         setHasSearched(true);
     };
 
@@ -92,7 +95,7 @@ const QuestionSearch = () => {
         ));
     };
 
-    const inputBoxStyle = { outline: '1px solid black', width: '30%' };
+    const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
         <div>
             <div className="grid place-content-center">
@@ -144,11 +147,11 @@ const QuestionSearch = () => {
                             disableElevation
                             size="small"
                             sx={{
-                                height: '80%',
+                                height: "80%",
                             }}
                             endIcon={<Search />}
                         >
-                            {' '}
+                            {" "}
                             Search
                         </LoadingButton>
                     </div>

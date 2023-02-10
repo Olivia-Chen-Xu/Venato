@@ -1,5 +1,5 @@
-import * as functions from 'firebase-functions';
-import admin = require('firebase-admin');
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
 /**
  * Initialize the app with admin permissions to be used in other functions
@@ -28,8 +28,8 @@ const getCollection = (collection: string) => admin.firestore().collection(colle
 const verifyIsAuthenticated = (context: functions.https.CallableContext) => {
     if (!context.auth) {
         throw new functions.https.HttpsError(
-            'unauthenticated',
-            'You must be logged in to call the API'
+            "unauthenticated",
+            "You must be logged in to call the API"
         );
     }
 };
@@ -43,14 +43,14 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
         .then((doc) => {
             if (!doc.exists) {
                 throw new functions.https.HttpsError(
-                    'not-found',
+                    "not-found",
                     `The document '${path}' does not exist`
                 );
             }
 
             if (doc.data()?.userId !== context.auth?.uid) {
                 throw new functions.https.HttpsError(
-                    'permission-denied',
+                    "permission-denied",
                     `You cannot view the document '${path}' as it doesn't belong to you`
                 );
             }
@@ -65,7 +65,7 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
 //  - Each key in the structure object exists in the original object and has the same type
 //    (if the value is an object, recursively check the structure of that object too)
 const isValidObjectStructure = (obj: any, structure: any) => {
-    if (typeof obj !== 'object' || typeof structure !== 'object') {
+    if (typeof obj !== "object" || typeof structure !== "object") {
         return false;
     }
 
@@ -78,7 +78,7 @@ const isValidObjectStructure = (obj: any, structure: any) => {
             if (typeof obj[key] !== typeof structure[key]) {
                 return false;
             }
-            if (typeof obj[key] === 'object') {
+            if (typeof obj[key] === "object") {
                 if (!isValidObjectStructure(obj[key], structure[key])) {
                     return false;
                 }
@@ -87,14 +87,16 @@ const isValidObjectStructure = (obj: any, structure: any) => {
     }
 
     return true;
-}
+};
 
 // Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-const getRelativeTimestamp = (days: number) => admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
+const getRelativeTimestamp = (days: number) =>
+    admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
 
 // Gets a firestore timestamp based on unix millis
-const getFirestoreTimestamp = (unixMillis: number) => admin.firestore.Timestamp.fromMillis(unixMillis);
+const getFirestoreTimestamp = (unixMillis: number) =>
+    admin.firestore.Timestamp.fromMillis(unixMillis);
 
 // For doing misc. tasks like deleting or editing document keys
 const firestoreHelper = admin.firestore;
