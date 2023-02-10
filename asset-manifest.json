@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/venato/static/css/main.4fe8d884.css",
+    "main.js": "/venato/static/js/main.766dac29.js",
+    "static/media/bg.png": "/venato/static/media/bg.1d52a8c61d221e5666ca.png",
+    "static/media/logo.png": "/venato/static/media/logo.c43b24e5b267859d22f1.png",
+    "static/media/board.png": "/venato/static/media/board.2ce81448f75bb7e6e21d.png",
+    "static/media/logo.svg": "/venato/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/venato/index.html",
+    "main.4fe8d884.css.map": "/venato/static/css/main.4fe8d884.css.map",
+    "main.766dac29.js.map": "/venato/static/js/main.766dac29.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4fe8d884.css",
+    "static/js/main.766dac29.js"
+  ]
+}
