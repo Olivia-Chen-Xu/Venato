@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/venato/static/css/main.4fe8d884.css",
-    "main.js": "/venato/static/js/main.766dac29.js",
-    "static/media/bg.png": "/venato/static/media/bg.1d52a8c61d221e5666ca.png",
-    "static/media/logo.png": "/venato/static/media/logo.c43b24e5b267859d22f1.png",
-    "static/media/board.png": "/venato/static/media/board.2ce81448f75bb7e6e21d.png",
-    "static/media/logo.svg": "/venato/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/venato/index.html",
-    "main.4fe8d884.css.map": "/venato/static/css/main.4fe8d884.css.map",
-    "main.766dac29.js.map": "/venato/static/js/main.766dac29.js.map"
+    "main.css": "/Venato/static/css/main.f332b7be.css",
+    "main.js": "/Venato/static/js/main.5068e453.js",
+    "static/media/bg.png": "/Venato/static/media/bg.1d52a8c61d221e5666ca.png",
+    "static/media/logo.png": "/Venato/static/media/logo.c43b24e5b267859d22f1.png",
+    "static/media/board.png": "/Venato/static/media/board.2ce81448f75bb7e6e21d.png",
+    "static/media/logo.svg": "/Venato/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/Venato/index.html",
+    "main.f332b7be.css.map": "/Venato/static/css/main.f332b7be.css.map",
+    "main.5068e453.js.map": "/Venato/static/js/main.5068e453.js.map"
   },
   "entrypoints": [
-    "static/css/main.4fe8d884.css",
-    "static/js/main.766dac29.js"
+    "static/css/main.f332b7be.css",
+    "static/js/main.5068e453.js"
   ]
 }
