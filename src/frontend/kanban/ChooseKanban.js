@@ -37,7 +37,7 @@ const ChooseKanban = () => {
         const boardsHtml: JSX.Element[] = [];
         boards.result.data.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
-                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
