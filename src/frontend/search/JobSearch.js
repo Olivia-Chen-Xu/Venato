@@ -109,7 +109,7 @@ const SearchBar = () => {
                             <div className="mt-5">
                                 <h1 className="ml-5 mr-5">Job Details</h1>
                                 <br />
-                                <h2 className="ml-5 mr-5">job description</h2>
+                                <h2 className="ml-5 mr-5">{currJob.description}</h2>
                                 <br />
                                 <br />
                             </div>
