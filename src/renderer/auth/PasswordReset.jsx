@@ -5,6 +5,7 @@ import { passwordResetEmail } from './auth-functions';
 import checkMark from '../../../assets/checkMark.png';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
+import { WarningAmberRounded } from '@mui/icons-material';
 
 const PasswordReset = () => {
     const navigate = useNavigate();
@@ -64,9 +65,17 @@ const PasswordReset = () => {
     };
 
     return (
+        <>
+        {!isSubmitted && (
         <div className="AuthMainDiv">
             <text className="TopText">Password reset</text>
             <br />
+            <div className="flex flex-1  border border-black">
+                {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5" />}
+                <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
+                    {errMsg === '' ? '' : errMsg}
+                </text>
+            </div>
             <br />
             <InputLabel>Email</InputLabel>
             <TextField
@@ -81,25 +90,63 @@ const PasswordReset = () => {
             ></TextField>
 
             <br />
-            <Button
-                color="neutral"
-                variant="contained"
-                className="auth-button"
-                onClick={handlePassReset}
-            >
-                Reset password
-            </Button>
+            <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="contained"
+                    style={btnStyle}
+                    onClick={handlePassReset}
+                >
+                    Reset password
+                </Button>
+            </div>
+            <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="outlined"
+                    style={btnStyle}
+                    onClick={() => navigate('/sign-in')}
+                >
+                    Return to Log In
+                </Button>
+            </div>
             <br />
-            <p style={{ alignSelf: 'flex-end' }}>
-                <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
-                    Sign in
-                </text>
-            </p>
-            <br />
-            <text style={{ color: 'red' }}>{errMsg}</text>
-            <br />
-            {renderEmailSent()}
         </div>
+)}
+{
+    isSubmitted && (
+        <div className='h-screen grid place-content-center'>
+        <div>
+        <h1 className='text-xl'>We’ve sent the verification to your email</h1>
+        <div className="mt-10 w-full">
+                <Button
+                    color="neutral"
+                    variant="contained"
+                    style={btnStyle}
+                    onClick={() => {setIsSubmitted(false); setErrMsg('')}}
+                >
+                    Resend
+                </Button>
+                <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="outlined"
+                    style={btnStyle}
+                    onClick={() => navigate('/sign-in')}
+                >
+                    Return to Log In
+                </Button>
+            </div>
+            </div>
+            <br />
+            </div>
+        </div>
+    )
+}
+
+
+
+</>
     );
 };
 

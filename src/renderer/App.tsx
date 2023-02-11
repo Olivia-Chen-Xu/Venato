@@ -5,7 +5,6 @@ import SignUp from './auth/SignUp';
 import PasswordReset from './auth/PasswordReset';
 import './App.css';
 import Overlay from './reusable/Overlay';
-
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -14,9 +13,14 @@ const theme = createTheme({
             main: '#633175',
         },
         neutral: {
-            main: '#C7ADD8',
+            main: '#7F5BEB',
             contrastText: '#fff',
         },
+    },
+    typography:{
+        fontFamily:[
+            'Poppins'
+        ].join(',')
     },
 });
 

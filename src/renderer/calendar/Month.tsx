@@ -5,7 +5,7 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
-            ? 'bg-[#C8ADD8] text-white rounded-full w-7'
+            ? 'bg-[#7F5BEB] text-white rounded-full w-8'
             : '';
     };
 
@@ -54,13 +54,13 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
 
     return (
         <>
-            <div className="border border-gray-200 flex flex-col">
-                <header className="flex flex-col items-center">
+            <div className="border border-gray-300 flex flex-col">
+                <header className="flex flex-col items-right">
                     {rowIdx === 0 && (
-                        <p className="text-sm mt-1">{day.format('ddd').toUpperCase()}</p>
+                        <p className="text-base -mt-7 text-center">{day.format('ddd')}</p>
                     )}
-                    <p className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}`}>
-                        {day.format('DD')}
+                    <p className={`p-1 my-1 text-center font-bold text-base ml-auto ${getCurrentDayClass()}`}>
+                        {day.format('D')}
                     </p>
                 </header>
                 <div
@@ -75,7 +75,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
 
 const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
-        <div className="flex-1 grid grid-cols-7 grid-rows-5">
+        <div className="h-full flex-1 grid grid-cols-7 grid-rows-5 border border-gray-300 rounded-lg">
             {month.map((row: dayjs.Dayjs[], i) => (
                 <React.Fragment key={i}>
                     {row.map((day: dayjs.Dayjs, idx) => (

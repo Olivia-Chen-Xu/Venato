@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputLabel, TextField, Button } from '@mui/material';
+import { InputLabel, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { signup } from './auth-functions';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
+import {
+    VisibilityOffOutlined,
+    VisibilityOutlined,
+    WarningAmberRounded,
+} from '@mui/icons-material';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -11,6 +16,8 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
 
@@ -30,7 +37,13 @@ const SignUp = () => {
         <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
             <text className="TopText">Sign up</text>
             <br />
-            <text className="WelcomeText">Welcome!</text>
+            <div className="flex flex-1">
+                {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5" />}
+                <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
+                    {' '}
+                    {errMsg === '' ? 'Welcome!' : errMsg}
+                </text>
+            </div>
             <br />
             <InputLabel>Email</InputLabel>
             <TextField
@@ -47,7 +60,7 @@ const SignUp = () => {
             <InputLabel>Password</InputLabel>
             <TextField
                 variant="outlined"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -55,12 +68,27 @@ const SignUp = () => {
                 onChange={(e) => {
                     setPassword(e.target.value);
                 }}
+                InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                    setShowPassword(!showPassword);
+                                }}
+                            >
+                                {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
             />
             <div style={{ height: 20 }} />
             <InputLabel>Confirm password</InputLabel>
             <TextField
                 variant="outlined"
-                type="password"
+                type={showPasswordConfirm ? 'text' : 'password'} // <-- This is where the magic happens
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -68,28 +96,39 @@ const SignUp = () => {
                 onChange={(e) => {
                     setConfirmPassword(e.target.value);
                 }}
-            />
-            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
-                Sign up
-            </Button>
-            <br />
-            <div
-                style={{
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    display: 'flex',
-                    width: '100%',
+                InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                    setShowPasswordConfirm(!showPasswordConfirm);
+                                }}
+                            >
+                                {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
                 }}
-            >
-                <p className="SwapAuthText">Already have an account?</p>
-                <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
-                    Log in
-                </text>
-            </div>
-
-            <br />
-            <text style={{ color: 'red' }}>{errMsg}</text>
+            />
+            <div className='mt-4 w-full'>
+                <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
+                    Sign Up
+                </Button>
         </div>
+
+                <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="outlined"
+                    style={btnStyle}
+                    onClick={() => navigate('/sign-in')}
+                >
+                    Log In
+                </Button>
+            </div>
+            </div>
     );
 };
 
