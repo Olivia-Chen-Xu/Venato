@@ -6,7 +6,7 @@ import {
     isValidObjectStructure,
     verifyDocPermission,
     verifyIsAuthenticated
-} from './helpers';
+} from './helpers.js';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)

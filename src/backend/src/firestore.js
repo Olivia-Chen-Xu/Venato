@@ -3,7 +3,7 @@ import {
     firestoreHelper,
     getCollection, getDoc,
     getFirestoreTimestamp
-} from './helpers';
+} from './helpers.js';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed

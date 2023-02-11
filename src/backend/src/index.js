@@ -1,6 +1,6 @@
-import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
-import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth';
-import { onJobCreate, onJobPurge, onBoardPurge } from './firestore';
+import { purgeExpiredData, purgeUnverifiedUsers } from './cron.js';
+import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth.js';
+import { onJobCreate, onJobPurge, onBoardPurge } from './firestore.js';
 import {
     getCalendarDeadlines,
     getHomepageData,
@@ -9,7 +9,7 @@ import {
     getKanbanBoard,
     jobSearch,
     interviewQuestionSearch,
-} from './getData';
+} from './getData.js';
 import {
     addBoard,
     addContact,
@@ -20,7 +20,7 @@ import {
     deleteJob,
     dragKanbanJob,
     updateJob
-} from './mutateData';
+} from './mutateData.js';
 
 /**
  * Entry point for cloud firestore functions deployment
