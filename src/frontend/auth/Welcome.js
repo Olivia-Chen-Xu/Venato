@@ -11,21 +11,21 @@ const Welcome = () => {
     const navigate = useNavigate();
     const [errMsg, setErrMsg] = useState('');
 
-    const bypassSignIn = () => {
-        const signInResult = signin('18rem8@queensu.ca', 'Username12345');
-        if (typeof signInResult === 'string') {
-            setErrMsg(`Error signing in to admin account: ${signInResult}`);
-            return;
-        }
-
-        signInResult
-            .then(() => {
-                navigate('/home');
-            })
-            .catch((err) => {
-                setErrMsg(`Error signing in to admin account: ${err}`);
-            });
-    };
+    // const bypassSignIn = () => {
+    //     const signInResult = signin('18rem8@queensu.ca', 'Username12345');
+    //     if (typeof signInResult === 'string') {
+    //         setErrMsg(`Error signing in to admin account: ${signInResult}`);
+    //         return;
+    //     }
+    //
+    //     signInResult
+    //         .then(() => {
+    //             navigate('/home');
+    //         })
+    //         .catch((err) => {
+    //             setErrMsg(`Error signing in to admin account: ${err}`);
+    //         });
+    // };
 
     return (
         <div className="AuthMainDiv">
@@ -48,13 +48,10 @@ const Welcome = () => {
                 Sign Up
             </Button>
 
-            <Button variant="contained" color="neutral" style={btnStyle} onClick={bypassSignIn}>
-                {'Bypass sign-in (dev only)'}
-            </Button>
-            <br />
-            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={() => {generateJobs(40)}}>*/}
-            {/*    Generate jobs*/}
+            {/*<Button variant="contained" color="neutral" style={btnStyle} onClick={bypassSignIn}>*/}
+            {/*    {'Bypass sign-in (dev only)'}*/}
             {/*</Button>*/}
+            {/*<br />*/}
             <br />
             <text style={{ color: 'red' }}>{errMsg}</text>
         </div>
