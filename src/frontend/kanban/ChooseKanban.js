@@ -34,8 +34,8 @@ const ChooseKanban = () => {
             return <p>Error: Invalid state</p>;
         }
 
-        const boardsHtml: JSX.Element[] = [];
-        boards.result.data.forEach((board: { name: string; id: string }) => {
+        const boardsHtml = [];
+        boards.result.data.forEach((board) => {
             boardsHtml.push(
                 <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button

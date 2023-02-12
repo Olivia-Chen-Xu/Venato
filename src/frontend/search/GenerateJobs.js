@@ -1,47 +1,47 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-interface Job {
-    // Core job data
-    position: string;
-    company: string;
-    description: string;
-    salary: string;
-    location: string;
-    link: string;
-    notes: string;
-    stage: number;
-    awaitingResponse: boolean;
-    priority: string;
-
-    // These will go in their own collections
-    deadlines: {
-        title: string;
-        date: number;
-        location: string;
-        link: string;
-        company: string;
-        position: string;
-    }[];
-    interviewQuestions: {
-        name: string;
-        description: string;
-        company: string;
-        position: string;
-    }[];
-    contacts: {
-        name: string;
-        title: string;
-        company: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-        notes: string;
-    }[];
-
-    // To link this job to a user and board
-    userId: string;
-    boardId: string;
-}
+// interface Job {
+//     // Core job data
+//     position: string;
+//     company: string;
+//     description: string;
+//     salary: string;
+//     location: string;
+//     link: string;
+//     notes: string;
+//     stage: number;
+//     awaitingResponse: boolean;
+//     priority: string;
+//
+//     // These will go in their own collections
+//     deadlines: {
+//         title: string;
+//         date: number;
+//         location: string;
+//         link: string;
+//         company: string;
+//         position: string;
+//     }[];
+//     interviewQuestions: {
+//         name: string;
+//         description: string;
+//         company: string;
+//         position: string;
+//     }[];
+//     contacts: {
+//         name: string;
+//         title: string;
+//         company: string;
+//         email: string;
+//         phone: string;
+//         linkedin: string;
+//         notes: string;
+//     }[];
+//
+//     // To link this job to a user and board
+//     userId: string;
+//     boardId: string;
+// }
 
 const companies = [
     'Google',
