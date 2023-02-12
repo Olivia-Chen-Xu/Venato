@@ -76,9 +76,9 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
 const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
         <div className="flex-1 grid grid-cols-7 grid-rows-5">
-            {month.map((row: dayjs.Dayjs[], i) => (
+            {month.map((row, i) => (
                 <React.Fragment key={i}>
-                    {row.map((day: dayjs.Dayjs, idx) => (
+                    {row.map((day, idx) => (
                         <Day
                             day={day}
                             key={idx}

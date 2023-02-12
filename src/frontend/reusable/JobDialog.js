@@ -9,7 +9,6 @@ import {
     Button,
     Dialog,
     CircularProgress,
-    Select,
     MenuItem,
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -26,44 +25,11 @@ import {
     AddCircleOutline,
 } from '@mui/icons-material';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { DateTimePicker, DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
 const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
 const priorities = ['High', 'Medium', 'Low'];
-
-interface Job {
-    company: string;
-    position: string;
-    location: string;
-    description: string;
-    link: string;
-    salary: string;
-
-    notes: string;
-    deadlines: {
-        title: string;
-        date: number;
-        location: string;
-    }[];
-    interviewQuestions: {
-        name: string;
-        description: string;
-    }[];
-    contacts: {
-        name: string;
-        title: string;
-        company: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-        notes: string;
-    }[];
-
-    stage: number;
-    awaitingResponse: boolean;
-    priority: string;
-}
 
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
@@ -140,7 +106,7 @@ const Details = ({ value, index, jobData, setJob }) => {
         <div
             style={{
                 flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
+                display: value === index ? 'flex' : 'none',
                 height: '100%',
             }}
         >
@@ -203,7 +169,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
         <div
             style={{
                 flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
+                display: value === index ? 'flex' : 'none',
                 height: '100%',
             }}
         >
@@ -243,7 +209,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         <div
             style={{
                 flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
+                display: value === index ? 'flex' : 'none',
                 height: '100%',
             }}
         >
@@ -342,7 +308,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
         <div
             style={{
                 flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
+                display: value === index ? 'flex' : 'none',
                 height: '100%',
             }}
         >
@@ -444,7 +410,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
         <div
             style={{
                 flexDirection: 'column',
-                display: value == index ? 'flex' : 'none',
+                display: value === index ? 'flex' : 'none',
                 height: '100%',
             }}
         >
@@ -525,7 +491,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
 };
 
 const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
-    const [job, setJob] = useState<Job>({
+    const [job, setJob] = useState({
         position: '',
         company: '',
         description: '',
@@ -660,7 +626,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     }, [jobData]);
 
     return (
-        <Dialog fullWidth maxWidth="xl" open onClose={async () => await handleClose()}>
+        <Dialog fullWidth maxWidth="xl" onClose={async () => await handleClose()} open={true}>
             <DialogContent
                 style={{
                     display: 'flex',

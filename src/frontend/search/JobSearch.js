@@ -6,7 +6,7 @@ import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
 import bar from "../../images/bar.png";
 
-const SearchBar = () => {
+const JobSearch = () => {
     const [query, setQuery] = useState("");
     const [jobs, setJobs] = useState([]);
     const [message, setMessage] = useState("");
@@ -205,4 +205,4 @@ const SearchBar = () => {
     );
 };
 
-export default SearchBar;
+export default JobSearch;

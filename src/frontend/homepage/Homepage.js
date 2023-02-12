@@ -11,9 +11,11 @@ const Homepage = () => {
     const nav = useNavigate();
     const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
 
+    // For adding a new board
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
 
+    // For opening a job (when you click a deadline)
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
 
@@ -39,8 +41,8 @@ const Homepage = () => {
             return <p>Error: Invalid state</p>;
         }
 
-        const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((board: { name: string; id: string }) => {
+        const boardsHtml = [];
+        userData.result.data.boards.forEach((board) => {
             boardsHtml.push(
                 <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -55,24 +57,6 @@ const Homepage = () => {
         return boardsHtml;
     };
 
-    // useEffect(() => {
-    //     const fetchBoards = async () => {
-    //         setLoading(true);
-    //         const newState = [[], [], [], []];
-    //         await httpsCallable(getFunctions(), 'getKanbanBoard')(boardId).then((res) => {
-    //             res.data.jobs.forEach((job) => newState[job.stage].push(job));
-    //             setKanbanState(newState);
-    //             setBoardName(res.data.name);
-    //             setBoardID(res.data.id);
-    //             setLoading(false);
-    //         });
-    //
-    //         return newState;
-    //     };
-    //
-    //     fetchBoards();
-    // }, []);
-
     const renderEvents = () => {
         if (!userData.result) {
             return <p>Error: Invalid state</p>;
@@ -85,9 +69,9 @@ const Homepage = () => {
                     <div
                         className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
                         onClick={async (mouseEvent) => {
-                            mouseEvent.stopPropagation(); // So the day div onClick won't be triggered also
-                            setCurrentJob(await httpsCallable(getFunctions(), 'getJobData')(event.jobId)
-                                .then((result) => result.data));
+                            const job = await httpsCallable(getFunctions(), 'getJobData')(event.jobId)
+                                .then((result) => result.data);
+                            setCurrentJob(job);
                             setModalOpen(true);
                         }}
                     >

@@ -21,7 +21,7 @@ const createAccount = functions.https.onCall(async (credentials: { email: string
                 password: credentials.password,
                 disabled: false,
             })
-            .then((userRecord) => {
+            .then(() => {
                 return `Successfully created new user`;
             })
             .catch((error) => {
@@ -54,8 +54,8 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
     promises.push(
         getDoc(`users/${user.uid}`)
             .set(defaultDoc)
-            .then(() => console.log(`Default db data successfully created for user: ${user.uid}`))
-            .catch((err) => console.log(`Error creating default db data for ${user.uid}: ${err}`))
+            .then(() => functions.logger.log(`Default db data successfully created for user: ${user.uid}`))
+            .catch((err) => functions.logger.log(`Error creating default db data for ${user.uid}: ${err}`))
     );
 
     // Adds a verification email to the db (will be sent by the 'Trigger Email' extension)
