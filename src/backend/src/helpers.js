@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
-import * as admin from 'firebase-admin';
+import * as admin from 'firebase-admin/firestore';
 
 /**
  * Initialize the app with admin permissions to be used in other functions
