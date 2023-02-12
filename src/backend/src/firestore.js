@@ -34,11 +34,12 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 ...deadline,
                 date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
-                userId: job.userId,
+                userId: job.priority,
                 priority: job.priority,
                 jobId: jobId,
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
+            throw new functions.https.HttpsError('invalid-argument', `does this throw? ${JSON.stringify(job)}\n${JSON.stringify(deadline)}`);
         }
     );
 
