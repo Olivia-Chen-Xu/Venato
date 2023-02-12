@@ -5,14 +5,14 @@ import {
     getRelativeTimestamp,
     verifyDocPermission,
     verifyIsAuthenticated
-} from './helpers.js';
+} from './helpers';
 import algoliaSearch from 'algoliasearch';
 
 /**
  * Callable functions for getting data from firestore
  */
 
-const getJobData = functions.https.onCall(async (jobId, context) => {
+const getJobData = functions.https.onCall(async (jobId: string, context: any) => {
     if (!jobId) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -23,7 +23,7 @@ const getJobData = functions.https.onCall(async (jobId, context) => {
     await verifyDocPermission(context, `jobs/${jobId}`);
 
     // @ts-ignore
-    const job = await getDoc(`jobs/${jobId}`)
+    const job: IJob = await getDoc(`jobs/${jobId}`)
         .get()
         .then((doc) => ({ ...doc.data(), id: doc.id }));
 
@@ -67,7 +67,7 @@ const getJobData = functions.https.onCall(async (jobId, context) => {
 });
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getHomepageData = functions.https.onCall((data, context) => {
+const getHomepageData = functions.https.onCall((data: null, context: any) => {
     verifyIsAuthenticated(context);
 
     if (data != null) {
@@ -77,7 +77,7 @@ const getHomepageData = functions.https.onCall((data, context) => {
         );
     }
 
-    const promises = [];
+    const promises: Promise<any>[] = [];
 
     promises.push(
         getCollection('deadlines')
@@ -110,7 +110,7 @@ const getHomepageData = functions.https.onCall((data, context) => {
         .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
-const getJobBoards = functions.https.onCall((data, context) => {
+const getJobBoards = functions.https.onCall((data: null, context: any) => {
     verifyIsAuthenticated(context);
 
     if (data != null) {
@@ -128,7 +128,7 @@ const getJobBoards = functions.https.onCall((data, context) => {
 });
 
 // Gets all the jobs for a given kanban board
-const getKanbanBoard = functions.https.onCall(async (boardId, context) => {
+const getKanbanBoard = functions.https.onCall(async (boardId: string, context: any) => {
     if (!boardId || String(boardId) !== boardId || boardId.trim().length === 0) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -164,7 +164,7 @@ const getKanbanBoard = functions.https.onCall(async (boardId, context) => {
 });
 
 // Returns all job deadlines for the currently signed-in user
-const getCalendarDeadlines = functions.https.onCall((data, context) => {
+const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
@@ -176,7 +176,7 @@ const getCalendarDeadlines = functions.https.onCall((data, context) => {
             }
 
             return deadlines.docs.map((deadline) => {
-                const deadlineDate = deadline.data().date.toDate();
+                const deadlineDate: Date = deadline.data().date.toDate();
                 const newDate = {
                     year: deadlineDate.getFullYear(),
                     month: deadlineDate.getMonth() + 1,
@@ -191,7 +191,7 @@ const getCalendarDeadlines = functions.https.onCall((data, context) => {
 
 // Search for a job by position, company, or location
 const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (queryData, context) => {
+    (queryData: { searchAll: string; company: string; position: string; location: string; }, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -226,17 +226,7 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('jobs')
                 .search(queryData.searchAll)
-                .then(({ hits }) => {
-                    return hits.map((hit) => ({
-                        jobId: hit.objectID,
-                        company: hit.company,
-                        position: hit.position,
-                        description: hit.description,
-                        location: hit.location,
-                        link: hit.link,
-                        salary: hit.salary,
-                    }));
-                })
+                .then(({ hits }) => hits)
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
@@ -258,7 +248,7 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
 
 // Search for interview questions based on a company and/or position
 const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (queryData, context) => {
+    (queryData: { searchAll: string; company: string; position: string; }, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -292,9 +282,7 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('interviewQuestions')
                 .search(queryData.searchAll)
-                .then(({ hits }) => {
-                    return hits;
-                })
+                .then(({ hits }) => hits)
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
@@ -314,7 +302,7 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
     }
 );
 
-const nullOrWhitespace = (str) => str == null || str.trim().length === 0;
+const nullOrWhitespace = (str: string) => str == null || str.trim().length === 0;
 
 export {
     getJobData,

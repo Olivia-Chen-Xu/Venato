@@ -3,7 +3,7 @@ import {
     firestoreHelper,
     getCollection, getDoc,
     getFirestoreTimestamp
-} from './helpers.js';
+} from './helpers';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -20,21 +20,22 @@ import {
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     // @ts-ignore
-    const job = snap.data();
+    const job: IJob = snap.data();
     const jobId = snap.id;
-    const promises = [];
+    const promises: Promise<any>[] = [];
 
     // Move the deadlines to its own collection
     const deadlines = job.deadlines;
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     deadlines.forEach(
-        (deadline) => {
+        (deadline: IDeadline) => {
             const newDoc = {
                 ...deadline,
                 date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
                 userId: job.userId,
+                priority: job.priority,
                 jobId: jobId,
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
@@ -45,7 +46,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const interviewQuestions = job.interviewQuestions;
     promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
 
-    interviewQuestions.forEach((question) => {
+    interviewQuestions.forEach((question: IInterviewQuestion) => {
         const newQuestion = {
             ...question,
             userId: job.userId,
@@ -60,7 +61,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
 
     contacts.forEach(
-        (contact) => {
+        (contact: IContact) => {
             const newContact = {
                 ...contact,
                 userId: job.userId,
@@ -81,7 +82,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
     const jobId = snap.id;
-    const promises = [];
+    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
     // Remove deadlines, interview questions and contacts for this job
     await getCollection('deadlines')
@@ -108,7 +109,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
 const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(async (snap, context) => {
     const boardId = snap.id;
 
-    const promises = [];
+    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
     await getDoc(`users/${snap.data().userId}`)
         .get()

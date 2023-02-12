@@ -1,10 +1,10 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getDoc, auth, isValidObjectStructure } from './helpers.js';
+import { getCollection, getDoc, auth, isValidObjectStructure } from './helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
  */
-const createAccount = functions.https.onCall(async (credentials, context) => {
+const createAccount = functions.https.onCall(async (credentials: { email: string; password: string }, context) => {
         // Verify input data
         if (!isValidObjectStructure(credentials, { email: '', password: '' })) {
             throw new functions.https.HttpsError(
@@ -76,7 +76,7 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
                 },
             })
             .then(() => functions.logger.log(`Email successfully sent to: ${user.email}`))
-            .catch((err) => functions.logger.log(`Error sending email: ${err}`))
+            .catch((err: string) => functions.logger.log(`Error sending email: ${err}`))
     );
 
     return Promise.all(promises);
