@@ -1,6 +1,8 @@
 import * as functions from "firebase-functions";
-//import * as admin from "firebase-admin";
-const admin = require('firebase-admin');
+import { initializeApp } from "firebase-admin/app";
+import { getAuth } from 'firebase-admin/auth';
+import { getDatabase } from 'firebase-admin/database';
+import * as admin from 'firebase-admin';
 
 /**
  * Initialize the app with admin permissions to be used in other functions
@@ -9,13 +11,13 @@ const admin = require('firebase-admin');
 // Admin SDK is required to access Firestore.
 // It also allows enhanced security since it's only available on the server-side and ignores
 // firestore security rules, so all other requests not defined in the API will be blocked
-admin.initializeApp();
+initializeApp();
 
 // Batch jobs require a db reference
-const db = admin.firestore();
+const db = getDatabase();
 
 // Auth-based functions may need admin permissions for authentication
-const auth = admin.auth();
+const auth = getAuth();
 
 /**
  * Helper functions for commonly used functionality
