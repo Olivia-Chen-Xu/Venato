@@ -5,6 +5,11 @@ import { Button, CircularProgress } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 import taskLine from '../../../assets/task-line.png';
 
+const bannerStyles = {
+    color: 'white',
+    padding: '16px 16px 16px 24px',
+    borderRadius: '12px',
+}
 const Homepage = () => {
     const nav = useNavigate();
     const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
@@ -33,9 +38,9 @@ const Homepage = () => {
         const boardsHtml: JSX.Element[] = [];
         userData.result.data.boards.forEach((board: { name: string; userId: string; id: string }) => {
             boardsHtml.push(
-                <div className="bg-[url('../../assets/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="font-poppins tracking-tighter text-black w-64 border-2 border-black bg-[#FFFFFF]  rounded-2xl">
                     <button
-                        className="relative w-full h-full py-16"
+                        className="relative w-full h-full py-16 bottom-100"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
                         <span className="absolute bottom-5 left-5 ">{board.name}</span>
@@ -55,7 +60,7 @@ const Homepage = () => {
         userData.result.data.events.forEach(
             (event: { title: string; date: number; location: string; company: string }) => {
                 eventsHtml.push(
-                    <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div className="font-poppins tracking-tighter p-3 place-content-between bg-gradient-to-tl from-[#7F5BEB] to-[#7F5BEB] rounded-2xl">
                         <div className="ml-5">
                             <h1>
                                 <span className="text-3xl">{event.title}</span>
@@ -99,28 +104,27 @@ const Homepage = () => {
 
     return (
         <div>
-            <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
-
-            <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">
-                Upcoming Tasks
+            <h1 className=" font-poppins tracking-tighter font-medium left-100 text-black text-xl mt-2 grid place-content-center ">
+                Upcoming Deadlines
             </h1>
-            <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
+            <div style={bannerStyles} className="grid grid-cols-3 gap-10 mx-30 h-20 my-5">
                 {renderEvents()}
             </div>
             <br />
             <br />
-
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Job Boards
-            </h1>
             <br />
-            <div className="flex justify-center">
-                <Button color="neutral" variant="contained" startIcon={<AddCircleOutline />}>
+            <br />
+            <br />
+            <br />
+            <br />
+            <div>
+                <Button sx={{color: 'white'}}  variant="contained" startIcon={<AddCircleOutline />}>
                     Create new board
                 </Button>
+                <br></br>
             </div>
             <br />
-            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
+            <div className="tracking-tighter mt-5 grid grid-cols-3 gap-3 gap-y-2 text-2xl text-white mx-10 ">
                 {renderBoards()}
                 {/* <div className="grid place-content-center">
                     <button

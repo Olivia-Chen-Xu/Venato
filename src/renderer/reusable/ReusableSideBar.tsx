@@ -6,7 +6,7 @@ export default function ReusableSideBar() {
     const nav = useNavigate();
     return (
         <div className="fixed left-0 h-fit">
-            <div className="mt-10 px-3 py-6 rounded-tr-2xl rounded-br-2xl bg-gradient-to-t from-[#ADADD8] to-[#C8ADD8] material-icons-outlined grid grid-rows-5 gap-y-6 text-white h-1/3">
+            <div className="mt-10 px-3 py-6 rounded-tr-2xl rounded-br-2xl bg-gradient-to-t from-[#7F5BEB] to-[#C8ADD8] material-icons-outlined grid grid-rows-5 gap-y-6 text-white h-1/3">
                 <Tooltip title="Home" placement="right">
                     <button
                         className="material-icons-outlined text-5xl"
