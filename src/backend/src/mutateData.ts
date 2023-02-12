@@ -7,6 +7,7 @@ import {
     verifyDocPermission,
     verifyIsAuthenticated
 } from './helpers';
+import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)

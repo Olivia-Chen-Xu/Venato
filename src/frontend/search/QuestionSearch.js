@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
+import { Button, Dialog, DialogContent, TextField } from '@mui/material';
 
 const QuestionSearch = () => {
     const [query, setQuery] = useState("");
@@ -9,6 +10,9 @@ const QuestionSearch = () => {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState({});
 
     const handleSearch = async () => {
         setLoading(true);
@@ -41,15 +45,15 @@ const QuestionSearch = () => {
         return questions.map((question) => (
             <div className="ml-20">
                 <li>
-                    <a
-                        // href={`https://www.google.com/search?q=${question.name.replaceAll(
-                        //     ' ',
-                        //     '+'
-                        // )}`}
-                        title={"question description"}
+                    <text
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            setDialogOpen(true);
+                            setCurrentQuestion(question);
+                        }}
                     >
-                        question name
-                    </a>
+                        {question.name}
+                    </text>
                 </li>
             </div>
             // <div style={{ marginTop: '20px' }}>
@@ -220,6 +224,33 @@ const QuestionSearch = () => {
                 <div className="grid place-content-center">{message}</div>
                 <br />
                 {displayQuestions()}
+                {dialogOpen && (
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                        <DialogContent
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: 600,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <p><strong><u>{currentQuestion.name}</u></strong></p>
+                            <br />
+
+                            {currentQuestion.description}
+                            <br />
+                            <br />
+
+                            <Button
+                                variant="contained"
+                                href={`https://www.google.com/search?q=${currentQuestion.name.replaceAll(' ', '+')}`}
+                                target={"_blank"}
+                            >
+                                Search on Google
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </div>
         </div>
     );

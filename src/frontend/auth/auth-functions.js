@@ -7,7 +7,7 @@ import {
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { auth } from '../../config/firebase';
 
-export const signup = (email: string, password: string) => {
+export const signup = (email, password) => {
     // Validate email is entered and valid
     if (!email) {
         return 'Email is empty';
@@ -40,7 +40,7 @@ export const signup = (email: string, password: string) => {
     return httpsCallable(getFunctions(), 'createAccount')({ email, password });
 };
 
-export const signin = (email: string, password: string) => {
+export const signin = (email, password) => {
     // Pre-verify the data entered
     if (!email) {
         return 'Email is empty';
@@ -73,7 +73,7 @@ export const deleteAccount = () => {
     return deleteUser(user);
 };
 
-export const passwordResetEmail = (email: string) => {
+export const passwordResetEmail = (email) => {
     // Pre-verify the data entered
     if (!email) {
         return 'Email is empty';

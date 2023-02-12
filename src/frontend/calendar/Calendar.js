@@ -26,7 +26,7 @@ const Calendar = () => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
-    const [isEdit, setIsEdit] = useState<boolean>(false); // If this is an edit or a new job
+    const [isEdit, setIsEdit] = useState(false); // If this is an edit or a new job
 
     useEffect(() => {
         setCurrentMonth(getMonth(monthIndex));
@@ -43,13 +43,7 @@ const Calendar = () => {
         return <p>Error: {getDeadlines.error.message}</p>;
     }
 
-    const deadlines: {
-        company: string;
-        date: { year: number; month: number; day: number };
-        title: string;
-        jobId: string;
-        link: string;
-    }[] = getDeadlines.result.data;
+    const deadlines = getDeadlines.result.data;
 
     return (
         <div className="h-screen flex flex-col">

@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 
 const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
-const newJob = (idx: number) => {
+const newJob = (idx) => {
     return {
         details: {
             position: '',
@@ -78,14 +78,14 @@ const getListStyle = (isDraggingOver) => ({
     overflowY: 'scroll'
 });
 
-export default function Kanban() {
+const Kanban = () => {
     const [kanbanState, setKanbanState] = useState([[], [], [], []]);
     const [modalOpen, setModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [index, setIndex] = useState(0);
     const [currentJob, setCurrentJob] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [boardName, setBoardName] = useState<string>('');
+    const [boardName, setBoardName] = useState('');
     const [boardID, setBoardID] = useState(null);
 
     const boardId = useLocation().state.boardId;
@@ -341,3 +341,5 @@ export default function Kanban() {
         </div>
     );
 }
+
+export default Kanban;

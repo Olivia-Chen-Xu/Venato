@@ -226,7 +226,21 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('jobs')
                 .search(queryData.searchAll)
-                .then(({ hits }) => hits)
+                .then(({ hits }) => hits.map((hit) => ({
+                    id: hit.objectID,
+                    // @ts-ignore
+                    company: hit.company,
+                    // @ts-ignore
+                    position: hit.position,
+                    // @ts-ignore
+                    location: hit.location,
+                    // @ts-ignore
+                    description: hit.description,
+                    // @ts-ignore
+                    link: hit.link,
+                    // @ts-ignore
+                    salary: hit.salary,
+                })))
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
@@ -282,7 +296,17 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('interviewQuestions')
                 .search(queryData.searchAll)
-                .then(({ hits }) => hits)
+                .then(({ hits }) => hits.map((hit) => ({
+                        id: hit.objectID,
+                        // @ts-ignore
+                        name: hit.name,
+                        // @ts-ignore
+                        description: hit.description,
+                        // @ts-ignore
+                        company: hit.company,
+                        // @ts-ignore
+                        position: hit.position,
+                    })))
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 

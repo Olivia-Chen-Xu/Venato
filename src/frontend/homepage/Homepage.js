@@ -5,6 +5,7 @@ import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui
 import { AddCircleOutline } from '@mui/icons-material';
 import taskLine from '../../images/task-line.png';
 import { useState } from 'react';
+import JobDialog from '../reusable/JobDialog';
 
 const bannerStyles = { 
     position: 'relative',
@@ -16,8 +17,13 @@ const Homepage = () => {
     const nav = useNavigate();
     const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
 
+    // For adding a new board
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
+
+    // For opening a job (when you click a deadline)
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentJob, setCurrentJob] = useState(null);
 
     if (userData.loading) {
         return (
@@ -41,8 +47,8 @@ const Homepage = () => {
             return <p>Error: Invalid state</p>;
         }
 
-        const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((board: { name: string; id: string }) => {
+        const boardsHtml = [];
+        userData.result.data.boards.forEach((board) => {
             boardsHtml.push(
                 <div className="bg-[#FFFFFF] border-2 border-black text-black bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
@@ -57,34 +63,24 @@ const Homepage = () => {
         return boardsHtml;
     };
 
-    // useEffect(() => {
-    //     const fetchBoards = async () => {
-    //         setLoading(true);
-    //         const newState = [[], [], [], []];
-    //         await httpsCallable(getFunctions(), 'getKanbanBoard')(boardId).then((res) => {
-    //             res.data.jobs.forEach((job) => newState[job.stage].push(job));
-    //             setKanbanState(newState);
-    //             setBoardName(res.data.name);
-    //             setBoardID(res.data.id);
-    //             setLoading(false);
-    //         });
-    //
-    //         return newState;
-    //     };
-    //
-    //     fetchBoards();
-    // }, []);
-
     const renderEvents = () => {
         if (!userData.result) {
             return <p>Error: Invalid state</p>;
         }
 
-        const eventsHtml: JSX.Element = [];
+        const eventsHtml = [];
         userData.result.data.events.forEach(
-            (event: { title: string; date: number; location: string; company: string; position: string; }) => {
+            (event) => {
                 eventsHtml.push(
-                    <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div
+                        className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
+                        onClick={async (mouseEvent) => {
+                            const job = await httpsCallable(getFunctions(), 'getJobData')(event.jobId)
+                                .then((result) => result.data);
+                            setCurrentJob(job);
+                            setModalOpen(true);
+                        }}
+                    >
                         <div className="ml-5">
                             <h1>
                                 <span className="text-3xl">{event.title}</span>
@@ -128,8 +124,22 @@ const Homepage = () => {
 
     return (
         <div>
-            <h1 className="font-poppins font-medium color-black text-xl tracking-wider mt-10 grid place-content-left mx-20  uppercase">
-                Upcoming Deadlines
+            {modalOpen && (
+                <JobDialog
+                    setOpen={setModalOpen}
+                    setCurrentJob={setCurrentJob}
+                    jobData={currentJob}
+                    isEdit={false}
+                    index={0}
+                    state={[]}
+                    setState={false}
+                    isKanban={false}
+                />
+            )}
+            <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
+
+            <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">
+                Upcoming Tasks
             </h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
                 {renderEvents()}
