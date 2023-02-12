@@ -5,6 +5,7 @@ import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui
 import { AddCircleOutline } from '@mui/icons-material';
 import taskLine from '../../images/task-line.png';
 import { useState } from 'react';
+import JobDialog from '../reusable/JobDialog';
 
 const Homepage = () => {
     const nav = useNavigate();
@@ -12,6 +13,9 @@ const Homepage = () => {
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentJob, setCurrentJob] = useState(null);
 
     if (userData.loading) {
         return (
@@ -74,11 +78,19 @@ const Homepage = () => {
             return <p>Error: Invalid state</p>;
         }
 
-        const eventsHtml: JSX.Element = [];
+        const eventsHtml = [];
         userData.result.data.events.forEach(
-            (event: { title: string; date: number; location: string; company: string; position: string; }) => {
+            (event) => {
                 eventsHtml.push(
-                    <div className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl">
+                    <div
+                        className="p-5 place-content-between bg-gradient-to-tl from-[#8080AE] to-[#C7C7E2] rounded-2xl"
+                        onClick={async (mouseEvent) => {
+                            mouseEvent.stopPropagation(); // So the day div onClick won't be triggered also
+                            setCurrentJob(await httpsCallable(getFunctions(), 'getJobData')(event.jobId)
+                                .then((result) => result.data));
+                            setModalOpen(true);
+                        }}
+                    >
                         <div className="ml-5">
                             <h1>
                                 <span className="text-3xl">{event.title}</span>
@@ -122,6 +134,18 @@ const Homepage = () => {
 
     return (
         <div>
+            {modalOpen && (
+                <JobDialog
+                    setOpen={setModalOpen}
+                    setCurrentJob={setCurrentJob}
+                    jobData={currentJob}
+                    isEdit={false}
+                    index={0}
+                    state={[]}
+                    setState={false}
+                    isKanban={false}
+                />
+            )}
             <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
 
             <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">

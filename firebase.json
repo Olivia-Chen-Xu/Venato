@@ -1,6 +1,7 @@
 {
   "functions": [
     {
+      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"],
       "source": "src/backend",
       "codebase": "default",
       "ignore": [
@@ -8,9 +9,6 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ]

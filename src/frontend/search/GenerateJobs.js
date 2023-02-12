@@ -269,14 +269,9 @@ const jobPositions = [
 ];
 
 const generateDeadlines = () => {
-    const deadlines: {
-        title: string;
-        date: number;
-        location: string;
-        link: string;
-    }[] = [];
+    const deadlines = [];
 
-    const generateDeadline = (title: string, day: number) => {
+    const generateDeadline = (title, day, isInterview) => {
         const month = Math.floor(Math.random() * 4);
         const hours =
             Math.random() < 0.5
@@ -290,7 +285,7 @@ const generateDeadlines = () => {
             .map(() => Math.floor(Math.random() * 10))
             .join(``)}`;
 
-        deadlines.push({ title, date, location, link });
+        deadlines.push({ title, date, location, link, isInterview });
     };
 
     const numDeadlines = Math.floor(Math.random() * 3) + 1;
@@ -300,31 +295,31 @@ const generateDeadlines = () => {
         case 1:
             title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
             day = Math.floor(Math.random() * 29) + 1;
-            generateDeadline(title, day);
+            generateDeadline(title, day, true);
 
             break;
         case 2:
-            title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
+            title = Math.random() < 0.5 ? 'Application deadline' : 'Application due';
             day = Math.floor(Math.random() * 14) + 1;
-            generateDeadline(title, day);
+            generateDeadline(title, day, false);
 
-            title = 'Interview';
+            title = Math.random() < 0.5 ? '❗ Interview ❗' : 'Job interview';
             day = Math.floor(Math.random() * 15) + 15;
-            generateDeadline(title, day);
+            generateDeadline(title, day, true);
 
             break;
         case 3:
             title = 'Initial application due';
             day = Math.floor(Math.random() * 9) + 1;
-            generateDeadline(title, day);
+            generateDeadline(title, day, false);
 
             title = Math.random() < 0.5 ? 'First round interview' : 'Technical round';
             day = Math.floor(Math.random() * 10) + 10;
-            generateDeadline(title, day);
+            generateDeadline(title, day, true);
 
             title = '❗ Final interview ❗';
             day = Math.floor(Math.random() * 10) + 20;
-            generateDeadline(title, day);
+            generateDeadline(title, day, true);
 
             break;
         default:
@@ -334,15 +329,7 @@ const generateDeadlines = () => {
 };
 
 const generateContacts = () => {
-    const contacts: {
-        // Note: company is added later with the job
-        name: string;
-        title: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-        notes: string;
-    }[] = [];
+    const contacts = [];
 
     const contactNames = [
         {
@@ -424,12 +411,12 @@ const getRandomPriority = () => {
 };
 
 // Add example jobs
-const generateJobs = async (num: number) => {
+const generateJobs = async (num) => {
     // 18rem8@queensu.ca (admin account) and reid.moffat9@gmail.com respectively
     const users = ['WAtTku8XDtUyu9XpjOW3yB8vF0R2', 'glTn3bNtAgX6Ahy7SeOSMmU2txy1'];
 
     const boardNames = ['Summer 2021 internships', 'Summer 2022 internships', 'Summer 2023 internships'];
-    const boards: { userId: string, name: string, id: string }[] = [];
+    const boards = [];
     let id = 0;
     for (const name of boardNames) {
         boards.push({
@@ -446,7 +433,7 @@ const generateJobs = async (num: number) => {
         id++;
     }
 
-    const jobs: Job[] = [];
+    const jobs = [];
     for (let i = 0; i < num; ++i) {
         const companyNumber = Math.floor(Math.random() * companies.length);
         const position = jobPositions[~~(Math.random() * jobPositions.length)];
@@ -468,7 +455,8 @@ const generateJobs = async (num: number) => {
             userId: userId,
             boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
 
-            deadlines: generateDeadlines().map((deadline) => ({ ...deadline, company: companies[companyNumber], position: position })),
+            deadlines: generateDeadlines()
+                .map((deadline) => ({ ...deadline, company: companies[companyNumber], position: position })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 5) + 1)
