@@ -12,7 +12,7 @@ import algoliaSearch from 'algoliasearch';
  * Callable functions for getting data from firestore
  */
 
-const getJobData = functions.https.onCall(async (jobId: string, context: any) => {
+const getJobData = functions.https.onCall(async (jobId, context) => {
     if (!jobId) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -23,7 +23,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
     await verifyDocPermission(context, `jobs/${jobId}`);
 
     // @ts-ignore
-    const job: IJob = await getDoc(`jobs/${jobId}`)
+    const job = await getDoc(`jobs/${jobId}`)
         .get()
         .then((doc) => ({ ...doc.data(), id: doc.id }));
 
@@ -67,7 +67,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
 });
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
-const getHomepageData = functions.https.onCall((data: null, context: any) => {
+const getHomepageData = functions.https.onCall((data, context) => {
     verifyIsAuthenticated(context);
 
     if (data != null) {
@@ -77,7 +77,7 @@ const getHomepageData = functions.https.onCall((data: null, context: any) => {
         );
     }
 
-    const promises: Promise<any>[] = [];
+    const promises = [];
 
     promises.push(
         getCollection('deadlines')
@@ -110,7 +110,7 @@ const getHomepageData = functions.https.onCall((data: null, context: any) => {
         .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
-const getJobBoards = functions.https.onCall((data: null, context: any) => {
+const getJobBoards = functions.https.onCall((data, context) => {
     verifyIsAuthenticated(context);
 
     if (data != null) {
@@ -128,7 +128,7 @@ const getJobBoards = functions.https.onCall((data: null, context: any) => {
 });
 
 // Gets all the jobs for a given kanban board
-const getKanbanBoard = functions.https.onCall(async (boardId: string, context: any) => {
+const getKanbanBoard = functions.https.onCall(async (boardId, context) => {
     if (!boardId || String(boardId) !== boardId || boardId.trim().length === 0) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -164,7 +164,7 @@ const getKanbanBoard = functions.https.onCall(async (boardId: string, context: a
 });
 
 // Returns all job deadlines for the currently signed-in user
-const getCalendarDeadlines = functions.https.onCall((data: object, context: any) => {
+const getCalendarDeadlines = functions.https.onCall((data, context) => {
     verifyIsAuthenticated(context);
 
     return getCollection('deadlines')
@@ -176,7 +176,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
             }
 
             return deadlines.docs.map((deadline) => {
-                const deadlineDate: Date = deadline.data().date.toDate();
+                const deadlineDate = deadline.data().date.toDate();
                 const newDate = {
                     year: deadlineDate.getFullYear(),
                     month: deadlineDate.getMonth() + 1,
@@ -191,7 +191,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
 
 // Search for a job by position, company, or location
 const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (queryData: { searchAll: string; company: string; position: string; location: string; }, context: any) => {
+    (queryData, context) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -258,7 +258,7 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
 
 // Search for interview questions based on a company and/or position
 const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (queryData: { searchAll: string; company: string; position: string; }, context: any) => {
+    (queryData, context) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -314,7 +314,7 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
     }
 );
 
-const nullOrWhitespace = (str: string) => str == null || str.trim().length === 0;
+const nullOrWhitespace = (str) => str == null || str.trim().length === 0;
 
 export {
     getJobData,

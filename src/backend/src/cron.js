@@ -11,10 +11,10 @@ import { getCollection, auth, getRelativeTimestamp } from './helpers';
  * https://github.com/firebase/functions-samples/blob/main/delete-unused-accounts-cron/functions/index.js
  */
 const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async () => {
-    const unVerifiedUsers: string[] = [];
+    const unVerifiedUsers = [];
 
     // Go through users in batches of 1000
-    const listAllUsers = (nextPageToken: string | undefined) => {
+    const listAllUsers = (nextPageToken) => {
         return auth
             .listUsers(1000, nextPageToken)
             .then((listUsersResult) => {
@@ -68,7 +68,7 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
      */
 
     // Remove emails have been sent at least a month ago
-    const emailsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
+    const emailsToDelete = [];
     getCollection('emails')
         .where('delivery.state', '==', 'SUCCESS')
         .where('delivery.endTime', '<', getRelativeTimestamp(30))

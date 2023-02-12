@@ -14,8 +14,7 @@ import {
 
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
-const addJobs = functions.https.onCall(
-    async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
+const addJobs = functions.https.onCall(async (data, context) => {
         verifyIsAuthenticated(context);
 
         for (const board of data.boards) {
@@ -31,18 +30,18 @@ const addJobs = functions.https.onCall(
 
         // Add all the jobs to the db
         const jobsBatch = db.batch();
-        data.jobs.forEach((job: any) => {
+        data.jobs.forEach((job) => {
             jobsBatch.set(db.collection('jobs').doc(), job);
         });
         return jobsBatch
             .commit()
             .then(() => 'Jobs added successfully')
-            .catch((err: any) => `Error adding jobs: ${err}`);
+            .catch((err) => `Error adding jobs: ${err}`);
     }
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: number }, context: any) => {
+const addJob = functions.https.onCall(async (jobData, context) => {
     const structure = {
         boardId: '',
         stage: 0
@@ -89,7 +88,7 @@ const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: 
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
-const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: any) => {
+const addDeadline = functions.https.onCall(async (deadline, context) => {
     await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
     return getCollection(`deadlines`)
@@ -98,7 +97,7 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
         .catch((err) => `Failed to add deadline: ${err}`);
 });
 
-const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
+const addInterviewQuestion = functions.https.onCall(async (interviewQuestion, context) => {
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
     return getCollection(`interviewQuestions`)
@@ -107,7 +106,7 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
         .catch((err) => `Failed to add interview question: ${err}`);
 });
 
-const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
+const addContact = functions.https.onCall(async (contact, context) => {
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
     return getCollection(`contacts`)
@@ -118,7 +117,7 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
 const updateJob = functions.https.onCall(
-    async (data: { id: string; tab: number; newFields: object }, context: any) => {
+    async (data, context) => {
         // Verify params
         let errMSg = '';
         if (!data) {
@@ -135,7 +134,7 @@ const updateJob = functions.https.onCall(
         }
         await verifyDocPermission(context, `jobs/${data.id}`);
 
-        const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
+        const updatePromises = [];
         switch (data.tab) {
             case 1:
                 updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
@@ -145,7 +144,7 @@ const updateJob = functions.https.onCall(
                 break;
             case 3:
                 // @ts-ignore
-                data.newFields.forEach((deadline: { edited: boolean; id: string }) => {
+                data.newFields.forEach((deadline) => {
                     if (deadline.edited) {
                         updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
                     }
@@ -153,7 +152,7 @@ const updateJob = functions.https.onCall(
                 break;
             case 4:
                 // @ts-ignore
-                data.newFields.forEach((question: { edited: boolean; id: string }) => {
+                data.newFields.forEach((question) => {
                     if (question.edited) {
                         updatePromises.push(
                             getDoc(`interviewQuestions/${question.id}`).update(question)
@@ -163,7 +162,7 @@ const updateJob = functions.https.onCall(
                 break;
             case 5:
                 // @ts-ignore
-                data.newFields.forEach((contact: { edited: boolean; id: string }) => {
+                data.newFields.forEach((contact) => {
                     if (contact.edited) {
                         updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
                     }
@@ -183,7 +182,7 @@ const updateJob = functions.https.onCall(
 );
 
 const dragKanbanJob = functions.https.onCall(
-    async (data: { id: string; newStage: number }, context: any) => {
+    async (data, context) => {
         if (!data || !data.hasOwnProperty('id') || !data.hasOwnProperty('newStage')) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
@@ -207,7 +206,7 @@ const dragKanbanJob = functions.https.onCall(
 );
 
 // Deletes a job in firestore
-const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
+const deleteJob = functions.https.onCall(async (data, context) => {
     await verifyDocPermission(context, `jobs/${data.id}`);
 
     return getDoc(`jobs/${data.id}`)
@@ -216,7 +215,7 @@ const deleteJob = functions.https.onCall(async (data: { id: string }, context: a
         .catch((err) => `Error deleting job '${data.id}': ${err}`);
 });
 
-const addBoard = functions.https.onCall(async (data: string, context: any) => {
+const addBoard = functions.https.onCall(async (data, context) => {
     if (!data) {
         throw new functions.https.HttpsError(
             'invalid-argument',

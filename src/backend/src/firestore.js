@@ -19,7 +19,6 @@ import {
  * -Move deadlines, interview questions and contacts to sub-collections
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
-    // @ts-ignore
     const job = snap.data();
     const jobId = snap.id;
     const promises = [];
@@ -83,7 +82,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
  */
 const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
     const jobId = snap.id;
-    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
+    const promises = [];
 
     // Remove deadlines, interview questions and contacts for this job
     await getCollection('deadlines')
@@ -110,7 +109,7 @@ const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (
 const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(async (snap, context) => {
     const boardId = snap.id;
 
-    const promises: Promise<FirebaseFirestore.WriteResult>[] = [];
+    const promises = [];
 
     await getDoc(`users/${snap.data().userId}`)
         .get()
