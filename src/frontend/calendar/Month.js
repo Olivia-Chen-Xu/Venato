@@ -58,7 +58,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
                     onClick={() => {
                         // TODO: When clicking the 'more' options, open a menu
                     }}
-                    className="bg-200 p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
+                    className="bg-200 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate bg-slate-100"
                 >
                     <i>{size - 2} more...</i>
                 </div>

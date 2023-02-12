@@ -81,15 +81,19 @@ const Calendar = () => {
                         </span>
                     </button>
 
-                    <div className=" ml-auto border-2 border rounded-md px-4">
+                    <div className=" ml-auto border-2 border rounded-md text-base px-4">
                         <div>My calendars</div>
                         <div className='flex flex-1'>
-                        <input type="checkbox" name="Applications" className='mr-2' id="" />  
-                        <p className='mr-5'>
-                        Applications
-                        </p>
-                        
-                        <input type="checkbox" name="Applications" className='mx-2' id="" /> Interviews
+                            <div>
+                                <FormGroup row>
+                                    <FormControlLabel  control={<Checkbox defaultChecked />} label="Applications"/>
+                                </FormGroup>
+                            </div>
+                            <div>
+                                <FormGroup row>
+                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Interviews" />
+                                </FormGroup>
+                            </div>
                         </div>
                     </div>
                 </div>
