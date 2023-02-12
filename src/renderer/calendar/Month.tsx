@@ -9,6 +9,19 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
             : '';
     };
 
+    const getPriorityColor = (deadline) => {
+        switch(deadline.priority){
+            case 'High':
+                return 'bg-[#FFE7E7] text-[#9B0909]';
+            case 'Medium':
+                return 'bg-[#FFF4E7] text-[#A4641B]';
+            case 'Low':
+                return 'bg-[#DEFFE5] text-[#166528]';
+            default:
+                return 'bg-slate-100';
+        }
+    }
+
     const getDayEvents = () => {
         if (!deadlines) {
             return [];
@@ -30,8 +43,10 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
                         .then((result) => result.data));
                     setIsEdit(true);
                     setOpen(true);
+
+
                 }}
-                className="bg-200 bg-slate-100 p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate"
+                className={`bg-200 ${getPriorityColor(deadline)} p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
             >
                 {deadline.title}
             </div>
@@ -75,7 +90,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
 
 const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
-        <div className="h-full flex-1 grid grid-cols-7 grid-rows-5 border border-gray-300 rounded-lg">
+        <div className="h-full grid grid-cols-7 grid-rows-5 border border-gray-300 rounded-lg">
             {month.map((row: dayjs.Dayjs[], i) => (
                 <React.Fragment key={i}>
                     {row.map((day: dayjs.Dayjs, idx) => (

@@ -70,7 +70,7 @@ const PasswordReset = () => {
         <div className="AuthMainDiv">
             <text className="TopText">Password reset</text>
             <br />
-            <div className="flex flex-1  border border-black">
+            <div className="flex flex-1">
                 {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5" />}
                 <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
                     {errMsg === '' ? '' : errMsg}

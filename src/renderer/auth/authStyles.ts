@@ -7,7 +7,7 @@ export const btnStyle = {
 
 export const inputStyle = {
     width: '100%',
-    border: '1px solid #333333',
+    // border: '1px solid #333333',
     borderRadius: '5px'
 };
 

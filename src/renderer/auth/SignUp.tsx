@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputLabel, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { signup } from './auth-functions';
-import { btnStyle, inputStyle } from './authStyles';
+import { btnStyle, inputStyle, iconStyle } from './authStyles';
 import './auth.css';
 import {
     VisibilityOffOutlined,
@@ -34,17 +34,20 @@ const SignUp = () => {
     };
 
     return (
-        <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
-            <text className="TopText">Sign up</text>
-            <br />
-            <div className="flex flex-1">
-                {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5" />}
+        <div className="h-screen grid place-content-center">
+        <div style={{ alignItems: 'flex-start ' }}>
+            <text className="TopText">Sign Up</text>
+            <div className="flex flex-1 my-5">
+                {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
+                    {errMsg === '' ? '' : '}
+                </p>{' '} */}
+
+                {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
                 <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
                     {' '}
                     {errMsg === '' ? 'Welcome!' : errMsg}
                 </text>
             </div>
-            <br />
             <InputLabel>Email</InputLabel>
             <TextField
                 variant="outlined"
@@ -55,8 +58,8 @@ const SignUp = () => {
                 onChange={(e) => {
                     setEmail(e.target.value);
                 }}
-            />
-            <div style={{ height: 20 }} />
+            ></TextField>
+            <div style={{ height: 20 }}></div>
             <InputLabel>Password</InputLabel>
             <TextField
                 variant="outlined"
@@ -78,17 +81,17 @@ const SignUp = () => {
                                     setShowPassword(!showPassword);
                                 }}
                             >
-                                {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+                                {showPassword ? <VisibilityOutlined style={iconStyle} /> : <VisibilityOffOutlined />}
                             </IconButton>
                         </InputAdornment>
                     ),
                 }}
-            />
-            <div style={{ height: 20 }} />
-            <InputLabel>Confirm password</InputLabel>
+            ></TextField>
+            <div style={{ height: 20 }}></div>
+            <InputLabel>Confirm Password</InputLabel>
             <TextField
                 variant="outlined"
-                type={showPasswordConfirm ? 'text' : 'password'} // <-- This is where the magic happens
+                type={showPasswordConfirm ? 'text' : 'password'}
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -106,19 +109,17 @@ const SignUp = () => {
                                     setShowPasswordConfirm(!showPasswordConfirm);
                                 }}
                             >
-                                {showPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+                                {showPasswordConfirm ? <VisibilityOutlined style={iconStyle} /> : <VisibilityOffOutlined />}
                             </IconButton>
                         </InputAdornment>
                     ),
                 }}
-            />
-            <div className='mt-4 w-full'>
-                <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
-                    Sign Up
-                </Button>
-        </div>
-
-                <div className="my-2 w-full">
+            ></TextField>
+           
+            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
+                Sign Up
+            </Button>
+            <div className="my-2 w-full">
                 <Button
                     color="neutral"
                     variant="outlined"
@@ -128,7 +129,8 @@ const SignUp = () => {
                     Log In
                 </Button>
             </div>
-            </div>
+        </div>
+        </div>
     );
 };
 

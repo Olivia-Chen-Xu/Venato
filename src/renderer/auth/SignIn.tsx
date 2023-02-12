@@ -51,10 +51,10 @@ const SignIn = () => {
     };
 
     return (
-        <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
+        <div className="h-screen grid place-content-center">
+        <div style={{ alignItems: 'flex-start ' }}>
             <text className="TopText">Log in</text>
-            <br />
-            <div className="flex flex-1">
+            <div className="flex flex-1 my-5">
                 {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
                     {errMsg === '' ? '' : '}
                 </p>{' '} */}
@@ -65,7 +65,6 @@ const SignIn = () => {
                     {errMsg === '' ? 'Welcome back!' : errMsg}
                 </text>
             </div>
-            <br />
             <InputLabel>Email</InputLabel>
             <TextField
                 variant="outlined"
@@ -136,6 +135,7 @@ const SignIn = () => {
                     Sign Up
                 </Button>
             </div>
+        </div>
         </div>
     );
 };
