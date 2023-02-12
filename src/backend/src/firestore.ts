@@ -4,6 +4,7 @@ import {
     getCollection, getDoc,
     getFirestoreTimestamp
 } from './helpers';
+import { IContact, IDeadline, IInterviewQuestion } from './DataInterfaces';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed

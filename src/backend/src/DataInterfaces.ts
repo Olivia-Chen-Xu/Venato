@@ -44,3 +44,5 @@ interface IContact {
     notes: string;
     jobId: string;
 }
+
+export { IJob, IDeadline, IInterviewQuestion, IContact };

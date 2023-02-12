@@ -42,13 +42,13 @@ const QuestionSearch = () => {
             <div className="ml-20">
                 <li>
                     <a
-                        // href={`https://www.google.com/search?q=${question.name.replaceAll(
-                        //     ' ',
-                        //     '+'
-                        // )}`}
-                        title={"question description"}
+                        href={`https://www.google.com/search?q=${question.name.replaceAll(
+                            ' ',
+                            '+'
+                        )}`}
+                        title={question.description}
                     >
-                        question name
+                        {question.name}
                     </a>
                 </li>
             </div>
