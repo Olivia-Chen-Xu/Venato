@@ -20,7 +20,7 @@ import {
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     // @ts-ignore
-    const job: IJob = snap.data();
+    const job = snap.data();
     const jobId = snap.id;
     const promises: Promise<any>[] = [];
 
@@ -29,12 +29,13 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     deadlines.forEach(
-        (deadline: IDeadline) => {
+        (deadline) => {
             const newDoc = {
                 ...deadline,
                 date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
                 userId: job.userId,
+                priority: job.priority,
                 jobId: jobId,
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
@@ -45,7 +46,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     const interviewQuestions = job.interviewQuestions;
     promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
 
-    interviewQuestions.forEach((question: IInterviewQuestion) => {
+    interviewQuestions.forEach((question) => {
         const newQuestion = {
             ...question,
             userId: job.userId,
@@ -60,7 +61,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
 
     contacts.forEach(
-        (contact: IContact) => {
+        (contact) => {
             const newContact = {
                 ...contact,
                 userId: job.userId,
