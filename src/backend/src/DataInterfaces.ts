@@ -45,4 +45,4 @@ interface IContact {
     jobId: string;
 }
 
-export { IJob, IDeadline, IInterviewQuestion, IContact };
+export type { IJob, IDeadline, IInterviewQuestion, IContact };
