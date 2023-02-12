@@ -6,6 +6,12 @@ import { AddCircleOutline } from '@mui/icons-material';
 import taskLine from '../../images/task-line.png';
 import { useState } from 'react';
 
+const bannerStyles = { 
+    position: 'relative',
+    top: '75px',
+    bottom: '0px',
+    left: '75px'
+}
 const Homepage = () => {
     const nav = useNavigate();
     const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
@@ -38,7 +44,7 @@ const Homepage = () => {
         const boardsHtml: JSX.Element[] = [];
         userData.result.data.boards.forEach((board: { name: string; id: string }) => {
             boardsHtml.push(
-                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="bg-[#FFFFFF] border-2 border-black text-black bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
                         className="relative w-full h-full py-16"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
@@ -122,30 +128,22 @@ const Homepage = () => {
 
     return (
         <div>
-            <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
-
-            <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">
-                Upcoming Tasks
+            <h1 className="font-poppins font-medium color-black text-xl tracking-wider mt-10 grid place-content-left mx-20  uppercase">
+                Upcoming Deadlines
             </h1>
             <div className="grid grid-cols-3 gap-20 mx-20 h-40 my-5" style={{ color: 'white' }}>
                 {renderEvents()}
             </div>
             <br />
             <br />
-
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Job Boards
+            <h1 className="font-poppins font-medium color-black tracking-wider text-xl mt-10 grid place-content-left mx-20 uppercase">
+                Get Started 
             </h1>
+            <h2 className="font-poppins font-light color-black tracking-wider mt-5 grid place-content-left mx-20 uppercase">
+                See what you can accomplish on Venato
+            </h2>
             <br />
-            <div className="flex justify-center">
-                <Button
-                    color="neutral"
-                    variant="contained"
-                    startIcon={<AddCircleOutline />}
-                    onClick={() => setDialogOpen(true)}
-                >
-                    Create new board
-                </Button>
+            <div className="absolute bottom-100">
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogContent
                         style={{
@@ -172,7 +170,7 @@ const Homepage = () => {
                 </Dialog>
             </div>
             <br />
-            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
+            <div className="mt-2 grid grid-cols-3 gap-x-4 gap-y-4 text-2xl text-white mx-20 ">
                 {renderBoards()}
                 {/* <div className="grid place-content-center">
                     <button
@@ -185,6 +183,20 @@ const Homepage = () => {
                     </button>
                 </div> */}
             </div>
+            <div className="mt-2 grid grid-cols-3 gap-x-5 text-2xl text-black mx-20">
+                <h1 className="font-poppins font-medium gap-y-5 color-black tracking-wider text-xl uppercase">
+                    Job Boards
+                </h1>
+            </div>
+            <Button
+                sx={bannerStyles}        
+                color="neutral"
+                        variant="contained"
+                        startIcon={<AddCircleOutline />}
+                        onClick={() => setDialogOpen(true)}
+                    >
+                        Create new board
+                </Button>
         </div>
     );
 };
