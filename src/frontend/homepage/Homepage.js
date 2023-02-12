@@ -11,9 +11,11 @@ const Homepage = () => {
     const nav = useNavigate();
     const userData = useAsync(httpsCallable(getFunctions(), 'getHomepageData'), []);
 
+    // For adding a new board
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
 
+    // For opening a job (when you click a deadline)
     const [modalOpen, setModalOpen] = useState(false);
     const [currentJob, setCurrentJob] = useState(null);
 
@@ -39,8 +41,8 @@ const Homepage = () => {
             return <p>Error: Invalid state</p>;
         }
 
-        const boardsHtml: JSX.Element[] = [];
-        userData.result.data.boards.forEach((board: { name: string; id: string }) => {
+        const boardsHtml = [];
+        userData.result.data.boards.forEach((board) => {
             boardsHtml.push(
                 <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
                     <button
