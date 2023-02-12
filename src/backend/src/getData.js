@@ -5,7 +5,7 @@ import {
     getRelativeTimestamp,
     verifyDocPermission,
     verifyIsAuthenticated
-} from './helpers';
+} from './helpers.js';
 import algoliaSearch from 'algoliasearch';
 
 /**

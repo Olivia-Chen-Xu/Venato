@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, auth, getRelativeTimestamp } from './helpers';
+import { getCollection, auth, getRelativeTimestamp } from './helpers.js';
 
 /**
  * CRON jobs - automatically triggered on a set schedule
