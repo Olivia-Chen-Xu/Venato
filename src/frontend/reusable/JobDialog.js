@@ -525,7 +525,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
 };
 
 const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
-    const [job, setJob] = useState<Job>({
+    const [job, setJob] = useState({
         position: '',
         company: '',
         description: '',
