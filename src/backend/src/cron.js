@@ -1,6 +1,5 @@
-const functions = require('firebase-functions');
-//import { getCollection, auth, getRelativeTimestamp } from './helpers.js';
-const helpers = require('./helpers.js');
+import * as functions from 'firebase-functions';
+import { getCollection, auth, getRelativeTimestamp } from './helpers';
 
 /**
  * CRON jobs - automatically triggered on a set schedule
@@ -11,12 +10,12 @@ const helpers = require('./helpers.js');
  * If there's bugs, try:
  * https://github.com/firebase/functions-samples/blob/main/delete-unused-accounts-cron/functions/index.js
  */
-exports.purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async () => {
+const purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRun(async () => {
     const unVerifiedUsers = [];
 
     // Go through users in batches of 1000
     const listAllUsers = (nextPageToken) => {
-        return helpers.auth
+        return auth
             .listUsers(1000, nextPageToken)
             .then((listUsersResult) => {
                 // Get unverified users
@@ -42,7 +41,7 @@ exports.purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRu
     };
     await listAllUsers(undefined);
 
-    return Promise.all(unVerifiedUsers.map((user) => helpers.auth.deleteUser(user)))
+    return Promise.all(unVerifiedUsers.map((user) => auth.deleteUser(user)))
         .then(() =>
             functions.logger.log(`Successfully deleted ${unVerifiedUsers.length} unverified users`)
         )
@@ -52,7 +51,7 @@ exports.purgeUnverifiedUsers = functions.pubsub.schedule('every day 00:00').onRu
 /**
  * Remove any old data in the db that's not needed anymore
  */
-exports.purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async () => {
+const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(async () => {
     /*
     // Remove jobs that have been deleted for 30 days
     const jobsToDelete: Promise<FirebaseFirestore.WriteResult>[] = [];
@@ -70,9 +69,9 @@ exports.purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(as
 
     // Remove emails have been sent at least a month ago
     const emailsToDelete = [];
-    helpers.getCollection('emails')
+    getCollection('emails')
         .where('delivery.state', '==', 'SUCCESS')
-        .where('delivery.endTime', '<', helpers.getRelativeTimestamp(30))
+        .where('delivery.endTime', '<', getRelativeTimestamp(30))
         .get()
         .then((snapshot) => {
             snapshot.forEach((doc) => {
@@ -148,9 +147,11 @@ exports.purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(as
 });
 
 /*
-exports.dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun(() => {
+const dataIntegrityCheck = functions.pubsub.schedule('every day 00:00').onRun(() => {
     functions.logger.log('Running data integrity check');
 
     // TODO (make sure that all db data makes sense (e.g. no users with more than the limit of jobs, no invalid ids, etc))
 });
  */
+
+export { purgeUnverifiedUsers, purgeExpiredData };

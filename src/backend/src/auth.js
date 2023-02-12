@@ -1,12 +1,12 @@
-const functions = require('firebase-functions');
-const helpers = require('./helpers.js');
+import * as functions from 'firebase-functions';
+import { getCollection, getDoc, auth, isValidObjectStructure } from './helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
  */
-exports.createAccount = functions.https.onCall(async (credentials, context) => {
+const createAccount = functions.https.onCall(async (credentials, context) => {
         // Verify input data
-        if (!helpers.isValidObjectStructure(credentials, { email: '', password: '' })) {
+        if (!isValidObjectStructure(credentials, { email: '', password: '' })) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Signup data must be provided: { email: string, password: string }'
@@ -14,7 +14,7 @@ exports.createAccount = functions.https.onCall(async (credentials, context) => {
         }
 
         // Create user (will throw an error if the email is already in use)
-        return helpers.auth
+        return auth
             .createUser({
                 email: credentials.email,
                 emailVerified: false,
@@ -40,13 +40,13 @@ exports.createAccount = functions.https.onCall(async (credentials, context) => {
  * When a user signs up, create a default document for them in firestore
  * and sends them a verification email
  */
-exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
+const onUserSignup = functions.auth.user().onCreate(async (user) => {
     const promises = [];
 
     // Create a default db document for the user
     const defaultDoc = {};
     promises.push(
-        helpers.getDoc(`users/${user.uid}`)
+        getDoc(`users/${user.uid}`)
             .set(defaultDoc)
             .then(() => console.log(`Default db data successfully created for user: ${user.uid}`))
             .catch((err) => console.log(`Error creating default db data for ${user.uid}: ${err}`))
@@ -59,11 +59,11 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
             `User email is null: ${JSON.stringify(user, null, 4)}`
         );
     }
-    const verifyLink = await helpers.auth
+    const verifyLink = await auth
         .generateEmailVerificationLink(user.email)
         .then((link) => link);
     promises.push(
-        helpers.getCollection('emails')
+        getCollection('emails')
             .add({
                 to: user.email,
                 message: {
@@ -85,7 +85,7 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
 /**
  * When a user tries to sign in, verify that their email is verified
  */
-exports.beforeSignIn = functions.auth.user().beforeSignIn((user) => {
+const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
     if (!user.emailVerified) {
         throw new functions.auth.HttpsError(
             'permission-denied',
@@ -98,11 +98,11 @@ exports.beforeSignIn = functions.auth.user().beforeSignIn((user) => {
  * On account deletion, delete user data in db
  * (Note: don't delete multiple users at the same time with the admin SDK, this won't trigger)
  */
-exports.onUserDeleted = functions.auth.user().onDelete((user) => {
+const onUserDeleted = functions.auth.user().onDelete((user) => {
     const promises = [];
 
     // Delete user's jobs
-    helpers.getCollection('jobs')
+    getCollection('jobs')
         .where('userId', '==', user.uid)
         .get()
         .then((jobs) => {
@@ -112,7 +112,9 @@ exports.onUserDeleted = functions.auth.user().onDelete((user) => {
         .catch((err) => functions.logger.log(`Error deleting user's jobs: ${err}`));
 
     // Delete user's document
-    promises.push(helpers.getDoc(`users/${user.uid}`).delete());
+    promises.push(getDoc(`users/${user.uid}`).delete());
 
     return Promise.all(promises);
 });
+
+export { createAccount, onUserSignup, beforeSignIn, onUserDeleted };

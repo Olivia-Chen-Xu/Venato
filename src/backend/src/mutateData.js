@@ -1,14 +1,12 @@
-//import * as functions from 'firebase-functions';
-const functions = require('firebase-functions');
-// import {
-//     db,
-//     getCollection,
-//     getDoc, getFirestoreTimestamp,
-//     isValidObjectStructure,
-//     verifyDocPermission,
-//     verifyIsAuthenticated
-// } from './helpers.js';
-const helpers = require('./helpers.js');
+import * as functions from 'firebase-functions';
+import {
+    db,
+    getCollection,
+    getDoc, getFirestoreTimestamp,
+    isValidObjectStructure,
+    verifyDocPermission,
+    verifyIsAuthenticated
+} from './helpers.js';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)
@@ -16,11 +14,12 @@ const helpers = require('./helpers.js');
 
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
-exports.addJobs = functions.https.onCall(async (data, context) => {
-    helpers.verifyIsAuthenticated(context);
+const addJobs = functions.https.onCall(
+    async (data, context) => {
+        verifyIsAuthenticated(context);
 
         for (const board of data.boards) {
-            await helpers.getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
+            await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
                 data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
                     job.boardId = doc.id;
                 });
@@ -31,9 +30,9 @@ exports.addJobs = functions.https.onCall(async (data, context) => {
         data.jobs.forEach((job) => job.userId = context.auth.uid);
 
         // Add all the jobs to the db
-        const jobsBatch = helpers.db.batch();
+        const jobsBatch = db.batch();
         data.jobs.forEach((job) => {
-            jobsBatch.set(helpers.db.collection('jobs').doc(), job);
+            jobsBatch.set(db.collection('jobs').doc(), job);
         });
         return jobsBatch
             .commit()
@@ -43,12 +42,12 @@ exports.addJobs = functions.https.onCall(async (data, context) => {
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-exports.addJob = functions.https.onCall(async (jobData, context) => {
+const addJob = functions.https.onCall(async (jobData, context) => {
     const structure = {
         boardId: '',
         stage: 0
     };
-    if (!helpers.isValidObjectStructure(jobData, structure)) {
+    if (!isValidObjectStructure(jobData, structure)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Must provide only a board id (string) and stage (number) as arguments'
@@ -62,7 +61,7 @@ exports.addJob = functions.https.onCall(async (jobData, context) => {
         );
     }
 
-    await helpers.verifyDocPermission(context, `boards/${jobData.boardId}`);
+    await verifyDocPermission(context, `boards/${jobData.boardId}`);
 
     const defaultJob = {
         position: '',
@@ -84,41 +83,41 @@ exports.addJob = functions.https.onCall(async (jobData, context) => {
         boardId: jobData.boardId
     };
 
-    return helpers.getCollection('jobs')
+    return getCollection('jobs')
         .add(defaultJob)
         .then((docRef) => ({ ...defaultJob, id: docRef.id }))
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 
-exports.addDeadline = functions.https.onCall(async (deadline, context) => {
-    await helpers.verifyDocPermission(context, `jobs/${deadline.jobId}`);
+const addDeadline = functions.https.onCall(async (deadline, context) => {
+    await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
-    return helpers.getCollection(`deadlines`)
-        .add({ ...deadline, userId: context.auth.uid, date: helpers.getFirestoreTimestamp(deadline.date * 1000) })
+    return getCollection(`deadlines`)
+        .add({ ...deadline, userId: context.auth.uid, date: getFirestoreTimestamp(deadline.date * 1000) })
         .then((result) => result.id)
         .catch((err) => `Failed to add deadline: ${err}`);
 });
 
-exports.addInterviewQuestion = functions.https.onCall(async (interviewQuestion, context) => {
-    await helpers.verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
+const addInterviewQuestion = functions.https.onCall(async (interviewQuestion, context) => {
+    await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
-    return helpers.getCollection(`interviewQuestions`)
+    return getCollection(`interviewQuestions`)
         .add({ ...interviewQuestion, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add interview question: ${err}`);
 });
 
-exports.addContact = functions.https.onCall(async (contact, context) => {
-    await helpers.verifyDocPermission(context, `jobs/${contact.jobId}`);
+const addContact = functions.https.onCall(async (contact, context) => {
+    await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
-    return helpers.getCollection(`contacts`)
+    return getCollection(`contacts`)
         .add({ ...contact, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add contact: ${err}`);
 });
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
-exports.updateJob = functions.https.onCall(
+const updateJob = functions.https.onCall(
     async (data, context) => {
         // Verify params
         let errMSg = '';
@@ -134,21 +133,21 @@ exports.updateJob = functions.https.onCall(
         if (errMSg !== '') {
             throw new functions.https.HttpsError('invalid-argument', errMSg);
         }
-        await helpers.verifyDocPermission(context, `jobs/${data.id}`);
+        await verifyDocPermission(context, `jobs/${data.id}`);
 
         const updatePromises = [];
         switch (data.tab) {
             case 1:
-                updatePromises.push(helpers.getDoc(`jobs/${data.id}`).update(data.newFields));
+                updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
                 break;
             case 2:
-                updatePromises.push(helpers.getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
+                updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
                 break;
             case 3:
                 // @ts-ignore
                 data.newFields.forEach((deadline) => {
                     if (deadline.edited) {
-                        updatePromises.push(helpers.getDoc(`deadlines/${deadline.id}`).update(deadline));
+                        updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
                     }
                 });
                 break;
@@ -157,7 +156,7 @@ exports.updateJob = functions.https.onCall(
                 data.newFields.forEach((question) => {
                     if (question.edited) {
                         updatePromises.push(
-                            helpers.getDoc(`interviewQuestions/${question.id}`).update(question)
+                            getDoc(`interviewQuestions/${question.id}`).update(question)
                         );
                     }
                 });
@@ -166,7 +165,7 @@ exports.updateJob = functions.https.onCall(
                 // @ts-ignore
                 data.newFields.forEach((contact) => {
                     if (contact.edited) {
-                        updatePromises.push(helpers.getDoc(`contacts/${contact.id}`).update(contact));
+                        updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
                     }
                 });
                 break;
@@ -183,7 +182,7 @@ exports.updateJob = functions.https.onCall(
     }
 );
 
-exports.dragKanbanJob = functions.https.onCall(
+const dragKanbanJob = functions.https.onCall(
     async (data, context) => {
         if (!data || !data.hasOwnProperty('id') || !data.hasOwnProperty('newStage')) {
             throw new functions.https.HttpsError(
@@ -198,9 +197,9 @@ exports.dragKanbanJob = functions.https.onCall(
             );
         }
 
-        await helpers.verifyDocPermission(context, `jobs/${data.id}`);
+        await verifyDocPermission(context, `jobs/${data.id}`);
 
-        return helpers.getDoc(`jobs/${data.id}`)
+        return getDoc(`jobs/${data.id}`)
             .update({ stage: data.newStage })
             .then(() => `Successfully updated job stage`)
             .catch((err) => `Error updating job stage: ${err}`);
@@ -208,16 +207,16 @@ exports.dragKanbanJob = functions.https.onCall(
 );
 
 // Deletes a job in firestore
-exports.deleteJob = functions.https.onCall(async (data, context) => {
-    await helpers.verifyDocPermission(context, `jobs/${data.id}`);
+const deleteJob = functions.https.onCall(async (data, context) => {
+    await verifyDocPermission(context, `jobs/${data.id}`);
 
-    return helpers.getDoc(`jobs/${data.id}`)
+    return getDoc(`jobs/${data.id}`)
         .delete()
         .then(() => `Successfully deleted job '${data.id}'`)
         .catch((err) => `Error deleting job '${data.id}': ${err}`);
 });
 
-exports.addBoard = functions.https.onCall(async (data, context) => {
+const addBoard = functions.https.onCall(async (data, context) => {
     if (!data) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -226,8 +225,20 @@ exports.addBoard = functions.https.onCall(async (data, context) => {
     }
 
     const newBoard = { name: data, userId: context.auth.uid };
-    return helpers.getCollection('boards')
+    return getCollection('boards')
         .add({ name: data, userId: context.auth.uid })
         .then((result) => ({ id: result.id, name: newBoard.name }))
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
+
+export {
+    addJobs,
+    addJob,
+    addDeadline,
+    addInterviewQuestion,
+    addContact,
+    updateJob,
+    dragKanbanJob,
+    deleteJob,
+    addBoard,
+};

@@ -1,20 +1,18 @@
-//import * as functions from 'firebase-functions';
-const functions = require('firebase-functions');
-// import {
-//     getCollection,
-//     getDoc,
-//     getRelativeTimestamp,
-//     verifyDocPermission,
-//     verifyIsAuthenticated
-// } from './helpers.js';
-const helpers = require('./helpers.js');
-const algoliaSearch = require('algoliasearch');
+import * as functions from 'firebase-functions';
+import {
+    getCollection,
+    getDoc,
+    getRelativeTimestamp,
+    verifyDocPermission,
+    verifyIsAuthenticated
+} from './helpers';
+import algoliaSearch from 'algoliasearch';
 
 /**
  * Callable functions for getting data from firestore
  */
 
-exports.getJobData = functions.https.onCall(async (jobId, context) => {
+const getJobData = functions.https.onCall(async (jobId, context) => {
     if (!jobId) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -22,16 +20,16 @@ exports.getJobData = functions.https.onCall(async (jobId, context) => {
         );
     }
 
-    await helpers.verifyDocPermission(context, `jobs/${jobId}`);
+    await verifyDocPermission(context, `jobs/${jobId}`);
 
     // @ts-ignore
-    const job = await helpers.getDoc(`jobs/${jobId}`)
+    const job = await getDoc(`jobs/${jobId}`)
         .get()
         .then((doc) => ({ ...doc.data(), id: doc.id }));
 
     const promises = [];
     promises.push(
-        helpers.getCollection(`deadlines`)
+        getCollection(`deadlines`)
             .where('jobId', '==', jobId)
             .get()
             .then((deadlines) => {
@@ -44,7 +42,7 @@ exports.getJobData = functions.https.onCall(async (jobId, context) => {
     );
 
     promises.push(
-        helpers.getCollection(`interviewQuestions`)
+        getCollection(`interviewQuestions`)
             .where('jobId', '==', jobId)
             .get()
             .then((questions) => {
@@ -55,7 +53,7 @@ exports.getJobData = functions.https.onCall(async (jobId, context) => {
     );
 
     promises.push(
-        helpers.getCollection(`contacts`)
+        getCollection(`contacts`)
             .where('jobId', '==', jobId)
             .get()
             .then((contacts) => {
@@ -69,8 +67,8 @@ exports.getJobData = functions.https.onCall(async (jobId, context) => {
 });
 
 // Returns all job boards for the current signed-in user (each has a name + array of job ids)
-exports.getHomepageData = functions.https.onCall((data, context) => {
-    helpers.verifyIsAuthenticated(context);
+const getHomepageData = functions.https.onCall((data, context) => {
+    verifyIsAuthenticated(context);
 
     if (data != null) {
         throw new functions.https.HttpsError(
@@ -82,9 +80,9 @@ exports.getHomepageData = functions.https.onCall((data, context) => {
     const promises = [];
 
     promises.push(
-        helpers.getCollection('deadlines')
+        getCollection('deadlines')
             .where('userId', '==', context.auth.uid)
-            .where('date', '>=', helpers.getRelativeTimestamp(0))
+            .where('date', '>=', getRelativeTimestamp(0))
             .orderBy('date')
             .limit(3)
             .get()
@@ -100,7 +98,7 @@ exports.getHomepageData = functions.https.onCall((data, context) => {
     );
 
     promises.push(
-        helpers.getCollection(`boards`)
+        getCollection(`boards`)
             .where('userId', '==', context.auth.uid)
             .get()
             .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
@@ -112,8 +110,8 @@ exports.getHomepageData = functions.https.onCall((data, context) => {
         .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
-exports.getJobBoards = functions.https.onCall((data, context) => {
-    helpers.verifyIsAuthenticated(context);
+const getJobBoards = functions.https.onCall((data, context) => {
+    verifyIsAuthenticated(context);
 
     if (data != null) {
         throw new functions.https.HttpsError(
@@ -122,7 +120,7 @@ exports.getJobBoards = functions.https.onCall((data, context) => {
         );
     }
 
-    return helpers.getCollection(`boards`)
+    return getCollection(`boards`)
         .where('userId', '==', context.auth.uid)
         .get()
         .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
@@ -130,7 +128,7 @@ exports.getJobBoards = functions.https.onCall((data, context) => {
 });
 
 // Gets all the jobs for a given kanban board
-exports.getKanbanBoard = functions.https.onCall(async (boardId, context) => {
+const getKanbanBoard = functions.https.onCall(async (boardId, context) => {
     if (!boardId || String(boardId) !== boardId || boardId.trim().length === 0) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -138,7 +136,7 @@ exports.getKanbanBoard = functions.https.onCall(async (boardId, context) => {
         );
     }
 
-    const board = await helpers.getDoc(`boards/${boardId}`).get().then((doc) => doc.data());
+    const board = await getDoc(`boards/${boardId}`).get().then((doc) => doc.data());
 
     if (board == null) {
         throw new functions.https.HttpsError(
@@ -153,7 +151,7 @@ exports.getKanbanBoard = functions.https.onCall(async (boardId, context) => {
         );
     }
 
-    return helpers.getCollection('jobs')
+    return getCollection('jobs')
         .where('userId', '==', context.auth.uid)
         .where('boardId', '==', boardId)
         .get()
@@ -166,10 +164,10 @@ exports.getKanbanBoard = functions.https.onCall(async (boardId, context) => {
 });
 
 // Returns all job deadlines for the currently signed-in user
-exports.getCalendarDeadlines = functions.https.onCall((data, context) => {
-    helpers.verifyIsAuthenticated(context);
+const getCalendarDeadlines = functions.https.onCall((data, context) => {
+    verifyIsAuthenticated(context);
 
-    return helpers.getCollection('deadlines')
+    return getCollection('deadlines')
         .where('userId', '==', context.auth.uid)
         .get()
         .then((deadlines) => {
@@ -192,9 +190,9 @@ exports.getCalendarDeadlines = functions.https.onCall((data, context) => {
 });
 
 // Search for a job by position, company, or location
-exports.jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
+const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
     (queryData, context) => {
-        helpers.verifyIsAuthenticated(context);
+        verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
         const AlgoliaAppId = process.env.ALGOLIA_APP_ID;
@@ -259,9 +257,9 @@ exports.jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_AP
 );
 
 // Search for interview questions based on a company and/or position
-exports.interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
+const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
     (queryData, context) => {
-        helpers.verifyIsAuthenticated(context);
+        verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
         const AlgoliaAppId = process.env.ALGOLIA_APP_ID;
@@ -317,3 +315,13 @@ exports.interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY
 );
 
 const nullOrWhitespace = (str) => str == null || str.trim().length === 0;
+
+export {
+    getJobData,
+    getHomepageData,
+    getJobBoards,
+    getKanbanBoard,
+    getCalendarDeadlines,
+    jobSearch,
+    interviewQuestionSearch
+};

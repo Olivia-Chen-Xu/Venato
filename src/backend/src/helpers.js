@@ -1,5 +1,5 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
 /**
  * Initialize the app with admin permissions to be used in other functions
@@ -11,21 +11,21 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 // Batch jobs require a db reference
-exports.db = admin.firestore();
+const db = admin.firestore();
 
 // Auth-based functions may need admin permissions for authentication
-exports.auth = admin.auth();
+const auth = admin.auth();
 
 /**
  * Helper functions for commonly used functionality
  */
 
 // Shorthand for the very common requirement of getting a document or collection
-exports.getDoc = (doc) => admin.firestore().doc(doc);
-exports.getCollection = (collection) => admin.firestore().collection(collection);
+const getDoc = (doc) => admin.firestore().doc(doc);
+const getCollection = (collection) => admin.firestore().collection(collection);
 
 // Confirm a function call comes from a logged-in user
-exports.verifyIsAuthenticated = (context) => {
+const verifyIsAuthenticated = (context) => {
     if (!context.auth) {
         throw new functions.https.HttpsError(
             "unauthenticated",
@@ -35,7 +35,7 @@ exports.verifyIsAuthenticated = (context) => {
 };
 
 // Verify the user who called the function has access to the specified job
-exports.verifyDocPermission = async (context, path) => {
+const verifyDocPermission = async (context, path) => {
     verifyIsAuthenticated(context);
 
     await getDoc(path)
@@ -64,7 +64,7 @@ exports.verifyDocPermission = async (context, path) => {
 //  - Both objects have the same number of keys
 //  - Each key in the structure object exists in the original object and has the same type
 //    (if the value is an object, recursively check the structure of that object too)
-exports.isValidObjectStructure = (obj, structure) => {
+const isValidObjectStructure = (obj, structure) => {
     if (typeof obj !== "object" || typeof structure !== "object") {
         return false;
     }
@@ -91,12 +91,25 @@ exports.isValidObjectStructure = (obj, structure) => {
 
 // Gets a firebase timestamp for x days ago (0 for current date)
 const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-exports.getRelativeTimestamp = (days) =>
+const getRelativeTimestamp = (days) =>
     admin.firestore.Timestamp.fromMillis(Date.now() - (days || 0) * oneDay);
 
 // Gets a firestore timestamp based on unix millis
-exports.getFirestoreTimestamp = (unixMillis) =>
+const getFirestoreTimestamp = (unixMillis) =>
     admin.firestore.Timestamp.fromMillis(unixMillis);
 
 // For doing misc. tasks like deleting or editing document keys
-exports.firestoreHelper = admin.firestore;
+const firestoreHelper = admin.firestore;
+
+export {
+    getDoc,
+    getCollection,
+    verifyIsAuthenticated,
+    verifyDocPermission,
+    isValidObjectStructure,
+    getRelativeTimestamp,
+    getFirestoreTimestamp,
+    firestoreHelper,
+    db,
+    auth,
+};

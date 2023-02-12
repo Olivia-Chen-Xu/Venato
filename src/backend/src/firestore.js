@@ -1,10 +1,9 @@
-const functions = require('firebase-functions');
-// import {
-//     firestoreHelper,
-//     getCollection, getDoc,
-//     getFirestoreTimestamp
-// } from './helpers.js';
-const helpers = require('./helpers.js');
+import * as functions from 'firebase-functions';
+import {
+    firestoreHelper,
+    getCollection, getDoc,
+    getFirestoreTimestamp
+} from './helpers.js';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -19,33 +18,32 @@ const helpers = require('./helpers.js');
  * -Add company/location to db (if it doesn't already exist)
  * -Move deadlines, interview questions and contacts to sub-collections
  */
-exports.onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
+const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
+    // @ts-ignore
     const job = snap.data();
     const jobId = snap.id;
     const promises = [];
 
     // Move the deadlines to its own collection
     const deadlines = job.deadlines;
-    promises.push(snap.ref.update({ deadlines: helpers.firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
 
     deadlines.forEach(
         (deadline) => {
             const newDoc = {
                 ...deadline,
-                date: helpers.getFirestoreTimestamp(deadline.date),
+                date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
-                userId: job.priority,
-                priority: job.priority,
+                userId: job.userId,
                 jobId: jobId,
             };
-            promises.push(helpers.getCollection(`deadlines`).add(newDoc));
-            throw new functions.https.HttpsError('invalid-argument', `does this throw? ${JSON.stringify(job)}\n${JSON.stringify(deadline)}`);
+            promises.push(getCollection(`deadlines`).add(newDoc));
         }
     );
 
     // Move the interview questions to their own collection (with search params for easy querying)
     const interviewQuestions = job.interviewQuestions;
-    promises.push(snap.ref.update({ interviewQuestions: helpers.firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
 
     interviewQuestions.forEach((question) => {
         const newQuestion = {
@@ -54,12 +52,12 @@ exports.onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(asyn
             company: job.company,
             jobId: jobId,
         };
-        promises.push(helpers.getCollection(`interviewQuestions`).add(newQuestion));
+        promises.push(getCollection(`interviewQuestions`).add(newQuestion));
     });
 
     // Move the contacts to their own collection
     const contacts = job.contacts;
-    promises.push(snap.ref.update({ contacts: helpers.firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
 
     contacts.forEach(
         (contact) => {
@@ -68,7 +66,7 @@ exports.onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(asyn
                 userId: job.userId,
                 jobId: jobId,
             };
-            promises.push(helpers.getCollection(`contacts`).add(newContact));
+            promises.push(getCollection(`contacts`).add(newContact));
         }
     );
 
@@ -81,24 +79,24 @@ exports.onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(asyn
  * - Remove the job from the user's job board
  * - Remove the deadlines and interview questions (in their own collection)
  */
-exports.onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
+const onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async (snap, context) => {
     const jobId = snap.id;
     const promises = [];
 
     // Remove deadlines, interview questions and contacts for this job
-    await helpers.getCollection('deadlines')
+    await getCollection('deadlines')
         .where('jobId', '==', jobId)
         .get()
         .then((deadlines) => deadlines.forEach((deadline) => promises.push(deadline.ref.delete())))
         .catch((err) => functions.logger.log(`Error getting deadlines: ${err}`));
 
-    await helpers.getCollection('interviewQuestions')
+    await getCollection('interviewQuestions')
         .where('jobId', '==', jobId)
         .get()
         .then((questions) => questions.forEach((question) => promises.push(question.ref.delete())))
         .catch((err) => functions.logger.log(`Error getting interview questions: ${err}`));
 
-    await helpers.getCollection('contacts')
+    await getCollection('contacts')
         .where('jobId', '==', jobId)
         .get()
         .then((contacts) => contacts.forEach((contact) => promises.push(contact.ref.delete())))
@@ -107,12 +105,12 @@ exports.onJobPurge = functions.firestore.document('jobs/{jobId}').onDelete(async
     return Promise.all(promises);
 });
 
-exports.onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(async (snap, context) => {
+const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(async (snap, context) => {
     const boardId = snap.id;
 
     const promises = [];
 
-    await helpers.getDoc(`users/${snap.data().userId}`)
+    await getDoc(`users/${snap.data().userId}`)
         .get()
         .then((userDoc) => {
             if (!userDoc.exists) {
@@ -120,13 +118,13 @@ exports.onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete
             }
 
             if (userDoc.data()?.kanbanBoard === boardId) {
-                promises.push(userDoc.ref.update({ kanbanBoard: helpers.firestoreHelper.FieldValue.delete() }));
+                promises.push(userDoc.ref.update({ kanbanBoard: firestoreHelper.FieldValue.delete() }));
             }
             return null;
         })
         .catch((err) => functions.logger.log(`Error getting user: ${err}`));
 
-    await helpers.getCollection('jobs')
+    await getCollection('jobs')
         .where('boardId', '==', boardId)
         .get()
         .then((jobs) => jobs.forEach((job) => promises.push(job.ref.delete())))
@@ -134,3 +132,5 @@ exports.onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete
 
     return Promise.all(promises);
 });
+
+export { onJobCreate, onJobPurge, onBoardPurge };
