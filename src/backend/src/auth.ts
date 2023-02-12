@@ -22,16 +22,15 @@ const createAccount = functions.https.onCall(async (credentials: { email: string
                 disabled: false,
             })
             .then((userRecord) => {
-                functions.logger.log(`Successfully created new user: ${userRecord.uid}`);
-                return `Successfully created new user: ${userRecord.uid}`;
+                return `Successfully created new user`;
             })
             .catch((error) => {
-                functions.logger.log(`Error creating new user: ${JSON.stringify(error)}`);
-
                 if (error.code === 'auth/email-already-exists') {
-                    throw new functions.https.HttpsError('already-exists', 'Email in use');
+                    return `Email ${credentials.email} in use`;
                 }
-                throw new functions.https.HttpsError('internal', 'Error creating account');
+
+                functions.logger.log(`Error creating new user (not including email in use): ${JSON.stringify(error)}`);
+                return `Error creating account - please try again later`;
             });
     }
 );
@@ -41,6 +40,13 @@ const createAccount = functions.https.onCall(async (credentials: { email: string
  * and sends them a verification email
  */
 const onUserSignup = functions.auth.user().onCreate(async (user) => {
+    if (user.email == null) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            `User email is null: ${JSON.stringify(user, null, 4)}`
+        );
+    }
+
     const promises = [];
 
     // Create a default db document for the user
@@ -53,15 +59,10 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
     );
 
     // Adds a verification email to the db (will be sent by the 'Trigger Email' extension)
-    if (user.email == null) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            `User email is null: ${JSON.stringify(user, null, 4)}`
-        );
-    }
     const verifyLink = await auth
         .generateEmailVerificationLink(user.email)
-        .then((link) => link);
+        .then((link) => link)
+        .catch((err) => `Error generating verification link: ${err}`);
     promises.push(
         getCollection('emails')
             .add({
@@ -75,11 +76,12 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
                            <p style="font-size: 12px;">-The Venato Team</p>`,
                 },
             })
-            .then(() => functions.logger.log(`Email successfully sent to: ${user.email}`))
-            .catch((err: string) => functions.logger.log(`Error sending email: ${err}`))
+            .then(() => functions.logger.log(`Verification email successfully sent to: ${user.email}`))
+            .catch((err: string) => functions.logger.log(`Error sending verification email to ${user.email}: ${err}`))
     );
 
-    return Promise.all(promises);
+    return Promise.all(promises)
+        .catch((err) => functions.logger.log(`Error creating user: ${JSON.stringify(err, null, 4)}`));
 });
 
 /**
@@ -92,6 +94,33 @@ const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
             `The email "${user.email}" has not been verified. Please check your email`
         );
     }
+});
+
+/**
+ * Sends a password reset email
+ */
+const passwordReset = functions.https.onCall(async (email: string, context) => {
+    const link = await auth
+        .generatePasswordResetLink(email)
+        .then((link) => link)
+        .catch((err) => `Error generating password reset link: ${err}`);
+
+    return getCollection('emails')
+        .add({
+            to: email,
+            message: {
+                subject: 'Reset your Venato password',
+                html: `<p style="font-size: 16px;">Reset your password with this link: ${link}</p>
+                       <p style="font-size: 12px;">If you didn't request this, please disregard this email</p>
+                       <p style="font-size: 12px;">Best Regards,</p>
+                       <p style="font-size: 12px;">-The Venato Team</p>`,
+            }
+        })
+        .then(() => `Password reset email successfully sent to ${email}`)
+        .catch((err) => {
+            functions.logger.log(`Error generating password reset email for ${email}: ${err}`);
+            return `Error sending password reset email - please try again later`;
+        });
 });
 
 /**
@@ -117,4 +146,4 @@ const onUserDeleted = functions.auth.user().onDelete((user) => {
     return Promise.all(promises);
 });
 
-export { createAccount, onUserSignup, beforeSignIn, onUserDeleted };
+export { createAccount, onUserSignup, beforeSignIn, passwordReset, onUserDeleted };
