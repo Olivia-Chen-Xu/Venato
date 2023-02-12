@@ -22,7 +22,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
     // @ts-ignore
     const job = snap.data();
     const jobId = snap.id;
-    const promises: Promise<any>[] = [];
+    const promises = [];
 
     // Move the deadlines to its own collection
     const deadlines = job.deadlines;

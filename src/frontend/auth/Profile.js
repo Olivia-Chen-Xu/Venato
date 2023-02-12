@@ -78,18 +78,18 @@ const Profile = () => {
                 style={{ width: 200 }}
                 onClick={handleSignOut}
             >
-                Delete account
+                Delete account!
             </Button>
-            {/*<Button*/}
-            {/*    variant="contained"*/}
-            {/*    color="neutral"*/}
-            {/*    style={btnStyle}*/}
-            {/*    onClick={() => {*/}
-            {/*        generateJobs(40);*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    Generate jobs*/}
-            {/*</Button>*/}
+            <Button
+                variant="contained"
+                color="neutral"
+                style={btnStyle}
+                onClick={() => {
+                    generateJobs(40);
+                }}
+            >
+                Generate jobs
+            </Button>
             <text style={{ color: "red" }}>{errMsg}</text>
         </div>
     );

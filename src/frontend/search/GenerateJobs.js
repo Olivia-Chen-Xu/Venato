@@ -269,7 +269,7 @@ const jobPositions = [
 ];
 
 const generateDeadlines = () => {
-    const deadlines= [];
+    const deadlines = [];
 
     const generateDeadline = (title, day, isInterview) => {
         const month = Math.floor(Math.random() * 4);
@@ -329,15 +329,7 @@ const generateDeadlines = () => {
 };
 
 const generateContacts = () => {
-    const contacts: {
-        // Note: company is added later with the job
-        name: string;
-        title: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-        notes: string;
-    }[] = [];
+    const contacts = [];
 
     const contactNames = [
         {
