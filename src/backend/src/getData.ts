@@ -191,7 +191,7 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
 
 // Search for a job by position, company, or location
 const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (query: string, context: any) => {
+    (queryData: { searchAll: string; company: string; position: string; location: string; }, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -209,9 +209,52 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
             );
         }
 
+        const searchAll = { query: queryData.searchAll, valid: !nullOrWhitespace(queryData.searchAll) };
+        const company = { query: queryData.company, valid: !nullOrWhitespace(queryData.company) };
+        const position = { query: queryData.position, valid: !nullOrWhitespace(queryData.position) };
+        const location = { query: queryData.location, valid: !nullOrWhitespace(queryData.location) };
+
+        if (searchAll.valid) {
+            if (company.valid || position.valid || location.valid) {
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'You can either perform a full search (searchAll), or search by company and/or position. ' +
+                    'You cannot define both searchAll and company/position'
+                );
+            }
+
+            return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
+                .initIndex('jobs')
+                .search(queryData.searchAll)
+                .then(({ hits }) => hits.map((hit) => ({
+                    id: hit.objectID,
+                    // @ts-ignore
+                    company: hit.company,
+                    // @ts-ignore
+                    position: hit.position,
+                    // @ts-ignore
+                    location: hit.location,
+                    // @ts-ignore
+                    description: hit.description,
+                    // @ts-ignore
+                    link: hit.link,
+                    // @ts-ignore
+                    salary: hit.salary,
+                })))
+                .catch(err => `Error querying interview questions: ${err}`);
+        }
+
+        if (!company.valid && !position.valid && !location.valid) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Please include either a searchAll query, or a company and/or position query'
+            );
+        }
+
+        // TODO: Facet search
         return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
             .initIndex('jobs')
-            .search(query)
+            .search(queryData.searchAll)
             .then(({ hits }) => hits)
             .catch(err => `Error querying interview questions: ${err}`);
     }
@@ -253,7 +296,17 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('interviewQuestions')
                 .search(queryData.searchAll)
-                .then(({ hits }) => hits)
+                .then(({ hits }) => hits.map((hit) => ({
+                        id: hit.objectID,
+                        // @ts-ignore
+                        name: hit.name,
+                        // @ts-ignore
+                        description: hit.description,
+                        // @ts-ignore
+                        company: hit.company,
+                        // @ts-ignore
+                        position: hit.position,
+                    })))
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
@@ -265,6 +318,11 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
         }
 
         // TODO: Facet search
+        return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
+            .initIndex('interviewQuestions')
+            .search(queryData.searchAll)
+            .then(({ hits }) => hits)
+            .catch(err => `Error querying interview questions: ${err}`);
     }
 );
 

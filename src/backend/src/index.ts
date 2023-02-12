@@ -1,5 +1,5 @@
 import { purgeExpiredData, purgeUnverifiedUsers } from './cron';
-import { beforeSignIn, createAccount, onUserDeleted, onUserSignup } from './auth';
+import { beforeSignIn, createAccount, onUserDeleted, onUserSignup, passwordReset } from './auth';
 import { onJobCreate, onJobPurge, onBoardPurge } from './firestore';
 import {
     getCalendarDeadlines,
@@ -59,6 +59,7 @@ export {
     onUserSignup,
     onUserDeleted,
     beforeSignIn,
+    passwordReset,
     onJobCreate,
     onJobPurge,
     onBoardPurge,

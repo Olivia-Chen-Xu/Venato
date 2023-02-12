@@ -4,6 +4,7 @@ import {
     getCollection, getDoc,
     getFirestoreTimestamp
 } from './helpers';
+import { IContact, IDeadline, IInterviewQuestion } from './DataInterfaces';
 
 /**
  * Firestore triggers - automatically triggered when a firestore document is changed
@@ -35,6 +36,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
                 date: getFirestoreTimestamp(deadline.date),
                 company: job.company,
                 userId: job.userId,
+                priority: job.priority,
                 jobId: jobId,
             };
             promises.push(getCollection(`deadlines`).add(newDoc));
