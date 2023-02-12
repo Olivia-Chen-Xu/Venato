@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
+//import * as admin from "firebase-admin";
+const admin = require('firebase-admin');
 
 /**
  * Initialize the app with admin permissions to be used in other functions
