@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InputLabel, TextField, Button } from '@mui/material';
 import { passwordResetEmail } from './auth-functions';
-import checkMark from '../../../assets/checkMark.png';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 import { WarningAmberRounded } from '@mui/icons-material';
@@ -24,7 +23,6 @@ const PasswordReset = () => {
         }
 
         passResetResult
-            // eslint-disable-next-line promise/always-return
             .then(() => {
                 console.log(`Password reset email sent to ${email}`);
 
