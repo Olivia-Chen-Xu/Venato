@@ -10,7 +10,6 @@ const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     };
 
     const getCurrMonth = () => {
-        console.log(month, day.format('MM'));
         return month === day.format('MM') ? '' : 'grayscale';
     }
 
