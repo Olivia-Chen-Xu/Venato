@@ -2,12 +2,17 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
+const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
             ? 'bg-[#7F5BEB] text-white rounded-full w-8'
             : '';
     };
+
+    const getCurrMonth = () => {
+        console.log(month, day.format('MM'));
+        return month === day.format('MM') ? '' : 'grayscale';
+    }
 
     const getPriorityColor = (deadline) => {
         switch(deadline.priority){
@@ -46,7 +51,7 @@ const Day = ({ day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
 
 
                 }}
-                className={`bg-200 ${getPriorityColor(deadline)} p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
+                className={`bg-200 ${getPriorityColor(deadline)} ${getCurrMonth()} p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
             >
                 {deadline.title}
             </div>
@@ -95,6 +100,7 @@ const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
                 <React.Fragment key={i}>
                     {row.map((day, idx) => (
                         <Day
+                            month={month[2][2].format('MM')}
                             day={day}
                             key={idx}
                             rowIdx={i}
