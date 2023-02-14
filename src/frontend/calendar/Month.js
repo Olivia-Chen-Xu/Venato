@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
+const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
             ? 'bg-[#7F5BEB] text-white rounded-full w-8'
@@ -26,6 +26,10 @@ const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
         }
     }
 
+    const checkInterview = (deadline) => {
+        console.log(deadline, deadline.isInterview)
+    }
+
     const getDayEvents = () => {
         if (!deadlines) {
             return [];
@@ -37,7 +41,15 @@ const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
             deadlines.splice(2);
             overLimit = true;
         }
+        
+        // if(deadlines.length > 0){
+        //     deadlines.forEach((day, idx) => {
+        //         console.log(day, day.isInterview);
+                
+        //     });
+        // }
 
+        console.log(app, int)
         const jsx = deadlines.map((deadline, idx) => (
             <div
                 key={idx}
@@ -54,7 +66,7 @@ const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
             >
                 {deadline.title}
             </div>
-        ));
+            ));
         if (overLimit) {
             jsx.push(
                 <div
@@ -92,13 +104,15 @@ const Day = ({ month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     );
 };
 
-const Month = ({ month, setOpen, setJob, setIsEdit, deadlines }) => {
+const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
         <div className="h-5/6 grid grid-cols-7 grid-rows-5">
             {month.map((row, i) => (
                 <React.Fragment key={i}>
                     {row.map((day, idx) => (
                         <Day
+                            app = {viewApp}
+                            int = {viewInt}
                             month={month[2][2].format('MM')}
                             day={day}
                             key={idx}
