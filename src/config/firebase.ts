@@ -2,7 +2,9 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-// Venato Firebase configuration (firebase API keys need to be public, it's not a security issue)
+// Venato Firebase configuration
+// Note: exposing the API isn't a security risk since the users need to interact with firebase;
+// all sensitive information is done server-side within functions
 const firebaseConfig = {
     apiKey: 'AIzaSyBouNrZMqdS_WX9Hyi-e7X69bxbvxEZZsY',
     authDomain: 'venato-ae74d.firebaseapp.com',
@@ -14,6 +16,6 @@ const firebaseConfig = {
 };
 
 const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const auth = firebase.auth(); // Some non-sensitive auth operations are done client-side (like signing out)
 
 export { app, auth };
