@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
+const Day = ({ viewApplications, viewInterviews, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
     const getCurrentDayClass = () => {
         return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
             ? 'bg-[#7F5BEB] text-white rounded-full w-8'
@@ -26,9 +26,7 @@ const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlin
         }
     }
 
-    const checkInterview = (deadline) => {
-        console.log(deadline, deadline.isInterview)
-    }
+   
 
     const getDayEvents = () => {
         if (!deadlines) {
@@ -49,7 +47,11 @@ const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlin
         //     });
         // }
 
-        console.log(app, int)
+        const getVisibility = (deadline) => {
+            // If view applications and is an application, view interview and is an interview, or unlabeled, show the event
+            return (viewApplications && !deadline.isInterview) || (viewInterviews && deadline.isInterview) || deadline.isInterview === null ? '' : 'hidden';
+        }
+
         const jsx = deadlines.map((deadline, idx) => (
             <div
                 key={idx}
@@ -62,7 +64,7 @@ const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlin
 
 
                 }}
-                className={`bg-200 ${getPriorityColor(deadline)} ${getCurrMonth()} p-1 mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
+                className={`bg-200 ${getPriorityColor(deadline)} ${getCurrMonth()} ${getVisibility(deadline)} mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
             >
                 {deadline.title}
             </div>
@@ -106,13 +108,13 @@ const Day = ({ app, int, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlin
 
 const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
-        <div className="h-5/6 grid grid-cols-7 grid-rows-5">
+        <div className="h-full grid grid-cols-7 grid-rows-5">
             {month.map((row, i) => (
                 <React.Fragment key={i}>
                     {row.map((day, idx) => (
                         <Day
-                            app = {viewApp}
-                            int = {viewInt}
+                            viewApplications = {viewApp}
+                            viewInterviews = {viewInt}
                             month={month[2][2].format('MM')}
                             day={day}
                             key={idx}
