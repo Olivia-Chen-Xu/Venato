@@ -12,14 +12,15 @@
 }
 
 .TopText {
-    font-weight: regular;
-    font-size: 40px;
-    color: #515050;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 27px;
+    color: #333333;
 }
 
 .WelcomeText {
     font-size: 18px;
-    color: #a0a0a0;
+    color: #333333;
 }
 
 .SwapAuthText {
@@ -39,7 +40,7 @@
 
     text-decoration-line: underline;
     float: right;
-    color: #c7add8;
+    color: #7f5beb;
     cursor: pointer;
 }
 

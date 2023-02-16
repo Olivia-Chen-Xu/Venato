@@ -16,9 +16,14 @@ const theme = createTheme({
             main: '#633175',
         },
         neutral: {
-            main: '#C7ADD8',
+            main: '#7F5BEB',
             contrastText: '#fff',
         },
+    },
+    typography:{
+        fontFamily:[
+            'Poppins'
+        ].join(',')
     },
 });
 
