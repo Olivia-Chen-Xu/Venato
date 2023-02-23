@@ -208,7 +208,9 @@ const Homepage = () => {
                     >
                         Create new board
             </Button>
+            
         </div>
+        
     );
 };
 

@@ -248,9 +248,14 @@ const Kanban = () => {
                                     style={{
                                         borderBottom: '1px solid #676767',
                                         width: '80%',
+                                        height: '42px',
                                         textAlign: 'center',
                                         fontSize: 20,
-                                        color: '#676767'
+                                        color: '#676767',
+                                        boxSizing: 'border-box',
+                                        padding: '8px 8px 8px 16px',
+                                        gap: '8px',
+                                        background: '#FFFFFF',
                                     }}
                                 >
                                     {colTitles[ind]}
