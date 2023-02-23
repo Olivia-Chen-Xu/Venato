@@ -23,9 +23,14 @@ else
   exit 1
 fi
 
+# Update firebase config for production
+cp ./prodConfig.ts ../src/config/firebase.ts &&
+
 # Build and deploy
 npm run build &&
-gh-pages -d build
+gh-pages -d build &&
+
+git restore ../src/config/firebase.ts &&
 
 # Automatically regenerate the CNAME file
 git checkout gh-pages &&
