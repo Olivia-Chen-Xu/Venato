@@ -6,13 +6,13 @@ import 'firebase/compat/firestore';
 // Note: exposing the API isn't a security risk since the users need to interact with firebase;
 // all sensitive information is done server-side within functions
 const firebaseConfig = {
-    apiKey: 'AIzaSyBouNrZMqdS_WX9Hyi-e7X69bxbvxEZZsY',
-    authDomain: 'venato-ae74d.firebaseapp.com',
-    projectId: 'venato-ae74d',
-    storageBucket: 'venato-ae74d.appspot.com',
-    messagingSenderId: '1065915891459',
-    appId: '1:1065915891459:web:eac53d65d3155eed597336',
-    measurementId: 'G-RGF0GESP9P',
+    apiKey: "AIzaSyBVZp21HmO6Q5ULdsg4Ki8fDuy_NqwxIbA",
+    authDomain: "venato-production-e2ae0.firebaseapp.com",
+    projectId: "venato-production-e2ae0",
+    storageBucket: "venato-production-e2ae0.appspot.com",
+    messagingSenderId: "9231796483",
+    appId: "1:9231796483:web:7478a32897925cd68f4136",
+    measurementId: "G-79DX6QRJ6J",
 };
 
 const app = firebase.initializeApp(firebaseConfig);
