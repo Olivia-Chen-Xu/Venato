@@ -16,6 +16,11 @@ if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
     exit 1
 fi
 
+if [ "$(git rev-parse --git-dir)" != '.git' ]; then
+    echo " 🔴 You must be in the root directory of the project to deploy"
+    exit 1
+fi
+
 if [ "$(git status --porcelain | wc -l)" -eq "0" ]; then
   echo "  🟢 Git repo is clean, starting build..."
 else
@@ -23,14 +28,11 @@ else
   exit 1
 fi
 
-# Update firebase config for production
-cp ./prodConfig.ts ../src/config/firebase.ts &&
-
-# Build and deploy
+# Update firebase config for production, build and deploy
+cp tools/prodConfig.ts src/config/firebase.ts &&
 npm run build &&
 gh-pages -d build &&
-
-git restore ../src/config/firebase.ts &&
+git restore src/config/firebase.ts &&
 
 # Automatically regenerate the CNAME file
 git checkout gh-pages &&
