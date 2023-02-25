@@ -10,7 +10,7 @@ if [ "$#" -ne 1 ] || [ "$1" != "TEST" ] && [ "$1" != "STG" ] && [ "$1" != "PROD"
 fi
 
 if [ "$1" == "TEST" ] || [ "$1" == "STG" ]; then
-    echo "  🟢 Deploying to TEST environment..."
+    echo "  🟢 Deploying to TEST/STG environment..."
     firebase deploy --only functions --project venato-ae74d
 else
     echo "  🟢 Deploying to PROD environment..."

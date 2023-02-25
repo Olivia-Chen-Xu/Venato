@@ -7,17 +7,7 @@ import {
 import { IContact, IDeadline, IInterviewQuestion } from './DataInterfaces';
 
 /**
- * Firestore triggers - automatically triggered when a firestore document is changed
- *
- * e.g. When a document in /jobs/* is created, make a searchable field for the position and add the
- * company and location to a list of companies and locations respectively in firestore
- */
-
-/**
- * On job create:
- * -Makes searchable fields for the job position
- * -Add company/location to db (if it doesn't already exist)
- * -Move deadlines, interview questions and contacts to sub-collections
+ * On job create, move deadlines, interview questions and contacts to their own collections
  */
 const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async (snap, context) => {
     // @ts-ignore
