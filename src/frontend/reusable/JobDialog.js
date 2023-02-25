@@ -292,7 +292,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
 const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ name: '', description: '' });
+    const [newQuestion, setNewQuestion] = useState({ name: '', description: '', company: '' });
 
     const addNewQuestion = async () => {
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
@@ -301,7 +301,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             getFunctions(),
             'addInterviewQuestion'
         )({ jobId: jobData.id, ...newQuestion });
-        setNewQuestion({ name: '', description: '' });
+        setNewQuestion({ name: '', description: '', company: '' });
     };
 
     return (
