@@ -208,7 +208,7 @@ const Kanban = () => {
                     setCurrentJob={setCurrentJob}
                     setOpen={setModalOpen}
                     jobData={currentJob}
-                    isEdit={isEdit}
+                    isEdit={true}
                     index={index}
                     state={kanbanState}
                     setState={setKanbanState}

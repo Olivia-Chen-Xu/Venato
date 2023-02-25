@@ -521,24 +521,20 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
         await updateJob(job);
     };
 
-    const addNewJob = async () => {
-        await httpsCallable(getFunctions(), 'addJob')();
-    };
-
-    const deleteJob = async (jobData) => {
+    const deleteJob = async () => {
         const newState = [...state];
-        newState[index] = state[index].filter((j) => j.id !== jobData.id);
-        await httpsCallable(getFunctions(), 'deleteJob')({ id: jobData.id });
+        newState[index] = state[index].filter((j) => j.id !== job.id);
+        await httpsCallable(getFunctions(), 'deleteJob')({ id: job.id });
         setState(newState);
         setOpen(false);
     };
 
-    const updateJob = async (jobData) => {
+    const updateJob = async () => {
         const newState = [...state];
         let jobDataNew;
         switch (tabValue) {
             case 0:
-                jobDataNew = structuredClone(jobData);
+                jobDataNew = structuredClone(job);
                 delete jobDataNew.deadlines;
                 delete jobDataNew.interviewQuestions;
                 delete jobDataNew.contacts;
@@ -549,7 +545,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
 
                 break;
             case 1:
-                jobDataNew = jobData.notes;
+                jobDataNew = job.notes;
                 break;
             case 2:
                 jobDataNew = [];
@@ -569,10 +565,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
         await httpsCallable(
             getFunctions(),
             'updateJob'
-        )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+        )({ id: job.id, tab: tabValue + 1, newFields: jobDataNew });
 
         if (isKanban) {
-            newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+            newState[index] = state[index].map((j) => (j.id === job.id ? job : j));
             setState(newState);
         }
     };
@@ -676,7 +672,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                         </Button>
                         <Button
                             variant="contained"
-                            onClick={addNewJob}
+                            onClick={updateJob}
                             style={{
                                 padding: '15px 12px 15px 14px',
                                 gap: '10px',
