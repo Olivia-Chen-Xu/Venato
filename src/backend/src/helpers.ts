@@ -74,14 +74,12 @@ const isValidObjectStructure = (obj: any, structure: any) => {
     }
 
     for (const key in structure) {
-        if (structure.hasOwnProperty(key)) {
-            if (typeof obj[key] !== typeof structure[key]) {
+        if (typeof obj[key] !== typeof structure[key]) {
+            return false;
+        }
+        if (typeof obj[key] === 'object') {
+            if (!isValidObjectStructure(obj[key], structure[key])) {
                 return false;
-            }
-            if (typeof obj[key] === 'object') {
-                if (!isValidObjectStructure(obj[key], structure[key])) {
-                    return false;
-                }
             }
         }
     }

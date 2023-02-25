@@ -93,6 +93,27 @@ const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: 
 });
 
 const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: any) => {
+    const structure = {
+        title: '',
+        date: 0,
+        company: '',
+        location: '',
+        link: '',
+        jobId: '',
+    };
+    if (!isValidObjectStructure(deadline, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Invalid deadline object structure'
+        );
+    }
+    if (!Number.isInteger(deadline.date) || deadline.date < 0) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Deadline date must be a non-negative integer'
+        );
+    }
+
     await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
     return getCollection(`deadlines`)
@@ -102,6 +123,19 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
 });
 
 const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
+    const structure = {
+        name: '',
+        description: '',
+        company: '',
+        jobId: '',
+    }
+    if (!isValidObjectStructure(interviewQuestion, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Invalid interview question object structure'
+        );
+    }
+
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
     return getCollection(`interviewQuestions`)
@@ -111,6 +145,23 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
 });
 
 const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
+    const structure = {
+        name: '',
+        company: '',
+        title: '',
+        email: '',
+        phone: '',
+        linkedin: '',
+        notes: '',
+        jobId: '',
+    }
+    if (!isValidObjectStructure(contact, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Invalid contact object structure'
+        );
+    }
+
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
     return getCollection(`contacts`)
