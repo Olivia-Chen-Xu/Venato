@@ -44,6 +44,7 @@ const addJobs = functions.https.onCall(
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
 const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: number }, context: any) => {
+    // Verify params
     const structure = {
         boardId: '',
         stage: 0
@@ -64,6 +65,7 @@ const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: 
 
     await verifyDocPermission(context, `boards/${jobData.boardId}`);
 
+    // Add a default job to the db
     const defaultJob = {
         position: '',
         company: '',
@@ -86,7 +88,7 @@ const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: 
 
     return getCollection('jobs')
         .add(defaultJob)
-        .then((docRef) => ({ ...defaultJob, id: docRef.id }))
+        .then((docRef) => (docRef.id))
         .catch((e) => `Failed to add job: ${JSON.stringify(e)}`);
 });
 

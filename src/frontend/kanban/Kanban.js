@@ -8,27 +8,23 @@ import { useLocation } from 'react-router-dom';
 
 const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
-const newJob = (idx) => {
+const newJob = (index) => {
     return {
-        details: {
-            position: '',
-            company: '',
-            description: '',
-            salary: '',
-            location: '',
-            link: ''
-        },
+        position: '',
+        company: '',
+        description: '',
+        salary: '',
+        location: '',
+        link: '',
 
         notes: '',
+        stage: index,
+        awaitingResponse: false,
+        priority: '',
+
         deadlines: [],
         interviewQuestions: [],
         contacts: [],
-
-        status: {
-            stage: idx,
-            awaitingResponse: false,
-            priority: ''
-        }
     };
 };
 
@@ -92,14 +88,15 @@ const Kanban = () => {
 
     const addJob = async (index) => {
         const newState = [...kanbanState];
-        const job = newJob(index);
+
         await httpsCallable(
             getFunctions(),
             'addJob'
         )({ boardId: boardID, stage: index }).then((res) => {
-            newState[index] = [{ ...job, id: res.data.id }, ...kanbanState[index]];
+            const job = newJob(index);
+            newState[index] = [{ ...job, id: res.data }, ...kanbanState[index]];
             setKanbanState(newState);
-            setCurrentJob({ ...job, id: res.data.id });
+            setCurrentJob({ ...job, id: res.data });
             // console.log(currentJob);
         });
     };
