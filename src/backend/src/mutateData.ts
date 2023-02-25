@@ -238,13 +238,13 @@ const updateJob = functions.https.onCall(
 
 const dragKanbanJob = functions.https.onCall(
     async (data: { id: string; newStage: number }, context: any) => {
-        if (!data || !data.hasOwnProperty('id') || !data.hasOwnProperty('newStage')) {
+        if (!data || !data.id || !data.newStage) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'A job id and new stage is required'
             );
         }
-        if (data.newStage < 0 || data.newStage > 3) {
+        if (!Number.isInteger(data.newStage) || data.newStage < 0 || data.newStage > 3) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Invalid job stage (must be between 0 and 3 inclusive)'
@@ -261,26 +261,32 @@ const dragKanbanJob = functions.https.onCall(
 );
 
 // Deletes a job in firestore
-const deleteJob = functions.https.onCall(async (data: { id: string }, context: any) => {
-    await verifyDocPermission(context, `jobs/${data.id}`);
+const deleteJob = functions.https.onCall(async (id: string, context: any) => {
+    if (!id || typeof id !== 'string' || id.length === 0) {
+        throw new functions.https.HttpsError('invalid-argument', 'No job id provided');
+    }
 
-    return getDoc(`jobs/${data.id}`)
+    await verifyDocPermission(context, `jobs/${id}`);
+
+    return getDoc(`jobs/${id}`)
         .delete()
-        .then(() => `Successfully deleted job '${data.id}'`)
-        .catch((err) => `Error deleting job '${data.id}': ${err}`);
+        .then(() => `Successfully deleted job '${id}'`)
+        .catch((err) => `Error deleting job '${id}': ${err}`);
 });
 
-const addBoard = functions.https.onCall(async (data: string, context: any) => {
-    if (!data) {
+const addBoard = functions.https.onCall(async (boardName: string, context: any) => {
+    if (!boardName || typeof boardName !== 'string' || boardName.length === 0) {
         throw new functions.https.HttpsError(
             'invalid-argument',
             'No board name provided'
         );
     }
 
-    const newBoard = { name: data, userId: context.auth.uid };
+    verifyIsAuthenticated(context);
+
+    const newBoard = { name: boardName, userId: context.auth.uid };
     return getCollection('boards')
-        .add({ name: data, userId: context.auth.uid })
+        .add({ name: boardName, userId: context.auth.uid })
         .then((result) => ({ id: result.id, name: newBoard.name }))
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });

@@ -31,6 +31,8 @@ const Homepage = () => {
     }
 
     const addNewBoard = async () => {
+        if (boardName === '') return;
+
         const boardData = await httpsCallable(getFunctions(), 'addBoard')(boardName);
         userData.result.data.boards.push(boardData.data);
         setDialogOpen(false);
