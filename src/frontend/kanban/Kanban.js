@@ -265,9 +265,9 @@ const Kanban = () => {
                                         background: "#FFFFFF",
                                         borderTop:
                                             colTitles[ind] == 'APPLICATIONS' ? '4px solid #926EFE' : '4px solid #926EFE'
-                                            || colTitles[ind] == 'INTERVIEWS' ? '4px solid #FF8900' : '4px solid #926EFE'
-                                            || colTitles[ind] == 'OFFERS' ? '4px solid #84FF9F' : '4px solid #926EFE'
-                                            || colTitles[ind] == 'REJECTIONS' ? '4px solid #00819B' : '4px solid #926EFE'
+                                            && colTitles[ind] == 'INTERVIEWS' ? '4px solid #FF8900' : '4px solid #926EFE'
+                                            && colTitles[ind] == 'OFFERS' ? '4px solid #84FF9F' : '4px solid #926EFE'
+                                            && colTitles[ind] == 'REJECTIONS' ? '4px solid #00819B' : '4px solid #926EFE'
                                         
                                         ,
                                         boxShadow: "0px 5px 14px rgba(0, 0, 0, 0.1)",
