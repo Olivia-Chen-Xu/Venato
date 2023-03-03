@@ -8,6 +8,9 @@ import { useLocation } from 'react-router-dom';
 
 const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
 
+const current = new Date();
+const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+
 const newJob = (idx) => {
     return {
         details: {
@@ -187,6 +190,9 @@ const Kanban = () => {
                 flexDirection: 'column'
             }}
         >
+        <h2 className="font-poppins font-light color-black tracking-wider mt-5 grid place-content-left mx-0 uppercase">
+                {date}
+        </h2>
             {/* <button
             type="button"
             onClick={() => {
@@ -219,8 +225,9 @@ const Kanban = () => {
                 style={{
                     alignSelf: 'flex-start',
                     fontSize: 32,
-                    fontWeight: 'bold',
-                    color: '#676767'
+                    fontWeight: '500',
+                    color: '#676767',
+                    textTransform: 'capitalize',
                 }}
             >
                 {boardName}
@@ -245,17 +252,30 @@ const Kanban = () => {
                                 }}
                             >
                                 <p
+                                    
                                     style={{
-                                        borderBottom: '1px solid #676767',
-                                        width: '80%',
-                                        height: '42px',
-                                        textAlign: 'center',
-                                        fontSize: 20,
-                                        color: '#676767',
-                                        boxSizing: 'border-box',
-                                        padding: '8px 8px 8px 16px',
-                                        gap: '8px',
-                                        background: '#FFFFFF',
+                                        boxSizing: "border-box",
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        padding: "8px 8px 8px 16px",
+                                        gap: "8px", "width": "250px",
+                                        height: "42px",
+                                        background: "#FFFFFF",
+                                        borderTop:
+                                            colTitles[ind] == 'APPLICATIONS' ? '4px solid #926EFE' : '4px solid #926EFE'
+                                            || colTitles[ind] == 'INTERVIEWS' ? '4px solid #FF8900' : '4px solid #926EFE'
+                                            || colTitles[ind] == 'OFFERS' ? '4px solid #84FF9F' : '4px solid #926EFE'
+                                            || colTitles[ind] == 'REJECTIONS' ? '4px solid #00819B' : '4px solid #926EFE'
+                                        
+                                        ,
+                                        boxShadow: "0px 5px 14px rgba(0, 0, 0, 0.1)",
+                                        borderRadius: "4px",
+                                        flex: "none",
+                                        order: "0",
+                                        flexGrow: "0",
+                                        fontWeight: '500'
                                     }}
                                 >
                                     {colTitles[ind]}

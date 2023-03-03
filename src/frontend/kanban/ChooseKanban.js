@@ -3,7 +3,7 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef} from 'react';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -11,6 +11,8 @@ const ChooseKanban = () => {
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
+    const current = new Date();
+    const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
 
     if (boards.loading) {
         return (
@@ -52,8 +54,8 @@ const ChooseKanban = () => {
 
     return (
         <div>
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Job Boards
+           <h1 className="font-poppins font-medium color-black tracking-wider text-xl mt-10 grid place-content-left mx-20 uppercase">
+                Summer Internships
             </h1>
             <br />
             <div className="flex justify-center">

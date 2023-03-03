@@ -142,8 +142,6 @@ const Homepage = () => {
                     isKanban={false}
                 />
             )}
-            
-
             <h1 className="font-poppins font-medium color-black tracking-wider text-xl mt-10 grid place-content-left mx-20 uppercase">
                 Upcoming Tasks
             </h1>
