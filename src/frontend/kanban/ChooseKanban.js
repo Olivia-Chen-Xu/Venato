@@ -1,9 +1,10 @@
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
+import { Add, AddCircleOutline } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import SplitBackground from '../reusable/SplitBackground';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -14,7 +15,7 @@ const ChooseKanban = () => {
 
     if (boards.loading) {
         return (
-            <div>
+            <div className="h-full w-full flex justify-center items-center">
                 <CircularProgress />
             </div>
         );
@@ -51,27 +52,35 @@ const ChooseKanban = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Job Boards
-            </h1>
-            <br />
-            <div className="flex justify-center">
+        <div
+            className='grow flex flex-col px-10'
+            style={{
+                background: SplitBackground('bottom', 'white', '#F6F6F6', 15)
+            }}
+        >
+            <div className='mb-5'>
+                <h1 className="text-neutral-500 text-3xl">
+                    Job Boards
+                </h1>
                 <Button
-                    color="neutral"
+                    sx={{
+                        marginTop: '4.5rem',
+                    }}
+                    color='white'
                     variant="contained"
-                    startIcon={<AddCircleOutline />}
+                    startIcon={<Add />}
                     onClick={() => setDialogOpen(true)}
                 >
                     Create new board
                 </Button>
+            </div>
+            <div className="flex">
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogContent
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
                             width: 600,
-                            alignItems: 'center',
                         }}
                     >
                         <p>Enter board name</p>
