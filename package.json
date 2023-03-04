@@ -37,7 +37,8 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "deploy": "echo ' !!! Please run tools/deploySite.sh instead !!!'"
+        "deployweb": "bash ./tools/deploySite.sh",
+        "deployapi": "bash ./tools/deployAPI.sh"
     },
     "browserslist": {
         "production": [
