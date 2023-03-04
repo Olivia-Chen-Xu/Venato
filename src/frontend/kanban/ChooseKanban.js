@@ -1,10 +1,11 @@
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
-import { Add, AddCircleOutline } from '@mui/icons-material';
+import { Add, MoreVert, SkateboardingOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import SplitBackground from '../reusable/SplitBackground';
+import IconButton from '@mui/material/IconButton';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -38,12 +39,22 @@ const ChooseKanban = () => {
         const boardsHtml = [];
         boards.result.data.forEach((board) => {
             boardsHtml.push(
-                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
-                        className="relative w-full h-full py-16"
+                        className="py-8 flex grow"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
-                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
+                        <div class="flex px-8 gap-3 grow items-center">
+                            <SkateboardingOutlined color="primary" fontSize='large'/>
+                            <span>{board.name}</span>
+                            <IconButton 
+                                sx={{
+                                    marginLeft: 'auto'
+                                }}
+                            >
+                                <MoreVert />
+                            </IconButton>
+                        </div>
                     </button>
                 </div>
             );

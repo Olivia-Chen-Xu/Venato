@@ -6,6 +6,7 @@ import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from '../reusable/JobDialog';
 import { useLocation } from 'react-router-dom';
 import SplitBackground from '../reusable/SplitBackground';
+import { Skeleton } from '@mui/lab';
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -219,17 +220,11 @@ const Kanban = () => {
                 />
             )}
             <div className='px-8 mb-11'>
-                <h4
-                    style={{
-                        alignSelf: 'flex-start',
-                        fontSize: 32,
-                        fontWeight: 500,
-                        lineHeight: '29px',
-                        color: '#676767'
-                    }}
-                >
-                    {boardName}
-                </h4>
+                {loading ? (
+                    <Skeleton animation="wave" sx={{ fontSize: '1.875rem', lineHeight: '2.25rem', width: '25%' }} />
+                ) : (
+                    <h1 className='text-neutral-800 text-3xl'>{boardName}</h1>
+                )}
             </div>
             <div style={{
                 display: 'flex',
