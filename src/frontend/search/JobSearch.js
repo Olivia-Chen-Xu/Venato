@@ -5,6 +5,7 @@ import "./job.css";
 import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
 import bar from "../../images/bar.png";
+import PageTitle from "../reusable/PageTitle";
 
 const JobSearch = () => {
     const [query, setQuery] = useState("");
@@ -121,9 +122,11 @@ const JobSearch = () => {
     };
 
     return (
-        <div className="ml-5 mr-5">
-            <div className="grid place-content-center">
-                <h1 className="grid place-content-center text-2xl mb-1">Job Search</h1>
+        <div>
+            <PageTitle>
+                Job Search
+            </PageTitle>
+            <div className="grid place-content-center ml-5 mr-5">
                 <div className="flex flex-1">
                     <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
                         <div>

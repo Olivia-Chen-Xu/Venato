@@ -1,9 +1,11 @@
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
+import { Add, MoreVert, SkateboardingOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import PageTitle from '../reusable/PageTitle';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -14,7 +16,7 @@ const ChooseKanban = () => {
 
     if (boards.loading) {
         return (
-            <div>
+            <div className="h-full w-full flex justify-center items-center">
                 <CircularProgress />
             </div>
         );
@@ -37,12 +39,22 @@ const ChooseKanban = () => {
         const boardsHtml = [];
         boards.result.data.forEach((board) => {
             boardsHtml.push(
-                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
-                        className="relative w-full h-full py-16"
+                        className="py-8 flex grow"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
-                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
+                        <div className="flex px-8 gap-3 grow items-center">
+                            <SkateboardingOutlined color="primary" fontSize='large' />
+                            <span>{board.name}</span>
+                            <IconButton
+                                sx={{
+                                    marginLeft: 'auto'
+                                }}
+                            >
+                                <MoreVert />
+                            </IconButton>
+                        </div>
                     </button>
                 </div>
             );
@@ -51,27 +63,29 @@ const ChooseKanban = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
+        <div
+            className='grow flex flex-col'
+        >
+            <PageTitle>
                 Job Boards
-            </h1>
-            <br />
-            <div className="flex justify-center">
+            </PageTitle>
+            <div className='mx-20 mb-6'>
                 <Button
-                    color="neutral"
+                    color='white'
                     variant="contained"
-                    startIcon={<AddCircleOutline />}
+                    startIcon={<Add />}
                     onClick={() => setDialogOpen(true)}
                 >
                     Create new board
                 </Button>
+            </div>
+            <div className="flex">
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogContent
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
                             width: 600,
-                            alignItems: 'center',
                         }}
                     >
                         <p>Enter board name</p>

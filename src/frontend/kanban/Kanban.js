@@ -1,12 +1,22 @@
 import { useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { ControlPoint } from '@mui/icons-material';
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import JobDialog from '../reusable/JobDialog';
 import { useLocation } from 'react-router-dom';
+import Skeleton from '@mui/material/Skeleton';
+import { StrictModeDroppable } from '../reusable/StrictModeDroppable';
+import {ReactComponent as NoJobs} from '../../images/no-jobs.svg'
+import PageTitle from '../reusable/PageTitle';
+import KanbanJob from './components/KanbanJob';
+import KanbanHeader from './components/KanbanHeader';
 
-const colTitles = ['APPLICATIONS', 'INTERVIEWS', 'OFFERS', 'REJECTIONS'];
+const cols = [
+    { name: 'APPLICATIONS', color: '#926EFE' },
+    { name: 'INTERVIEWS', color: '#FF8900' },
+    { name: 'OFFERS', color: '#84FF9F' },
+    { name: 'REJECTIONS', color: '#00819B' },
+]
 
 const newJob = (idx) => {
     return {
@@ -57,25 +67,15 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
     return [result, removed];
 };
-const grid = 8;
 
-const getJobStyle = (isDragging, draggableStyle) => ({
-    userSelect: 'none',
-    padding: grid * 4,
-    margin: `0 0 ${grid}px 0`,
+
+const getListStyle = (isDraggingOver) => ({
+    height: '100%',
+    overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
-    background: isDragging ? '#C7ADD8' : 'none',
-    //border: '1px solid #676767',
-    borderRadius: 10,
-    boxShadow: '2px 5px 5px #BEBEBE',
-    ...draggableStyle
-});
-const getListStyle = (isDraggingOver) => ({
-    padding: grid,
-    width: (window.innerWidth - 200) / 4,
-    height: window.innerHeight - 100,
-    overflowY: 'scroll'
+    gap: '1rem',
+    margin: '1rem',
 });
 
 const Kanban = () => {
@@ -118,6 +118,10 @@ const Kanban = () => {
         setCurrentJob(job);
         setModalOpen(true);
     };
+
+    const handleDelete = (job, idx) => {
+        console.error('not implmented')
+    }
 
     async function onDragEnd(result) {
         const { source, destination } = result;
@@ -180,29 +184,8 @@ const Kanban = () => {
 
     return (
         <div
-            style={{
-                paddingLeft: 40,
-                display: 'flex',
-                justifyContent: 'center',
-                flexDirection: 'column'
-            }}
+            className='flex flex-col grow overflow-hidden'
         >
-            {/* <button
-            type="button"
-            onClick={() => {
-                setState([...state, []]);
-            }}
-        >
-            Add new group
-        </button> */}
-            {/* <button
-            type="button"
-            onClick={() => {
-                setState([...state, getJobs(1)]);
-            }}
-        >
-            Add new job
-        </button> */}
             {modalOpen && (
                 <JobDialog
                     setCurrentJob={setCurrentJob}
@@ -215,127 +198,78 @@ const Kanban = () => {
                     isKanban={true}
                 />
             )}
-            <h4
+            <PageTitle>
+                {loading ? (
+                    <Skeleton animation="wave" sx={{ fontSize: '1.875rem', lineHeight: '2.25rem', width: '25%' }} />
+                ) : (
+                    <h1 className='text-neutral-800 text-3xl'>{boardName}</h1>
+                )}
+            </PageTitle>
+            <div
+                className='overflow-hidden'
                 style={{
-                    alignSelf: 'flex-start',
-                    fontSize: 32,
-                    fontWeight: 'bold',
-                    color: '#676767'
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '5',
+                    flexBasis: 'max-content',
+                    flexGrow: '1',
                 }}
             >
-                {boardName}
-            </h4>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 {/* {jobs.map((job) => (
                 <div>{JSON.stringify(job)}</div>
             ))} */}
 
                 {loading ? (
-                    <CircularProgress />
+                    <div className="flex justify-center items-center flex-[1_1_100%]">
+                        <CircularProgress />
+                    </div>
                 ) : (
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        {kanbanState.map((el, ind) => (
-                            <div
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexDirection: 'column',
-                                    display: 'flex'
-                                }}
-                            >
-                                <p
-                                    style={{
-                                        borderBottom: '1px solid #676767',
-                                        width: '80%',
-                                        textAlign: 'center',
-                                        fontSize: 20,
-                                        color: '#676767'
-                                    }}
-                                >
-                                    {colTitles[ind]}
-                                </p>
-                                <IconButton onClick={async () => await handleAddClick(ind)}>
-                                    <ControlPoint />
-                                </IconButton>
-                                <Droppable key={ind} droppableId={`${ind}`}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            style={getListStyle(snapshot.isDraggingOver)}
-                                            {...provided.droppableProps}
-                                        >
-                                            {el.map((job, index) => (
-                                                <div onClick={() => handleJobView(job, ind)}>
-                                                    <Draggable
-                                                        key={job.id}
-                                                        draggableId={job.id}
-                                                        index={index}
-                                                    >
-                                                        {(provided, snapshot) => (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                style={getJobStyle(
-                                                                    snapshot.isDragging,
-                                                                    provided.draggableProps.style
-                                                                )}
-                                                            >
-                                                                <text
-                                                                    style={{
-                                                                        fontSize: 20,
-                                                                        fontWeight: 300,
-                                                                        color: '#633175',
-                                                                        textAlign: 'right'
-                                                                    }}
-                                                                >
-                                                                    {job.position}
-                                                                </text>
-                                                                <text
-                                                                    style={{
-                                                                        fontSize: 14,
-                                                                        fontWeight: 300,
-                                                                        color: '#633175',
-                                                                        textAlign: 'right'
-                                                                    }}
-                                                                >
-                                                                    {job.company}
-                                                                </text>
-                                                                {/* <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    justifyContent:
-                                                                        'space-around',
-                                                                }}
-                                                            >
-                                                                {colTitles[job.metadata.stage]}
-                                                            </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    const newState = [...state];
-                                                                    newState[ind].splice(
-                                                                        index,
-                                                                        1
-                                                                    );
-                                                                    setState(newState);
-                                                                }}
-                                                            >
-                                                                delete
-                                                            </button> */}
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
+                    <div className='flex grow flex-col overflow-scroll h-full'>
+                        <div className='flex flex-1 min-h-min'>
+                            <DragDropContext onDragEnd={onDragEnd}>
+                                {kanbanState.map((el, ind) => (
+                                    <div
+                                        className='flex flex-col items-center gap-3 flex-1 my-3 min-h-min'
+                                        style={{
+                                            minWidth: '24rem'
+                                        }}
+                                    >
+                                        <KanbanHeader
+                                            name={cols[ind].name}
+                                            color={cols[ind].color}
+                                            amount={kanbanState[ind].length}
+                                            ind={ind}
+                                            handleAddClick={handleAddClick}
+                                            handleEditClick={() => console.warn('Not Implmented')}
+                                            handleDeleteClick={() => console.warn('Not Implmented')}
+                                        />
+                                        <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    className='flex-1 w-[85%] empty:min-w-0 empty:flex-[0_1_0]'
+                                                    ref={provided.innerRef}
+                                                    style={getListStyle(snapshot.isDraggingOver)}
+                                                    {...provided.droppableProps}
+                                                >
+                                                    {el.map((job, index) => (
+                                                        <div onClick={() => handleJobView(job, ind)}>
+                                                            <KanbanJob job={job} index={index} ind={ind} edit={handleJobView} delete={handleDelete}/>
+                                                        </div>
+                                                    ))}
+                                                    {provided.placeholder}
                                                 </div>
-                                            ))}
-                                            {provided.placeholder}
-                                        </div>
-                                    )}
-                                </Droppable>
+                                            )}
+                                        </StrictModeDroppable>
+                                    </div>
+                                ))}
+                            </DragDropContext>
+                        </div>
+                        { !kanbanState.reduce((p, c) => p || c.length > 0, false) &&
+                            <div className='flex justify-center content-center my-[7rem]'>
+                                <NoJobs />
                             </div>
-                        ))}
-                    </DragDropContext>
+                        }
+                    </div>
                 )}
             </div>
         </div>
@@ -343,3 +277,26 @@ const Kanban = () => {
 }
 
 export default Kanban;
+
+/* <div
+style={{
+    display: 'flex',
+    justifyContent:
+        'space-around',
+}}
+>
+{colTitles[job.metadata.stage]}
+</div>
+<button
+type="button"
+onClick={() => {
+    const newState = [...state];
+    newState[ind].splice(
+        index,
+        1
+    );
+    setState(newState);
+}}
+>
+delete
+</button> */

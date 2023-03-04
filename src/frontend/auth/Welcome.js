@@ -28,7 +28,7 @@ const Welcome = () => {
     // };
 
     return (
-        <div className="AuthMainDiv">
+        <div className="AuthMainDiv w-50">
             <img src={logo} alt="" width={200} />
             <Button
                 variant="contained"
