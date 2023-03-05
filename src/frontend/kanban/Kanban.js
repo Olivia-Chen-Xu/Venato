@@ -6,7 +6,7 @@ import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from '../reusable/JobDialog';
 import { useLocation } from 'react-router-dom';
 import SplitBackground from '../reusable/SplitBackground';
-import { Skeleton } from '@mui/lab';
+import Skeleton from '@mui/material/Skeleton';
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -230,9 +230,9 @@ const Kanban = () => {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '5',
-                overflowX: 'scroll',
+                overflowX: 'auto',
                 overflowY: 'hidden',
-                flexGrow: '1',
+                flexBasis: 'max-content'
             }}>
                 {/* {jobs.map((job) => (
                 <div>{JSON.stringify(job)}</div>
@@ -245,7 +245,12 @@ const Kanban = () => {
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
                         {kanbanState.map((el, ind) => (
-                            <div className='flex flex-col items-center h-full gap-3 flex-1 my-3'>
+                            <div
+                                className='flex flex-col items-center h-full gap-3 flex-1 my-3 w-0'
+                                style={{
+                                    minWidth: '24rem'
+                                }}
+                            >
                                 <div
                                     className='flex flex-row items-center gap-2 w-[85%]'
                                     style={{
@@ -284,14 +289,23 @@ const Kanban = () => {
                                     <IconButton
                                         onClick={async () => await handleAddClick(ind)}
                                         style={{ marginLeft: 'auto' }}
+                                        sx={{
+                                            flexShrink: 1,
+                                            padding: 0
+                                        }}
                                     >
                                         <Add />
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton
+                                        sx={{
+                                            flexShrink: 1,
+                                            padding: 0
+                                        }}
+                                    >
                                         <MoreHoriz />
                                     </IconButton>
                                 </div>
-                                <Droppable key={ind} droppableId={`${ind}`}>
+                                <Droppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
                                     {(provided, snapshot) => (
                                         <div
                                             className='flex-1 w-[85%]'
