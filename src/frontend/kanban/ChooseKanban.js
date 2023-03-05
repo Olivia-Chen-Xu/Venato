@@ -44,7 +44,7 @@ const ChooseKanban = () => {
                         className="py-8 flex grow"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
-                        <div class="flex px-8 gap-3 grow items-center">
+                        <div className="flex px-8 gap-3 grow items-center">
                             <SkateboardingOutlined color="primary" fontSize='large'/>
                             <span>{board.name}</span>
                             <IconButton 
@@ -65,9 +65,6 @@ const ChooseKanban = () => {
     return (
         <div
             className='grow flex flex-col px-10'
-            style={{
-                background: SplitBackground('bottom', 'white', '#F6F6F6', 15)
-            }}
         >
             <div className='mb-5'>
                 <h1 className="text-neutral-500 text-3xl">

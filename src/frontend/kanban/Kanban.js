@@ -7,6 +7,7 @@ import JobDialog from '../reusable/JobDialog';
 import { useLocation } from 'react-router-dom';
 import SplitBackground from '../reusable/SplitBackground';
 import Skeleton from '@mui/material/Skeleton';
+import { StrictModeDroppable } from '../reusable/StrictModeDroppable';
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -84,7 +85,9 @@ const getListStyle = (isDraggingOver) => ({
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem'
+    gap: '1rem',
+    padding: '1rem',
+    //borderRadius: '16px',
 });
 
 const someAction = (e) => {
@@ -232,7 +235,8 @@ const Kanban = () => {
                 gap: '5',
                 overflowX: 'auto',
                 overflowY: 'hidden',
-                flexBasis: 'max-content'
+                flexBasis: 'max-content',
+                flexGrow: '1',
             }}>
                 {/* {jobs.map((job) => (
                 <div>{JSON.stringify(job)}</div>
@@ -305,7 +309,7 @@ const Kanban = () => {
                                         <MoreHoriz />
                                     </IconButton>
                                 </div>
-                                <Droppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
+                                <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
                                     {(provided, snapshot) => (
                                         <div
                                             className='flex-1 w-[85%]'
@@ -389,7 +393,7 @@ const Kanban = () => {
                                             {provided.placeholder}
                                         </div>
                                     )}
-                                </Droppable>
+                                </StrictModeDroppable>
                             </div>
                         ))}
                     </DragDropContext>
