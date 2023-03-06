@@ -3,6 +3,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
 import { Button, Dialog, DialogContent, TextField } from '@mui/material';
+import PageTitle from "../reusable/PageTitle";
 
 const QuestionSearch = () => {
     const [query, setQuery] = useState("");
@@ -102,11 +103,11 @@ const QuestionSearch = () => {
     const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
         <div>
-            <div className="grid place-content-center">
-                <h1 className="grid place-content-center text-2xl mb-1">
-                    Interview Question Search
-                </h1>
-                <div className="flex flex-1">
+            <div>
+                <PageTitle>
+                        Interview Question Search
+                </PageTitle>
+                <div className="grid place-content-center flex flex-1">
                     <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
                         <div>
                             <label htmlFor="position">

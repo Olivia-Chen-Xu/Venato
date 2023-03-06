@@ -8,6 +8,8 @@ import { useLocation } from 'react-router-dom';
 import SplitBackground from '../reusable/SplitBackground';
 import Skeleton from '@mui/material/Skeleton';
 import { StrictModeDroppable } from '../reusable/StrictModeDroppable';
+import {ReactComponent as NoJobs} from '../../images/no-jobs.svg'
+import PageTitle from '../reusable/PageTitle';
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -205,10 +207,7 @@ const Kanban = () => {
 
     return (
         <div
-            className='h-full flex flex-col grow'
-            style={{
-                background: SplitBackground('bottom', 'white', '#F6F6F6', 15)
-            }}
+            className='flex flex-col grow overflow-hidden'
         >
             {modalOpen && (
                 <JobDialog
@@ -222,181 +221,191 @@ const Kanban = () => {
                     isKanban={true}
                 />
             )}
-            <div className='px-8 mb-11'>
+            <PageTitle>
                 {loading ? (
                     <Skeleton animation="wave" sx={{ fontSize: '1.875rem', lineHeight: '2.25rem', width: '25%' }} />
                 ) : (
                     <h1 className='text-neutral-800 text-3xl'>{boardName}</h1>
                 )}
-            </div>
-            <div style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '5',
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                flexBasis: 'max-content',
-                flexGrow: '1',
-            }}>
+            </PageTitle>
+            <div
+                className='overflow-hidden'
+                style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '5',
+                    flexBasis: 'max-content',
+                    flexGrow: '1',
+                }}
+            >
                 {/* {jobs.map((job) => (
                 <div>{JSON.stringify(job)}</div>
             ))} */}
 
                 {loading ? (
-                    <div className="h-full w-full flex justify-center items-center">
+                    <div className="flex justify-center items-center flex-[1_1_100%]">
                         <CircularProgress />
                     </div>
                 ) : (
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        {kanbanState.map((el, ind) => (
-                            <div
-                                className='flex flex-col items-center h-full gap-3 flex-1 my-3 w-0'
-                                style={{
-                                    minWidth: '24rem'
-                                }}
-                            >
-                                <div
-                                    className='flex flex-row items-center gap-2 w-[85%]'
-                                    style={{
-                                        borderTop: `4px solid ${cols[ind].color || '#676767'}`,
-                                        padding: '8px',
-                                        paddingLeft: '16px',
-                                        textAlign: 'center',
-                                        fontSize: 20,
-                                        boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.1)',
-                                        borderRadius: '4px',
-                                        background: 'white',
-                                    }}
-                                >
-                                    <span>{cols[ind].name}</span>
+                    <div className='flex grow flex-col overflow-scroll'>
+                        <div className='flex flex-1 min-h-min'>
+                            <DragDropContext onDragEnd={onDragEnd}>
+                                {kanbanState.map((el, ind) => (
                                     <div
+                                        className='flex flex-col items-center gap-3 flex-1 my-3 min-h-min'
                                         style={{
-                                            border: '1px solid #32363d',
-                                            borderRadius: '16px',
-                                            display: 'flex',
-                                            padding: '4px',
-                                            justifyContent: 'center'
+                                            minWidth: '24rem'
                                         }}
                                     >
-                                        <span
-                                            className='flex items-center text-center'
+                                        <div
+                                            className='flex flex-row items-center gap-2 w-[85%]'
                                             style={{
-                                                lineHeight: '16px',
-                                                fontSize: '13px',
-                                                fontWeight: '400',
-                                                letterSpacing: '0.04em'
+                                                borderTop: `4px solid ${cols[ind].color || '#676767'}`,
+                                                padding: '8px',
+                                                paddingLeft: '16px',
+                                                textAlign: 'center',
+                                                fontSize: 20,
+                                                boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.1)',
+                                                borderRadius: '4px',
+                                                background: 'white',
                                             }}
                                         >
-                                            {kanbanState[ind].length}
-                                        </span>
-                                    </div>
-                                    <IconButton
-                                        onClick={async () => await handleAddClick(ind)}
-                                        style={{ marginLeft: 'auto' }}
-                                        sx={{
-                                            flexShrink: 1,
-                                            padding: 0
-                                        }}
-                                    >
-                                        <Add />
-                                    </IconButton>
-                                    <IconButton
-                                        sx={{
-                                            flexShrink: 1,
-                                            padding: 0
-                                        }}
-                                    >
-                                        <MoreHoriz />
-                                    </IconButton>
-                                </div>
-                                <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            className='flex-1 w-[85%]'
-                                            ref={provided.innerRef}
-                                            style={getListStyle(snapshot.isDraggingOver)}
-                                            {...provided.droppableProps}
-                                        >
-                                            {el.map((job, index) => (
-                                                <div onClick={() => handleJobView(job, ind)}>
-                                                    <Draggable
-                                                        key={job.id}
-                                                        draggableId={job.id}
-                                                        index={index}
-                                                    >
-                                                        {(provided, snapshot) => (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                style={getJobStyle(
-                                                                    snapshot.isDragging,
-                                                                    provided.draggableProps.style
-                                                                )}
-                                                                className='min-h-[15%]'
-                                                            >
-                                                                <div className='flex flex-col'>
-                                                                    <IconButton
-                                                                        size="small"
-                                                                        sx={{
-                                                                            marginLeft: 'auto'
-                                                                        }}
-                                                                        onClick={someAction}
-                                                                    >
-                                                                        <MoreHoriz />
-                                                                    </IconButton>
-                                                                    <div
-                                                                        className='flex flex-row'
-                                                                        style={{
-                                                                            padding: grid * 4 + 5,
-                                                                            paddingTop: 0,
-                                                                            gap: '0.5rem'
-                                                                        }}
-                                                                    >
-                                                                        <Flag
-                                                                            color={jobPrioityMapper(job.priority) || 'action'}
-                                                                            style={{
-                                                                                marginTop: '4px',
-                                                                                fontSize: 30
-                                                                            }}
-                                                                        ></Flag>
-                                                                        <div className='flex flex-col'>
-                                                                            <text
-                                                                                className='truncate'
-                                                                                style={{
-                                                                                    fontSize: 25,
-                                                                                    fontWeight: 300,
-                                                                                    minHeight: '37.5px',
-                                                                                    minWidth: '37.5px'
-                                                                                }}
-                                                                            >
-                                                                                {job.company}
-                                                                            </text>
-                                                                            <text
-                                                                                className='truncate'
-                                                                                style={{
-                                                                                    fontSize: 16,
-                                                                                    fontWeight: 300,
-                                                                                }}
-                                                                            >
-                                                                                {job.position}
-                                                                            </text>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                </div>
-                                            ))}
-                                            {provided.placeholder}
+                                            <span>{cols[ind].name}</span>
+                                            <div
+                                                style={{
+                                                    border: '1px solid #32363d',
+                                                    borderRadius: '16px',
+                                                    display: 'flex',
+                                                    padding: '4px',
+                                                    justifyContent: 'center'
+                                                }}
+                                            >
+                                                <span
+                                                    className='flex items-center text-center'
+                                                    style={{
+                                                        lineHeight: '16px',
+                                                        fontSize: '13px',
+                                                        fontWeight: '400',
+                                                        letterSpacing: '0.04em'
+                                                    }}
+                                                >
+                                                    {kanbanState[ind].length}
+                                                </span>
+                                            </div>
+                                            <IconButton
+                                                onClick={async () => await handleAddClick(ind)}
+                                                style={{ marginLeft: 'auto' }}
+                                                sx={{
+                                                    flexShrink: 1,
+                                                    padding: 0
+                                                }}
+                                            >
+                                                <Add />
+                                            </IconButton>
+                                            <IconButton
+                                                sx={{
+                                                    flexShrink: 1,
+                                                    padding: 0
+                                                }}
+                                            >
+                                                <MoreHoriz />
+                                            </IconButton>
                                         </div>
-                                    )}
-                                </StrictModeDroppable>
+                                        <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    className='flex-1 w-[85%] empty:min-w-0 empty:flex-[0_1_0]'
+                                                    ref={provided.innerRef}
+                                                    style={getListStyle(snapshot.isDraggingOver)}
+                                                    {...provided.droppableProps}
+                                                >
+                                                    {el.map((job, index) => (
+                                                        <div onClick={() => handleJobView(job, ind)}>
+                                                            <Draggable
+                                                                key={job.id}
+                                                                draggableId={job.id}
+                                                                index={index}
+                                                            >
+                                                                {(provided, snapshot) => (
+                                                                    <div
+                                                                        ref={provided.innerRef}
+                                                                        {...provided.draggableProps}
+                                                                        {...provided.dragHandleProps}
+                                                                        style={getJobStyle(
+                                                                            snapshot.isDragging,
+                                                                            provided.draggableProps.style
+                                                                        )}
+                                                                        className='min-h-[15%]'
+                                                                    >
+                                                                        <div className='flex flex-col'>
+                                                                            <IconButton
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    marginLeft: 'auto'
+                                                                                }}
+                                                                                onClick={someAction}
+                                                                            >
+                                                                                <MoreHoriz />
+                                                                            </IconButton>
+                                                                            <div
+                                                                                className='flex flex-row'
+                                                                                style={{
+                                                                                    padding: grid * 4 + 5,
+                                                                                    paddingTop: 0,
+                                                                                    gap: '0.5rem'
+                                                                                }}
+                                                                            >
+                                                                                <Flag
+                                                                                    color={jobPrioityMapper(job.priority) || 'action'}
+                                                                                    style={{
+                                                                                        marginTop: '4px',
+                                                                                        fontSize: 30
+                                                                                    }}
+                                                                                ></Flag>
+                                                                                <div className='flex flex-col'>
+                                                                                    <text
+                                                                                        className='truncate'
+                                                                                        style={{
+                                                                                            fontSize: 25,
+                                                                                            fontWeight: 300,
+                                                                                            minHeight: '37.5px',
+                                                                                            minWidth: '37.5px'
+                                                                                        }}
+                                                                                    >
+                                                                                        {job.company}
+                                                                                    </text>
+                                                                                    <text
+                                                                                        className='truncate'
+                                                                                        style={{
+                                                                                            fontSize: 16,
+                                                                                            fontWeight: 300,
+                                                                                        }}
+                                                                                    >
+                                                                                        {job.position}
+                                                                                    </text>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                )}
+                                                            </Draggable>
+                                                        </div>
+                                                    ))}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </StrictModeDroppable>
+                                    </div>
+                                ))}
+                            </DragDropContext>
+                        </div>
+                        { !kanbanState.reduce((p, c) => p || c.length > 0, false) &&
+                            <div className='flex justify-center content-center my-[7rem]'>
+                                <NoJobs />
                             </div>
-                        ))}
-                    </DragDropContext>
+                        }
+                    </div>
                 )}
             </div>
         </div>

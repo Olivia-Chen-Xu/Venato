@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import SplitBackground from '../reusable/SplitBackground';
 import IconButton from '@mui/material/IconButton';
+import PageTitle from '../reusable/PageTitle';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -45,9 +46,9 @@ const ChooseKanban = () => {
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
                         <div className="flex px-8 gap-3 grow items-center">
-                            <SkateboardingOutlined color="primary" fontSize='large'/>
+                            <SkateboardingOutlined color="primary" fontSize='large' />
                             <span>{board.name}</span>
-                            <IconButton 
+                            <IconButton
                                 sx={{
                                     marginLeft: 'auto'
                                 }}
@@ -64,16 +65,13 @@ const ChooseKanban = () => {
 
     return (
         <div
-            className='grow flex flex-col px-10'
+            className='grow flex flex-col'
         >
-            <div className='mb-5'>
-                <h1 className="text-neutral-500 text-3xl">
-                    Job Boards
-                </h1>
+            <PageTitle>
+                Job Boards
+            </PageTitle>
+            <div className='mx-20 mb-6'>
                 <Button
-                    sx={{
-                        marginTop: '4.5rem',
-                    }}
                     color='white'
                     variant="contained"
                     startIcon={<Add />}

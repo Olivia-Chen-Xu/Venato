@@ -14,7 +14,8 @@ const sidebarButtonOverrides = {
     lineHeight: '16px',
     letterSpacing: '0.04em',
     whiteSpace: 'nowrap',
-    padding: '1rem 0.5rem'
+    padding: '1rem 0.5rem',
+    textOverflow: 'clip'
 }
 
 export default function ReusableSideBar() {
@@ -26,7 +27,7 @@ export default function ReusableSideBar() {
                 <Profile />
             </Drawer>
             <div
-                className="h-screen min-w-[15%] max-w-[15%] flex-auto overflow-hidden"
+                className="min-w-[15rem] max-w-[15%] flex-auto"
                 style={{
                     boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.1)',
                     border: '1px solid #E0E0E0',

@@ -6,6 +6,7 @@ import { AddCircleOutline } from '@mui/icons-material';
 import taskLine from '../../images/task-line.png';
 import { useState } from 'react';
 import JobDialog from '../reusable/JobDialog';
+import PageTitle from '../reusable/PageTitle';
 
 const Homepage = () => {
     const nav = useNavigate();
@@ -130,7 +131,7 @@ const Homepage = () => {
                     isKanban={false}
                 />
             )}
-            <h1 className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</h1>
+            <PageTitle className="text-neutral-500 text-3xl mt-4 ml-20">Welcome Back!</PageTitle>
 
             <h1 className="text-neutral-500 text-xl mt-2 grid place-content-center uppercase">
                 Upcoming Tasks
