@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
     DialogContent,
+    DialogTitle,
     Tabs,
     Tab,
     TextField,
@@ -10,9 +11,9 @@ import {
     Dialog,
     CircularProgress,
     MenuItem,
-} from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+} from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
     DescriptionOutlined,
     DriveFileRenameOutlineOutlined,
@@ -23,13 +24,15 @@ import {
     LocationOnOutlined,
     Delete,
     AddCircleOutline,
-} from '@mui/icons-material';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { DateTimePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-
-const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
-const priorities = ['High', 'Medium', 'Low'];
+} from "@mui/icons-material";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { btnStyle } from "../auth/authStyles";
+import { AccountCircleOutlined } from "@mui/icons-material";
+import { MoreHoriz } from "@mui/icons-material";
+const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
+const priorities = ["High", "Medium", "Low"];
 
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
@@ -61,7 +64,7 @@ const Headings = ({ jobData, setJob }) => {
                 }}>
                     @
                 </h1> */}
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
                 <Input
                     placeholder="Company"
                     style={styles.Company}
@@ -105,9 +108,9 @@ const Details = ({ value, index, jobData, setJob }) => {
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
             <>{/* </div> */}</>
@@ -116,7 +119,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                 label="Column"
                 value={colTitles[jobData.stage]}
                 onChange={handleChange}
-                style={{ marginTop: '2vh' }}
+                style={{ marginTop: "2vh" }}
             >
                 {colTitles.map((title) => (
                     <MenuItem value={title}>{title}</MenuItem>
@@ -127,7 +130,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                 value={jobData.priority}
                 label="Priority"
                 onChange={handleChange}
-                style={{ marginTop: '2vh' }}
+                style={{ marginTop: "2vh" }}
             >
                 {priorities.map((p) => (
                     <MenuItem value={p}>{p}</MenuItem>
@@ -168,13 +171,13 @@ const Notes = ({ value, index, jobData, setJob }) => {
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
             <TextField
-                style={{ marginTop: '2vh' }}
+                style={{ marginTop: "2vh" }}
                 label="Notes"
                 multiline
                 rows={10}
@@ -190,31 +193,31 @@ const Notes = ({ value, index, jobData, setJob }) => {
 const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newDdl, setNewDdl] = useState({
-        title: '',
+        title: "",
         date: dayjs().unix(),
-        location: '',
-        link: '',
+        location: "",
+        link: "",
     });
     const addNewDdl = async () => {
         setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
         setOpen(false);
         await httpsCallable(
             getFunctions(),
-            'addDeadline'
+            "addDeadline"
         )({ ...newDdl, jobId: jobData.id, company: jobData.company });
-        setNewDdl({ title: '', date: dayjs().unix(), location: '', link: '' });
+        setNewDdl({ title: "", date: dayjs().unix(), location: "", link: "" });
     };
 
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
             <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
+                style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -223,8 +226,8 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             </Button>
             {jobData.deadlines &&
                 jobData.deadlines.map((deadline) => (
-                    <div style={{ marginBottom: '2vh' }}>
-                        {' '}
+                    <div style={{ marginBottom: "2vh" }}>
+                        {" "}
                         <h2>{deadline.title}</h2>
                         <p>{dayjs.unix(deadline.date).toString()}</p>
                         <p>{deadline.location}</p>
@@ -235,10 +238,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        display: "flex",
+                        flexDirection: "column",
                         width: 600,
-                        alignItems: 'center',
+                        alignItems: "center",
                     }}
                 >
                     <p>Task title</p>
@@ -292,28 +295,28 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
 const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ name: '', description: '' });
+    const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
 
     const addNewQuestion = async () => {
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         await httpsCallable(
             getFunctions(),
-            'addInterviewQuestion'
+            "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
-        setNewQuestion({ name: '', description: '' });
+        setNewQuestion({ name: "", description: "" });
     };
 
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
             <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
+                style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
                 onClick={() => setOpen(true)}
                 startIcon={<AddCircleOutline />}
@@ -323,10 +326,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        display: "flex",
+                        flexDirection: "column",
                         width: 600,
-                        alignItems: 'center',
+                        alignItems: "center",
                     }}
                 >
                     <p>Enter question title</p>
@@ -369,7 +372,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         </a>
                     </li> */
                 jobData.interviewQuestions.map((question) => (
-                    <div style={{ marginBottom: '2vh' }}>
+                    <div style={{ marginBottom: "2vh" }}>
                         <h2>{question.name}</h2>
                         <p>{question.description}</p>
                         <hr />
@@ -382,126 +385,179 @@ const Questions = ({ value, index, jobData, setJob }) => {
 const Contacts = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newContact, setNewContact] = useState({
-        name: '',
-        title: '',
-        company: '',
-        email: '',
-        phone: '',
-        linkedin: '',
-        notes: '',
+        name: "",
+        title: "",
+        company: "",
+        email: "",
+        phone: "",
+        linkedin: "",
+        notes: "",
     });
 
     const addNewContact = async () => {
         setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
         setOpen(false);
-        await httpsCallable(getFunctions(), 'addContact')({ jobId: jobData.id, ...newContact });
+        await httpsCallable(getFunctions(), "addContact")({ jobId: jobData.id, ...newContact });
         setNewContact({
-            name: '',
-            title: '',
-            company: '',
-            email: '',
-            phone: '',
-            linkedin: '',
-            notes: '',
+            name: "",
+            title: "",
+            company: "",
+            email: "",
+            phone: "",
+            linkedin: "",
+            notes: "",
         });
     };
+
+    const openLink = (url) => {};
 
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add Contact
-            </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid--3 w-2/3 gap-14"></div>
+                <Button
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: 600,
-                        alignItems: 'center',
+                        marginTop: "2vh",
+                        marginBottom: "2vh",
+                        padding: "1vh 1vw",
+                        border: "2px solid #7F5BEB",
                     }}
+                    variant="outlined"
+                    onClick={() => setOpen(true)}
+                    startIcon={<AddCircleOutline />}
                 >
-                    <p>Contact name</p>
-                    <TextField
-                        label="Name"
-                        value={newContact.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, name: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Job title</p>
-                    <TextField
-                        label="Job title"
-                        value={newContact.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, title: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Company</p>
-                    <TextField
-                        label="Company"
-                        value={newContact.company}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, company: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to LinkedIn</p>
-                    <TextField
-                        label="Link to LinkedIn"
-                        value={newContact.linkedin}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, linkedin: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
-                        Add
-                    </Button>
+                    Add Contact
+                </Button>
+            </div>
+            <Dialog fulLWidth maxWidth="xl" open={open} onClose={() => setOpen(false)}>
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={addNewContact}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="w-full mb-4">
+                        <TextField
+                            className="w-full"
+                            required
+                            label="Contact Name"
+                            value={newContact.name}
+                            onChange={(e) => {
+                                setNewContact({ ...newContact, name: e.target.value });
+                            }}
+                        />
+                        <div className="flex flex-1 justify-between my-8">
+                            <TextField
+                                required
+                                className="w-7/12 ml-2"
+                                label="Job title"
+                                value={newContact.title}
+                                onChange={(e) => {
+                                    setNewContact({ ...newContact, title: e.target.value });
+                                }}
+                            />
+                            <TextField
+                                required
+                                className="w-2/5"
+                                label="Company"
+                                value={newContact.company}
+                                onChange={(e) => {
+                                    setNewContact({ ...newContact, company: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <TextField
+                            className="w-full"
+                            label="LinkedIn Profile"
+                            value={newContact.linkedin}
+                            onChange={(e) => {
+                                setNewContact({ ...newContact, linkedin: e.target.value });
+                            }}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
-            {jobData.contacts &&
-                jobData.contacts.map((contact) => (
-                    <div style={{ marginBottom: '2vh' }}>
-                        <h2>{contact.name}</h2>
-                        <p>{contact.title}</p>
-                        <p>{contact.company}</p>
-                        <p>{contact.linkedin}</p>
-                        <hr />
-                    </div>
-                ))}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-cols-3 w-3/4 gap-14">
+                    {jobData.contacts &&
+                        jobData.contacts.map((contact) => (
+                            <div className="border rounded-lg">
+                                {/* <div className="flex flex-row-reverse w-full mr-5">
+                                    <MoreHoriz /> 
+                                </div> */}
+                                <div className="m-4">
+                                    <div className="flex flex-1 w-full mb-2">
+                                        <div className="flex flex-row justify-center font-light align-center mt-4 px-4">
+                                            <AccountCircleOutlined
+                                                fontSize="small"
+                                                className="scale-[2.25]"
+                                            />
+                                        </div>
+                                        <div className="w-full">
+                                            <h2 className="text-l font-bold">{contact.name}</h2>
+                                            <p>{contact.title}</p>
+                                            <p>@ {contact.company}</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        className="w-full border-2 border-[#367CFF]"
+                                        color="info"
+                                        style={{ border: "2px solid #367CFF" }}
+                                        variant="outlined"
+                                        onClick={() => {
+                                            window.open(contact.linkedin, "_blank");
+                                        }}
+                                    >
+                                        Linkedin
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                </div>
+            </div>
         </div>
     );
 };
 
 const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
     const [job, setJob] = useState({
-        position: '',
-        company: '',
-        description: '',
-        salary: '',
-        location: '',
-        link: '',
-        notes: '',
+        position: "",
+        company: "",
+        description: "",
+        salary: "",
+        location: "",
+        link: "",
+        notes: "",
         stage: jobData.stage,
         awaitingResponse: false,
-        priority: '',
+        priority: "",
 
         deadlines: [],
         interviewQuestions: [],
@@ -522,13 +578,13 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     };
 
     const addNewJob = async () => {
-        await httpsCallable(getFunctions(), 'addJob')();
+        await httpsCallable(getFunctions(), "addJob")();
     };
 
     const deleteJob = async (jobData) => {
         const newState = [...state];
         newState[index] = state[index].filter((j) => j.id !== jobData.id);
-        await httpsCallable(getFunctions(), 'deleteJob')({ id: jobData.id });
+        await httpsCallable(getFunctions(), "deleteJob")({ id: jobData.id });
         setState(newState);
         setOpen(false);
     };
@@ -568,7 +624,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
 
         await httpsCallable(
             getFunctions(),
-            'updateJob'
+            "updateJob"
         )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
 
         if (isKanban) {
@@ -617,7 +673,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
             if (jobData) {
                 await httpsCallable(
                     getFunctions(),
-                    'getJobData'
+                    "getJobData"
                 )(jobData.id).then((res) => setJob(res.data));
             }
         };
@@ -629,9 +685,9 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
         <Dialog fullWidth maxWidth="xl" onClose={async () => await handleClose()} open={true}>
             <DialogContent
                 style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
                     height: 800,
                 }}
             >
@@ -658,16 +714,16 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                 <Questions value={tabValue} index={3} jobData={job} setJob={setJob} />
                 <Contacts value={tabValue} index={4} jobData={job} setJob={setJob} />
                 {loading ? (
-                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
+                    <CircularProgress style={{ position: "absolute", right: 30 }} />
                 ) : (
-                    <div style={{ position: 'absolute', right: '2vw', top: '4vh' }}>
+                    <div style={{ position: "absolute", right: "2vw", top: "4vh" }}>
                         <Button
                             variant="outlined"
                             style={{
-                                padding: '14px 12px 14px 14px',
-                                gap: '10px',
-                                height: '25px',
-                                borderRadius: '4px',
+                                padding: "14px 12px 14px 14px",
+                                gap: "10px",
+                                height: "25px",
+                                borderRadius: "4px",
                                 marginInlineEnd: 5,
                             }}
                             onClick={() => deleteJob(job)}
@@ -678,14 +734,14 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                             variant="contained"
                             onClick={addNewJob}
                             style={{
-                                padding: '15px 12px 15px 14px',
-                                gap: '10px',
-                                width: '25px',
-                                height: '25px',
-                                borderRadius: '4px',
+                                padding: "15px 12px 15px 14px",
+                                gap: "10px",
+                                width: "25px",
+                                height: "25px",
+                                borderRadius: "4px",
                             }}
                         >
-                            {isEdit ? 'Save' : 'Add'}
+                            {isEdit ? "Save" : "Add"}
                         </Button>
                     </div>
                 )}
@@ -698,95 +754,95 @@ export default JobDialog;
 
 const styles = {
     jobTitle: {
-        fontStyle: 'normal',
-        fontWeight: '200',
-        fontSize: '36px',
-        lineHeight: '44px',
-        color: '#676767',
-        margin: '.5vh 0',
+        fontStyle: "normal",
+        fontWeight: "200",
+        fontSize: "36px",
+        lineHeight: "44px",
+        color: "#676767",
+        margin: ".5vh 0",
     },
 
     jobDescription: {
-        boxSizing: 'border-box',
-        border: 'none',
-        outline: 'none',
+        boxSizing: "border-box",
+        border: "none",
+        outline: "none",
     },
     applicationLink: {
-        border: 'none',
-        outline: 'none',
-        margin: '2vh 0px',
+        border: "none",
+        outline: "none",
+        margin: "2vh 0px",
     },
 
     Company: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '20px',
-        marginBottom: '.5vh',
-        color: '#676767',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "20px",
+        marginBottom: ".5vh",
+        color: "#676767",
     },
     Location: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '20px',
-        color: '#676767',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "20px",
+        color: "#676767",
     },
 
     interviewIcons: {
-        width: '740px',
-        gap: '42px',
+        width: "740px",
+        gap: "42px",
     },
 
     deadlineButton: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '16px 12px 16px 16px',
-        gap: '10px',
-        width: '145px',
-        height: '51px',
-        whiteSpace: 'nowrap',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "16px 12px 16px 16px",
+        gap: "10px",
+        width: "145px",
+        height: "51px",
+        whiteSpace: "nowrap",
 
-        background: '#633175',
-        borderRadius: '8px',
+        background: "#633175",
+        borderRadius: "8px",
     },
 
     interviewQuestions: {
-        color: '#676767',
-        width: '100%',
+        color: "#676767",
+        width: "100%",
     },
 
     contactsBox: {
-        color: '#676767',
-        width: '100%',
+        color: "#676767",
+        width: "100%",
     },
 
     deadlineTitle: {
-        fontStyle: 'normal',
-        fontWeight: '200',
-        fontSize: '36px',
-        lineHeight: '44px',
-        color: '#676767',
+        fontStyle: "normal",
+        fontWeight: "200",
+        fontSize: "36px",
+        lineHeight: "44px",
+        color: "#676767",
     },
 
     deadlineLocation: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '12px',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "12px",
 
-        color: '#676767',
+        color: "#676767",
     },
 
     deadlineCompany: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '12px',
-        lineHeight: '19px',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "12px",
+        lineHeight: "19px",
 
-        color: '#676767',
+        color: "#676767",
     },
 };
