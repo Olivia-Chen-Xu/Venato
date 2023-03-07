@@ -73,6 +73,7 @@ const getListStyle = (isDraggingOver) => ({
     margin: '1rem',
     borderRadius: '14px',
     backgroundColor: isDraggingOver ? 'rgb(233 213 255 / var(--tw-bg-opacity))' : 'rgb(248 250 252 / var(--tw-bg-opacity))',
+    alignSelf: 'stretch'
 });
 
 const Kanban = () => {
@@ -184,7 +185,6 @@ const Kanban = () => {
             isLoading={loading}
             isEmpty={empty}
             empty={<NoJobs />}
-            margin="10"
             title={boardName}
         >
             {modalOpen && (
@@ -200,12 +200,13 @@ const Kanban = () => {
                 />
             )}
             <div
-                className='overflow-auto pb-4'                
+                className='overflow-auto'                
                 style={{
                     display: 'grid',
                     gridAutoFlow: 'column',
                     gridAutoColumns: '24rem',
-                    height: empty ? 'fit-content' : '96.8%'                         // Weird height is so that scrollbar will show
+                    height: empty ? 'fit-content' : '100%',                         // Set height so that scrollbar will show
+                    padding: '0 1.5rem'
                 }}
             >
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -226,7 +227,7 @@ const Kanban = () => {
                                 {(provided, snapshot) => (
                                     <div
                                         // If no jobs, collapse to make room for graphic
-                                        className={`flex-1 w-[85%] p-1 ${empty && 'empty:min-w-0 empty:flex-[0_1_0]'}`}
+                                        className={`flex-1 p-1 ${empty && 'empty:min-w-0 empty:flex-[0_1_0]'}`}
                                         ref={provided.innerRef}
                                         style={getListStyle(snapshot.isDraggingOver)}
                                         {...provided.droppableProps}

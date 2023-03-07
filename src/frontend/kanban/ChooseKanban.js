@@ -73,7 +73,7 @@ const ChooseKanban = () => {
             isEmpty={empty}
             empty={<NoBoards />}
             title="Job Boards"
-            margin="20"
+            margin="mx-20"
         >
             <Button
                 color='white'

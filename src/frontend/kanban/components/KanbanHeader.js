@@ -38,7 +38,7 @@ export default function KanbanHeader(props) {
 
     return (
         <div
-            className='flex flex-row items-center gap-2 w-[82%]'
+            className='flex flex-row self-stretch gap-2 flex-1 max-h-[3rem]'
             style={{
                 borderTop: `4px solid ${props.color || '#676767'}`,
                 padding: '8px',
@@ -48,7 +48,7 @@ export default function KanbanHeader(props) {
                 boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.1)',
                 borderRadius: '4px',
                 background: 'white',
-                margin: '0 0.5em',
+                margin: '0 1em',
             }}
         >
             <span>{props.name}</span>

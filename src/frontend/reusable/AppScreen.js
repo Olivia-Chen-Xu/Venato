@@ -5,7 +5,7 @@ export default function AppScreen(props) {
     // className only effects the second div
     const { isLoading, isEmpty, empty, title, children, margin, className, style, ...rest} = props
 
-    const classes = `flex-1 overflow-auto py-3 pt-5 app-screen relative mx-${margin} ${className ? className : ''}`
+    const classes = `flex-1 overflow-auto py-3 pt-5 app-screen ${margin} ${className ? className : ''}`
     const styles = {
 
         ...style
@@ -15,7 +15,7 @@ export default function AppScreen(props) {
         <>
             <div className={`w-full bg-white pb-4 px-${margin} flex-[0_1_auto]`}
             >
-                <div className={`mx-${margin}`}>
+                <div className={`${margin ? margin : 'mx-10'}`}>
                 {isLoading  ? (<Skeleton animation="wave" sx={{ fontSize: '1.875rem', lineHeight: '2.25rem', width: '25%' }} />)
                             : (<h1 className='text-neutral-800 text-3xl'>{title}</h1>)}
                 </div>
