@@ -55,3 +55,18 @@ body,
   background-color: #7F5BEB;
   border-radius   : 14px;
 }
+
+.blob-bg, .wave-bg {
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+.blob-bg {
+
+  background-image: url('./images/blob.svg');
+}
+
+.wave-bg {
+  background-image: url('./images/wave.svg');
+  background-size: cover
+}
