@@ -69,7 +69,7 @@ export default function KanbanJob(props) {
                         snapshot.isDragging,
                         provided.draggableProps.style
                     )}
-                    className='min-h-[15%]'
+                    //className='min-h-[15%]'
                 >
                     <div className='flex flex-col'>
                         <IconButton
@@ -102,8 +102,8 @@ export default function KanbanJob(props) {
                                     style={{
                                         fontSize: 25,
                                         fontWeight: 300,
-                                        minHeight: '37.5px',
-                                        minWidth: '37.5px'
+                                        //minHeight: '37.5px',
+                                        //minWidth: '37.5px'
                                     }}
                                 >
                                     {props.job.company}

@@ -9,7 +9,6 @@ import ChooseKanban from '../kanban/ChooseKanban';
 
 const Overlay = (props) => {
     const { page } = props;
-    let title;
     let elem;
 
     if (page === 'home') {
@@ -30,14 +29,10 @@ const Overlay = (props) => {
 
     return (
         <>
-            <div className="flex bg-[url('./images/home/bg.png')] bg-cover bg-no-repeat bg-fixed bg-center overflow-hidden" id="app">
-                <div className="flex flex-1 overflow-hidden">
-                    <ReusableSideBar />
-                    <div className='flex flex-col grow overflow-hidden' style={{backgroundColor: '#F6F6F6'}}>
-                        <ReusableHeader/>
-                        <div className='h-full overflow-hidden flex z-10 app-body'>{elem}</div>
-                    </div>
-                </div>
+            <div id='app'>
+                <ReusableSideBar />
+                <ReusableHeader />
+                <main className='bg-slate-50 h-[85vh] overflow-hidden debug-blue'>{elem}</main>
             </div>
         </>
     );

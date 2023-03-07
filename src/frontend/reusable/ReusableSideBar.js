@@ -1,15 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
-import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, ExpandMore, FolderOpenOutlined, FolderZipOutlined, HomeOutlined, NotificationsOutlined, QuizOutlined, SearchOutlined } from '@mui/icons-material';
-
-import React, { useState } from 'react';
-import { Button, Drawer, IconButton } from '@mui/material';
-=======
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, ExpandMore, FolderZipOutlined, HomeOutlined, NotificationsOutlined, QuizOutlined, SearchOutlined } from '@mui/icons-material';
-import React, { useState } from 'react';
-import { Button, Drawer } from '@mui/material';
->>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
-import Profile from '../auth/Profile';
+import { useState, useEffect } from 'react';
+import { Button, Menu, MenuItem } from '@mui/material';
+import { deleteAccount, signout } from "../auth/auth-functions";
+import { auth } from "../../config/firebase";
+import generateJobs from "../search/GenerateJobs";
 
 const sidebarButtonOverrides = {
     justifyContent: 'left',
@@ -20,29 +15,101 @@ const sidebarButtonOverrides = {
     lineHeight: '16px',
     letterSpacing: '0.04em',
     whiteSpace: 'nowrap',
-    padding: '1rem 0.5rem',
+    padding: '1rem 1rem',
     textOverflow: 'clip'
 }
 
 export default function ReusableSideBar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const nav = useNavigate();
+    
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+
+    const [currentPage, setCurrentPage ] = useState('');
+    let navigate = useNavigate();
+    let location = useLocation();
+
+    useEffect(() => {
+
+        setCurrentPage(location.pathname)
+    }, [location])
+
+    const areHere = (page) => {
+
+        if (typeof page === 'string') page = [page]
+        return page.some(p => p === currentPage) ? 'active' : ''
+    }
+
+    const handleMenuOpen = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setAnchorEl(e.currentTarget)
+    }
+
+    const handleMenuClose = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setAnchorEl(null)
+    }
+
+    const handleSignOut = async (e) => {
+        const signoutResult = signout();
+        if (typeof signoutResult === "string") {
+            setErrMsg(signoutResult);
+            return;
+        }
+        signoutResult
+            .then(() => {
+                console.log(`Successfully signed out`);
+                navigate("/");
+            })
+            .catch((err) => console.log(`Failed to sign out: ${JSON.stringify(err)}`));
+    }
+
+    const handleDeleteAccount = (e) => {
+        if (auth.currentUser.email === "18rem8@queensu.ca") {
+            handleSignOut(); // Don't delete the admin account
+            return;
+        }
+        const deleteAccountResult = deleteAccount();
+        if (typeof deleteAccountResult === "string") {
+            setErrMsg(deleteAccountResult);
+            return;
+        }
+
+        deleteAccountResult
+            .then(() => {
+                console.log(`Current user successfully deleted`);
+                navigate("/");
+            })
+            .catch((error) => console.log(`Error deleting current user: ${JSON.stringify(error)}`));
+    }
+
+    const handleGenerateJobs = (e) => {
+        generateJobs(40)
+    }
+
     return (
-        <React.Fragment>
-            <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
-                <Profile />
-            </Drawer>
-            <div
-                className="min-w-[15rem] max-w-[15%] flex-auto"
+        <>
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+                <MenuItem onClick={handleDeleteAccount}>Delete Account!</MenuItem>
+                <MenuItem onClick={handleGenerateJobs}>Generate Jobs</MenuItem>
+            </Menu>
+            <aside
+                className="min-w-[15rem]"
                 style={{
                     boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.1)',
                     border: '1px solid #E0E0E0',
-                    background: 'white'
+                    background: 'white',
                 }}
             >
                 <div className='flex px-3 py-6'>
                     <span>
-                        <button onClick={() => setIsOpen(true)}>
+                        <button onClick={handleMenuOpen}>
                             <AccountCircleOutlined></AccountCircleOutlined>
                             <ExpandMore fontSize="small"></ExpandMore>
                         </button>
@@ -55,21 +122,21 @@ export default function ReusableSideBar() {
                 </div>
                 <div className="mt-10 px-3 py-6 grid grid-rows-5 bg-white">
 
-                    <Button onClick={() => nav('/home')} sx={sidebarButtonOverrides} startIcon={<HomeOutlined />}>
+                    <Button className={areHere('/home')} onClick={() => navigate('/home')} sx={sidebarButtonOverrides} startIcon={<HomeOutlined />}>
                         Home
                     </Button>
 
-                    <Button onClick={() => { nav('/chooseKanban') }} sx={sidebarButtonOverrides} startIcon={<FolderZipOutlined/>}>
+                    <Button className={areHere(['/kanban', '/chooseKanban'])} onClick={() => { navigate('/chooseKanban') }} sx={sidebarButtonOverrides} startIcon={<FolderZipOutlined/>}>
                         Job Boards
                     </Button>
 
-                    <Button onClick={() => { nav('/calendar') }} sx={sidebarButtonOverrides} startIcon={<CalendarMonthOutlined />}>
+                    <Button className={areHere('/calendar')} onClick={() => { navigate('/calendar') }} sx={sidebarButtonOverrides} startIcon={<CalendarMonthOutlined />}>
                         Calendar
                     </Button>
-                    <Button onClick={() => { nav('/job') }} sx={sidebarButtonOverrides} startIcon={<SearchOutlined />}>
+                    <Button className={areHere('/job')} onClick={() => { navigate('/job') }} sx={sidebarButtonOverrides} startIcon={<SearchOutlined />}>
                         Job Search
                     </Button>
-                    <Button onClick={() => { nav('/questions') }} sx={sidebarButtonOverrides} startIcon={<QuizOutlined />}>
+                    <Button className={areHere('/questions')} onClick={() => { navigate('/questions') }} sx={sidebarButtonOverrides} startIcon={<QuizOutlined />}>
                         Interview Questions
                     </Button>
                     <Button
@@ -88,7 +155,7 @@ export default function ReusableSideBar() {
                         Upgrade
                     </Button>
                 </div>
-            </div>
-        </React.Fragment>
+            </aside>
+        </>
     );
 }

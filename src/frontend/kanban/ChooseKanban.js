@@ -4,10 +4,6 @@ import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui
 import { Add, MoreVert, SkateboardingOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-<<<<<<< HEAD
-import SplitBackground from '../reusable/SplitBackground';
-=======
->>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
 import IconButton from '@mui/material/IconButton';
 import PageTitle from '../reusable/PageTitle';
 
