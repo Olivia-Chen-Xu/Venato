@@ -8,7 +8,6 @@ import { ReactComponent as NoJobs } from '../../images/no-jobs.svg'
 import AppScreen from '../reusable/AppScreen';
 import KanbanJob from './components/KanbanJob';
 import KanbanHeader from './components/KanbanHeader';
-import { color } from '@mui/system';
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -85,12 +84,9 @@ const Kanban = () => {
     const [loading, setLoading] = useState(false);
     const [boardName, setBoardName] = useState('');
     const [boardID, setBoardID] = useState(null);
+    const [empty, setEmpty] = useState(true);
 
     const boardId = useLocation().state.boardId;
-
-    const hasJobs = () => {
-        return kanbanState.reduce((p, c) => p || c.length > 0, false)
-    }
 
     const addJob = async (index) => {
         const newState = [...kanbanState];
@@ -173,6 +169,7 @@ const Kanban = () => {
                 setKanbanState(newState);
                 setBoardName(res.data.name);
                 setBoardID(res.data.id);
+                setEmpty(newState.every(arr => arr.length === 0));
                 setLoading(false);
             });
 
@@ -185,8 +182,9 @@ const Kanban = () => {
     return (
         <AppScreen
             isLoading={loading}
-            isEmpty={!hasJobs()}
+            isEmpty={empty}
             empty={<NoJobs />}
+            margin="10"
             title={boardName}
         >
             {modalOpen && (
@@ -202,18 +200,18 @@ const Kanban = () => {
                 />
             )}
             <div
-                className='overflow-auto h-[96.8%] pb-4'                // Weird height is so that scrollbar will show
+                className='overflow-auto pb-4'                
                 style={{
                     display: 'grid',
                     gridAutoFlow: 'column',
                     gridAutoColumns: '24rem',
-                    justifyContent: 'space-between'
+                    height: empty ? 'fit-content' : '96.8%'                         // Weird height is so that scrollbar will show
                 }}
             >
                 <DragDropContext onDragEnd={onDragEnd}>
                     {kanbanState.map((el, ind) => (
                         <div 
-                            className='flex flex-col items-center gap-3 flex-1 my-3 min-h-min'
+                            className='flex flex-col items-center gap-3'
                         >
                             <KanbanHeader
                                 name={cols[ind].name}
@@ -228,7 +226,7 @@ const Kanban = () => {
                                 {(provided, snapshot) => (
                                     <div
                                         // If no jobs, collapse to make room for graphic
-                                        className={`flex-1 w-[85%] p-1 ${!hasJobs() && 'empty:min-w-0 empty:flex-[0_1_0]'}`}
+                                        className={`flex-1 w-[85%] p-1 ${empty && 'empty:min-w-0 empty:flex-[0_1_0]'}`}
                                         ref={provided.innerRef}
                                         style={getListStyle(snapshot.isDraggingOver)}
                                         {...provided.droppableProps}

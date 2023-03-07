@@ -60,3 +60,17 @@ html, body, #root, #root > #app {
   background-color: #7F5BEB;
   border-radius: 14px;
 }
+
+/* .app-screen::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 1em;
+}
+
+.app-screen::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.app-screen::-webkit-scrollbar-track {
+
+} */

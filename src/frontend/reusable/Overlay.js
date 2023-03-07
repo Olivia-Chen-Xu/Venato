@@ -32,7 +32,7 @@ const Overlay = (props) => {
             <div id='app'>
                 <ReusableSideBar />
                 <ReusableHeader />
-                <main className='bg-slate-50 h-[85vh] overflow-hidden debug-blue'>{elem}</main>
+                <main className='bg-slate-50 h-full overflow-hidden flex flex-col'>{elem}</main>
             </div>
         </>
     );
