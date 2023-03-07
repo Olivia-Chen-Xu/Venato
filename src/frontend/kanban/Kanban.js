@@ -1,15 +1,26 @@
 import { useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+<<<<<<< HEAD
 import { Add, Flag, MoreHoriz } from '@mui/icons-material';
 import { CircularProgress, IconButton } from '@mui/material';
 import JobDialog from '../reusable/JobDialog';
 import { useLocation } from 'react-router-dom';
 import SplitBackground from '../reusable/SplitBackground';
+=======
+import { CircularProgress } from '@mui/material';
+import JobDialog from '../reusable/JobDialog';
+import { useLocation } from 'react-router-dom';
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
 import Skeleton from '@mui/material/Skeleton';
 import { StrictModeDroppable } from '../reusable/StrictModeDroppable';
 import {ReactComponent as NoJobs} from '../../images/no-jobs.svg'
 import PageTitle from '../reusable/PageTitle';
+<<<<<<< HEAD
+=======
+import KanbanJob from './components/KanbanJob';
+import KanbanHeader from './components/KanbanHeader';
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
 
 const cols = [
     { name: 'APPLICATIONS', color: '#926EFE' },
@@ -67,8 +78,8 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
     return [result, removed];
 };
-const grid = 8;
 
+<<<<<<< HEAD
 const getJobStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
     margin: `0 0 ${grid}px 0`,
@@ -90,6 +101,16 @@ const getListStyle = (isDraggingOver) => ({
     gap: '1rem',
     padding: '1rem',
     //borderRadius: '16px',
+=======
+
+const getListStyle = (isDraggingOver) => ({
+    height: '100%',
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    margin: '1rem',
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
 });
 
 const someAction = (e) => {
@@ -138,12 +159,17 @@ const Kanban = () => {
         setModalOpen(true);
     };
 
+<<<<<<< HEAD
     const jobPrioityMapper = (priority) => {
         return {
             'High': "error",
             'Medium': 'warning',
             'Low': 'success'
         }[priority]
+=======
+    const handleDelete = (job, idx) => {
+        console.error('not implmented')
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
     }
 
     async function onDragEnd(result) {
@@ -247,7 +273,11 @@ const Kanban = () => {
                         <CircularProgress />
                     </div>
                 ) : (
+<<<<<<< HEAD
                     <div className='flex grow flex-col overflow-scroll'>
+=======
+                    <div className='flex grow flex-col overflow-scroll h-full'>
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
                         <div className='flex flex-1 min-h-min'>
                             <DragDropContext onDragEnd={onDragEnd}>
                                 {kanbanState.map((el, ind) => (
@@ -257,6 +287,7 @@ const Kanban = () => {
                                             minWidth: '24rem'
                                         }}
                                     >
+<<<<<<< HEAD
                                         <div
                                             className='flex flex-row items-center gap-2 w-[85%]'
                                             style={{
@@ -311,6 +342,17 @@ const Kanban = () => {
                                                 <MoreHoriz />
                                             </IconButton>
                                         </div>
+=======
+                                        <KanbanHeader
+                                            name={cols[ind].name}
+                                            color={cols[ind].color}
+                                            amount={kanbanState[ind].length}
+                                            ind={ind}
+                                            handleAddClick={handleAddClick}
+                                            handleEditClick={() => console.warn('Not Implmented')}
+                                            handleDeleteClick={() => console.warn('Not Implmented')}
+                                        />
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
                                         <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
                                             {(provided, snapshot) => (
                                                 <div
@@ -321,6 +363,7 @@ const Kanban = () => {
                                                 >
                                                     {el.map((job, index) => (
                                                         <div onClick={() => handleJobView(job, ind)}>
+<<<<<<< HEAD
                                                             <Draggable
                                                                 key={job.id}
                                                                 draggableId={job.id}
@@ -390,6 +433,9 @@ const Kanban = () => {
                                                                     </div>
                                                                 )}
                                                             </Draggable>
+=======
+                                                            <KanbanJob job={job} index={index} ind={ind} edit={handleJobView} delete={handleDelete}/>
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
                                                         </div>
                                                     ))}
                                                     {provided.placeholder}

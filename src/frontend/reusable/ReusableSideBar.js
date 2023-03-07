@@ -1,8 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, ExpandMore, FolderOpenOutlined, FolderZipOutlined, HomeOutlined, NotificationsOutlined, QuizOutlined, SearchOutlined } from '@mui/icons-material';
 
 import React, { useState } from 'react';
 import { Button, Drawer, IconButton } from '@mui/material';
+=======
+import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, ExpandMore, FolderZipOutlined, HomeOutlined, NotificationsOutlined, QuizOutlined, SearchOutlined } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { Button, Drawer } from '@mui/material';
+>>>>>>> 9313e2fa478e81b60b8c5f7c0a84964e025d3d2b
 import Profile from '../auth/Profile';
 
 const sidebarButtonOverrides = {
