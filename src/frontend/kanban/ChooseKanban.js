@@ -1,24 +1,31 @@
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
+import { Add, MoreVert, SkateboardingOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import AppScreen from '../reusable/AppScreen';
+import { ReactComponent as NoBoards } from '../../images/empty/no-boards.svg';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
     const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
+    const [loading, setLoading] = useState(true);
+    const [empty, setEmpty] = useState(true);
+
+    useEffect(() => {
+
+        setLoading(boards.loading)
+
+        if (!boards.loading) {
+            setEmpty(boards.result.data.length === 0);
+        }
+    }, [boards])
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
 
-    if (boards.loading) {
-        return (
-            <div>
-                <CircularProgress />
-            </div>
-        );
-    }
     if (boards.error) {
         return <p>Error: {boards.error.message}</p>;
     }
@@ -37,12 +44,22 @@ const ChooseKanban = () => {
         const boardsHtml = [];
         boards.result.data.forEach((board) => {
             boardsHtml.push(
-                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
-                        className="relative w-full h-full py-16"
+                        className="py-8 flex grow"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
-                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
+                        <div className="flex px-8 gap-3 grow items-center">
+                            <SkateboardingOutlined color="primary" fontSize='large' />
+                            <span>{board.name}</span>
+                            <IconButton
+                                sx={{
+                                    marginLeft: 'auto'
+                                }}
+                            >
+                                <MoreVert />
+                            </IconButton>
+                        </div>
                     </button>
                 </div>
             );
@@ -51,27 +68,32 @@ const ChooseKanban = () => {
     };
 
     return (
-        <div>
-            <h1 className="text-neutral-500 text-xl mt-10 grid place-content-center mx-20 uppercase">
-                Job Boards
-            </h1>
-            <br />
-            <div className="flex justify-center">
-                <Button
-                    color="neutral"
-                    variant="contained"
-                    startIcon={<AddCircleOutline />}
-                    onClick={() => setDialogOpen(true)}
-                >
-                    Create new board
-                </Button>
+        <AppScreen
+            isLoading={loading}
+            isEmpty={empty}
+            empty={<NoBoards />}
+            title="Job Boards"
+            margin="mx-20"
+        >
+            <Button
+                color='white'
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => setDialogOpen(true)}
+                sx={{
+                    border: '2px solid #7F5BEB',
+                    borderRadius: '8px'
+                }}
+            >
+                Create new board
+            </Button>
+            <div className="flex mt-8">
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogContent
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
                             width: 600,
-                            alignItems: 'center',
                         }}
                     >
                         <p>Enter board name</p>
@@ -90,10 +112,10 @@ const ChooseKanban = () => {
                     </DialogContent>
                 </Dialog>
             </div>
-            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
+            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white">
                 {renderBoards()}
             </div>
-        </div>
+        </AppScreen>
     );
 }
 

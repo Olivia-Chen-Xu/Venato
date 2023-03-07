@@ -19,6 +19,10 @@ const theme = createTheme({
             main: '#7F5BEB',
             contrastText: '#fff',
         },
+        white: {
+            main: '#fff',
+            contrastText: '#333'
+        }
     },
     typography:{
         fontFamily:[

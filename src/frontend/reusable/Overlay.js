@@ -29,12 +29,10 @@ const Overlay = (props) => {
 
     return (
         <>
-            <div className="h-screen bg-[url('./images/home/bg.png')] bg-cover bg-no-repeat bg-fixed bg-center">
+            <div id='app'>
+                <ReusableSideBar />
                 <ReusableHeader />
-                <div className="flex flex-1 mt-16">
-                    <ReusableSideBar />
-                    <div className="ml-20 basis-full">{elem}</div>
-                </div>
+                <main className='bg-slate-50 h-full overflow-hidden flex flex-col'>{elem}</main>
             </div>
         </>
     );
