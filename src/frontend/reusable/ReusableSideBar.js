@@ -20,7 +20,7 @@ const sidebarButtonOverrides = {
 }
 
 export default function ReusableSideBar() {
-    
+
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
 
@@ -29,12 +29,10 @@ export default function ReusableSideBar() {
     let location = useLocation();
 
     useEffect(() => {
-
         setCurrentPage(location.pathname)
     }, [location])
 
     const areHere = (page) => {
-
         if (typeof page === 'string') page = [page]
         return page.some(p => p === currentPage) ? 'active' : ''
     }
@@ -97,7 +95,7 @@ export default function ReusableSideBar() {
             >
                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                 <MenuItem onClick={handleDeleteAccount}>Delete Account!</MenuItem>
-                <MenuItem onClick={handleGenerateJobs}>Generate Jobs</MenuItem>
+                <MenuItem onClick={handleGenerateJobs}>Generate Jobs (dev only)</MenuItem>
             </Menu>
             <aside
                 className="min-w-[15rem]"
