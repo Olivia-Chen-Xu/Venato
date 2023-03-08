@@ -152,6 +152,22 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
         .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
 });
 
+const deleteDeadline = functions.https.onCall(async (deadlineId: string, context: any) => {
+    // Verify params
+    if (!deadlineId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a deadline id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `deadlines/${deadlineId}`);
+
+    return getDoc(`deadlines/${deadlineId}`)
+        .delete()
+        .then(() => `Deadline '${deadlineId}' deleted successfully`)
+        .catch((err) => `Failed to delete deadline '${deadlineId}': ${err}`);
+});
+
 const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
@@ -186,7 +202,23 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     return getDoc(`interviewQuestions/${data.questionId}`)
         .update(data.question)
         .then(() => `Question '${data.questionId}' updated successfully`)
-        .catch((err) => `Failed to update contact '${data.questionId}': ${err}`);
+        .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
+});
+
+const deleteInterviewQuestion = functions.https.onCall(async (questionId: string, context: any) => {
+    // Verify params
+    if (!questionId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a question id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `interviewQuestions/${questionId}`);
+
+    return getDoc(`interviewQuestions/${questionId}`)
+        .delete()
+        .then(() => `Question '${questionId}' deleted successfully`)
+        .catch((err) => `Failed to delete question '${questionId}': ${err}`);
 });
 
 const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
@@ -227,6 +259,22 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
         .update(data.contact)
         .then(() => `Contact '${data.contactId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
+});
+
+const deleteContact = functions.https.onCall(async (contactId: string, context: any) => {
+    // Verify params
+    if (!contactId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a contact id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `contacts/${contactId}`);
+
+    return getDoc(`contacts/${contactId}`)
+        .delete()
+        .then(() => `Contact '${contactId}' deleted successfully`)
+        .catch((err) => `Failed to delete contact '${contactId}': ${err}`);
 });
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
@@ -365,10 +413,13 @@ export {
     addJob,
     addDeadline,
     updateDeadline,
+    deleteDeadline,
     addInterviewQuestion,
     updateInterviewQuestion,
+    deleteInterviewQuestion,
     addContact,
     updateContact,
+    deleteContact,
     updateJob,
     dragKanbanJob,
     deleteJob,
