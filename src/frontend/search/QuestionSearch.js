@@ -4,6 +4,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
 import { Button, Dialog, DialogContent, TextField } from '@mui/material';
 import PageTitle from "../reusable/PageTitle";
+import AppScreen from "../reusable/AppScreen";
 
 const QuestionSearch = () => {
     const [query, setQuery] = useState("");
@@ -102,71 +103,70 @@ const QuestionSearch = () => {
 
     const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
-        <div>
-            <div>
-                <PageTitle>
-                        Interview Question Search
-                </PageTitle>
-                <div className="grid place-content-center flex flex-1">
-                    <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
-                        <div>
-                            <label htmlFor="position">
-                                <input
-                                    id="position"
-                                    type="email"
-                                    name="email"
-                                    // value={position}
-                                    placeholder="Search by position or company"
-                                    onChange={(e) => {
-                                        setQuery(e.target.value);
-                                    }}
-                                />
-                            </label>
+        <AppScreen
+            title="Interview Question Search"
+        >
+                <div className="mt-8">
+                    <div className="grid place-content-center flex flex-1">
+                        <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
+                            <div>
+                                <label htmlFor="position">
+                                    <input
+                                        id="position"
+                                        type="email"
+                                        name="email"
+                                        // value={position}
+                                        placeholder="Search by position or company"
+                                        onChange={(e) => {
+                                            setQuery(e.target.value);
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                            {/*<div>*/}
+                            {/*    <label htmlFor="company">*/}
+                            {/*        <select*/}
+                            {/*            id="company"*/}
+                            {/*            name="company"*/}
+                            {/*            select*/}
+                            {/*            label="Company"*/}
+                            {/*            value={company}*/}
+                            {/*            onChange={(e) => setCompany(e.target.value)}*/}
+                            {/*        >*/}
+                            {/*            <option value="" selected>*/}
+                            {/*                Company*/}
+                            {/*            </option>*/}
+                            {/*            {companies.result.data.map((c) => (*/}
+                            {/*                <option value={c}>{c}</option>*/}
+                            {/*            ))}*/}
+                            {/*        </select>*/}
+                            {/*    </label>*/}
+                            {/*</div>*/}
                         </div>
-                        {/*<div>*/}
-                        {/*    <label htmlFor="company">*/}
-                        {/*        <select*/}
-                        {/*            id="company"*/}
-                        {/*            name="company"*/}
-                        {/*            select*/}
-                        {/*            label="Company"*/}
-                        {/*            value={company}*/}
-                        {/*            onChange={(e) => setCompany(e.target.value)}*/}
-                        {/*        >*/}
-                        {/*            <option value="" selected>*/}
-                        {/*                Company*/}
-                        {/*            </option>*/}
-                        {/*            {companies.result.data.map((c) => (*/}
-                        {/*                <option value={c}>{c}</option>*/}
-                        {/*            ))}*/}
-                        {/*        </select>*/}
-                        {/*    </label>*/}
-                        {/*</div>*/}
-                    </div>
-                    <div className="h-full bg-transparent align-middle">
-                        <LoadingButton
-                            id="searchBtn"
-                            onClick={handleSearch}
-                            variant="contained"
-                            loading={loading}
-                            disableElevation
-                            size="small"
-                            sx={{
-                                height: "80%",
-                            }}
-                            endIcon={<Search />}
-                        >
-                            {" "}
-                            Search
-                        </LoadingButton>
+                        <div className="h-full bg-transparent align-middle">
+                            <LoadingButton
+                                id="searchBtn"
+                                onClick={handleSearch}
+                                variant="contained"
+                                loading={loading}
+                                disableElevation
+                                size="small"
+                                sx={{
+                                    height: "80%",
+                                }}
+                                endIcon={<Search />}
+                            >
+                                {" "}
+                                Search
+                            </LoadingButton>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <br />
+                <br />
 
-            <div>
-                {/*
+                <div>
+                    {/*
 
             <br />
             Interview question search
@@ -221,39 +221,39 @@ const QuestionSearch = () => {
             >
                 Clear search
             </button> */}
-                <br />
-                <div className="grid place-content-center">{message}</div>
-                <br />
-                {displayQuestions()}
-                {dialogOpen && (
-                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                        <DialogContent
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: 600,
-                                alignItems: 'center',
-                            }}
-                        >
-                            <p><strong><u>{currentQuestion.name}</u></strong></p>
-                            <br />
-
-                            {currentQuestion.description}
-                            <br />
-                            <br />
-
-                            <Button
-                                variant="contained"
-                                href={`https://www.google.com/search?q=${currentQuestion.name.replaceAll(' ', '+')}`}
-                                target={"_blank"}
+                    <br />
+                    <div className="grid place-content-center">{message}</div>
+                    <br />
+                    {displayQuestions()}
+                    {dialogOpen && (
+                        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                            <DialogContent
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: 600,
+                                    alignItems: 'center',
+                                }}
                             >
-                                Search on Google
-                            </Button>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </div>
-        </div>
+                                <p><strong><u>{currentQuestion.name}</u></strong></p>
+                                <br />
+
+                                {currentQuestion.description}
+                                <br />
+                                <br />
+
+                                <Button
+                                    variant="contained"
+                                    href={`https://www.google.com/search?q=${currentQuestion.name.replaceAll(' ', '+')}`}
+                                    target={"_blank"}
+                                >
+                                    Search on Google
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                </div>
+        </AppScreen>
     );
 };
 

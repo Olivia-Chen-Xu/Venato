@@ -49,7 +49,7 @@ const Calendar = () => {
     const deadlines = getDeadlines.result.data;
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col mt-4">
             {modalOpen && (
                 <JobDialog
                     setOpen={setModalOpen}
