@@ -107,10 +107,10 @@ export default function ReusableSideBar() {
                     background: 'white',
                 }}
             >
-                <div className='flex px-3 py-6'>
+                <div className='flex px-3 py-6 thin-icons'>
                     <span>
                         <button onClick={handleMenuOpen}>
-                            <AccountCircleOutlined></AccountCircleOutlined>
+                            <AccountCircleOutlined />
                             <ExpandMore fontSize="small"></ExpandMore>
                         </button>
                     </span>
