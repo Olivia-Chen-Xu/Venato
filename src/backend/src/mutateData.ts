@@ -344,6 +344,22 @@ const addBoard = functions.https.onCall(async (data: string, context: any) => {
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 
+const deleteBoard = functions.https.onCall(async (boardId: string, context: any) => {
+    // Verify params
+    if (!boardId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'No board id provided'
+        );
+    }
+    await verifyDocPermission(context, `boards/${boardId}`);
+
+    return getDoc(`boards/${boardId}`)
+        .delete()
+        .then(() => `Successfully deleted board '${boardId}'`)
+        .catch((err) => `Error deleting board '${boardId}': ${err}`);
+});
+
 export {
     addJobs,
     addJob,
