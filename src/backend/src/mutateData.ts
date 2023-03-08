@@ -147,7 +147,7 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     await verifyDocPermission(context, `contacts/${data.deadlineId}`);
 
     return getDoc(`contacts/${data.deadlineId}`)
-        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .set({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
         .then(() => `Contact '${data.deadlineId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
 });
@@ -200,7 +200,7 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
     return getDoc(`interviewQuestions/${data.questionId}`)
-        .update(data.question)
+        .set(data.question)
         .then(() => `Question '${data.questionId}' updated successfully`)
         .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
 });
@@ -256,7 +256,7 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
     await verifyDocPermission(context, `contacts/${data.contactId}`);
 
     return getDoc(`contacts/${data.contactId}`)
-        .update(data.contact)
+        .set(data.contact)
         .then(() => `Contact '${data.contactId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
 });
@@ -277,69 +277,40 @@ const deleteContact = functions.https.onCall(async (contactId: string, context: 
         .catch((err) => `Failed to delete contact '${contactId}': ${err}`);
 });
 
-// Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
-const updateJob = functions.https.onCall(
-    async (data: { id: string; tab: number; newFields: object }, context: any) => {
+// Updates job data (excluding deadlines, interview questions and contacts)
+const updateJobData = functions.https.onCall(
+    async (data: { jobId: string; jobData: object }, context: any) => {
         // Verify params
-        let errMSg = '';
-        if (!data) {
-            errMSg = 'No data provided';
-        } else if (!data.id) {
-            errMSg = 'No job id provided';
-        } else if (!data.tab) {
-            errMSg = 'No tab number provided';
-        } else if (!data.newFields) {
-            errMSg = 'No new field(s) provided';
-        }
-        if (errMSg !== '') {
-            throw new functions.https.HttpsError('invalid-argument', errMSg);
-        }
-        await verifyDocPermission(context, `jobs/${data.id}`);
-
-        const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
-        switch (data.tab) {
-            case 1:
-                updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
-                break;
-            case 2:
-                updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
-                break;
-            case 3:
-                // @ts-ignore
-                data.newFields.forEach((deadline: { edited: boolean; id: string }) => {
-                    if (deadline.edited) {
-                        updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
-                    }
-                });
-                break;
-            case 4:
-                // @ts-ignore
-                data.newFields.forEach((question: { edited: boolean; id: string }) => {
-                    if (question.edited) {
-                        updatePromises.push(
-                            getDoc(`interviewQuestions/${question.id}`).update(question)
-                        );
-                    }
-                });
-                break;
-            case 5:
-                // @ts-ignore
-                data.newFields.forEach((contact: { edited: boolean; id: string }) => {
-                    if (contact.edited) {
-                        updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
-                    }
-                });
-                break;
-            default:
-                throw new functions.https.HttpsError(
-                    'invalid-argument',
-                    'Tab number must an integer between 1 and 5 inclusive'
-                );
+        const structure = {
+            jobId : '',
+            jobData: {
+                awaitingResponse: false,
+                boardId: '',
+                company: '',
+                description: '',
+                link: '',
+                location: '',
+                notes: '',
+                position: '',
+                priority: '',
+                salary: '',
+                stage: 0,
+                userId: '',
+            }
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only a job id (string) and job data (see db for structure) as arguments'
+            );
         }
 
-        return Promise.all(updatePromises)
-            .then(() => `Successfully updated job '${data.id}`)
-            .catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
+        await verifyDocPermission(context, `jobs/${data.jobId}`);
+
+        return getDoc(`jobs/${data.jobId}`)
+            .set(data.jobData)
+            .then(() => `job '${data.jobId}' updated successfully`)
+            .catch((err) => `Failed to update contact '${data.jobId}': ${err}`);
     }
 );
 
@@ -420,7 +391,7 @@ export {
     addContact,
     updateContact,
     deleteContact,
-    updateJob,
+    updateJobData,
     dragKanbanJob,
     deleteJob,
     addBoard,

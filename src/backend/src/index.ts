@@ -25,7 +25,7 @@ import {
     addJobs,
     deleteJob,
     dragKanbanJob,
-    updateJob,
+    updateJobData,
     deleteBoard,
 } from './mutateData';
 
@@ -88,7 +88,7 @@ export {
     deleteInterviewQuestion,
     addContact,
     updateContact,
-    updateJob,
+    updateJobData,
     dragKanbanJob,
     deleteJob,
     addBoard,
