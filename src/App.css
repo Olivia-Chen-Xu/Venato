@@ -70,3 +70,9 @@ body,
   background-image: url('./images/wave.svg');
   background-size: cover
 }
+
+.thin-icons svg > path {
+
+  stroke: white;
+  stroke-width: 0.75px;
+}
