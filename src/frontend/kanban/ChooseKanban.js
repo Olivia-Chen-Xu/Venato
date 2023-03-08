@@ -13,15 +13,15 @@ const ChooseKanban = () => {
     const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
     const [loading, setLoading] = useState(true);
     const [empty, setEmpty] = useState(true);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState('');
 
     useEffect(() => {
-
         setLoading(boards.loading)
 
         if (!boards.loading) {
             setEmpty(boards.result.data.length === 0);
         }
-    }, [boards])
+    }, [boards]);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
@@ -36,9 +36,14 @@ const ChooseKanban = () => {
         setDialogOpen(false);
     }
 
+    const getBoardName = () => {
+        if (!boards.result || !deleteDialogOpen) return;
+        return boards.result.data.find(b => b.id === deleteDialogOpen).name;
+    }
+
     const renderBoards = () => {
         if (!boards.result) {
-            return <p>Error: Invalid state</p>;
+            return <p>Error: Invalid state; no boards present</p>;
         }
 
         const boardsHtml = [];
@@ -57,7 +62,10 @@ const ChooseKanban = () => {
                                     marginLeft: 'auto'
                                 }}
                             >
-                                <MoreVert />
+                                <MoreVert onClick={(event) => {
+                                    event.stopPropagation();
+                                    setDeleteDialogOpen(board.id);
+                                }} />
                             </IconButton>
                         </div>
                     </button>
@@ -108,6 +116,36 @@ const ChooseKanban = () => {
 
                         <Button variant="contained" onClick={addNewBoard} style={{ width: 100 }}>
                             Add
+                        </Button>
+                    </DialogContent>
+                </Dialog>
+            </div>
+            <div className="flex mt-8">
+                <Dialog open={deleteDialogOpen !== ''} onClose={() => setDeleteDialogOpen('')}>
+                    <DialogContent
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: 600,
+                        }}
+                    >
+                        <p>Delete job board '{getBoardName()}'?</p>
+                        <br />
+                        <strong>⚠️ WARNING: This board and ALL of its jobs will be deleted ⚠️</strong>
+                        <br />
+
+                        <Button variant="contained" style={{ width: 100 }}>
+                            No
+                        </Button>
+                        <Button
+                            onClick={async (event) => {
+                                event.stopPropagation();
+                                await httpsCallable(getFunctions(), 'deleteBoard')(deleteDialogOpen)
+                                    .then(() => boards.result.data = boards.result.data.filter(b => b.id !== deleteDialogOpen));
+                                setDeleteDialogOpen('');
+                            }}
+                            style={{ width: 100 }}>
+                            Yes
                         </Button>
                     </DialogContent>
                 </Dialog>
