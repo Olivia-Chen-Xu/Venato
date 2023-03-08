@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import {
+    auth,
     db,
     getCollection,
     getDoc, getFirestoreTimestamp,
@@ -18,6 +19,15 @@ import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces'
 const addJobs = functions.https.onCall(
     async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
         verifyIsAuthenticated(context);
+
+        const userEmail = await auth.getUser(context.auth.token.uid)
+            .then((user) => user.email);
+        if (!userEmail || userEmail !== '18rem8@queensu.ca') {
+            throw new functions.https.HttpsError(
+                'permission-denied',
+                'Only the admin account can add jobs; contact Reid for details'
+            );
+        }
 
         for (const board of data.boards) {
             await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
