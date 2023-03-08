@@ -18,6 +18,7 @@ import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces'
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall(
     async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
+        // Verify admin account is requesting this
         verifyIsAuthenticated(context);
 
         const userEmail = await auth.getUser(context.auth.token.uid)
@@ -29,6 +30,19 @@ const addJobs = functions.https.onCall(
             );
         }
 
+        // Verify params are valid
+        const structure = {
+            jobs: [],
+            boards: [],
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only an array of jobs and boards as arguments'
+            );
+        }
+
+        // Add boards and jobs to db
         for (const board of data.boards) {
             await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
                 data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
@@ -37,12 +51,9 @@ const addJobs = functions.https.onCall(
             });
         }
 
-        // @ts-ignore
-        data.jobs.forEach((job) => job.userId = context.auth.uid);
-
-        // Add all the jobs to the db
         const jobsBatch = db.batch();
         data.jobs.forEach((job: any) => {
+            job.userId = context.auth.uid;
             jobsBatch.set(db.collection('jobs').doc(), job);
         });
         return jobsBatch
