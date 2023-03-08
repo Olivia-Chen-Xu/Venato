@@ -566,10 +566,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                 );
         }
 
-        await httpsCallable(
-            getFunctions(),
-            'updateJob'
-        )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
+        // await httpsCallable(
+        //     getFunctions(),
+        //     'updateJob'
+        // )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
 
         if (isKanban) {
             newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));

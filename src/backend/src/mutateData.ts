@@ -120,6 +120,38 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
         .catch((err) => `Failed to add deadline: ${err}`);
 });
 
+const updateDeadline = functions.https.onCall(async (data: { deadlineId: string, deadline: IDeadline }, context: any) => {
+    // Verify params
+    const structure = {
+        deadlineId: '',
+        deadline: {
+            company: '',
+            date: 0,
+            isInterview: false,
+            jobId: '',
+            link: '',
+            location: '',
+            position: '',
+            priority: '',
+            title: '',
+            userId: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `contacts/${data.deadlineId}`);
+
+    return getDoc(`contacts/${data.deadlineId}`)
+        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .then(() => `Contact '${data.deadlineId}' updated successfully`)
+        .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
+});
+
 const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
@@ -129,6 +161,34 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
         .catch((err) => `Failed to add interview question: ${err}`);
 });
 
+const updateInterviewQuestion = functions.https.onCall(async (data: { questionId: string, question: IInterviewQuestion }, context: any) => {
+    // Verify params
+    const structure = {
+        questionId: '',
+        question: {
+            company: '',
+            description: '',
+            jobId: '',
+            name: '',
+            position: '',
+            userId: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a question id (string) and question (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
+
+    return getDoc(`interviewQuestions/${data.questionId}`)
+        .update(data.question)
+        .then(() => `Question '${data.questionId}' updated successfully`)
+        .catch((err) => `Failed to update contact '${data.questionId}': ${err}`);
+});
+
 const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
@@ -136,6 +196,37 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
         .add({ ...contact, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add contact: ${err}`);
+});
+
+const updateContact = functions.https.onCall(async (data: { contactId: string, contact: IContact }, context: any) => {
+    // Verify params
+    const structure = {
+        contactId: '',
+        contact: {
+            company: '',
+            email: '',
+            jobId: '',
+            linkedin: '',
+            name: '',
+            notes: '',
+            phone: '',
+            title: '',
+            userId: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `contacts/${data.contactId}`);
+
+    return getDoc(`contacts/${data.contactId}`)
+        .update(data.contact)
+        .then(() => `Contact '${data.contactId}' updated successfully`)
+        .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
 });
 
 // Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
@@ -257,8 +348,11 @@ export {
     addJobs,
     addJob,
     addDeadline,
+    updateDeadline,
     addInterviewQuestion,
+    updateInterviewQuestion,
     addContact,
+    updateContact,
     updateJob,
     dragKanbanJob,
     deleteJob,
