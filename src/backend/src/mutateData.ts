@@ -424,4 +424,5 @@ export {
     dragKanbanJob,
     deleteJob,
     addBoard,
+    deleteBoard,
 };
