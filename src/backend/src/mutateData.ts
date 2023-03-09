@@ -125,31 +125,27 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     const structure = {
         deadlineId: '',
         deadline: {
-            company: '',
             date: 0,
             isInterview: false,
-            jobId: '',
             link: '',
             location: '',
-            position: '',
             priority: '',
             title: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+            'Must provide only a deadlines id (string) and contact (see db for structure) as arguments'
         );
     }
 
-    await verifyDocPermission(context, `contacts/${data.deadlineId}`);
+    await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
 
-    return getDoc(`contacts/${data.deadlineId}`)
-        .set({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
-        .then(() => `Contact '${data.deadlineId}' updated successfully`)
-        .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
+    return getDoc(`deadlines/${data.deadlineId}`)
+        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .then(() => `Deadline '${data.deadlineId}' updated successfully`)
+        .catch((err) => `Failed to update deadline '${data.deadlineId}': ${err}`);
 });
 
 const deleteDeadline = functions.https.onCall(async (deadlineId: string, context: any) => {
@@ -182,12 +178,8 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     const structure = {
         questionId: '',
         question: {
-            company: '',
             description: '',
-            jobId: '',
             name: '',
-            position: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
@@ -200,7 +192,7 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
     return getDoc(`interviewQuestions/${data.questionId}`)
-        .set(data.question)
+        .update(data.question)
         .then(() => `Question '${data.questionId}' updated successfully`)
         .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
 });
@@ -237,13 +229,11 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
         contact: {
             company: '',
             email: '',
-            jobId: '',
             linkedin: '',
             name: '',
             notes: '',
             phone: '',
             title: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
@@ -256,7 +246,7 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
     await verifyDocPermission(context, `contacts/${data.contactId}`);
 
     return getDoc(`contacts/${data.contactId}`)
-        .set(data.contact)
+        .update(data.contact)
         .then(() => `Contact '${data.contactId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
 });

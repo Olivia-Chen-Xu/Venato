@@ -257,8 +257,9 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
-                                    // Delete function goes here
+                                onClick={async () => {
+                                    await httpsCallable(getFunctions(), "deleteDeadline")(deadline.id)
+                                        .then(() => jobData.deadlines = jobData.deadlines.filter((c) => c.id !== deadline.id));
                                 }}
                             >
                                 Delete
@@ -267,7 +268,26 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <hr />
                     </div>
                 ))}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const deadlineUpdate = {
+                        date: newDdl.date,
+                        isInterview: newDdl.isInterview,
+                        link: newDdl.link,
+                        location: newDdl.location,
+                        priority: newDdl.priority,
+                        title: newDdl.title,
+                    };
+                    await httpsCallable(getFunctions(), "updateDeadline")
+                    ({ deadlineId: newDdl.id, deadline: deadlineUpdate })
+                        .then(() => {
+                            const deadlineIndex = jobData.deadlines.findIndex((deadline) => deadline.id === newDdl.id);
+                            jobData.deadlines[deadlineIndex] = newDdl;
+                        });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
@@ -357,7 +377,22 @@ const Questions = ({ value, index, jobData, setJob }) => {
             >
                 Add a question
             </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const questionUpdate = {
+                        description: newQuestion.description,
+                        name: newQuestion.name,
+                    };
+                    await httpsCallable(getFunctions(), "updateInterviewQuestion")
+                    ({ questionId: newQuestion.id, question: questionUpdate })
+                        .then(() => {
+                            const questionIndex = jobData.interviewQuestions.findIndex((question) => question.id === newQuestion.id);
+                            jobData.interviewQuestions[questionIndex] = newQuestion;
+                        });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
@@ -432,8 +467,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
-                                    // Delete function goes here
+                                onClick={async () => {
+                                    await httpsCallable(getFunctions(), "deleteInterviewQuestion")(question.id)
+                                        .then(() => jobData.interviewQuestions = jobData.interviewQuestions.filter((c) => c.id !== question.id));
                                 }}
                             >
                                 Delete
@@ -491,7 +527,27 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             >
                 Add Contact
             </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const contactUpdate = {
+                        name: newContact.name,
+                        title: newContact.title,
+                        company: newContact.company,
+                        email: newContact.email,
+                        phone: newContact.phone,
+                        linkedin: newContact.linkedin,
+                        notes: newContact.notes,
+                    };
+                    await httpsCallable(getFunctions(), "updateContact")
+                        ({ contactId: newContact.id, contact: contactUpdate })
+                        .then(() => {
+                            const contactIndex = jobData.contacts.findIndex((contact) => contact.id === newContact.id);
+                            jobData.contacts[contactIndex] = newContact;
+                        });
+                    setOpen(false);
+                }
+            }>
                 <DialogContent
                     style={{
                         display: "flex",
@@ -575,8 +631,9 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
-                                    // Delete function goes here
+                                onClick={async () => {
+                                    await httpsCallable(getFunctions(), "deleteContact")(contact.id)
+                                        .then(() => jobData.contacts = jobData.contacts.filter((c) => c.id !== contact.id));
                                 }}
                             >
                                 Delete
@@ -633,47 +690,28 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     };
 
     const updateJob = async (jobData) => {
-        const newState = [...state];
-        let jobDataNew;
-        switch (tabValue) {
-            case 0:
-                jobDataNew = structuredClone(jobData);
-                delete jobDataNew.deadlines;
-                delete jobDataNew.interviewQuestions;
-                delete jobDataNew.contacts;
-                delete jobDataNew.notes;
-                delete jobDataNew.id;
-                delete jobDataNew.boardId;
-                delete jobDataNew.userId;
+        //const newState = [...state];
 
-                break;
-            case 1:
-                jobDataNew = jobData.notes;
-                break;
-            case 2:
-                jobDataNew = [];
-                break;
-            case 3:
-                jobDataNew = [];
-                break;
-            case 4:
-                jobDataNew = [];
-                break;
-            default:
-                throw new Error(
-                    `Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`
-                );
-        }
+        const newJobData = {
+            awaitingResponse: jobData.awaitingResponse,
+            boardId: jobData.boardId,
+            company: jobData.company,
+            description: jobData.description,
+            link: jobData.link,
+            location: jobData.location,
+            notes: jobData.notes,
+            position: jobData.position,
+            priority: jobData.priority,
+            salary: jobData.salary,
+            stage: jobData.stage,
+            userId: jobData.userId,
+        };
+        await httpsCallable(getFunctions(), 'updateJobData')({ jobId: jobData.id, jobData: newJobData });
 
-        // await httpsCallable(
-        //     getFunctions(),
-        //     'updateJob'
-        // )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
-
-        if (isKanban) {
-            newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
-            setState(newState);
-        }
+        // if (isKanban) {
+        //     newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+        //     setState(newState);
+        // }
     };
 
     // const addNewJob = async () => {
