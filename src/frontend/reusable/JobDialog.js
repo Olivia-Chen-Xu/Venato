@@ -257,8 +257,9 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
-                                    // Delete function goes here
+                                onClick={async () => {
+                                    await httpsCallable(getFunctions(), "deleteDeadline")(deadline.id)
+                                        .then(() => jobData.deadlines = jobData.deadlines.filter((c) => c.id !== deadline.id));
                                 }}
                             >
                                 Delete
@@ -432,8 +433,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
-                                    // Delete function goes here
+                                onClick={async () => {
+                                    await httpsCallable(getFunctions(), "deleteInterviewQuestion")(question.id)
+                                        .then(() => jobData.interviewQuestions = jobData.interviewQuestions.filter((c) => c.id !== question.id));
                                 }}
                             >
                                 Delete
