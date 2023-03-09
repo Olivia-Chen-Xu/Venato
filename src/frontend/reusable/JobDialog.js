@@ -633,47 +633,28 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     };
 
     const updateJob = async (jobData) => {
-        const newState = [...state];
-        let jobDataNew;
-        switch (tabValue) {
-            case 0:
-                jobDataNew = structuredClone(jobData);
-                delete jobDataNew.deadlines;
-                delete jobDataNew.interviewQuestions;
-                delete jobDataNew.contacts;
-                delete jobDataNew.notes;
-                delete jobDataNew.id;
-                delete jobDataNew.boardId;
-                delete jobDataNew.userId;
+        //const newState = [...state];
 
-                break;
-            case 1:
-                jobDataNew = jobData.notes;
-                break;
-            case 2:
-                jobDataNew = [];
-                break;
-            case 3:
-                jobDataNew = [];
-                break;
-            case 4:
-                jobDataNew = [];
-                break;
-            default:
-                throw new Error(
-                    `Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`
-                );
-        }
+        const newJobData = {
+            awaitingResponse: jobData.awaitingResponse,
+            boardId: jobData.boardId,
+            company: jobData.company,
+            description: jobData.description,
+            link: jobData.link,
+            location: jobData.location,
+            notes: jobData.notes,
+            position: jobData.position,
+            priority: jobData.priority,
+            salary: jobData.salary,
+            stage: jobData.stage,
+            userId: jobData.userId,
+        };
+        await httpsCallable(getFunctions(), 'updateJobData')({ jobId: jobData.id, jobData: newJobData });
 
-        // await httpsCallable(
-        //     getFunctions(),
-        //     'updateJob'
-        // )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
-
-        if (isKanban) {
-            newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
-            setState(newState);
-        }
+        // if (isKanban) {
+        //     newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+        //     setState(newState);
+        // }
     };
 
     // const addNewJob = async () => {
