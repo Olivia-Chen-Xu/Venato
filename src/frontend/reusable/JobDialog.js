@@ -40,8 +40,8 @@ const Headings = ({ jobData, setJob }) => {
     };
     return (
         <>
+            
             <Input
-                className="focus-only "
                 placeholder="Job Title"
                 value={jobData.position}
                 onChange={(e) => {
@@ -76,20 +76,7 @@ const Headings = ({ jobData, setJob }) => {
                         </InputAdornment>
                     }
                 />
-                <Input
-                    placeholder="Location"
-                    value={jobData.location}
-                    disableUnderline
-                    onChange={(e) => {
-                        setJob({ ...jobData, location: e.target.value });
-                    }}
-                    style={styles.Location}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined style={{ fontSize: 20 }} />
-                        </InputAdornment>
-                    }
-                />
+                
             </div>
             {/* <h1>{jobData.position}</h1>
             <h3>{jobData.company}</h3> */}
@@ -642,15 +629,29 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                     onChange={handleChange}
                     aria-label="Vertical tabs example"
                 >
-                    <Tab icon={<DescriptionOutlined />} iconPosition="end" label="Job Details" />
                     <Tab
+                        sx={{ "width": "56px", "height": "16px", "fontFamily": "'Poppins'", "fontStyle": "normal", "fontWeight": "400", "fontSize": "10px", "lineHeight": "16px", "letterSpacing": "0.04em", "flex": "none", "order": "1", "flexGrow": "0" }}
+                        icon={<DescriptionOutlined />}
+                        iconPosition="end"
+                        label="Job Details" />
+                    <Tab
+                        sx={{ "width": "40px", "height": "16px", "fontFamily": "'Poppins'", "fontStyle": "normal", "fontWeight": "400", "fontSize": "10px", "lineHeight": "16px", "letterSpacing": "0.04em", "flex": "none", "order": "1", "flexGrow": "0" }}
                         icon={<DriveFileRenameOutlineOutlined />}
                         iconPosition="end"
                         label="Notes"
                     />
-                    <Tab icon={<CalendarMonthOutlined />} iconPosition="end" label="Deadlines" />
-                    <Tab icon={<QuizOutlined />} iconPosition="end" label="Interview Questions" />
-                    <Tab icon={<ContactPageOutlined />} iconPosition="end" label="Contacts" />
+                    <Tab sx={{ "width": "69px", "height": "16px", "fontFamily": "'Poppins'", "fontStyle": "normal", "fontWeight": "400", "fontSize": "10px", "lineHeight": "16px", "letterSpacing": "0.04em", "flex": "none", "order": "1", "flexGrow": "0" }}
+                        icon={<CalendarMonthOutlined />}
+                        iconPosition="end"
+                        label="Deadlines" />
+                    <Tab sx={{ "width": "139px", "height": "16px", "fontFamily": "'Poppins'", "fontStyle": "normal", "fontWeight": "400", "fontSize": "10px", "lineHeight": "16px", "letterSpacing": "0.04em", "flex": "none", "order": "1", "flexGrow": "0" }}
+                        icon={<QuizOutlined />}
+                        iconPosition="end"
+                        label="Interview Questions" />
+                    <Tab sx={{ "width": "64px", "height": "16px", "fontFamily": "'Poppins'", "fontStyle": "normal", "fontWeight": "400", "fontSize": "10px", "lineHeight": "16px", "letterSpacing": "0.04em", "flex": "none", "order": "1", "flexGrow": "0" }}
+                        icon={<ContactPageOutlined />}
+                        iconPosition="end"
+                        label="Contacts" />
                 </Tabs>
                 <Details value={tabValue} index={0} jobData={job} setJob={setJob} />
                 <Notes value={tabValue} index={1} jobData={job} setJob={setJob} />
@@ -669,6 +670,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                                 height: '25px',
                                 borderRadius: '4px',
                                 marginInlineEnd: 5,
+                                bottom: '10px',
                             }}
                             onClick={() => deleteJob(job)}
                         >
@@ -678,11 +680,12 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                             variant="contained"
                             onClick={addNewJob}
                             style={{
-                                padding: '15px 12px 15px 14px',
+                                padding: '13px 12px 15px 14px',
                                 gap: '10px',
                                 width: '25px',
                                 height: '25px',
                                 borderRadius: '4px',
+                                bottom: '10px',
                             }}
                         >
                             {isEdit ? 'Save' : 'Add'}
@@ -698,12 +701,17 @@ export default JobDialog;
 
 const styles = {
     jobTitle: {
+        fontFamily: 'Poppins',
         fontStyle: 'normal',
-        fontWeight: '200',
-        fontSize: '36px',
-        lineHeight: '44px',
-        color: '#676767',
-        margin: '.5vh 0',
+        fontWeight: '500',
+        fontSize: '20px',
+        lineHeight: '29px',
+        color: '#333333',
+        letterSpacing: '0.04em',
+        flex: 'none',
+        order: 0,
+        flexGrow: 0,
+        textDecoration: 'none'
     },
 
     jobDescription: {
@@ -718,19 +726,28 @@ const styles = {
     },
 
     Company: {
-        outline: 'none',
+        fontFamily: 'Poppins',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '20px',
-        marginBottom: '.5vh',
-        color: '#676767',
+        fontSize: '17px',
+        lineHeight: '24px',
+        color: '#333333',
+        letterSpacing: '0.04em',
+        flex: 'none',
+        order: 1,
+        flexGrow: 0,
     },
     Location: {
-        outline: 'none',
+        fontFamily: 'Poppins',
         fontStyle: 'normal',
         fontWeight: '400',
-        fontSize: '20px',
-        color: '#676767',
+        fontSize: '17px',
+        lineHeight: '24px',
+        color: '#333333',
+        letterSpacing: '0.04em',
+        flex: 'none',
+        order: 1,
+        flexGrow: 0,
     },
 
     interviewIcons: {
