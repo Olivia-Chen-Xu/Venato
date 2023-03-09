@@ -575,7 +575,9 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                onClick={() => {
+                                onClick={async () => {
+                                    console.log(JSON.stringify(contact, null, 4));
+                                    //await httpsCallable(getFunctions(), "deleteContact")(contact.id);
                                     // Delete function goes here
                                 }}
                             >
