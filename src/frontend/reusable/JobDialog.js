@@ -383,10 +383,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                 open={open}
                 onClose={async () => {
                     const questionUpdate = {
-                        company: newQuestion.company,
                         description: newQuestion.description,
                         name: newQuestion.name,
-                        position: newQuestion.position,
                     };
                     await httpsCallable(getFunctions(), "updateInterviewQuestion")
                     ({ questionId: newQuestion.id, question: questionUpdate })

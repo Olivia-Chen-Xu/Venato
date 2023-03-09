@@ -180,10 +180,8 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     const structure = {
         questionId: '',
         question: {
-            company: '',
             description: '',
             name: '',
-            position: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
@@ -196,7 +194,7 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
     return getDoc(`interviewQuestions/${data.questionId}`)
-        .set(data.question)
+        .update(data.question)
         .then(() => `Question '${data.questionId}' updated successfully`)
         .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
 });
