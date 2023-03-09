@@ -1,26 +1,33 @@
 import { useAsync } from 'react-async-hook';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button, CircularProgress, Dialog, DialogContent, TextField } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
+import { Add, MoreVert, SkateboardingOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef} from 'react';
+import { useEffect, useState, useEffect, useRef} from 'react';
+import IconButton from '@mui/material/IconButton';
+import AppScreen from '../reusable/AppScreen';
+import { ReactComponent as NoBoards } from '../../images/empty/no-boards.svg';
 
 const ChooseKanban = () => {
     const nav = useNavigate();
     const boards = useAsync(httpsCallable(getFunctions(), 'getJobBoards'), []);
+    const [loading, setLoading] = useState(true);
+    const [empty, setEmpty] = useState(true);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState('');
+
+    useEffect(() => {
+        setLoading(boards.loading)
+
+        if (!boards.loading) {
+            setEmpty(boards.result.data.length === 0);
+        }
+    }, [boards]);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [boardName, setBoardName] = useState('');
     const current = new Date();
     const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
 
-    if (boards.loading) {
-        return (
-            <div>
-                <CircularProgress />
-            </div>
-        );
-    }
     if (boards.error) {
         return <p>Error: {boards.error.message}</p>;
     }
@@ -31,20 +38,38 @@ const ChooseKanban = () => {
         setDialogOpen(false);
     }
 
+    const getBoardName = () => {
+        if (!boards.result || !deleteDialogOpen) return;
+        return boards.result.data.find(b => b.id === deleteDialogOpen).name;
+    }
+
     const renderBoards = () => {
         if (!boards.result) {
-            return <p>Error: Invalid state</p>;
+            return <p>Error: Invalid state; no boards present</p>;
         }
 
         const boardsHtml = [];
         boards.result.data.forEach((board) => {
             boardsHtml.push(
-                <div className="bg-[url('./images/home/board.png')] bg-[#793476] bg-right bg-no-repeat bg-contain rounded-2xl">
+                <div className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
-                        className="relative w-full h-full py-16"
+                        className="py-8 flex grow"
                         onClick={() => nav('/kanban', { state: { boardId: board.id } })}
                     >
-                        <span className="absolute bottom-5 left-5 ">{board.name}</span>
+                        <div className="flex px-8 gap-3 grow items-center">
+                            <SkateboardingOutlined color="primary" fontSize='large' />
+                            <span>{board.name}</span>
+                            <IconButton
+                                sx={{
+                                    marginLeft: 'auto'
+                                }}
+                            >
+                                <MoreVert onClick={(event) => {
+                                    event.stopPropagation();
+                                    setDeleteDialogOpen(board.id);
+                                }} />
+                            </IconButton>
+                        </div>
                     </button>
                 </div>
             );
@@ -53,27 +78,32 @@ const ChooseKanban = () => {
     };
 
     return (
-        <div>
-           <h1 className="font-poppins font-medium color-black tracking-wider text-xl mt-10 grid place-content-left mx-20 uppercase">
-                Summer Internships
-            </h1>
-            <br />
-            <div className="flex justify-center">
-                <Button
-                    color="neutral"
-                    variant="contained"
-                    startIcon={<AddCircleOutline />}
-                    onClick={() => setDialogOpen(true)}
-                >
-                    Create new board
-                </Button>
+        <AppScreen
+            isLoading={loading}
+            isEmpty={empty}
+            empty={<NoBoards />}
+            title="Job Boards"
+            margin="mx-20"
+        >
+            <Button
+                color='white'
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => setDialogOpen(true)}
+                sx={{
+                    border: '2px solid #7F5BEB',
+                    borderRadius: '8px'
+                }}
+            >
+                Create new board
+            </Button>
+            <div className="flex mt-8">
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogContent
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
                             width: 600,
-                            alignItems: 'center',
                         }}
                     >
                         <p>Enter board name</p>
@@ -92,10 +122,40 @@ const ChooseKanban = () => {
                     </DialogContent>
                 </Dialog>
             </div>
-            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white mx-20 ">
+            <div className="flex mt-8">
+                <Dialog open={deleteDialogOpen !== ''} onClose={() => setDeleteDialogOpen('')}>
+                    <DialogContent
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: 600,
+                        }}
+                    >
+                        <p>Delete job board '{getBoardName()}'?</p>
+                        <br />
+                        <strong>⚠️ WARNING: This board and ALL of its jobs will be deleted ⚠️</strong>
+                        <br />
+
+                        <Button variant="contained" style={{ width: 100 }}>
+                            No
+                        </Button>
+                        <Button
+                            onClick={async (event) => {
+                                event.stopPropagation();
+                                await httpsCallable(getFunctions(), 'deleteBoard')(deleteDialogOpen)
+                                    .then(() => boards.result.data = boards.result.data.filter(b => b.id !== deleteDialogOpen));
+                                setDeleteDialogOpen('');
+                            }}
+                            style={{ width: 100 }}>
+                            Yes
+                        </Button>
+                    </DialogContent>
+                </Dialog>
+            </div>
+            <div className="mt-2 grid grid-rows-2 gap-y-4 text-2xl text-white">
                 {renderBoards()}
             </div>
-        </div>
+        </AppScreen>
     );
 }
 

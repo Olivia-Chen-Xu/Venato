@@ -7,6 +7,7 @@ import {
     verifyIsAuthenticated
 } from './helpers';
 import algoliaSearch from 'algoliasearch';
+import { IJob } from './DataInterfaces';
 
 /**
  * Callable functions for getting data from firestore
@@ -35,7 +36,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .then((deadlines) => {
                 // @ts-ignore
                 job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => {
-                    return { ...doc.data(), date: doc.data().date._seconds };
+                    return { ...doc.data(), date: doc.data().date._seconds, id: doc.id };
                 });
                 return null;
             })
@@ -47,7 +48,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .get()
             .then((questions) => {
                 // @ts-ignore
-                job.interviewQuestions = questions.empty ? [] : questions.docs.map((doc) => doc.data());
+                job.interviewQuestions = questions.empty ? [] : questions.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
                 return null;
             })
     );
@@ -58,7 +59,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .get()
             .then((contacts) => {
                 // @ts-ignore
-                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => doc.data());
+                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
                 return null;
             })
     );

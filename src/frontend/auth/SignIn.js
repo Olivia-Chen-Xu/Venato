@@ -1,11 +1,12 @@
-import { useNavigate } from "react-router-dom";
-import "./auth.css";
-import { useState } from "react";
-import { signOut } from "firebase/auth";
-import { signin } from "./auth-functions";
-import { auth } from "../../config/firebase";
-import { InputLabel, TextField, Button } from "@mui/material";
-import { btnStyle, inputStyle } from "./authStyles";
+import { useNavigate } from 'react-router-dom';
+import './auth.css';
+import { useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { signin } from './auth-functions';
+import { auth } from '../../config/firebase';
+import { InputLabel, TextField, Button, InputAdornment, IconButton } from '@mui/material';
+import { btnStyle, inputStyle, iconStyle } from './authStyles';
+import { VisibilityOffOutlined, VisibilityOutlined, WarningAmberRounded } from '@mui/icons-material';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -49,11 +50,20 @@ const SignIn = () => {
     };
 
     return (
-        <div className="AuthMainDiv" style={{ alignItems: "flex-start " }}>
+        <div className="h-screen grid place-content-center">
+        <div style={{ alignItems: 'flex-start ' }}>
             <text className="TopText">Log in</text>
-            <br />
-            <text className="WelcomeText">Welcome back.</text>
-            <br />
+            <div className="flex flex-1 my-5">
+                {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
+                    {errMsg === '' ? '' : '}
+                </p>{' '} */}
+
+                {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
+                <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
+                    {' '}
+                    {errMsg === '' ? 'Welcome back!' : errMsg}
+                </text>
+            </div>
             <InputLabel>Email</InputLabel>
             <TextField
                 variant="outlined"
@@ -69,7 +79,7 @@ const SignIn = () => {
             <InputLabel>Password</InputLabel>
             <TextField
                 variant="outlined"
-                type="password"
+                type={showPW ? 'text' : 'password'}
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -77,17 +87,33 @@ const SignIn = () => {
                 onChange={(e) => {
                     setPassword(e.target.value);
                 }}
+                InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                    setShowPW(!showPW);
+                                }}
+                            >
+                                {showPW ? <VisibilityOutlined style={iconStyle} /> : <VisibilityOffOutlined />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
             ></TextField>
 
             <p
+                className="my-5"
                 style={{
-                    textAlign: "right",
-                    fontSize: "12px",
-                    float: "right",
-                    textDecorationLine: "underline",
-                    fontStyle: "italic",
-                    color: "#676767",
-                    alignSelf: "flex-end",
+                    textAlign: 'right',
+                    fontSize: '12px',
+                    float: 'right',
+                    textDecorationLine: 'underline',
+                    fontStyle: 'italic',
+                    color: '#333333',
+                    alignSelf: 'flex-end',
                 }}
             >
                 <text style={{ cursor: "pointer" }} onClick={() => navigate("/password-reset")}>
@@ -95,26 +121,20 @@ const SignIn = () => {
                 </text>
             </p>
 
-            <br />
             <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignIn}>
                 Log in
             </Button>
-            <br />
-            <div
-                style={{
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                    display: "flex",
-                    width: "100%",
-                }}
-            >
-                <p className="SwapAuthText">Don't have an account?</p>
-                <text className="SwapAuthTextLink" onClick={() => navigate("/sign-up")}>
-                    Sign up
-                </text>
+            <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="outlined"
+                    style={btnStyle}
+                    onClick={() => navigate('/sign-up')}
+                >
+                    Sign Up
+                </Button>
             </div>
-            <br />
-            <text style={{ color: "red" }}>{errMsg}</text>
+        </div>
         </div>
     );
 };
