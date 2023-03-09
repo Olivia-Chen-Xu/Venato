@@ -268,7 +268,28 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <hr />
                     </div>
                 ))}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const deadlineUpdate = {
+                        company: newDdl.company,
+                        date: newDdl.date,
+                        isInterview: newDdl.isInterview,
+                        link: newDdl.link,
+                        location: newDdl.location,
+                        priority: newDdl.priority,
+                        position: newDdl.position,
+                        title: newDdl.title,
+                    };
+                    await httpsCallable(getFunctions(), "updateDeadline")
+                    ({ deadlineId: newDdl.id, deadline: deadlineUpdate })
+                        .then(() => {
+                            const deadlineIndex = jobData.deadlines.findIndex((deadline) => deadline.id === newDdl.id);
+                            jobData.deadlines[deadlineIndex] = newDdl;
+                        });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
@@ -358,7 +379,24 @@ const Questions = ({ value, index, jobData, setJob }) => {
             >
                 Add a question
             </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const questionUpdate = {
+                        company: newQuestion.company,
+                        description: newQuestion.description,
+                        name: newQuestion.name,
+                        position: newQuestion.position,
+                    };
+                    await httpsCallable(getFunctions(), "updateInterviewQuestion")
+                    ({ questionId: newQuestion.id, question: questionUpdate })
+                        .then(() => {
+                            const questionIndex = jobData.interviewQuestions.findIndex((question) => question.id === newQuestion.id);
+                            jobData.interviewQuestions[questionIndex] = newQuestion;
+                        });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
