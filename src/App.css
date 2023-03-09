@@ -11,7 +11,68 @@ html * {
     font-family: 'Poppins', sans-serif;
 }
 
-::-webkit-scrollbar {
-    width: 2px;
-    background: transparent;
+html,
+body,
+#root,
+#root>#app {
+  width   : 100%;
+  height  : 100%;
+}
+
+#app {
+  display              : grid;
+  grid-gap             : 0;
+  grid-template-rows   : 0fr 3fr;
+  grid-template-columns: minmax(min-content, 0.5fr) 3fr;
+  grid-template-areas  :
+    "sidebar header"
+    "sidebar content";
+}
+
+#app>header {
+  grid-area: header;
+}
+
+#app>aside {
+  grid-area: sidebar;
+}
+
+#app>main {
+  grid-area: content;
+}
+
+.active {
+  color: #7F5BEB !important;
+}
+
+.active::before {
+  content         : ' ';
+  position        : absolute;
+  left            : 0;
+  width           : .35em;
+  height          : 3em;
+  border          : 1px solid #7F5BEB;
+  background-color: #7F5BEB;
+  border-radius   : 14px;
+}
+
+.blob-bg, .wave-bg {
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+.blob-bg {
+
+  background-image: url('./images/blob.svg');
+}
+
+.wave-bg {
+  background-image: url('./images/wave.svg');
+  background-size: cover
+}
+
+.thin-icons svg > path {
+
+  stroke: white;
+  stroke-width: 0.75px;
 }

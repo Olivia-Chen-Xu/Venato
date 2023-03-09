@@ -21,6 +21,10 @@ const theme = createTheme({
         },
         info: {
             main: '#367CFF'
+        },
+        white: {
+            main: '#fff',
+            contrastText: '#333'
         }
     },
     typography:{
