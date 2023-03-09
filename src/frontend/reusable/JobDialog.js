@@ -272,13 +272,11 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 open={open}
                 onClose={async () => {
                     const deadlineUpdate = {
-                        company: newDdl.company,
                         date: newDdl.date,
                         isInterview: newDdl.isInterview,
                         link: newDdl.link,
                         location: newDdl.location,
                         priority: newDdl.priority,
-                        position: newDdl.position,
                         title: newDdl.title,
                     };
                     await httpsCallable(getFunctions(), "updateDeadline")

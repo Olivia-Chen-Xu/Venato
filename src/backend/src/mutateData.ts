@@ -125,12 +125,10 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     const structure = {
         deadlineId: '',
         deadline: {
-            company: '',
             date: 0,
             isInterview: false,
             link: '',
             location: '',
-            position: '',
             priority: '',
             title: '',
         }
@@ -145,7 +143,7 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     await verifyDocPermission(context, `contacts/${data.deadlineId}`);
 
     return getDoc(`contacts/${data.deadlineId}`)
-        .set({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
         .then(() => `Contact '${data.deadlineId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
 });
