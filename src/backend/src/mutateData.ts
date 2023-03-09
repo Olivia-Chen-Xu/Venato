@@ -136,16 +136,16 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     if (!isValidObjectStructure(data, structure)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+            'Must provide only a deadlines id (string) and contact (see db for structure) as arguments'
         );
     }
 
-    await verifyDocPermission(context, `contacts/${data.deadlineId}`);
+    await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
 
-    return getDoc(`contacts/${data.deadlineId}`)
+    return getDoc(`deadlines/${data.deadlineId}`)
         .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
-        .then(() => `Contact '${data.deadlineId}' updated successfully`)
-        .catch((err) => `Failed to update contact '${data.deadlineId}': ${err}`);
+        .then(() => `Deadline '${data.deadlineId}' updated successfully`)
+        .catch((err) => `Failed to update deadline '${data.deadlineId}': ${err}`);
 });
 
 const deleteDeadline = functions.https.onCall(async (deadlineId: string, context: any) => {
