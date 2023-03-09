@@ -24,6 +24,8 @@ import {
     LocationOnOutlined,
     Delete,
     AddCircleOutline,
+    Flag,
+    Add,
 } from "@mui/icons-material";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -33,7 +35,7 @@ import { AccountCircleOutlined } from "@mui/icons-material";
 import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
-
+import { SocialIcon } from "react-social-icons";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -105,6 +107,17 @@ const Details = ({ value, index, jobData, setJob }) => {
         setJob({ ...jobData, priority: e.target.value });
     };
 
+    const priorityColor = (p) => {
+        console.log("test");
+        switch (p) {
+            case "High":
+                return "text-[#E56464]";
+            case "Medium":
+                return "text-[#FF8900]";
+            case "Low":
+                return "text-[#0CBC8B]";
+        }
+    };
     return (
         <div
             style={{
@@ -114,55 +127,121 @@ const Details = ({ value, index, jobData, setJob }) => {
             }}
         >
             <>{/* </div> */}</>
-            <TextField
-                select
-                label="Column"
-                value={colTitles[jobData.stage]}
-                onChange={handleChange}
-                style={{ marginTop: "2vh" }}
-            >
-                {colTitles.map((title) => (
-                    <MenuItem value={title}>{title}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                select
-                value={jobData.priority}
-                label="Priority"
-                onChange={handleChange}
-                style={{ marginTop: "2vh" }}
-            >
-                {priorities.map((p) => (
-                    <MenuItem value={p}>{p}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                label="Posting Link"
-                value={jobData.link}
-                style={styles.applicationLink}
-                onChange={(e) => {
-                    setJob({ ...jobData, link: e.target.value });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
-            <TextField
-                label="Job details"
-                style={styles.jobDescription}
-                multiline
-                rows={10}
-                value={jobData.description}
-                onChange={(e) => {
-                    setJob({
-                        ...jobData,
-                        description: e.target.value,
-                    });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
+                <div className="w-3/4">
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full mr-8">
+                            <h1>Job Title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                className="w-full"
+                                value={jobData.position}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, position: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <h1>Priority</h1>
+                            <TextField
+                                select
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.priority}
+                                onChange={handleChange}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                            >
+                                {priorities.map((p) => (
+                                    <MenuItem value={p}>
+                                        <Flag className={priorityColor(p)} />
+                                    </MenuItem>
+                                ))}
+                            </TextField>{" "}
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full mr-4">
+                            <h1>Company</h1>
+                            <TextField
+                                value={jobData.company}
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, company: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col w-full ml-4">
+                            <h1>Location</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.location}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, location: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Posting Link</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={jobData.link}
+                                style={{ marginTop: "1vh" }}
+                                // style={styles.applicationLink}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, link: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Job Details</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                // style={styles.jobDescription}
+                                style={{ marginTop: "1vh" }}
+                                multiline
+                                rows={10}
+                                value={jobData.description}
+                                onChange={(e) => {
+                                    setJob({
+                                        ...jobData,
+                                        description: e.target.value,
+                                    });
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
@@ -176,16 +255,25 @@ const Notes = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <TextField
-                style={{ marginTop: "2vh" }}
-                label="Notes"
-                multiline
-                rows={10}
-                value={jobData.notes}
-                onChange={(e) => {
-                    setJob({ ...jobData, notes: e.target.value });
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
+                <div className="w-3/4 h-full">
+                    <h1>Notes</h1>
+                    <TextField
+                        InputProps={{
+                            style: {
+                                borderRadius: "8px",
+                            },
+                        }}
+                        style={{ marginTop: "2vh", height: "100%", width: "100%" }}
+                        multiline
+                        rows={20}
+                        value={jobData.notes}
+                        onChange={(e) => {
+                            setJob({ ...jobData, notes: e.target.value });
+                        }}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
@@ -409,7 +497,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
         });
     };
 
-    const openLink = (url) => {};
 
     return (
         <div
@@ -420,22 +507,33 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             }}
         >
             <div className="flex flex-row justify-center align-center w-full">
-                <div className="grid grid--3 w-2/3 gap-14"></div>
-                <Button
-                    style={{
-                        marginTop: "2vh",
-                        marginBottom: "2vh",
-                        padding: "1vh 1vw",
-                        border: "2px solid #7F5BEB",
-                    }}
-                    variant="outlined"
-                    onClick={() => setOpen(true)}
-                    startIcon={<AddCircleOutline />}
-                >
-                    Add Contact
-                </Button>
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => setOpen(true)}
+                        startIcon={<Add />}
+                    >
+                        Add Contact
+                    </Button>
+                </div>
             </div>
-            <Dialog fulLWidth maxWidth="xl" open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: '5vh 5vw' }
+                  }}
+                open={open}
+                onClose={() => setOpen(false)}
+            >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
                         <h1 className="text-xl w-full">Create Contact</h1>
@@ -443,6 +541,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             <div className="ml-3">
                                 <Button
                                     variant="outlined"
+                                    sx={{ borderRadius: 2 }}
                                     color="neutral"
                                     style={{ width: 100, border: "2px solid #7F5BEB" }}
                                     onClick={() => {
@@ -454,6 +553,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             </div>
                             <Button
                                 type="submit"
+                                sx={{ borderRadius: 2 }}
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
@@ -464,66 +564,97 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         </div>
                     </div>
                     <div className="w-full mb-4">
-                        <TextField
-                            className="w-full"
-                            required
-                            label="Contact Name"
-                            value={newContact.name}
-                            onChange={(e) => {
-                                setNewContact({ ...newContact, name: e.target.value });
-                            }}
-                        />
-                        <div className="flex flex-1 justify-between my-8">
-                            <TextField
-                                required
-                                className="w-7/12 ml-2"
-                                label="Job title"
-                                value={newContact.title}
-                                onChange={(e) => {
-                                    setNewContact({ ...newContact, title: e.target.value });
-                                }}
-                            />
-                            <TextField
-                                required
-                                className="w-2/5"
-                                label="Company"
-                                value={newContact.company}
-                                onChange={(e) => {
-                                    setNewContact({ ...newContact, company: e.target.value });
-                                }}
-                            />
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Contact Name</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.name}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({ ...newContact, name: e.target.value });
+                                    }}
+                                />{" "}
+                            </div>
                         </div>
-                        <TextField
-                            className="w-full"
-                            label="LinkedIn Profile"
-                            value={newContact.linkedin}
-                            onChange={(e) => {
-                                setNewContact({ ...newContact, linkedin: e.target.value });
-                            }}
-                        />
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Company</h1>
+                                <TextField
+                                    value={newContact.title}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({ ...newContact, title: e.target.value });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Location</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.company}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({ ...newContact, company: e.target.value });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full">
+                            <div className="flex flex-col w-full">
+                                <h1>LinkedIn Profile</h1>
+                                <TextField
+                                    className="w-full"
+                                    value={newContact.linkedin}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({ ...newContact, linkedin: e.target.value });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
             <div className="flex flex-row justify-center align-center w-full">
-                <div className="grid grid-cols-3 w-3/4 gap-14">
+                <div className="grid grid-cols-3 w-2/3 gap-14">
                     {jobData.contacts &&
                         jobData.contacts.map((contact) => (
-                            <div className="border rounded-lg">
+                            <div className="border rounded-xl">
                                 {/* <div className="flex flex-row-reverse w-full mr-5">
                                     <MoreHoriz /> 
                                 </div> */}
                                 <div className="m-4">
                                     <div className="flex flex-1 w-full mb-2">
-                                        <div className="flex flex-row justify-center font-light align-center mt-4 px-4">
+                                        <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
                                             <AccountCircleOutlined
-                                                fontSize="small"
                                                 className="scale-[2.25]"
+                                                sx={{ stroke: "#ffffff", strokeWidth: 1 }}
                                             />
                                         </div>
                                         <div className="w-full">
-                                            <h2 className="text-l font-bold">{contact.name}</h2>
-                                            <p>{contact.title}</p>
-                                            <p>@ {contact.company}</p>
+                                            <h2 className="text-lg font-semibold">{contact.name}</h2>
+                                            <p className="mt-1">{contact.title}</p>
+                                            <p className="mb-1">@ {contact.company}</p>
                                         </div>
                                     </div>
                                     <Button
@@ -531,11 +662,14 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         color="info"
                                         style={{ border: "2px solid #367CFF" }}
                                         variant="outlined"
+                        sx={{ borderRadius: 2 }}
+
                                         onClick={() => {
                                             window.open(contact.linkedin, "_blank");
                                         }}
                                     >
-                                        Linkedin
+                                        <SocialIcon className="w-1/2 mr-2" url="https://www.linkedin.com/in/" style={{ height: 20, width: 20 }} />
+                                        Contact
                                     </Button>
                                 </div>
                             </div>
