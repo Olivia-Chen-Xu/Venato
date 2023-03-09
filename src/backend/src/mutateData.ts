@@ -237,13 +237,11 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
         contact: {
             company: '',
             email: '',
-            jobId: '',
             linkedin: '',
             name: '',
             notes: '',
             phone: '',
             title: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
@@ -256,7 +254,7 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
     await verifyDocPermission(context, `contacts/${data.contactId}`);
 
     return getDoc(`contacts/${data.contactId}`)
-        .set(data.contact)
+        .update(data.contact)
         .then(() => `Contact '${data.contactId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
 });

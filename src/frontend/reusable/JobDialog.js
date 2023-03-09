@@ -491,7 +491,27 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             >
                 Add Contact
             </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const contactUpdate = {
+                        name: newContact.name,
+                        title: newContact.title,
+                        company: newContact.company,
+                        email: newContact.email,
+                        phone: newContact.phone,
+                        linkedin: newContact.linkedin,
+                        notes: newContact.notes,
+                    };
+                    await httpsCallable(getFunctions(), "updateContact")
+                        ({ contactId: newContact.id, contact: contactUpdate })
+                        .then(() => {
+                            const contactIndex = jobData.contacts.findIndex((contact) => contact.id === newContact.id);
+                            jobData.contacts[contactIndex] = newContact;
+                        });
+                    setOpen(false);
+                }
+            }>
                 <DialogContent
                     style={{
                         display: "flex",
@@ -576,9 +596,8 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             </MenuItem>
                             <MenuItem
                                 onClick={async () => {
-                                    console.log(JSON.stringify(contact, null, 4));
-                                    //await httpsCallable(getFunctions(), "deleteContact")(contact.id);
-                                    // Delete function goes here
+                                    await httpsCallable(getFunctions(), "deleteContact")(contact.id)
+                                        .then(() => jobData.contacts = jobData.contacts.filter((c) => c.id !== contact.id));
                                 }}
                             >
                                 Delete
