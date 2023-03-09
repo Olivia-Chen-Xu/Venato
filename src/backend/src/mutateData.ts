@@ -128,13 +128,11 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
             company: '',
             date: 0,
             isInterview: false,
-            jobId: '',
             link: '',
             location: '',
             position: '',
             priority: '',
             title: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
@@ -184,10 +182,8 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
         question: {
             company: '',
             description: '',
-            jobId: '',
             name: '',
             position: '',
-            userId: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
