@@ -11,6 +11,8 @@ import {
     Dialog,
     CircularProgress,
     MenuItem,
+    Menu,
+    IconButton,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -26,6 +28,7 @@ import {
     AddCircleOutline,
     Flag,
     Add,
+    MoreVert,
 } from "@mui/icons-material";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -280,6 +283,8 @@ const Notes = ({ value, index, jobData, setJob }) => {
 
 const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuOpen = Boolean(anchorEl);
     const [newDdl, setNewDdl] = useState({
         title: "",
         date: dayjs().unix(),
@@ -320,10 +325,70 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <p>{dayjs.unix(deadline.date).toString()}</p>
                         <p>{deadline.location}</p>
                         <p>{deadline.link}</p>
+                        <IconButton
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+                            }}
+                        >
+                            <MoreVert></MoreVert>
+                        </IconButton>
+                        <Menu
+                            open={menuOpen}
+                            onClose={() => setAnchorEl(null)}
+                            anchorEl={anchorEl}
+                            transformOrigin={{ horizontal: "right", vertical: "top" }}
+                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    setOpen(true);
+                                    setNewDdl(deadline);
+                                }}
+                            >
+                                Edit
+                            </MenuItem>
+                            <MenuItem
+                                onClick={async () => {
+                                    await httpsCallable(
+                                        getFunctions(),
+                                        "deleteDeadline"
+                                    )(deadline.id).then(
+                                        () =>
+                                            (jobData.deadlines = jobData.deadlines.filter(
+                                                (c) => c.id !== deadline.id
+                                            ))
+                                    );
+                                }}
+                            >
+                                Delete
+                            </MenuItem>
+                        </Menu>
                         <hr />
                     </div>
                 ))}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const deadlineUpdate = {
+                        date: newDdl.date,
+                        isInterview: newDdl.isInterview,
+                        link: newDdl.link,
+                        location: newDdl.location,
+                        priority: newDdl.priority,
+                        title: newDdl.title,
+                    };
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateDeadline"
+                    )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+                        const deadlineIndex = jobData.deadlines.findIndex(
+                            (deadline) => deadline.id === newDdl.id
+                        );
+                        jobData.deadlines[deadlineIndex] = newDdl;
+                    });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
@@ -373,7 +438,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         }}
                     />
                     <Button variant="contained" onClick={addNewDdl} style={{ width: 100 }}>
-                        Add
+                        Save
                     </Button>
                 </DialogContent>
             </Dialog>
@@ -384,6 +449,8 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuOpen = Boolean(anchorEl);
 
     const addNewQuestion = async () => {
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
@@ -411,7 +478,25 @@ const Questions = ({ value, index, jobData, setJob }) => {
             >
                 Add a question
             </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={async () => {
+                    const questionUpdate = {
+                        description: newQuestion.description,
+                        name: newQuestion.name,
+                    };
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateInterviewQuestion"
+                    )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+                        const questionIndex = jobData.interviewQuestions.findIndex(
+                            (question) => question.id === newQuestion.id
+                        );
+                        jobData.interviewQuestions[questionIndex] = newQuestion;
+                    });
+                    setOpen(false);
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
@@ -463,6 +548,45 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     <div style={{ marginBottom: "2vh" }}>
                         <h2>{question.name}</h2>
                         <p>{question.description}</p>
+                        <IconButton
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+                            }}
+                        >
+                            <MoreVert></MoreVert>
+                        </IconButton>
+                        <Menu
+                            open={menuOpen}
+                            onClose={() => setAnchorEl(null)}
+                            anchorEl={anchorEl}
+                            transformOrigin={{ horizontal: "right", vertical: "top" }}
+                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    setOpen(true);
+                                    setNewQuestion(question);
+                                }}
+                            >
+                                Edit
+                            </MenuItem>
+                            <MenuItem
+                                onClick={async () => {
+                                    await httpsCallable(
+                                        getFunctions(),
+                                        "deleteInterviewQuestion"
+                                    )(question.id).then(
+                                        () =>
+                                            (jobData.interviewQuestions =
+                                                jobData.interviewQuestions.filter(
+                                                    (c) => c.id !== question.id
+                                                ))
+                                    );
+                                }}
+                            >
+                                Delete
+                            </MenuItem>
+                        </Menu>
                         <hr />
                     </div>
                 ))}
@@ -472,6 +596,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
 
 const Contacts = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuOpen = Boolean(anchorEl);
     const [newContact, setNewContact] = useState({
         name: "",
         title: "",
@@ -496,7 +622,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             notes: "",
         });
     };
-
 
     return (
         <div
@@ -529,10 +654,30 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 fulLWidth
                 maxWidth="xl"
                 PaperProps={{
-                    style: { borderRadius: 16, padding: '5vh 5vw' }
-                  }}
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={async () => {
+                    const contactUpdate = {
+                        name: newContact.name,
+                        title: newContact.title,
+                        company: newContact.company,
+                        email: newContact.email,
+                        phone: newContact.phone,
+                        linkedin: newContact.linkedin,
+                        notes: newContact.notes,
+                    };
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateContact"
+                    )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
+                        const contactIndex = jobData.contacts.findIndex(
+                            (contact) => contact.id === newContact.id
+                        );
+                        jobData.contacts[contactIndex] = newContact;
+                    });
+                    setOpen(false);
+                }}
             >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
@@ -577,14 +722,17 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         },
                                     }}
                                     onChange={(e) => {
-                                        setNewContact({ ...newContact, name: e.target.value });
+                                        setNewContact({
+                                            ...newContact,
+                                            name: e.target.value,
+                                        });
                                     }}
                                 />{" "}
                             </div>
                         </div>
                         <div className="flex flex-1 w-full mb-8">
                             <div className="flex flex-col w-full mr-4">
-                                <h1>Company</h1>
+                                <h1>Job Title</h1>
                                 <TextField
                                     value={newContact.title}
                                     style={{ marginTop: "1vh" }}
@@ -594,12 +742,15 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         },
                                     }}
                                     onChange={(e) => {
-                                        setNewContact({ ...newContact, title: e.target.value });
+                                        setNewContact({
+                                            ...newContact,
+                                            title: e.target.value,
+                                        });
                                     }}
                                 />
                             </div>
                             <div className="flex flex-col w-full ml-4">
-                                <h1>Location</h1>
+                                <h1>Company</h1>
                                 <TextField
                                     style={{ marginTop: "1vh" }}
                                     value={newContact.company}
@@ -609,7 +760,10 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         },
                                     }}
                                     onChange={(e) => {
-                                        setNewContact({ ...newContact, company: e.target.value });
+                                        setNewContact({
+                                            ...newContact,
+                                            company: e.target.value,
+                                        });
                                     }}
                                 />
                             </div>
@@ -627,7 +781,10 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         },
                                     }}
                                     onChange={(e) => {
-                                        setNewContact({ ...newContact, linkedin: e.target.value });
+                                        setNewContact({
+                                            ...newContact,
+                                            linkedin: e.target.value,
+                                        });
                                     }}
                                 />{" "}
                             </div>
@@ -636,7 +793,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 </DialogContent>
             </Dialog>
             <div className="flex flex-row justify-center align-center w-full">
-                <div className="grid grid-cols-3 w-2/3 gap-14">
+                <div className="grid grid-cols-3 gap-14 w-2/3">
                     {jobData.contacts &&
                         jobData.contacts.map((contact) => (
                             <div className="border rounded-xl">
@@ -652,7 +809,9 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                             />
                                         </div>
                                         <div className="w-full">
-                                            <h2 className="text-lg font-semibold">{contact.name}</h2>
+                                            <h2 className="text-lg">
+                                                {contact.name}
+                                            </h2>
                                             <p className="mt-1">{contact.title}</p>
                                             <p className="mb-1">@ {contact.company}</p>
                                         </div>
@@ -662,13 +821,16 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         color="info"
                                         style={{ border: "2px solid #367CFF" }}
                                         variant="outlined"
-                        sx={{ borderRadius: 2 }}
-
+                                        sx={{ borderRadius: 2 }}
                                         onClick={() => {
                                             window.open(contact.linkedin, "_blank");
                                         }}
                                     >
-                                        <SocialIcon className="w-1/2 mr-2" url="https://www.linkedin.com/in/" style={{ height: 20, width: 20 }} />
+                                        <SocialIcon
+                                            className="w-1/2 mr-2"
+                                            url="https://www.linkedin.com/in/"
+                                            style={{ height: 20, width: 20 }}
+                                        />
                                         Contact
                                     </Button>
                                 </div>
@@ -676,6 +838,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         ))}
                 </div>
             </div>
+            );{" "}
         </div>
     );
 };
@@ -724,47 +887,31 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     };
 
     const updateJob = async (jobData) => {
-        const newState = [...state];
-        let jobDataNew;
-        switch (tabValue) {
-            case 0:
-                jobDataNew = structuredClone(jobData);
-                delete jobDataNew.deadlines;
-                delete jobDataNew.interviewQuestions;
-                delete jobDataNew.contacts;
-                delete jobDataNew.notes;
-                delete jobDataNew.id;
-                delete jobDataNew.boardId;
-                delete jobDataNew.userId;
+        //const newState = [...state];
 
-                break;
-            case 1:
-                jobDataNew = jobData.notes;
-                break;
-            case 2:
-                jobDataNew = [];
-                break;
-            case 3:
-                jobDataNew = [];
-                break;
-            case 4:
-                jobDataNew = [];
-                break;
-            default:
-                throw new Error(
-                    `Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`
-                );
-        }
+        const newJobData = {
+            awaitingResponse: jobData.awaitingResponse,
+            boardId: jobData.boardId,
+            company: jobData.company,
+            description: jobData.description,
+            link: jobData.link,
+            location: jobData.location,
+            notes: jobData.notes,
+            position: jobData.position,
+            priority: jobData.priority,
+            salary: jobData.salary,
+            stage: jobData.stage,
+            userId: jobData.userId,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateJobData"
+        )({ jobId: jobData.id, jobData: newJobData });
 
-        // await httpsCallable(
-        //     getFunctions(),
-        //     'updateJob'
-        // )({ id: jobData.id, tab: tabValue + 1, newFields: jobDataNew });
-
-        if (isKanban) {
-            newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
-            setState(newState);
-        }
+        // if (isKanban) {
+        //     newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
+        //     setState(newState);
+        // }
     };
 
     // const addNewJob = async () => {
