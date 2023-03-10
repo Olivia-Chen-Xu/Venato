@@ -462,8 +462,11 @@ const Questions = ({ value, index, jobData, setJob }) => {
     const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
+    const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const addNewQuestion = async () => {
+        setLoading(true);
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         await httpsCallable(
@@ -471,6 +474,24 @@ const Questions = ({ value, index, jobData, setJob }) => {
             "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
         setNewQuestion({ name: "", description: "" });
+        setLoading(false);
+    };
+
+    const updateQuesiton = async () => {
+        const questionUpdate = {
+            description: newQuestion.description,
+            name: newQuestion.name,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateInterviewQuestion"
+        )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+            const questionIndex = jobData.interviewQuestions.findIndex(
+                (question) => question.id === newQuestion.id
+            );
+            jobData.interviewQuestions[questionIndex] = newQuestion;
+        });
+        setOpen(false);
     };
 
     return (
@@ -484,29 +505,14 @@ const Questions = ({ value, index, jobData, setJob }) => {
             <Button
                 style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
-                onClick={() => setOpen(true)}
+                onClick={() => { setIsEditing(false); setOpen(true);}}
                 startIcon={<AddCircleOutline />}
             >
                 Add a question
             </Button>
             <Dialog
                 open={open}
-                onClose={async () => {
-                    const questionUpdate = {
-                        description: newQuestion.description,
-                        name: newQuestion.name,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateInterviewQuestion"
-                    )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
-                        const questionIndex = jobData.interviewQuestions.findIndex(
-                            (question) => question.id === newQuestion.id
-                        );
-                        jobData.interviewQuestions[questionIndex] = newQuestion;
-                    });
-                    setOpen(false);
-                }}
+                onClose={async () => { await updateQuesiton(); }}
             >
                 <DialogContent
                     style={{
@@ -537,9 +543,16 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     />
                     <br />
 
-                    <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
-                        Add
-                    </Button>
+                    <LoadingButton
+                        style={{ width: 100 }}
+                        variant="contained"
+                        onClick={async () => { isEditing ? await updateQuesiton() :  await addNewQuestion(); }}
+
+                        loading={loading}
+                        disableElevation
+                    >
+                        {isEditing ? "Save" : "Add"}
+                    </LoadingButton>
                 </DialogContent>
             </Dialog>
 
@@ -575,6 +588,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         >
                             <MenuItem
                                 onClick={() => {
+                                    setIsEditing(true);
                                     setOpen(true);
                                     setNewQuestion(question);
                                 }}
