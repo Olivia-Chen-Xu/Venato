@@ -39,8 +39,8 @@ import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
 import { SocialIcon } from "react-social-icons";
-import Search from '@mui/icons-material/Search';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Search from "@mui/icons-material/Search";
+import LoadingButton from "@mui/lab/LoadingButton";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -286,6 +286,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
 const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
     const menuOpen = Boolean(anchorEl);
     const [newDdl, setNewDdl] = useState({
         title: "",
@@ -297,14 +298,36 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
     const addNewDdl = async () => {
         setLoading(true);
-        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
-        setOpen(false);
         await httpsCallable(
             getFunctions(),
             "addDeadline"
-        )({ ...newDdl, jobId: jobData.id, company: jobData.company });
-        setNewDdl({ title: "", date: dayjs().unix(), location: "", link: "" });
+        )({ ...newDdl, jobId: jobData.id, company: jobData.company }).then((res) =>
+            setNewDdl({ ...newDdl, id: res.result })
+        );
+        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
+        setOpen(false);
+    };
+
+    const updateDdl = async () => {
+        const deadlineUpdate = {
+            date: newDdl.date,
+            isInterview: newDdl.isInterview,
+            link: newDdl.link,
+            location: newDdl.location,
+            priority: newDdl.priority,
+            title: newDdl.title,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateDeadline"
+        )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+            const deadlineIndex = jobData.deadlines.findIndex(
+                (deadline) => deadline.id === newDdl.id
+            );
+            jobData.deadlines[deadlineIndex] = newDdl;
+        });
         setLoading(false);
+        setOpen(false);
     };
 
     return (
@@ -318,7 +341,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             <LoadingButton
                 style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                    setIsAdding(true);
+                    setOpen(true);
+                }}
                 startIcon={<AddCircleOutline />}
             >
                 Add Deadline
@@ -334,6 +360,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <IconButton
                             onClick={(e) => {
                                 setAnchorEl(e.currentTarget);
+                                setNewDdl(deadline);
                             }}
                         >
                             <MoreVert></MoreVert>
@@ -347,8 +374,8 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         >
                             <MenuItem
                                 onClick={() => {
+                                    setIsAdding(false);
                                     setOpen(true);
-                                    setNewDdl(deadline);
                                 }}
                             >
                                 Edit
@@ -374,23 +401,14 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 ))}
             <Dialog
                 open={open}
-                onClose={async () => {
-                    const deadlineUpdate = {
-                        date: newDdl.date,
-                        link: newDdl.link,
-                        location: newDdl.location,
-                        title: newDdl.title,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateDeadline"
-                    )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
-                        const deadlineIndex = jobData.deadlines.findIndex(
-                            (deadline) => deadline.id === newDdl.id
-                        );
-                        jobData.deadlines[deadlineIndex] = newDdl;
-                    });
+                onClose={() => {
                     setOpen(false);
+                    setNewDdl({
+                        title: "",
+                        date: dayjs().unix(),
+                        location: "",
+                        link: "",
+                    });
                 }}
             >
                 <DialogContent
@@ -445,7 +463,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         style={{ width: 100 }}
                         variant="contained"
                         onClick={async () => await addNewDdl()}
-
                         loading={loading}
                         disableElevation
                     >
@@ -505,14 +522,19 @@ const Questions = ({ value, index, jobData, setJob }) => {
             <Button
                 style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
-                onClick={() => { setIsEditing(false); setOpen(true);}}
+                onClick={() => {
+                    setIsEditing(false);
+                    setOpen(true);
+                }}
                 startIcon={<AddCircleOutline />}
             >
                 Add a question
             </Button>
             <Dialog
                 open={open}
-                onClose={async () => { await updateQuesiton(); }}
+                onClose={async () => {
+                    await updateQuesiton();
+                }}
             >
                 <DialogContent
                     style={{
@@ -546,8 +568,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     <LoadingButton
                         style={{ width: 100 }}
                         variant="contained"
-                        onClick={async () => { isEditing ? await updateQuesiton() :  await addNewQuestion(); }}
-
+                        onClick={async () => {
+                            isEditing ? await updateQuesiton() : await addNewQuestion();
+                        }}
                         loading={loading}
                         disableElevation
                     >
@@ -824,13 +847,13 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             <div className="border rounded-xl">
                                 <div className="flex flex-row-reverse w-full mr-5">
                                     <div className="">
-                                    <IconButton
-                                        onClick={(e) => {
-                                            setAnchorEl(e.currentTarget);
-                                        }}
-                                    >
-                                        <MoreHoriz></MoreHoriz>
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={(e) => {
+                                                setAnchorEl(e.currentTarget);
+                                            }}
+                                        >
+                                            <MoreHoriz></MoreHoriz>
+                                        </IconButton>
                                     </div>
                                     <Menu
                                         open={menuOpen}
@@ -900,7 +923,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         ))}
                 </div>
             </div>
-            );{" "}
         </div>
     );
 };
