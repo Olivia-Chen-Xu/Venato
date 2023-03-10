@@ -29,6 +29,8 @@ import {
     Flag,
     Add,
     MoreVert,
+    RoomOutlined,
+    AccessTimeOutlined,
 } from "@mui/icons-material";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -39,6 +41,8 @@ import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
 import { SocialIcon } from "react-social-icons";
+import Checkbox from "@mui/material/Checkbox";
+
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -301,6 +305,16 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         setNewDdl({ title: "", date: dayjs().unix(), location: "", link: "" });
     };
 
+    const uniqueDates = jobData.deadlines
+        ? [
+              ...new Set(
+                  jobData.deadlines.map((deadline) =>
+                      dayjs.unix(deadline.date).format("MMMM D, YYYY")
+                  )
+              ),
+          ]
+        : [];
+
     return (
         <div
             style={{
@@ -330,58 +344,119 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             </div>
             <div className="flex flex-row justify-center align-center w-full">
                 <div className="w-2/3">
-                    {jobData.deadlines &&
-                        jobData.deadlines.map((deadline) => (
-                            <div style={{ marginBottom: "2vh" }}>
-                                {" "}
-                                <h2>{deadline.title}</h2>
-                                <p>{dayjs.unix(deadline.date).toString()}</p>
-                                <p>{deadline.location}</p>
-                                <p>{deadline.link}</p>
-                                <IconButton
-                                    onClick={(e) => {
-                                        setAnchorEl(e.currentTarget);
-                                    }}
-                                >
-                                    <MoreVert></MoreVert>
-                                </IconButton>
-                                <Menu
-                                    open={menuOpen}
-                                    onClose={() => setAnchorEl(null)}
-                                    anchorEl={anchorEl}
-                                    transformOrigin={{ horizontal: "right", vertical: "top" }}
-                                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                                >
-                                    <MenuItem
-                                        onClick={() => {
-                                            setOpen(true);
-                                            setNewDdl(deadline);
-                                        }}
-                                    >
-                                        Edit
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={async () => {
-                                            await httpsCallable(
-                                                getFunctions(),
-                                                "deleteDeadline"
-                                            )(deadline.id).then(
-                                                () =>
-                                                    (jobData.deadlines = jobData.deadlines.filter(
-                                                        (c) => c.id !== deadline.id
-                                                    ))
-                                            );
-                                        }}
-                                    >
-                                        Delete
-                                    </MenuItem>
-                                </Menu>
-                                <hr />
-                            </div>
-                        ))}
-                </div>
+                    {uniqueDates &&
+                        uniqueDates
+                            .sort((a, b) => a - b)
+                            .map((date) => (
+                                <div key={date}>
+                                    <h1 className="mb-4">{date}</h1>
+                                    {jobData.deadlines &&
+                                        jobData.deadlines
+                                            .filter(
+                                                (deadline) =>
+                                                    dayjs
+                                                        .unix(deadline.date)
+                                                        .format("MMMM D, YYYY") === date
+                                            )
+                                            .sort((a, b) => a.date - b.date)
+                                            .map((deadline) => (
+                                                <div className="mb-2">
+                                                    <div className="border rounded-lg mb-4">
+                                                        <div className="flex flex-row-reverse w-full mr-5">
+                                                            <MoreHoriz
+                                                                className="mr-4 cursor-pointer"
+                                                                onClick={(e) => {
+                                                                    setAnchorEl(e.currentTarget);
+                                                                }}
+                                                            ></MoreHoriz>
+                                                            <Menu
+                                                                open={menuOpen}
+                                                                onClose={() => setAnchorEl(null)}
+                                                                anchorEl={anchorEl}
+                                                                transformOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "top",
+                                                                }}
+                                                                anchorOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "bottom",
+                                                                }}
+                                                            >
+                                                                <MenuItem
+                                                                    onClick={() => {
+                                                                        setOpen(true);
+                                                                        setNewDdl(deadline);
+                                                                    }}
+                                                                >
+                                                                    Edit
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    onClick={async () => {
+                                                                        await httpsCallable(
+                                                                            getFunctions(),
+                                                                            "deleteDeadline"
+                                                                        )(deadline.id).then(
+                                                                            () =>
+                                                                                (jobData.deadlines =
+                                                                                    jobData.deadlines.filter(
+                                                                                        (c) =>
+                                                                                            c.id !==
+                                                                                            deadline.id
+                                                                                    ))
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Delete
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </div>{" "}
+                                                        <div className="flex flex-1 justify-between mb-3 -mt-2">
+                                                            <div className="flex flex-1">
+                                                                <Checkbox
+                                                                    className="mr-5"
+                                                                    style={{ padding: "0 1vw" }}
+                                                                />
+                                                                <h1 className="mt-1 font-medium">
+                                                                    {deadline.title}
+                                                                </h1>
+                                                            </div>
+                                                            <div className="flex flex-1 justify-end">
+                                                                <div className="border rounded-lg bg-[#F2F9FA] py-1 px-2">
+                                                                    <div className="flex flex-1 text-[#003F4B]">
+                                                                        <AccessTimeOutlined />
+                                                                        {/* {console.log(dayjs.unix(deadline.date).format('HH:mm'))} */}
+                                                                        <h1 className="pl-1">
+                                                                            {dayjs
+                                                                                .unix(deadline.date)
+                                                                                .format("h:mm A")}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="border rounded-lg bg-[#D8CFF3] py-1 ml-4 mr-12 px-2">
+                                                                    <div className="flex flex-1 text-[#3F15BB]">
+                                                                        <RoomOutlined />
+                                                                        <h1 className="pl-1">
+                                                                            {deadline.location}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                {/* <h1>{deadline.link}</h1> */}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                </div>
+                            ))}
+                </div>{" "}
             </div>
+
             <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
                 open={open}
                 onClose={async () => {
                     const deadlineUpdate = {
@@ -404,57 +479,113 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                     setOpen(false);
                 }}
             >
-                <DialogContent
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: 600,
-                        alignItems: "center",
-                    }}
-                >
-                    <p>Task title</p>
-                    <TextField
-                        label="Task title"
-                        value={newDdl.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, title: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <p>Date and time</p>
-                        <br />
-                        <DateTimePicker
-                            label="Date and time"
-                            value={dayjs.unix(newDdl.date)}
-                            onChange={(val) => setNewDdl({ ...newDdl, date: val.unix() })}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                    <br />
-                    <p>Location</p>
-                    <TextField
-                        label="Location"
-                        value={newDdl.location}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, location: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to meeting (if applicable)</p>
-                    <TextField
-                        label="Link"
-                        value={newDdl.link}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, link: e.target.value });
-                        }}
-                    />
-                    <Button variant="contained" onClick={addNewDdl} style={{ width: 100 }}>
-                        Save
-                    </Button>
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <Button
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={addNewDdl}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="w-full mb-4">
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Task Title</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.title}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({ ...newDdl, title: e.target.value });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Date & Time</h1>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker
+                                        value={dayjs.unix(newDdl.date)}
+                                        InputProps={{
+                                            style: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        onChange={(val) =>
+                                            setNewDdl({ ...newDdl, date: val.unix() })
+                                        }
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                            
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Location</h1>
+                                <TextField
+                                    value={newDdl.location}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            location: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Link (If Applicable)</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.link}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            link: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
