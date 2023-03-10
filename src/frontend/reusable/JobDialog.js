@@ -662,6 +662,77 @@ const Questions = ({ value, index, jobData, setJob }) => {
         setOpen(false);
     };
 
+    const renderQuestions = () => {
+        if (!jobData.interviewQuestions) {
+            return;
+        }
+        /* job.interviewQuestions.map((question: string) => (
+                    <li>
+                        <a
+                            href={`https://www.google.com/search?q=${question.replaceAll(
+                                ' ',
+                                '+'
+                            )}`}
+                        >
+                            {question}
+                        </a>
+                    </li> */
+
+        return jobData.interviewQuestions.map((question) => (
+                <div className="border rounded-xl mb-8">
+                    <div className="flex flex-col">
+                        <div className="flex flex-row justify-between ml-8 mt-4">
+                            <h1 className="font-medium font-lg">{question.name}</h1>
+
+                            <MoreHoriz
+                                className="cursor-pointer mr-4"
+                                onClick={(e) => {
+                                    setAnchorEl(e.currentTarget);
+                                }}
+                            ></MoreHoriz>
+                        </div>
+                        <div className="mx-8 mt-2 mb-4">
+                            <h1>{question.description}</h1>
+                        </div>
+                        <Menu
+                            open={menuOpen}
+                            onClose={() => setAnchorEl(null)}
+                            anchorEl={anchorEl}
+                            transformOrigin={{ horizontal: "right", vertical: "top" }}
+                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                        setIsEditing(true);
+
+                                    setOpen(true);
+                                    setNewQuestion(question);
+                                }}
+                            >
+                                Edit
+                            </MenuItem>
+                            <MenuItem
+                                onClick={async () => {
+                                    await httpsCallable(
+                                        getFunctions(),
+                                        "deleteInterviewQuestion"
+                                    )(question.id).then(
+                                        () =>
+                                            (jobData.interviewQuestions =
+                                                jobData.interviewQuestions.filter(
+                                                    (c) => c.id !== question.id
+                                                ))
+                                    );
+                                }}
+                            >
+                                Delete
+                            </MenuItem>
+                        </Menu>
+                    </div>
+                </div>
+            ));
+    }
+
     return (
         <div
             style={{
@@ -783,73 +854,11 @@ const Questions = ({ value, index, jobData, setJob }) => {
 
             <div className="flex flex-row justify-center align-center w-full">
                 <div className="w-2/3">
-                    {jobData.interviewQuestions &&
-                        /* job.interviewQuestions.map((question: string) => (
-                    <li>
-                        <a
-                            href={`https://www.google.com/search?q=${question.replaceAll(
-                                ' ',
-                                '+'
-                            )}`}
-                        >
-                            {question}
-                        </a>
-                    </li> */
-                        jobData.interviewQuestions.map((question) => (
-                            <div className="border rounded-xl mb-8">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row justify-between ml-8 mt-4">
-                                        <h1 className="font-medium font-lg">{question.name}</h1>
-
-                                        <MoreHoriz
-                                            className="cursor-pointer mr-4"
-                                            onClick={(e) => {
-                                                setAnchorEl(e.currentTarget);
-                                            }}
-                                        ></MoreHoriz>
-                                    </div>
-                                    <div className="mx-8 mt-2 mb-4">
-                                        <h1>{question.description}</h1>
-                                    </div>
-                                    <Menu
-                                        open={menuOpen}
-                                        onClose={() => setAnchorEl(null)}
-                                        anchorEl={anchorEl}
-                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
-                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                                    >
-                                        <MenuItem
-                                            onClick={() => {
-                                    setIsEditing(true);
-
-                                                setOpen(true);
-                                                setNewQuestion(question);
-                                            }}
-                                        >
-                                            Edit
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={async () => {
-                                                await httpsCallable(
-                                                    getFunctions(),
-                                                    "deleteInterviewQuestion"
-                                                )(question.id).then(
-                                                    () =>
-                                                        (jobData.interviewQuestions =
-                                                            jobData.interviewQuestions.filter(
-                                                                (c) => c.id !== question.id
-                                                            ))
-                                                );
-                                            }}
-                                        >
-                                            Delete
-                                        </MenuItem>
-                                    </Menu>
-                                </div>
-                            </div>
-                        ))}{" "}
+                    
+                        {renderQuestions()}
                 </div>
             </div>
+            
         </div>
     );
 };
