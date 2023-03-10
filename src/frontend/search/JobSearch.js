@@ -11,7 +11,7 @@ import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, PlaceOutlined, WorkOutline } from "@mui/icons-material";
 
 const JobSearch = () => {
-    const [query, setQuery] = useState({ company: "", position: "", locaton: "" });
+    const [query, setQuery] = useState({ company: "", position: "", location: "" });
     const [jobs, setJobs] = useState([]);
     const [message, setMessage] = useState("");
     const [currJob, setcurrJob] = useState(null);
@@ -20,7 +20,7 @@ const JobSearch = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        if (query.trim().length === { company: "", position: "", locaton: "" }) {
+        if (query.company.trim() === "" && query.position.trim() === "" && query.location.trim() === "") {
             setMessage("Please enter a search query");
             setLoading(false);
             return;
