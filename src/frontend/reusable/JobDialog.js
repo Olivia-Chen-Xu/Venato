@@ -511,6 +511,72 @@ const Questions = ({ value, index, jobData, setJob }) => {
         setOpen(false);
     };
 
+    const renderQuestions = () => {
+        if (!jobData.interviewQuestions) {
+            return;
+        }
+        /* job.interviewQuestions.map((question: string) => (
+                    <li>
+                        <a
+                            href={`https://www.google.com/search?q=${question.replaceAll(
+                                ' ',
+                                '+'
+                            )}`}
+                        >
+                            {question}
+                        </a>
+                    </li> */
+
+        return jobData.interviewQuestions.map((question) => (
+            <div style={{ marginBottom: "2vh" }}>
+                <h2>{question.name}</h2>
+                <p>{question.description}</p>
+                <IconButton
+                    onClick={(e) => {
+                        setAnchorEl(e.currentTarget);
+                    }}
+                >
+                    <MoreVert></MoreVert>
+                </IconButton>
+                <Menu
+                    open={menuOpen}
+                    onClose={() => setAnchorEl(null)}
+                    anchorEl={anchorEl}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                >
+                    <MenuItem
+                        onClick={() => {
+                            console.log(JSON.stringify(question, null, 4));
+                            setIsEditing(true);
+                            setOpen(true);
+                            setNewQuestion(question);
+                        }}
+                    >
+                        Edit
+                    </MenuItem>
+                    <MenuItem
+                        onClick={async () => {
+                            await httpsCallable(
+                                getFunctions(),
+                                "deleteInterviewQuestion"
+                            )(question.id).then(
+                                () =>
+                                    (jobData.interviewQuestions =
+                                        jobData.interviewQuestions.filter(
+                                            (c) => c.id !== question.id
+                                        ))
+                            );
+                        }}
+                    >
+                        Delete
+                    </MenuItem>
+                </Menu>
+                <hr />
+            </div>
+        ));
+    }
+
     return (
         <div
             style={{
@@ -579,65 +645,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                 </DialogContent>
             </Dialog>
 
-            {jobData.interviewQuestions &&
-                /* job.interviewQuestions.map((question: string) => (
-                    <li>
-                        <a
-                            href={`https://www.google.com/search?q=${question.replaceAll(
-                                ' ',
-                                '+'
-                            )}`}
-                        >
-                            {question}
-                        </a>
-                    </li> */
-                jobData.interviewQuestions.map((question) => (
-                    <div style={{ marginBottom: "2vh" }}>
-                        <h2>{question.name}</h2>
-                        <p>{question.description}</p>
-                        <IconButton
-                            onClick={(e) => {
-                                setAnchorEl(e.currentTarget);
-                            }}
-                        >
-                            <MoreVert></MoreVert>
-                        </IconButton>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    setIsEditing(true);
-                                    setOpen(true);
-                                    setNewQuestion(question);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(
-                                        getFunctions(),
-                                        "deleteInterviewQuestion"
-                                    )(question.id).then(
-                                        () =>
-                                            (jobData.interviewQuestions =
-                                                jobData.interviewQuestions.filter(
-                                                    (c) => c.id !== question.id
-                                                ))
-                                    );
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
-                        <hr />
-                    </div>
-                ))}
+            {renderQuestions()}
         </div>
     );
 };
