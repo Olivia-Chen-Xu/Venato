@@ -309,63 +309,78 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: "2vh", marginBottom: "2vh" }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add Deadline
-            </Button>
-            {jobData.deadlines &&
-                jobData.deadlines.map((deadline) => (
-                    <div style={{ marginBottom: "2vh" }}>
-                        {" "}
-                        <h2>{deadline.title}</h2>
-                        <p>{dayjs.unix(deadline.date).toString()}</p>
-                        <p>{deadline.location}</p>
-                        <p>{deadline.link}</p>
-                        <IconButton
-                            onClick={(e) => {
-                                setAnchorEl(e.currentTarget);
-                            }}
-                        >
-                            <MoreVert></MoreVert>
-                        </IconButton>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    setOpen(true);
-                                    setNewDdl(deadline);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(
-                                        getFunctions(),
-                                        "deleteDeadline"
-                                    )(deadline.id).then(
-                                        () =>
-                                            (jobData.deadlines = jobData.deadlines.filter(
-                                                (c) => c.id !== deadline.id
-                                            ))
-                                    );
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
-                        <hr />
-                    </div>
-                ))}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => setOpen(true)}
+                        startIcon={<Add />}
+                    >
+                        Add Deadline
+                    </Button>
+                </div>
+            </div>
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-2/3">
+                    {jobData.deadlines &&
+                        jobData.deadlines.map((deadline) => (
+                            <div style={{ marginBottom: "2vh" }}>
+                                {" "}
+                                <h2>{deadline.title}</h2>
+                                <p>{dayjs.unix(deadline.date).toString()}</p>
+                                <p>{deadline.location}</p>
+                                <p>{deadline.link}</p>
+                                <IconButton
+                                    onClick={(e) => {
+                                        setAnchorEl(e.currentTarget);
+                                    }}
+                                >
+                                    <MoreVert></MoreVert>
+                                </IconButton>
+                                <Menu
+                                    open={menuOpen}
+                                    onClose={() => setAnchorEl(null)}
+                                    anchorEl={anchorEl}
+                                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                >
+                                    <MenuItem
+                                        onClick={() => {
+                                            setOpen(true);
+                                            setNewDdl(deadline);
+                                        }}
+                                    >
+                                        Edit
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={async () => {
+                                            await httpsCallable(
+                                                getFunctions(),
+                                                "deleteDeadline"
+                                            )(deadline.id).then(
+                                                () =>
+                                                    (jobData.deadlines = jobData.deadlines.filter(
+                                                        (c) => c.id !== deadline.id
+                                                    ))
+                                            );
+                                        }}
+                                    >
+                                        Delete
+                                    </MenuItem>
+                                </Menu>
+                                <hr />
+                            </div>
+                        ))}
+                </div>
+            </div>
             <Dialog
                 open={open}
                 onClose={async () => {
@@ -470,15 +485,32 @@ const Questions = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: "2vh", marginBottom: "2vh" }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add a question
-            </Button>
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => setOpen(true)}
+                        startIcon={<Add />}
+                    >
+                        Add Interview Question
+                    </Button>
+                </div>
+            </div>
             <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
+                open={open}
                 open={open}
                 onClose={async () => {
                     const questionUpdate = {
@@ -497,43 +529,80 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     setOpen(false);
                 }}
             >
-                <DialogContent
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: 600,
-                        alignItems: "center",
-                    }}
-                >
-                    <p>Enter question title</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, name: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Enter question description</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.description}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, description: e.target.value });
-                        }}
-                    />
-                    <br />
-
-                    <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
-                        Add
-                    </Button>
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Interview Question</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <Button
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={addNewQuestion}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Question title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={newQuestion.name}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, name: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full">
+                        <div className="flex flex-col w-full">
+                            <h1>Question description</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                multiline
+                                rows={10}
+                                value={newQuestion.description}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, description: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
 
-            {jobData.interviewQuestions &&
-                /* job.interviewQuestions.map((question: string) => (
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-2/3">
+                    {jobData.interviewQuestions &&
+                        /* job.interviewQuestions.map((question: string) => (
                     <li>
                         <a
                             href={`https://www.google.com/search?q=${question.replaceAll(
@@ -544,52 +613,59 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             {question}
                         </a>
                     </li> */
-                jobData.interviewQuestions.map((question) => (
-                    <div style={{ marginBottom: "2vh" }}>
-                        <h2>{question.name}</h2>
-                        <p>{question.description}</p>
-                        <IconButton
-                            onClick={(e) => {
-                                setAnchorEl(e.currentTarget);
-                            }}
-                        >
-                            <MoreVert></MoreVert>
-                        </IconButton>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    setOpen(true);
-                                    setNewQuestion(question);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(
-                                        getFunctions(),
-                                        "deleteInterviewQuestion"
-                                    )(question.id).then(
-                                        () =>
-                                            (jobData.interviewQuestions =
-                                                jobData.interviewQuestions.filter(
-                                                    (c) => c.id !== question.id
-                                                ))
-                                    );
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
-                        <hr />
-                    </div>
-                ))}
+                        jobData.interviewQuestions.map((question) => (
+                            <div className="border rounded-xl mb-8">
+                                <div className="flex flex-col">
+                                    <div className="flex flex-row justify-between ml-8 mt-4">
+                                        <h1 className="font-medium font-lg">{question.name}</h1>
+
+                                        <MoreHoriz
+                                            className="cursor-pointer mr-4"
+                                            onClick={(e) => {
+                                                setAnchorEl(e.currentTarget);
+                                            }}
+                                        ></MoreHoriz>
+                                    </div>
+                                    <div className="mx-8 mt-2 mb-4">
+                                        <h1>{question.description}</h1>
+                                    </div>
+                                    <Menu
+                                        open={menuOpen}
+                                        onClose={() => setAnchorEl(null)}
+                                        anchorEl={anchorEl}
+                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                    >
+                                        <MenuItem
+                                            onClick={() => {
+                                                setOpen(true);
+                                                setNewQuestion(question);
+                                            }}
+                                        >
+                                            Edit
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={async () => {
+                                                await httpsCallable(
+                                                    getFunctions(),
+                                                    "deleteInterviewQuestion"
+                                                )(question.id).then(
+                                                    () =>
+                                                        (jobData.interviewQuestions =
+                                                            jobData.interviewQuestions.filter(
+                                                                (c) => c.id !== question.id
+                                                            ))
+                                                );
+                                            }}
+                                        >
+                                            Delete
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </div>
+                        ))}{" "}
+                </div>
+            </div>
         </div>
     );
 };
@@ -798,15 +874,12 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         jobData.contacts.map((contact) => (
                             <div className="border rounded-xl">
                                 <div className="flex flex-row-reverse w-full mr-5">
-                                    <div className="">
-                                    <IconButton 
+                                    <MoreHoriz
+                                        className="mr-4 cursor-pointer"
                                         onClick={(e) => {
                                             setAnchorEl(e.currentTarget);
                                         }}
-                                    >
-                                        <MoreHoriz></MoreHoriz>
-                                    </IconButton>
-                                    </div>
+                                    ></MoreHoriz>
                                     <Menu
                                         open={menuOpen}
                                         onClose={() => setAnchorEl(null)}
@@ -839,7 +912,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         </MenuItem>
                                     </Menu>
                                 </div>
-                                <div className="m-4">
+                                <div className="mx-4 mb-4 -mt-2">
                                     <div className="flex flex-1 w-full mb-2">
                                         <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
                                             <AccountCircleOutlined
@@ -848,7 +921,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                             />
                                         </div>
                                         <div className="w-full">
-                                            <h2 className="text-lg">{contact.name}</h2>
+                                            <h2 className="text-lg font-medium">{contact.name}</h2>
                                             <p className="mt-1">{contact.title}</p>
                                             <p className="mb-1">@ {contact.company}</p>
                                         </div>
@@ -875,7 +948,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         ))}
                 </div>
             </div>
-            );{" "}
         </div>
     );
 };
