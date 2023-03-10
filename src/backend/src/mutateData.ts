@@ -126,17 +126,15 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
         deadlineId: '',
         deadline: {
             date: 0,
-            isInterview: false,
             link: '',
             location: '',
-            priority: '',
             title: '',
         }
     };
     if (!isValidObjectStructure(data, structure)) {
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Must provide only a deadlines id (string) and contact (see db for structure) as arguments'
+            'Must provide only a deadlines id (string) and deadline (see db for structure) as arguments'
         );
     }
 

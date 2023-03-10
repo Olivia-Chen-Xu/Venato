@@ -42,7 +42,9 @@ const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
 import { SocialIcon } from "react-social-icons";
 import Checkbox from "@mui/material/Checkbox";
+import LoadingButton from "@mui/lab/LoadingButton";
 
+import Search from "@mui/icons-material/Search";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -273,7 +275,8 @@ const Notes = ({ value, index, jobData, setJob }) => {
                         }}
                         style={{ marginTop: "2vh", height: "100%", width: "100%" }}
                         multiline
-                        rows={20}
+                        rows={15}
+                        size="small"
                         value={jobData.notes}
                         onChange={(e) => {
                             setJob({ ...jobData, notes: e.target.value });
@@ -288,6 +291,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
 const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
     const menuOpen = Boolean(anchorEl);
     const [newDdl, setNewDdl] = useState({
         title: "",
@@ -295,14 +299,40 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         location: "",
         link: "",
     });
+    const [loading, setLoading] = useState(false);
+
     const addNewDdl = async () => {
-        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
-        setOpen(false);
+        setLoading(true);
         await httpsCallable(
             getFunctions(),
             "addDeadline"
-        )({ ...newDdl, jobId: jobData.id, company: jobData.company });
-        setNewDdl({ title: "", date: dayjs().unix(), location: "", link: "" });
+        )({ ...newDdl, jobId: jobData.id, company: jobData.company }).then((res) =>
+            setNewDdl({ ...newDdl, id: res.result })
+        );
+        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
+        setOpen(false);
+    };
+
+    const updateDdl = async () => {
+        const deadlineUpdate = {
+            date: newDdl.date,
+            isInterview: newDdl.isInterview,
+            link: newDdl.link,
+            location: newDdl.location,
+            priority: newDdl.priority,
+            title: newDdl.title,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateDeadline"
+        )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+            const deadlineIndex = jobData.deadlines.findIndex(
+                (deadline) => deadline.id === newDdl.id
+            );
+            jobData.deadlines[deadlineIndex] = newDdl;
+        });
+        setLoading(false);
+        setOpen(false);
     };
 
     const uniqueDates = jobData.deadlines
@@ -323,9 +353,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
+            
             <div className="flex flex-row justify-center align-center w-full">
                 <div className="grid grid-col-1 w-2/3 place-content-end">
-                    <Button
+                    <LoadingButton
                         style={{
                             width: "fit-content",
                             marginTop: "2vh",
@@ -335,11 +366,14 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         }}
                         sx={{ borderRadius: 2 }}
                         variant="outlined"
-                        onClick={() => setOpen(true)}
+                        onClick={() => {
+                            setIsAdding(true);
+                            setOpen(true);
+                        }}
                         startIcon={<Add />}
                     >
                         Add Deadline
-                    </Button>
+                    </LoadingButton>
                 </div>
             </div>
             <div className="flex flex-row justify-center align-center w-full">
@@ -458,25 +492,14 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                     style: { borderRadius: 16, padding: "5vh 5vw" },
                 }}
                 open={open}
-                onClose={async () => {
-                    const deadlineUpdate = {
-                        date: newDdl.date,
-                        isInterview: newDdl.isInterview,
-                        link: newDdl.link,
-                        location: newDdl.location,
-                        priority: newDdl.priority,
-                        title: newDdl.title,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateDeadline"
-                    )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
-                        const deadlineIndex = jobData.deadlines.findIndex(
-                            (deadline) => deadline.id === newDdl.id
-                        );
-                        jobData.deadlines[deadlineIndex] = newDdl;
-                    });
+                onClose={() => {
                     setOpen(false);
+                    setNewDdl({
+                        title: "",
+                        date: dayjs().unix(),
+                        location: "",
+                        link: "",
+                    });
                 }}
             >
                 <DialogContent style={{ width: "50vw" }}>
@@ -491,21 +514,27 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                     style={{ width: 100, border: "2px solid #7F5BEB" }}
                                     onClick={() => {
                                         setOpen(false);
+                                        setLoading(false);
                                     }}
                                 >
                                     Discard
                                 </Button>
                             </div>
-                            <Button
+                            <LoadingButton
                                 type="submit"
                                 sx={{ borderRadius: 2 }}
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={addNewDdl}
+                                onClick={async () => await addNewDdl()}
+                        loading={loading}
+                        disableElevation
+
+
+
                             >
                                 Save
-                            </Button>
+                            </LoadingButton>
                         </div>
                     </div>
                     <div className="w-full mb-4">
@@ -586,6 +615,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             </div>
                         </div>
                     </div>
+                  
+                   
+                    
+                   
                 </DialogContent>
             </Dialog>
         </div>
@@ -597,8 +630,11 @@ const Questions = ({ value, index, jobData, setJob }) => {
     const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
+    const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const addNewQuestion = async () => {
+        setLoading(true);
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         await httpsCallable(
@@ -606,6 +642,24 @@ const Questions = ({ value, index, jobData, setJob }) => {
             "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
         setNewQuestion({ name: "", description: "" });
+        setLoading(false);
+    };
+
+    const updateQuesiton = async () => {
+        const questionUpdate = {
+            description: newQuestion.description,
+            name: newQuestion.name,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateInterviewQuestion"
+        )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+            const questionIndex = jobData.interviewQuestions.findIndex(
+                (question) => question.id === newQuestion.id
+            );
+            jobData.interviewQuestions[questionIndex] = newQuestion;
+        });
+        setOpen(false);
     };
 
     return (
@@ -628,7 +682,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         }}
                         sx={{ borderRadius: 2 }}
                         variant="outlined"
-                        onClick={() => setOpen(true)}
+                        onClick={() => {
+                            setIsEditing(false);
+                            setOpen(true);
+                        }}
                         startIcon={<Add />}
                     >
                         Add Interview Question
@@ -642,22 +699,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     style: { borderRadius: 16, padding: "5vh 5vw" },
                 }}
                 open={open}
-                open={open}
                 onClose={async () => {
-                    const questionUpdate = {
-                        description: newQuestion.description,
-                        name: newQuestion.name,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateInterviewQuestion"
-                    )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
-                        const questionIndex = jobData.interviewQuestions.findIndex(
-                            (question) => question.id === newQuestion.id
-                        );
-                        jobData.interviewQuestions[questionIndex] = newQuestion;
-                    });
-                    setOpen(false);
+                    await updateQuesiton();
                 }}
             >
                 <DialogContent style={{ width: "50vw" }}>
@@ -672,21 +715,27 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                     style={{ width: 100, border: "2px solid #7F5BEB" }}
                                     onClick={() => {
                                         setOpen(false);
+                                        setLoading(false);
                                     }}
                                 >
                                     Discard
                                 </Button>
                             </div>
-                            <Button
-                                type="submit"
+                    <LoadingButton
                                 sx={{ borderRadius: 2 }}
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={addNewQuestion}
+                                onClick={async () => {
+                                    isEditing ? await updateQuesiton() : await addNewQuestion();
+                                }}
+                                loading={loading}
+                        disableElevation
                             >
-                                Save
-                            </Button>
+                        {isEditing ? "Save" : "Add"}
+                                
+                    </LoadingButton>
+                            
                         </div>
                     </div>
                     <div className="flex flex-1 w-full mb-8">
@@ -709,6 +758,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     </div>
                     <div className="flex flex-1 w-full">
                         <div className="flex flex-col w-full">
+
+
                             <h1>Question description</h1>
                             <TextField
                                 style={{ marginTop: "1vh" }}
@@ -769,6 +820,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                     >
                                         <MenuItem
                                             onClick={() => {
+                                    setIsEditing(true);
+
                                                 setOpen(true);
                                                 setNewQuestion(question);
                                             }}
