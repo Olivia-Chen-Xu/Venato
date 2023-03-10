@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
-import { Button, Dialog, DialogContent, TextField, InputAdornment, Select } from "@mui/material";
+import { Button, Dialog, DialogContent, TextField, InputAdornment } from "@mui/material";
 import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, WorkOutline } from "@mui/icons-material";
@@ -136,40 +136,6 @@ const QuestionSearch = () => {
                         setQuery({ ...query, company: e.target.value });
                     }}
                 ></TextField>
-
-                {/* <div>
-                                <label htmlFor="position">
-                                    <input
-                                        id="position"
-                                        type="email"
-                                        name="email"
-                                        // value={position}
-                                        placeholder="Search by position or company"
-                                        onChange={(e) => {
-                                            setQuery(e.target.value);
-                                        }}
-                                    />
-                                </label>
-                            </div> */}
-                {/*<div>*/}
-                {/*    <label htmlFor="company">*/}
-                {/*        <select*/}
-                {/*            id="company"*/}
-                {/*            name="company"*/}
-                {/*            select*/}
-                {/*            label="Company"*/}
-                {/*            value={company}*/}
-                {/*            onChange={(e) => setCompany(e.target.value)}*/}
-                {/*        >*/}
-                {/*            <option value="" selected>*/}
-                {/*                Company*/}
-                {/*            </option>*/}
-                {/*            {companies.result.data.map((c) => (*/}
-                {/*                <option value={c}>{c}</option>*/}
-                {/*            ))}*/}
-                {/*        </select>*/}
-                {/*    </label>*/}
-                {/*</div>*/}
                 <LoadingButton
                     id="searchBtn"
                     onClick={handleSearch}
