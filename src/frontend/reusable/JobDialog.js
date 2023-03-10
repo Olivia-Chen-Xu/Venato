@@ -354,6 +354,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <IconButton
                             onClick={(e) => {
                                 setAnchorEl(e.currentTarget);
+                                setNewDdl(deadline);
                             }}
                         >
                             <MoreVert></MoreVert>
@@ -368,9 +369,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             <MenuItem
                                 onClick={() => {
                                     setIsAdding(false);
-                                    setNewDdl(deadline);
                                     setOpen(true);
-                                    console.log(newDdl);
                                 }}
                             >
                                 Edit
@@ -394,7 +393,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <hr />
                     </div>
                 ))}
-            <Dialog open={open}>
+            <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogContent
                     style={{
                         display: "flex",
@@ -885,7 +884,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         ))}
                 </div>
             </div>
-            );{" "}
         </div>
     );
 };
