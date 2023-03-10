@@ -39,6 +39,8 @@ import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
 import { SocialIcon } from "react-social-icons";
+import Search from "@mui/icons-material/Search";
+import LoadingButton from "@mui/lab/LoadingButton";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -292,7 +294,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         location: "",
         link: "",
     });
+    const [loading, setLoading] = useState(false);
+
     const addNewDdl = async () => {
+        setLoading(true);
         await httpsCallable(
             getFunctions(),
             "addDeadline"
@@ -321,6 +326,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             );
             jobData.deadlines[deadlineIndex] = newDdl;
         });
+        setLoading(false);
         setOpen(false);
     };
 
@@ -332,7 +338,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <Button
+            <LoadingButton
                 style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
                 onClick={() => {
@@ -342,7 +348,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 startIcon={<AddCircleOutline />}
             >
                 Add Deadline
-            </Button>
+            </LoadingButton>
             {jobData.deadlines &&
                 jobData.deadlines.map((deadline) => (
                     <div style={{ marginBottom: "2vh" }}>
@@ -442,13 +448,15 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             setNewDdl({ ...newDdl, link: e.target.value });
                         }}
                     />
-                    <Button
-                        variant="contained"
-                        onClick={isAdding ? addNewDdl : updateDdl}
+                    <LoadingButton
                         style={{ width: 100 }}
+                        variant="contained"
+                        onClick={async () => await addNewDdl()}
+                        loading={loading}
+                        disableElevation
                     >
                         Save
-                    </Button>
+                    </LoadingButton>
                 </DialogContent>
             </Dialog>
         </div>
@@ -460,8 +468,11 @@ const Questions = ({ value, index, jobData, setJob }) => {
     const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
+    const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const addNewQuestion = async () => {
+        setLoading(true);
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         await httpsCallable(
@@ -469,6 +480,24 @@ const Questions = ({ value, index, jobData, setJob }) => {
             "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
         setNewQuestion({ name: "", description: "" });
+        setLoading(false);
+    };
+
+    const updateQuesiton = async () => {
+        const questionUpdate = {
+            description: newQuestion.description,
+            name: newQuestion.name,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateInterviewQuestion"
+        )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+            const questionIndex = jobData.interviewQuestions.findIndex(
+                (question) => question.id === newQuestion.id
+            );
+            jobData.interviewQuestions[questionIndex] = newQuestion;
+        });
+        setOpen(false);
     };
 
     return (
@@ -482,7 +511,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
             <Button
                 style={{ marginTop: "2vh", marginBottom: "2vh" }}
                 variant="contained"
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                    setIsEditing(false);
+                    setOpen(true);
+                }}
                 startIcon={<AddCircleOutline />}
             >
                 Add a question
@@ -490,20 +522,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             <Dialog
                 open={open}
                 onClose={async () => {
-                    const questionUpdate = {
-                        description: newQuestion.description,
-                        name: newQuestion.name,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateInterviewQuestion"
-                    )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
-                        const questionIndex = jobData.interviewQuestions.findIndex(
-                            (question) => question.id === newQuestion.id
-                        );
-                        jobData.interviewQuestions[questionIndex] = newQuestion;
-                    });
-                    setOpen(false);
+                    await updateQuesiton();
                 }}
             >
                 <DialogContent
@@ -535,9 +554,17 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     />
                     <br />
 
-                    <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
-                        Add
-                    </Button>
+                    <LoadingButton
+                        style={{ width: 100 }}
+                        variant="contained"
+                        onClick={async () => {
+                            isEditing ? await updateQuesiton() : await addNewQuestion();
+                        }}
+                        loading={loading}
+                        disableElevation
+                    >
+                        {isEditing ? "Save" : "Add"}
+                    </LoadingButton>
                 </DialogContent>
             </Dialog>
 
@@ -573,6 +600,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         >
                             <MenuItem
                                 onClick={() => {
+                                    setIsEditing(true);
                                     setOpen(true);
                                     setNewQuestion(question);
                                 }}
