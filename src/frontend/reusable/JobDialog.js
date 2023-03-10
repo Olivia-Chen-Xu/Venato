@@ -29,6 +29,8 @@ import {
     Flag,
     Add,
     MoreVert,
+    RoomOutlined,
+    AccessTimeOutlined,
 } from "@mui/icons-material";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -39,8 +41,10 @@ import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
 import { SocialIcon } from "react-social-icons";
-import Search from "@mui/icons-material/Search";
+import Checkbox from "@mui/material/Checkbox";
 import LoadingButton from "@mui/lab/LoadingButton";
+
+import Search from "@mui/icons-material/Search";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -271,7 +275,8 @@ const Notes = ({ value, index, jobData, setJob }) => {
                         }}
                         style={{ marginTop: "2vh", height: "100%", width: "100%" }}
                         multiline
-                        rows={20}
+                        rows={15}
+                        size="small"
                         value={jobData.notes}
                         onChange={(e) => {
                             setJob({ ...jobData, notes: e.target.value });
@@ -330,6 +335,16 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         setOpen(false);
     };
 
+    const uniqueDates = jobData.deadlines
+        ? [
+              ...new Set(
+                  jobData.deadlines.map((deadline) =>
+                      dayjs.unix(deadline.date).format("MMMM D, YYYY")
+                  )
+              ),
+          ]
+        : [];
+
     return (
         <div
             style={{
@@ -338,68 +353,143 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <LoadingButton
-                style={{ marginTop: "2vh", marginBottom: "2vh" }}
-                variant="contained"
-                onClick={() => {
-                    setIsAdding(true);
-                    setOpen(true);
-                }}
-                startIcon={<AddCircleOutline />}
-            >
-                Add Deadline
-            </LoadingButton>
-            {jobData.deadlines &&
-                jobData.deadlines.map((deadline) => (
-                    <div style={{ marginBottom: "2vh" }}>
-                        {" "}
-                        <h2>{deadline.title}</h2>
-                        <p>{dayjs.unix(deadline.date).toString()}</p>
-                        <p>{deadline.location}</p>
-                        <p>{deadline.link}</p>
-                        <IconButton
-                            onClick={(e) => {
-                                setAnchorEl(e.currentTarget);
-                                setNewDdl(deadline);
-                            }}
-                        >
-                            <MoreVert></MoreVert>
-                        </IconButton>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    setIsAdding(false);
-                                    setOpen(true);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(
-                                        getFunctions(),
-                                        "deleteDeadline"
-                                    )(deadline.id).then(
-                                        () =>
-                                            (jobData.deadlines = jobData.deadlines.filter(
-                                                (c) => c.id !== deadline.id
-                                            ))
-                                    );
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
-                        <hr />
-                    </div>
-                ))}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <LoadingButton
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => {
+                            setIsAdding(true);
+                            setOpen(true);
+                        }}
+                        startIcon={<Add />}
+                    >
+                        Add Deadline
+                    </LoadingButton>
+                </div>
+            </div>
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-2/3">
+                    {uniqueDates &&
+                        uniqueDates
+                            .sort((a, b) => a - b)
+                            .map((date) => (
+                                <div key={date}>
+                                    <h1 className="mb-4">{date}</h1>
+                                    {jobData.deadlines &&
+                                        jobData.deadlines
+                                            .filter(
+                                                (deadline) =>
+                                                    dayjs
+                                                        .unix(deadline.date)
+                                                        .format("MMMM D, YYYY") === date
+                                            )
+                                            .sort((a, b) => a.date - b.date)
+                                            .map((deadline) => (
+                                                <div className="mb-2">
+                                                    <div className="border rounded-lg mb-4">
+                                                        <div className="flex flex-row-reverse w-full mr-5">
+                                                            <MoreHoriz
+                                                                className="mr-4 cursor-pointer"
+                                                                onClick={(e) => {
+                                                                    setAnchorEl(e.currentTarget);
+                                                                    setNewDdl(deadline);
+                                                                }}
+                                                            ></MoreHoriz>
+                                                            <Menu
+                                                                open={menuOpen}
+                                                                onClose={() => setAnchorEl(null)}
+                                                                anchorEl={anchorEl}
+                                                                transformOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "top",
+                                                                }}
+                                                                anchorOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "bottom",
+                                                                }}
+                                                            >
+                                                                <MenuItem
+                                                                    onClick={() => {
+                                                                        setOpen(true);
+                                                                    }}
+                                                                >
+                                                                    Edit
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    onClick={async () => {
+                                                                        await httpsCallable(
+                                                                            getFunctions(),
+                                                                            "deleteDeadline"
+                                                                        )(deadline.id).then(
+                                                                            () =>
+                                                                                (jobData.deadlines =
+                                                                                    jobData.deadlines.filter(
+                                                                                        (c) =>
+                                                                                            c.id !==
+                                                                                            deadline.id
+                                                                                    ))
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Delete
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </div>{" "}
+                                                        <div className="flex flex-1 justify-between mb-3 -mt-2">
+                                                            <div className="flex flex-1">
+                                                                <Checkbox
+                                                                    className="mr-5"
+                                                                    style={{ padding: "0 1vw" }}
+                                                                />
+                                                                <h1 className="mt-1 font-medium">
+                                                                    {deadline.title}
+                                                                </h1>
+                                                            </div>
+                                                            <div className="flex flex-1 justify-end">
+                                                                <div className="border rounded-lg bg-[#F2F9FA] py-1 px-2">
+                                                                    <div className="flex flex-1 text-[#003F4B]">
+                                                                        <AccessTimeOutlined />
+                                                                        {/* {console.log(dayjs.unix(deadline.date).format('HH:mm'))} */}
+                                                                        <h1 className="pl-1">
+                                                                            {dayjs
+                                                                                .unix(deadline.date)
+                                                                                .format("h:mm A")}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="border rounded-lg bg-[#D8CFF3] py-1 ml-4 mr-12 px-2">
+                                                                    <div className="flex flex-1 text-[#3F15BB]">
+                                                                        <RoomOutlined />
+                                                                        <h1 className="pl-1">
+                                                                            {deadline.location}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                {/* <h1>{deadline.link}</h1> */}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                </div>
+                            ))}
+                </div>{" "}
+            </div>
+
             <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
                 open={open}
                 onClose={() => {
                     setOpen(false);
@@ -411,63 +501,117 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                     });
                 }}
             >
-                <DialogContent
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: 600,
-                        alignItems: "center",
-                    }}
-                >
-                    <p>Task title</p>
-                    <TextField
-                        label="Task title"
-                        value={newDdl.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, title: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <p>Date and time</p>
-                        <br />
-                        <DateTimePicker
-                            label="Date and time"
-                            value={dayjs.unix(newDdl.date)}
-                            onChange={(val) => setNewDdl({ ...newDdl, date: val.unix() })}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                    <br />
-                    <p>Location</p>
-                    <TextField
-                        label="Location"
-                        value={newDdl.location}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, location: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to meeting (if applicable)</p>
-                    <TextField
-                        label="Link"
-                        value={newDdl.link}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, link: e.target.value });
-                        }}
-                    />
-                    <LoadingButton
-                        style={{ width: 100 }}
-                        variant="contained"
-                        onClick={async () => await addNewDdl()}
-                        loading={loading}
-                        disableElevation
-                    >
-                        Save
-                    </LoadingButton>
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        setLoading(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <LoadingButton
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={async () =>
+                                    isAdding ? await addNewDdl() : await updateDdl()
+                                }
+                                loading={loading}
+                                disableElevation
+                            >
+                                Save
+                            </LoadingButton>
+                        </div>
+                    </div>
+                    <div className="w-full mb-4">
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Task Title</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.title}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({ ...newDdl, title: e.target.value });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Date & Time</h1>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker
+                                        value={dayjs.unix(newDdl.date)}
+                                        InputProps={{
+                                            style: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        onChange={(val) =>
+                                            setNewDdl({ ...newDdl, date: val.unix() })
+                                        }
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Location</h1>
+                                <TextField
+                                    value={newDdl.location}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            location: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Link (If Applicable)</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.link}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            link: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
@@ -528,54 +672,59 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     </li> */
 
         return jobData.interviewQuestions.map((question) => (
-            <div style={{ marginBottom: "2vh" }}>
-                <h2>{question.name}</h2>
-                <p>{question.description}</p>
-                <IconButton
-                    onClick={(e) => {
-                        setAnchorEl(e.currentTarget);
-                    }}
-                >
-                    <MoreVert></MoreVert>
-                </IconButton>
-                <Menu
-                    open={menuOpen}
-                    onClose={() => setAnchorEl(null)}
-                    anchorEl={anchorEl}
-                    transformOrigin={{ horizontal: "right", vertical: "top" }}
-                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                >
-                    <MenuItem
-                        onClick={() => {
-                            console.log(JSON.stringify(question, null, 4));
-                            setIsEditing(true);
-                            setOpen(true);
-                            setNewQuestion(question);
-                        }}
+            <div className="border rounded-xl mb-8">
+                <div className="flex flex-col">
+                    <div className="flex flex-row justify-between ml-8 mt-4">
+                        <h1 className="font-medium font-lg">{question.name}</h1>
+
+                        <MoreHoriz
+                            className="cursor-pointer mr-4"
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+                                setNewQuestion(question);
+                            }}
+                        ></MoreHoriz>
+                    </div>
+                    <div className="mx-8 mt-2 mb-4">
+                        <h1>{question.description}</h1>
+                    </div>
+                    <Menu
+                        open={menuOpen}
+                        onClose={() => setAnchorEl(null)}
+                        anchorEl={anchorEl}
+                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     >
-                        Edit
-                    </MenuItem>
-                    <MenuItem
-                        onClick={async () => {
-                            await httpsCallable(
-                                getFunctions(),
-                                "deleteInterviewQuestion"
-                            )(question.id).then(
-                                () =>
-                                    (jobData.interviewQuestions =
-                                        jobData.interviewQuestions.filter(
-                                            (c) => c.id !== question.id
-                                        ))
-                            );
-                        }}
-                    >
-                        Delete
-                    </MenuItem>
-                </Menu>
-                <hr />
+                        <MenuItem
+                            onClick={() => {
+                                setIsEditing(true);
+
+                                setOpen(true);
+                            }}
+                        >
+                            Edit
+                        </MenuItem>
+                        <MenuItem
+                            onClick={async () => {
+                                await httpsCallable(
+                                    getFunctions(),
+                                    "deleteInterviewQuestion"
+                                )(question.id).then(
+                                    () =>
+                                        (jobData.interviewQuestions =
+                                            jobData.interviewQuestions.filter(
+                                                (c) => c.id !== question.id
+                                            ))
+                                );
+                            }}
+                        >
+                            Delete
+                        </MenuItem>
+                    </Menu>
+                </div>
             </div>
         ));
-    }
+    };
 
     return (
         <div
@@ -585,67 +734,116 @@ const Questions = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: "2vh", marginBottom: "2vh" }}
-                variant="contained"
-                onClick={() => {
-                    setIsEditing(false);
-                    setOpen(true);
-                }}
-                startIcon={<AddCircleOutline />}
-            >
-                Add a question
-            </Button>
-            <Dialog
-                open={open}
-                onClose={async () => {
-                    await updateQuesiton();
-                }}
-            >
-                <DialogContent
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: 600,
-                        alignItems: "center",
-                    }}
-                >
-                    <p>Enter question title</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, name: e.target.value });
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
                         }}
-                    />
-                    <br />
-                    <p>Enter question description</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.description}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, description: e.target.value });
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => {
+                            setIsEditing(false);
+                            setOpen(true);
                         }}
-                    />
-                    <br />
-
-                    <LoadingButton
-                        style={{ width: 100 }}
-                        variant="contained"
-                        onClick={async () => {
-                            isEditing ? await updateQuesiton() : await addNewQuestion();
-                        }}
-                        loading={loading}
-                        disableElevation
+                        startIcon={<Add />}
                     >
-                        {isEditing ? "Save" : "Add"}
-                    </LoadingButton>
+                        Add Interview Question
+                    </Button>
+                </div>
+            </div>
+            <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                }}
+            >
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Interview Question</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        setLoading(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <LoadingButton
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={async () => {
+                                    isEditing ? await updateQuesiton() : await addNewQuestion();
+                                }}
+                                loading={loading}
+                                disableElevation
+                            >
+                                {isEditing ? "Save" : "Add"}
+                            </LoadingButton>
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Question title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={newQuestion.name}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, name: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full">
+                        <div className="flex flex-col w-full">
+                            <h1>Question description</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                multiline
+                                rows={10}
+                                value={newQuestion.description}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, description: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
 
-            {renderQuestions()}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-2/3">{renderQuestions()}</div>
+            </div>
         </div>
     );
 };
@@ -714,24 +912,24 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 }}
                 open={open}
                 onClose={async () => {
-                    const contactUpdate = {
-                        name: newContact.name,
-                        title: newContact.title,
-                        company: newContact.company,
-                        email: newContact.email,
-                        phone: newContact.phone,
-                        linkedin: newContact.linkedin,
-                        notes: newContact.notes,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateContact"
-                    )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
-                        const contactIndex = jobData.contacts.findIndex(
-                            (contact) => contact.id === newContact.id
-                        );
-                        jobData.contacts[contactIndex] = newContact;
-                    });
+                    // const contactUpdate = {
+                    //     name: newContact.name,
+                    //     title: newContact.title,
+                    //     company: newContact.company,
+                    //     email: newContact.email,
+                    //     phone: newContact.phone,
+                    //     linkedin: newContact.linkedin,
+                    //     notes: newContact.notes,
+                    // };
+                    // await httpsCallable(
+                    //     getFunctions(),
+                    //     "updateContact"
+                    // )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
+                    //     const contactIndex = jobData.contacts.findIndex(
+                    //         (contact) => contact.id === newContact.id
+                    //     );
+                    //     jobData.contacts[contactIndex] = newContact;
+                    // });
                     setOpen(false);
                 }}
             >
@@ -854,15 +1052,13 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         jobData.contacts.map((contact) => (
                             <div className="border rounded-xl">
                                 <div className="flex flex-row-reverse w-full mr-5">
-                                    <div className="">
-                                        <IconButton
-                                            onClick={(e) => {
-                                                setAnchorEl(e.currentTarget);
-                                            }}
-                                        >
-                                            <MoreHoriz></MoreHoriz>
-                                        </IconButton>
-                                    </div>
+                                    <MoreHoriz
+                                        className="mr-4 cursor-pointer"
+                                        onClick={(e) => {
+                                            setAnchorEl(e.currentTarget);
+                                            setNewContact(contact);
+                                        }}
+                                    ></MoreHoriz>
                                     <Menu
                                         open={menuOpen}
                                         onClose={() => setAnchorEl(null)}
@@ -873,7 +1069,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         <MenuItem
                                             onClick={() => {
                                                 setOpen(true);
-                                                setNewContact(contact);
                                             }}
                                         >
                                             Edit
@@ -895,7 +1090,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         </MenuItem>
                                     </Menu>
                                 </div>
-                                <div className="m-4">
+                                <div className="mx-4 mb-4 -mt-2">
                                     <div className="flex flex-1 w-full mb-2">
                                         <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
                                             <AccountCircleOutlined
@@ -904,7 +1099,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                             />
                                         </div>
                                         <div className="w-full">
-                                            <h2 className="text-lg">{contact.name}</h2>
+                                            <h2 className="text-lg font-medium">{contact.name}</h2>
                                             <p className="mt-1">{contact.title}</p>
                                             <p className="mb-1">@ {contact.company}</p>
                                         </div>
