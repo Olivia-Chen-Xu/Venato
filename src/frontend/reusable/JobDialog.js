@@ -399,7 +399,18 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         <hr />
                     </div>
                 ))}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                    setNewDdl({
+                        title: "",
+                        date: dayjs().unix(),
+                        location: "",
+                        link: "",
+                    });
+                }}
+            >
                 <DialogContent
                     style={{
                         display: "flex",
