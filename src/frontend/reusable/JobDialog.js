@@ -353,7 +353,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            
             <div className="flex flex-row justify-center align-center w-full">
                 <div className="grid grid-col-1 w-2/3 place-content-end">
                     <LoadingButton
@@ -401,6 +400,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                                 className="mr-4 cursor-pointer"
                                                                 onClick={(e) => {
                                                                     setAnchorEl(e.currentTarget);
+                                                                    setNewDdl(deadline);
                                                                 }}
                                                             ></MoreHoriz>
                                                             <Menu
@@ -419,7 +419,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                                 <MenuItem
                                                                     onClick={() => {
                                                                         setOpen(true);
-                                                                        setNewDdl(deadline);
                                                                     }}
                                                                 >
                                                                     Edit
@@ -526,12 +525,11 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={async () => await addNewDdl()}
-                        loading={loading}
-                        disableElevation
-
-
-
+                                onClick={async () =>
+                                    isAdding ? await addNewDdl() : await updateDdl()
+                                }
+                                loading={loading}
+                                disableElevation
                             >
                                 Save
                             </LoadingButton>
@@ -574,7 +572,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                     />
                                 </LocalizationProvider>
                             </div>
-                            
                         </div>
                         <div className="flex flex-1 w-full mb-8">
                             <div className="flex flex-col w-full mr-4">
@@ -615,10 +612,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             </div>
                         </div>
                     </div>
-                  
-                   
-                    
-                   
                 </DialogContent>
             </Dialog>
         </div>
@@ -679,59 +672,59 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     </li> */
 
         return jobData.interviewQuestions.map((question) => (
-                <div className="border rounded-xl mb-8">
-                    <div className="flex flex-col">
-                        <div className="flex flex-row justify-between ml-8 mt-4">
-                            <h1 className="font-medium font-lg">{question.name}</h1>
+            <div className="border rounded-xl mb-8">
+                <div className="flex flex-col">
+                    <div className="flex flex-row justify-between ml-8 mt-4">
+                        <h1 className="font-medium font-lg">{question.name}</h1>
 
-                            <MoreHoriz
-                                className="cursor-pointer mr-4"
-                                onClick={(e) => {
-                                    setAnchorEl(e.currentTarget);
-                                }}
-                            ></MoreHoriz>
-                        </div>
-                        <div className="mx-8 mt-2 mb-4">
-                            <h1>{question.description}</h1>
-                        </div>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                        setIsEditing(true);
-
-                                    setOpen(true);
-                                    setNewQuestion(question);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(
-                                        getFunctions(),
-                                        "deleteInterviewQuestion"
-                                    )(question.id).then(
-                                        () =>
-                                            (jobData.interviewQuestions =
-                                                jobData.interviewQuestions.filter(
-                                                    (c) => c.id !== question.id
-                                                ))
-                                    );
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
+                        <MoreHoriz
+                            className="cursor-pointer mr-4"
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+                                setNewQuestion(question);
+                            }}
+                        ></MoreHoriz>
                     </div>
+                    <div className="mx-8 mt-2 mb-4">
+                        <h1>{question.description}</h1>
+                    </div>
+                    <Menu
+                        open={menuOpen}
+                        onClose={() => setAnchorEl(null)}
+                        anchorEl={anchorEl}
+                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    >
+                        <MenuItem
+                            onClick={() => {
+                                setIsEditing(true);
+
+                                setOpen(true);
+                            }}
+                        >
+                            Edit
+                        </MenuItem>
+                        <MenuItem
+                            onClick={async () => {
+                                await httpsCallable(
+                                    getFunctions(),
+                                    "deleteInterviewQuestion"
+                                )(question.id).then(
+                                    () =>
+                                        (jobData.interviewQuestions =
+                                            jobData.interviewQuestions.filter(
+                                                (c) => c.id !== question.id
+                                            ))
+                                );
+                            }}
+                        >
+                            Delete
+                        </MenuItem>
+                    </Menu>
                 </div>
-            ));
-    }
+            </div>
+        ));
+    };
 
     return (
         <div
@@ -770,8 +763,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     style: { borderRadius: 16, padding: "5vh 5vw" },
                 }}
                 open={open}
-                onClose={async () => {
-                    await updateQuesiton();
+                onClose={() => {
+                    setOpen(false);
                 }}
             >
                 <DialogContent style={{ width: "50vw" }}>
@@ -792,7 +785,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                     Discard
                                 </Button>
                             </div>
-                    <LoadingButton
+                            <LoadingButton
                                 sx={{ borderRadius: 2 }}
                                 variant="contained"
                                 color="neutral"
@@ -801,12 +794,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                     isEditing ? await updateQuesiton() : await addNewQuestion();
                                 }}
                                 loading={loading}
-                        disableElevation
+                                disableElevation
                             >
-                        {isEditing ? "Save" : "Add"}
-                                
-                    </LoadingButton>
-                            
+                                {isEditing ? "Save" : "Add"}
+                            </LoadingButton>
                         </div>
                     </div>
                     <div className="flex flex-1 w-full mb-8">
@@ -829,8 +820,6 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     </div>
                     <div className="flex flex-1 w-full">
                         <div className="flex flex-col w-full">
-
-
                             <h1>Question description</h1>
                             <TextField
                                 style={{ marginTop: "1vh" }}
@@ -853,12 +842,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
             </Dialog>
 
             <div className="flex flex-row justify-center align-center w-full">
-                <div className="w-2/3">
-                    
-                        {renderQuestions()}
-                </div>
+                <div className="w-2/3">{renderQuestions()}</div>
             </div>
-            
         </div>
     );
 };
@@ -927,24 +912,24 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 }}
                 open={open}
                 onClose={async () => {
-                    const contactUpdate = {
-                        name: newContact.name,
-                        title: newContact.title,
-                        company: newContact.company,
-                        email: newContact.email,
-                        phone: newContact.phone,
-                        linkedin: newContact.linkedin,
-                        notes: newContact.notes,
-                    };
-                    await httpsCallable(
-                        getFunctions(),
-                        "updateContact"
-                    )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
-                        const contactIndex = jobData.contacts.findIndex(
-                            (contact) => contact.id === newContact.id
-                        );
-                        jobData.contacts[contactIndex] = newContact;
-                    });
+                    // const contactUpdate = {
+                    //     name: newContact.name,
+                    //     title: newContact.title,
+                    //     company: newContact.company,
+                    //     email: newContact.email,
+                    //     phone: newContact.phone,
+                    //     linkedin: newContact.linkedin,
+                    //     notes: newContact.notes,
+                    // };
+                    // await httpsCallable(
+                    //     getFunctions(),
+                    //     "updateContact"
+                    // )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
+                    //     const contactIndex = jobData.contacts.findIndex(
+                    //         (contact) => contact.id === newContact.id
+                    //     );
+                    //     jobData.contacts[contactIndex] = newContact;
+                    // });
                     setOpen(false);
                 }}
             >
@@ -1071,6 +1056,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         className="mr-4 cursor-pointer"
                                         onClick={(e) => {
                                             setAnchorEl(e.currentTarget);
+                                            setNewContact(contact);
                                         }}
                                     ></MoreHoriz>
                                     <Menu
@@ -1083,7 +1069,6 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         <MenuItem
                                             onClick={() => {
                                                 setOpen(true);
-                                                setNewContact(contact);
                                             }}
                                         >
                                             Edit
