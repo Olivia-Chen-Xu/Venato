@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     DialogContent,
+    DialogTitle,
     Tabs,
     Tab,
     TextField,
@@ -25,15 +26,19 @@ import {
     LocationOnOutlined,
     Delete,
     AddCircleOutline,
+    Flag,
+    Add,
     MoreVert,
 } from "@mui/icons-material";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-
+import { btnStyle } from "../auth/authStyles";
+import { AccountCircleOutlined } from "@mui/icons-material";
+import { MoreHoriz } from "@mui/icons-material";
 const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
 const priorities = ["High", "Medium", "Low"];
-
+import { SocialIcon } from "react-social-icons";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -105,6 +110,17 @@ const Details = ({ value, index, jobData, setJob }) => {
         setJob({ ...jobData, priority: e.target.value });
     };
 
+    const priorityColor = (p) => {
+        console.log("test");
+        switch (p) {
+            case "High":
+                return "text-[#E56464]";
+            case "Medium":
+                return "text-[#FF8900]";
+            case "Low":
+                return "text-[#0CBC8B]";
+        }
+    };
     return (
         <div
             style={{
@@ -114,55 +130,121 @@ const Details = ({ value, index, jobData, setJob }) => {
             }}
         >
             <>{/* </div> */}</>
-            <TextField
-                select
-                label="Column"
-                value={colTitles[jobData.stage]}
-                onChange={handleChange}
-                style={{ marginTop: "2vh" }}
-            >
-                {colTitles.map((title) => (
-                    <MenuItem value={title}>{title}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                select
-                value={jobData.priority}
-                label="Priority"
-                onChange={handleChange}
-                style={{ marginTop: "2vh" }}
-            >
-                {priorities.map((p) => (
-                    <MenuItem value={p}>{p}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                label="Posting Link"
-                value={jobData.link}
-                style={styles.applicationLink}
-                onChange={(e) => {
-                    setJob({ ...jobData, link: e.target.value });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
-            <TextField
-                label="Job details"
-                style={styles.jobDescription}
-                multiline
-                rows={10}
-                value={jobData.description}
-                onChange={(e) => {
-                    setJob({
-                        ...jobData,
-                        description: e.target.value,
-                    });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
+                <div className="w-3/4">
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full mr-8">
+                            <h1>Job Title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                className="w-full"
+                                value={jobData.position}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, position: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <h1>Priority</h1>
+                            <TextField
+                                select
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.priority}
+                                onChange={handleChange}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                            >
+                                {priorities.map((p) => (
+                                    <MenuItem value={p}>
+                                        <Flag className={priorityColor(p)} />
+                                    </MenuItem>
+                                ))}
+                            </TextField>{" "}
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full mr-4">
+                            <h1>Company</h1>
+                            <TextField
+                                value={jobData.company}
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, company: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col w-full ml-4">
+                            <h1>Location</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.location}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, location: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Posting Link</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={jobData.link}
+                                style={{ marginTop: "1vh" }}
+                                // style={styles.applicationLink}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, link: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Job Details</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                // style={styles.jobDescription}
+                                style={{ marginTop: "1vh" }}
+                                multiline
+                                rows={10}
+                                value={jobData.description}
+                                onChange={(e) => {
+                                    setJob({
+                                        ...jobData,
+                                        description: e.target.value,
+                                    });
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
@@ -176,16 +258,25 @@ const Notes = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <TextField
-                style={{ marginTop: "2vh" }}
-                label="Notes"
-                multiline
-                rows={10}
-                value={jobData.notes}
-                onChange={(e) => {
-                    setJob({ ...jobData, notes: e.target.value });
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
+                <div className="w-3/4 h-full">
+                    <h1>Notes</h1>
+                    <TextField
+                        InputProps={{
+                            style: {
+                                borderRadius: "8px",
+                            },
+                        }}
+                        style={{ marginTop: "2vh", height: "100%", width: "100%" }}
+                        multiline
+                        rows={20}
+                        value={jobData.notes}
+                        onChange={(e) => {
+                            setJob({ ...jobData, notes: e.target.value });
+                        }}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
@@ -258,8 +349,15 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             </MenuItem>
                             <MenuItem
                                 onClick={async () => {
-                                    await httpsCallable(getFunctions(), "deleteDeadline")(deadline.id)
-                                        .then(() => jobData.deadlines = jobData.deadlines.filter((c) => c.id !== deadline.id));
+                                    await httpsCallable(
+                                        getFunctions(),
+                                        "deleteDeadline"
+                                    )(deadline.id).then(
+                                        () =>
+                                            (jobData.deadlines = jobData.deadlines.filter(
+                                                (c) => c.id !== deadline.id
+                                            ))
+                                    );
                                 }}
                             >
                                 Delete
@@ -279,12 +377,15 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                         priority: newDdl.priority,
                         title: newDdl.title,
                     };
-                    await httpsCallable(getFunctions(), "updateDeadline")
-                    ({ deadlineId: newDdl.id, deadline: deadlineUpdate })
-                        .then(() => {
-                            const deadlineIndex = jobData.deadlines.findIndex((deadline) => deadline.id === newDdl.id);
-                            jobData.deadlines[deadlineIndex] = newDdl;
-                        });
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateDeadline"
+                    )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+                        const deadlineIndex = jobData.deadlines.findIndex(
+                            (deadline) => deadline.id === newDdl.id
+                        );
+                        jobData.deadlines[deadlineIndex] = newDdl;
+                    });
                     setOpen(false);
                 }}
             >
@@ -384,12 +485,15 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         description: newQuestion.description,
                         name: newQuestion.name,
                     };
-                    await httpsCallable(getFunctions(), "updateInterviewQuestion")
-                    ({ questionId: newQuestion.id, question: questionUpdate })
-                        .then(() => {
-                            const questionIndex = jobData.interviewQuestions.findIndex((question) => question.id === newQuestion.id);
-                            jobData.interviewQuestions[questionIndex] = newQuestion;
-                        });
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateInterviewQuestion"
+                    )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+                        const questionIndex = jobData.interviewQuestions.findIndex(
+                            (question) => question.id === newQuestion.id
+                        );
+                        jobData.interviewQuestions[questionIndex] = newQuestion;
+                    });
                     setOpen(false);
                 }}
             >
@@ -468,8 +572,16 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             </MenuItem>
                             <MenuItem
                                 onClick={async () => {
-                                    await httpsCallable(getFunctions(), "deleteInterviewQuestion")(question.id)
-                                        .then(() => jobData.interviewQuestions = jobData.interviewQuestions.filter((c) => c.id !== question.id));
+                                    await httpsCallable(
+                                        getFunctions(),
+                                        "deleteInterviewQuestion"
+                                    )(question.id).then(
+                                        () =>
+                                            (jobData.interviewQuestions =
+                                                jobData.interviewQuestions.filter(
+                                                    (c) => c.id !== question.id
+                                                ))
+                                    );
                                 }}
                             >
                                 Delete
@@ -519,15 +631,31 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: "2vh", marginBottom: "2vh" }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add Contact
-            </Button>
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-2/3 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => setOpen(true)}
+                        startIcon={<Add />}
+                    >
+                        Add Contact
+                    </Button>
+                </div>
+            </div>
             <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
                 open={open}
                 onClose={async () => {
                     const contactUpdate = {
@@ -539,109 +667,215 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         linkedin: newContact.linkedin,
                         notes: newContact.notes,
                     };
-                    await httpsCallable(getFunctions(), "updateContact")
-                        ({ contactId: newContact.id, contact: contactUpdate })
-                        .then(() => {
-                            const contactIndex = jobData.contacts.findIndex((contact) => contact.id === newContact.id);
-                            jobData.contacts[contactIndex] = newContact;
-                        });
+                    await httpsCallable(
+                        getFunctions(),
+                        "updateContact"
+                    )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
+                        const contactIndex = jobData.contacts.findIndex(
+                            (contact) => contact.id === newContact.id
+                        );
+                        jobData.contacts[contactIndex] = newContact;
+                    });
                     setOpen(false);
-                }
-            }>
-                <DialogContent
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: 600,
-                        alignItems: "center",
-                    }}
-                >
-                    <p>Contact name</p>
-                    <TextField
-                        label="Name"
-                        value={newContact.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, name: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Job title</p>
-                    <TextField
-                        label="Job title"
-                        value={newContact.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, title: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Company</p>
-                    <TextField
-                        label="Company"
-                        value={newContact.company}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, company: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to LinkedIn</p>
-                    <TextField
-                        label="Link to LinkedIn"
-                        value={newContact.linkedin}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, linkedin: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
-                        Add
-                    </Button>
+                }}
+            >
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <Button
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={addNewContact}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="w-full mb-4">
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Contact Name</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.name}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            name: e.target.value,
+                                        });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Job Title</h1>
+                                <TextField
+                                    value={newContact.title}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            title: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Company</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.company}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            company: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full">
+                            <div className="flex flex-col w-full">
+                                <h1>LinkedIn Profile</h1>
+                                <TextField
+                                    className="w-full"
+                                    value={newContact.linkedin}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            linkedin: e.target.value,
+                                        });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
-            {jobData.contacts &&
-                jobData.contacts.map((contact) => (
-                    <div style={{ marginBottom: "2vh" }}>
-                        <h2>{contact.name}</h2>
-                        <p>{contact.title}</p>
-                        <p>{contact.company}</p>
-                        <p>{contact.linkedin}</p>
-                        <IconButton
-                            onClick={(e) => {
-                                setAnchorEl(e.currentTarget);
-                            }}
-                        >
-                            <MoreVert></MoreVert>
-                        </IconButton>
-                        <Menu
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
-                            anchorEl={anchorEl}
-                            transformOrigin={{ horizontal: "right", vertical: "top" }}
-                            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                        >
-                            <MenuItem
-                                onClick={() => {
-                                    setOpen(true);
-                                    setNewContact(contact);
-                                }}
-                            >
-                                Edit
-                            </MenuItem>
-                            <MenuItem
-                                onClick={async () => {
-                                    await httpsCallable(getFunctions(), "deleteContact")(contact.id)
-                                        .then(() => jobData.contacts = jobData.contacts.filter((c) => c.id !== contact.id));
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        </Menu>
-                        <hr />
-                    </div>
-                ))}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-cols-3 gap-14 w-2/3">
+                    {jobData.contacts &&
+                        jobData.contacts.map((contact) => (
+                            <div className="border rounded-xl">
+                                <div className="flex flex-row-reverse w-full mr-5">
+                                    <div className="">
+                                    <IconButton 
+                                        onClick={(e) => {
+                                            setAnchorEl(e.currentTarget);
+                                        }}
+                                    >
+                                        <MoreHoriz></MoreHoriz>
+                                    </IconButton>
+                                    </div>
+                                    <Menu
+                                        open={menuOpen}
+                                        onClose={() => setAnchorEl(null)}
+                                        anchorEl={anchorEl}
+                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                    >
+                                        <MenuItem
+                                            onClick={() => {
+                                                setOpen(true);
+                                                setNewContact(contact);
+                                            }}
+                                        >
+                                            Edit
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={async () => {
+                                                await httpsCallable(
+                                                    getFunctions(),
+                                                    "deleteContact"
+                                                )(contact.id).then(
+                                                    () =>
+                                                        (jobData.contacts = jobData.contacts.filter(
+                                                            (c) => c.id !== contact.id
+                                                        ))
+                                                );
+                                            }}
+                                        >
+                                            Delete
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                                <div className="m-4">
+                                    <div className="flex flex-1 w-full mb-2">
+                                        <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
+                                            <AccountCircleOutlined
+                                                className="scale-[2.25]"
+                                                sx={{ stroke: "#ffffff", strokeWidth: 1 }}
+                                            />
+                                        </div>
+                                        <div className="w-full">
+                                            <h2 className="text-lg">{contact.name}</h2>
+                                            <p className="mt-1">{contact.title}</p>
+                                            <p className="mb-1">@ {contact.company}</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        className="w-full border-2 border-[#367CFF]"
+                                        color="info"
+                                        style={{ border: "2px solid #367CFF" }}
+                                        variant="outlined"
+                                        sx={{ borderRadius: 2 }}
+                                        onClick={() => {
+                                            window.open(contact.linkedin, "_blank");
+                                        }}
+                                    >
+                                        <SocialIcon
+                                            className="w-1/2 mr-2"
+                                            url="https://www.linkedin.com/in/"
+                                            style={{ height: 20, width: 20 }}
+                                        />
+                                        Contact
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                </div>
+            </div>
+            );{" "}
         </div>
     );
 };
@@ -706,7 +940,10 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
             stage: jobData.stage,
             userId: jobData.userId,
         };
-        await httpsCallable(getFunctions(), 'updateJobData')({ jobId: jobData.id, jobData: newJobData });
+        await httpsCallable(
+            getFunctions(),
+            "updateJobData"
+        )({ jobId: jobData.id, jobData: newJobData });
 
         // if (isKanban) {
         //     newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
