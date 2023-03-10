@@ -797,9 +797,48 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                     {jobData.contacts &&
                         jobData.contacts.map((contact) => (
                             <div className="border rounded-xl">
-                                {/* <div className="flex flex-row-reverse w-full mr-5">
-                                    <MoreHoriz /> 
-                                </div> */}
+                                <div className="flex flex-row-reverse w-full mr-5">
+                                    <div className="">
+                                    <IconButton 
+                                        onClick={(e) => {
+                                            setAnchorEl(e.currentTarget);
+                                        }}
+                                    >
+                                        <MoreHoriz></MoreHoriz>
+                                    </IconButton>
+                                    </div>
+                                    <Menu
+                                        open={menuOpen}
+                                        onClose={() => setAnchorEl(null)}
+                                        anchorEl={anchorEl}
+                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                    >
+                                        <MenuItem
+                                            onClick={() => {
+                                                setOpen(true);
+                                                setNewContact(contact);
+                                            }}
+                                        >
+                                            Edit
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={async () => {
+                                                await httpsCallable(
+                                                    getFunctions(),
+                                                    "deleteContact"
+                                                )(contact.id).then(
+                                                    () =>
+                                                        (jobData.contacts = jobData.contacts.filter(
+                                                            (c) => c.id !== contact.id
+                                                        ))
+                                                );
+                                            }}
+                                        >
+                                            Delete
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
                                 <div className="m-4">
                                     <div className="flex flex-1 w-full mb-2">
                                         <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
@@ -809,9 +848,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                             />
                                         </div>
                                         <div className="w-full">
-                                            <h2 className="text-lg">
-                                                {contact.name}
-                                            </h2>
+                                            <h2 className="text-lg">{contact.name}</h2>
                                             <p className="mt-1">{contact.title}</p>
                                             <p className="mb-1">@ {contact.company}</p>
                                         </div>
