@@ -2,12 +2,13 @@ import { useState } from "react";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
-import { Button, Dialog, DialogContent, TextField } from '@mui/material';
+import { Button, Dialog, DialogContent, TextField, InputAdornment, Select } from "@mui/material";
 import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
+import { AlternateEmail, WorkOutline } from "@mui/icons-material";
 
 const QuestionSearch = () => {
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState({ company: "", position: "" });
     const [questions, setQuestions] = useState([]);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -18,17 +19,14 @@ const QuestionSearch = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        if (query.trim().length === 0) {
+        if (query === { company: "", position: "" }) {
             setMessage("Please enter a search query");
             setLoading(false);
             return;
         }
 
         setMessage("Loading questions...");
-        const result = await httpsCallable(
-            getFunctions(),
-            "interviewQuestionSearch"
-        )({ searchAll: query });
+        const result = await httpsCallable(getFunctions(), "interviewQuestionSearch")(query);
 
         setQuestions(result.data);
         setLoading(false);
@@ -103,13 +101,43 @@ const QuestionSearch = () => {
 
     const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
-        <AppScreen
-            title="Interview Question Search"
-        >
-                <div className="mt-8">
-                    <div className="grid place-content-center flex flex-1">
-                        <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
-                            <div>
+        <AppScreen title="Interview Question Search">
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <TextField
+                    label="Search job title or keyword"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <WorkOutline />
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => {
+                        setQuery({ ...query, position: e.target.value });
+                    }}
+                ></TextField>
+                <TextField
+                    label="company"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <AlternateEmail></AlternateEmail>
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => {
+                        setQuery({ ...query, company: e.target.value });
+                    }}
+                ></TextField>
+
+                {/* <div>
                                 <label htmlFor="position">
                                     <input
                                         id="position"
@@ -122,51 +150,42 @@ const QuestionSearch = () => {
                                         }}
                                     />
                                 </label>
-                            </div>
-                            {/*<div>*/}
-                            {/*    <label htmlFor="company">*/}
-                            {/*        <select*/}
-                            {/*            id="company"*/}
-                            {/*            name="company"*/}
-                            {/*            select*/}
-                            {/*            label="Company"*/}
-                            {/*            value={company}*/}
-                            {/*            onChange={(e) => setCompany(e.target.value)}*/}
-                            {/*        >*/}
-                            {/*            <option value="" selected>*/}
-                            {/*                Company*/}
-                            {/*            </option>*/}
-                            {/*            {companies.result.data.map((c) => (*/}
-                            {/*                <option value={c}>{c}</option>*/}
-                            {/*            ))}*/}
-                            {/*        </select>*/}
-                            {/*    </label>*/}
-                            {/*</div>*/}
-                        </div>
-                        <div className="h-full bg-transparent align-middle">
-                            <LoadingButton
-                                id="searchBtn"
-                                onClick={handleSearch}
-                                variant="contained"
-                                loading={loading}
-                                disableElevation
-                                size="small"
-                                sx={{
-                                    height: "80%",
-                                }}
-                                endIcon={<Search />}
-                            >
-                                {" "}
-                                Search
-                            </LoadingButton>
-                        </div>
-                    </div>
-                </div>
+                            </div> */}
+                {/*<div>*/}
+                {/*    <label htmlFor="company">*/}
+                {/*        <select*/}
+                {/*            id="company"*/}
+                {/*            name="company"*/}
+                {/*            select*/}
+                {/*            label="Company"*/}
+                {/*            value={company}*/}
+                {/*            onChange={(e) => setCompany(e.target.value)}*/}
+                {/*        >*/}
+                {/*            <option value="" selected>*/}
+                {/*                Company*/}
+                {/*            </option>*/}
+                {/*            {companies.result.data.map((c) => (*/}
+                {/*                <option value={c}>{c}</option>*/}
+                {/*            ))}*/}
+                {/*        </select>*/}
+                {/*    </label>*/}
+                {/*</div>*/}
+                <LoadingButton
+                    id="searchBtn"
+                    onClick={handleSearch}
+                    variant="contained"
+                    loading={loading}
+                    disableElevation
+                    endIcon={<Search />}
+                >
+                    {" "}
+                    Search
+                </LoadingButton>
+            </div>
+            <br />
 
-                <br />
-
-                <div>
-                    {/*
+            <div>
+                {/*
 
             <br />
             Interview question search
@@ -221,38 +240,45 @@ const QuestionSearch = () => {
             >
                 Clear search
             </button> */}
-                    <br />
-                    <div className="grid place-content-center">{message}</div>
-                    <br />
-                    {displayQuestions()}
-                    {dialogOpen && (
-                        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                            <DialogContent
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    width: 600,
-                                    alignItems: 'center',
-                                }}
+                <br />
+                <div className="grid place-content-center">{message}</div>
+                <br />
+                {displayQuestions()}
+                {dialogOpen && (
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                        <DialogContent
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                width: 600,
+                                alignItems: "center",
+                            }}
+                        >
+                            <p>
+                                <strong>
+                                    <u>{currentQuestion.name}</u>
+                                </strong>
+                            </p>
+                            <br />
+
+                            {currentQuestion.description}
+                            <br />
+                            <br />
+
+                            <Button
+                                variant="contained"
+                                href={`https://www.google.com/search?q=${currentQuestion.name.replaceAll(
+                                    " ",
+                                    "+"
+                                )}`}
+                                target={"_blank"}
                             >
-                                <p><strong><u>{currentQuestion.name}</u></strong></p>
-                                <br />
-
-                                {currentQuestion.description}
-                                <br />
-                                <br />
-
-                                <Button
-                                    variant="contained"
-                                    href={`https://www.google.com/search?q=${currentQuestion.name.replaceAll(' ', '+')}`}
-                                    target={"_blank"}
-                                >
-                                    Search on Google
-                                </Button>
-                            </DialogContent>
-                        </Dialog>
-                    )}
-                </div>
+                                Search on Google
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </div>
         </AppScreen>
     );
 };
