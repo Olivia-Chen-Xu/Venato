@@ -3,7 +3,6 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
 import { Button, Dialog, DialogContent, TextField, InputAdornment } from "@mui/material";
-import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, WorkOutline } from "@mui/icons-material";
 
@@ -19,7 +18,7 @@ const QuestionSearch = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        if (query === { company: "", position: "" }) {
+        if (query.company.trim() === "" && query.position.trim() === "") {
             setMessage("Please enter a search query");
             setLoading(false);
             return;
