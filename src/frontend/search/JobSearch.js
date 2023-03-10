@@ -43,10 +43,14 @@ const JobSearch = () => {
         if (jobs.length === 0) {
             return <p align="center">⚠️No jobs found; please try another search.</p>;
         }
+
         return (
             <div className="w-full flex flex-1">
                 <div id="res">
                     {jobs.map((job, index) => {
+                        if (!job.position || !job.company || !job.location) {
+                            return;
+                        }
                         return (
                             <div
                                 id="job"
