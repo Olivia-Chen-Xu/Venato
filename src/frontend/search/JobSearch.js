@@ -4,12 +4,14 @@ import "../../App.css";
 import "./job.css";
 import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { TextField, InputAdornment } from "@mui/material";
 import bar from "../../images/bar.png";
 import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
+import { AlternateEmail, PlaceOutlined, WorkOutline } from "@mui/icons-material";
 
 const JobSearch = () => {
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState({ company: "", position: "", locaton: "" });
     const [jobs, setJobs] = useState([]);
     const [message, setMessage] = useState("");
     const [currJob, setcurrJob] = useState(null);
@@ -18,14 +20,14 @@ const JobSearch = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        if (query.trim().length === 0) {
+        if (query.trim().length === { company: "", position: "", locaton: "" }) {
             setMessage("Please enter a search query");
             setLoading(false);
             return;
         }
 
         setMessage("Loading jobs...");
-        const result = await httpsCallable(getFunctions(), "jobSearch")({ searchAll: query });
+        const result = await httpsCallable(getFunctions(), "jobSearch")(query);
 
         setJobs(result.data);
         setcurrJob(result.data[0]);
@@ -123,80 +125,65 @@ const JobSearch = () => {
     };
 
     return (
-        <AppScreen
-            title="Job Search"
-        >
-            <div className="grid place-content-center ml-5 mr-5">
-                <div className="flex flex-1">
-                    <div id="search" className="flex flex-1 drop-shadow-xl bg-white">
-                        <div>
-                            <label htmlFor="position">
-                                <input
-                                    id="position"
-                                    type="email"
-                                    name="email"
-                                    // value={position}
-                                    placeholder="Search by position, location or company"
-                                    onChange={(e) => {
-                                        setQuery(e.target.value);
-                                    }}
-                                />
-                            </label>
-                        </div>
-                        {/*<div>*/}
-                        {/*    <label htmlFor="company">*/}
-                        {/*        <select*/}
-                        {/*            id="company"*/}
-                        {/*            name="company"*/}
-                        {/*            select*/}
-                        {/*            label="Company"*/}
-                        {/*            value={company}*/}
-                        {/*            onChange={(e) => setCompany(e.target.value)}*/}
-                        {/*        >*/}
-                        {/*            <option value="" selected>*/}
-                        {/*                Company*/}
-                        {/*            </option>*/}
-                        {/*        </select>*/}
-                        {/*    </label>*/}
-                        {/*</div>*/}
-                        {/*<div>*/}
-                        {/*    <label htmlFor="location">*/}
-                        {/*        <select*/}
-                        {/*            select*/}
-                        {/*            sx={{*/}
-                        {/*                height: 20,*/}
-                        {/*            }}*/}
-                        {/*            id="location"*/}
-                        {/*            name="location"*/}
-                        {/*            label="Location"*/}
-                        {/*            value={location}*/}
-                        {/*            onChange={(e) => setLocation(e.target.value)}*/}
-                        {/*        >*/}
-                        {/*            <option value="" selected>*/}
-                        {/*                Location*/}
-                        {/*            </option>*/}
-                        {/*        </select>*/}
-                        {/*    </label>*/}
-                        {/*</div>*/}
-                    </div>
-                    <div className="h-full bg-transparent align-middle">
-                        <LoadingButton
-                            id="searchBtn"
-                            onClick={handleSearch}
-                            variant="contained"
-                            loading={loading}
-                            disableElevation
-                            size="small"
-                            sx={{
-                                height: "80%",
-                            }}
-                            endIcon={<Search />}
-                        >
-                            {" "}
-                            Search
-                        </LoadingButton>
-                    </div>
-                </div>
+        <AppScreen title="Job Search">
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <TextField
+                    label="Search job title or keyword"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <WorkOutline />
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => {
+                        setQuery({ ...query, position: e.target.value });
+                    }}
+                ></TextField>
+                <TextField
+                    label="Company"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <AlternateEmail></AlternateEmail>
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => {
+                        setQuery({ ...query, company: e.target.value });
+                    }}
+                ></TextField>
+                <TextField
+                    label="Location"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <PlaceOutlined></PlaceOutlined>
+                            </InputAdornment>
+                        ),
+                    }}
+                    onChange={(e) => {
+                        setQuery({ ...query, location: e.target.value });
+                    }}
+                ></TextField>
+                <LoadingButton
+                    id="searchBtn"
+                    onClick={handleSearch}
+                    variant="contained"
+                    loading={loading}
+                    disableElevation
+                    endIcon={<Search />}
+                >
+                    {" "}
+                    Search
+                </LoadingButton>
             </div>
 
             <br />
