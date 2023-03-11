@@ -11,7 +11,6 @@ const QuestionSearch = () => {
     const [questions, setQuestions] = useState([]);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [currentQuestion, setCurrentQuestion] = useState({});
@@ -30,13 +29,9 @@ const QuestionSearch = () => {
         setQuestions(result.data);
         setLoading(false);
         setMessage("");
-        setHasSearched(true);
     };
 
     const displayQuestions = () => {
-        if (!hasSearched) {
-            return <p align="center">Select or enter a search category to search</p>;
-        }
         if (questions.length === 0) {
             return <p align="center">⚠️No jobs found; please try another search.</p>;
         }

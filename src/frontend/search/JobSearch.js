@@ -16,7 +16,6 @@ const JobSearch = () => {
     const [message, setMessage] = useState("");
     const [currJob, setcurrJob] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async () => {
         setLoading(true);
@@ -37,7 +36,6 @@ const JobSearch = () => {
         setcurrJob(result.data[0]);
         setMessage("");
         setLoading(false);
-        setHasSearched(true);
     };
 
     const displayJobs = () => {
