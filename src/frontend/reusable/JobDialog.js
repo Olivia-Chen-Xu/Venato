@@ -44,6 +44,17 @@ import { SocialIcon } from "react-social-icons";
 import Checkbox from "@mui/material/Checkbox";
 import LoadingButton from "@mui/lab/LoadingButton";
 
+const priorityColor = (p) => {
+    switch (p) {
+        case "High":
+            return "text-[#E56464]";
+        case "Medium":
+            return "text-[#FF8900]";
+        case "Low":
+            return "text-[#0CBC8B]";
+    }
+};
+
 import Search from "@mui/icons-material/Search";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
@@ -52,58 +63,54 @@ const Headings = ({ jobData, setJob }) => {
             stage: colTitles.indexOf(e.target.value),
         });
     };
+
+    const priorityBg = (p) => {
+        switch (p) {
+            case "High":
+                return "bg-[#FFE7E7]";
+            case "Medium":
+                return "bg-[#FFF4E7]";
+            case "Low":
+                return "bg-[#DEFFE5]";
+        }
+    };
+
     return (
         <>
-            <Input
-                className="focus-only "
-                placeholder="Job Title"
-                value={jobData.position}
-                onChange={(e) => {
-                    setJob({
-                        ...jobData,
-                        position: e.target.value,
-                    });
-                }}
-                style={styles.jobTitle}
-            />
-            {/* <h1
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: "20px",
-                    margin: '0 1vw',
-                }}>
-                    @
-                </h1> */}
-            <div style={{ display: "flex", flexDirection: "row" }}>
-                <Input
-                    placeholder="Company"
-                    style={styles.Company}
-                    value={jobData.company}
-                    disableUnderline
-                    onChange={(e) => {
-                        setJob({ ...jobData, company: e.target.value });
-                    }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <AlternateEmailOutlined style={{ fontSize: 20 }} />
-                        </InputAdornment>
-                    }
-                />
-                <Input
-                    placeholder="Location"
-                    value={jobData.location}
-                    disableUnderline
-                    onChange={(e) => {
-                        setJob({ ...jobData, location: e.target.value });
-                    }}
-                    style={styles.Location}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined style={{ fontSize: 20 }} />
-                        </InputAdornment>
-                    }
-                />
+            <div className="w-full">
+            <div className="flex flex-row justify-center  align-center w-full">
+                <div className="grid grid-col-1 w-5/6  ">
+                    <h1 className="text-3xl">{jobData.position}</h1>
+                    <div className="flex flex-1 mt-3">
+                        <h1 className="text-xl mr-5 flex flex-row justify-center items-center">
+                            {" "}
+                            <AlternateEmailOutlined className=""/> <div className="">{jobData.company}</div>
+                        </h1>
+                        <TextField
+                            select
+                            value={colTitles[jobData.stage]}
+                            onChange={handleChange}
+                            size = "small"
+                            sx = {{padding: 0}}
+                            InputProps={{
+                                style: {
+                                    borderRadius: "8px",
+                                },
+                            }}
+                        >
+                            {colTitles.map((title) => (
+                                <MenuItem value={title}>{title}</MenuItem>
+                            ))}
+                        </TextField>
+                        <div
+                            className={`ml-5 ${priorityBg(jobData.priority)} ${priorityColor(
+                                jobData.priority
+                            )} border rounded-lg flex flex-row py-1 px-2`}
+                        >
+                            <Flag /> <p className="text-base">{jobData.priority}</p>
+                        </div>
+                    </div>
+                </div> </div>
             </div>
             {/* <h1>{jobData.position}</h1>
             <h3>{jobData.company}</h3> */}
@@ -117,7 +124,6 @@ const Details = ({ value, index, jobData, setJob }) => {
     };
 
     const priorityColor = (p) => {
-        console.log("test");
         switch (p) {
             case "High":
                 return "text-[#E56464]";
@@ -138,7 +144,7 @@ const Details = ({ value, index, jobData, setJob }) => {
             <>{/* </div> */}</>
             <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
                 <div className="w-3/4">
-                    <div className="flex flex-1 w-full mb-8">
+                    <div className="flex flex-1 w-full mb-5">
                         <div className="flex flex-col w-full mr-8">
                             <h1>Job Title</h1>
                             <TextField
@@ -176,7 +182,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                             </TextField>{" "}
                         </div>
                     </div>
-                    <div className="flex flex-1 w-full mb-8">
+                    <div className="flex flex-1 w-full mb-5">
                         <div className="flex flex-col w-full mr-4">
                             <h1>Company</h1>
                             <TextField
@@ -208,7 +214,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-1 w-full mb-8">
+                    <div className="flex flex-1 w-full mb-5">
                         <div className="flex flex-col w-full">
                             <h1>Posting Link</h1>
                             <TextField
@@ -226,7 +232,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-1 w-full mb-8">
+                    <div className="flex flex-1 w-full mb-5">
                         <div className="flex flex-col w-full">
                             <h1>Job Details</h1>
                             <TextField
@@ -238,7 +244,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                                 // style={styles.jobDescription}
                                 style={{ marginTop: "1vh" }}
                                 multiline
-                                rows={10}
+                                rows={5}
                                 value={jobData.description}
                                 onChange={(e) => {
                                     setJob({
@@ -264,8 +270,8 @@ const Notes = ({ value, index, jobData, setJob }) => {
                 height: "100%",
             }}
         >
-            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
-                <div className="w-3/4 h-full">
+            <div className="mt-8 flex flex-row justify-center align-center w-full">
+                <div className="w-3/4">
                     <h1>Notes</h1>
                     <TextField
                         InputProps={{
@@ -746,6 +752,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             marginBottom: "2vh",
                             padding: "1vh 1vw",
                             border: "2px solid #7F5BEB",
+                            borderRadius: '16px',
                         }}
                         sx={{ borderRadius: 2 }}
                         variant="outlined"
@@ -770,7 +777,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                     setOpen(false);
                 }}
             >
-                <DialogContent style={{ width: "50vw" }}>
+                <DialogContent style={{ borderRadius: 16, width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
                         <h1 className="text-xl w-full">
                             {isEditing ? 'Edit Interview Question' : 'Create Interview Question'}
@@ -1278,69 +1285,48 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     }, [jobData]);
 
     return (
-        <Dialog fullWidth maxWidth="xl" onClose={async () => await handleClose()} open={true}>
+        <Dialog fullWidth scroll="paper" className="overflow-hidden" maxWidth="xl" onClose={async () => await handleClose()} open={true}>
             <DialogContent
+                className=""
                 style={{
                     display: "flex",
                     justifyContent: "center",
                     flexDirection: "column",
-                    height: 800,
+                    height: "90vh",
+                    background: "linear-gradient(180deg, #FFF 21%, #F6F6F6  0%)"
                 }}
             >
+                <DialogTitle>
+                    <div className="bg-white -mt-5 overflow-hidden">
                 <Headings jobData={job} setJob={setJob} />
+                </div>
+                <div className="flex flex-row bg-white px-20 justify-center align-center drop-shadow-xl w-full">
+                <div className="grid grid-col-1 w-full  place-content-evenly">
                 <Tabs
-                    variant="scrollable"
+                    centered
+                    className="w-full"
+                    variant="fullWidth"
                     value={tabValue}
                     onChange={handleChange}
                     aria-label="Vertical tabs example"
                 >
-                    <Tab icon={<DescriptionOutlined />} iconPosition="end" label="Job Details" />
+                    <Tab icon={<DescriptionOutlined />} sx = {{ marginRight: "3vw"}} iconPosition="start" label="Job Details" />
                     <Tab
+                    sx = {{ marginRight: "3vw"}} 
                         icon={<DriveFileRenameOutlineOutlined />}
-                        iconPosition="end"
+                        iconPosition="start"
                         label="Notes"
                     />
-                    <Tab icon={<CalendarMonthOutlined />} iconPosition="end" label="Deadlines" />
-                    <Tab icon={<QuizOutlined />} iconPosition="end" label="Interview Questions" />
-                    <Tab icon={<ContactPageOutlined />} iconPosition="end" label="Contacts" />
-                </Tabs>
+                    <Tab icon={<CalendarMonthOutlined />} sx = {{ marginRight: "3vw"}} iconPosition="start" label="Deadlines" />
+                    <Tab icon={<QuizOutlined />} sx = {{ marginRight: "3vw"}} iconPosition="start" label="Interview Questions" />
+                    <Tab icon={<ContactPageOutlined />} iconPosition="start" label="Contacts" />
+                </Tabs> </div> </div>
+                </DialogTitle>
                 <Details value={tabValue} index={0} jobData={job} setJob={setJob} />
                 <Notes value={tabValue} index={1} jobData={job} setJob={setJob} />
                 <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob} />
                 <Questions value={tabValue} index={3} jobData={job} setJob={setJob} />
                 <Contacts value={tabValue} index={4} jobData={job} setJob={setJob} />
-                {loading ? (
-                    <CircularProgress style={{ position: "absolute", right: 30 }} />
-                ) : (
-                    <div style={{ position: "absolute", right: "2vw", top: "4vh" }}>
-                        <Button
-                            variant="outlined"
-                            style={{
-                                padding: "14px 12px 14px 14px",
-                                gap: "10px",
-                                height: "25px",
-                                borderRadius: "4px",
-                                marginInlineEnd: 5,
-                            }}
-                            onClick={() => deleteJob(job)}
-                        >
-                            <Delete />
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={addNewJob}
-                            style={{
-                                padding: "15px 12px 15px 14px",
-                                gap: "10px",
-                                width: "25px",
-                                height: "25px",
-                                borderRadius: "4px",
-                            }}
-                        >
-                            {isEdit ? "Save" : "Add"}
-                        </Button>
-                    </div>
-                )}
             </DialogContent>
         </Dialog>
     );
@@ -1441,4 +1427,5 @@ const styles = {
 
         color: "#676767",
     },
+
 };
