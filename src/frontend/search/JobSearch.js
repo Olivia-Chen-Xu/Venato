@@ -98,6 +98,7 @@ const JobSearch = () => {
                                 justifyContent: "space-around",
                                 padding: 10,
                                 paddingInline: 20,
+                                position: "relative",
                             }}
                         >
                             <div style={{ fontSize: 15 }}>{currJob.company}</div>
@@ -115,7 +116,8 @@ const JobSearch = () => {
                                 style={{
                                     position: "absolute",
                                     backgroundColor: "white",
-                                    right: 60,
+                                    right: 20,
+                                    borderRadius: 8,
                                 }}
                             >
                                 Apply now
