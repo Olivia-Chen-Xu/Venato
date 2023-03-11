@@ -1024,7 +1024,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         </div>
                         <div className="flex flex-1 w-full">
                             <div className="flex flex-col w-full">
-                                <h1>LinkedIn Profile</h1>
+                                <h1>LinkedIn Profile Link</h1>
                                 <TextField
                                     className="w-full"
                                     value={newContact.linkedin}
