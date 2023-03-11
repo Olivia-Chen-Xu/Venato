@@ -48,11 +48,11 @@ export default function KanbanJob(props) {
         props.edit(props.job, props.ind);
     };
 
-    const handleDelete = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        props.delete(props.job, props.ind);
-    };
+    // const handleDelete = (e) => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     props.delete(props.job, props.ind);
+    // };
 
     return (
         <Draggable key={props.job.id} draggableId={props.job.id} index={props.index}>

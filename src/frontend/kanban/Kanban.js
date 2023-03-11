@@ -145,14 +145,12 @@ const Kanban = () => {
             const newState = [...kanbanState];
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
-
             setKanbanState(newState);
             // await move(state[sInd], state[dInd], source, destination).then((res) => {
             //     const newState = [...state];
             //     newState[sInd] = res[sInd];
             //     newState[dInd] = res[dInd];
 
-            //     setState(newState);
             // });
             await httpsCallable(
                 getFunctions(),
@@ -243,7 +241,6 @@ const Kanban = () => {
                                                     index={ind}
                                                     ind={ind}
                                                     edit={handleJobView}
-                                                    delete={() => console.warn("Not Implmented")}
                                                     kanbanState={kanbanState}
                                                     setKanbanState={setKanbanState}
                                                 />
