@@ -95,7 +95,7 @@ export default function ReusableSideBar() {
             >
                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                 <MenuItem onClick={handleDeleteAccount}>Delete Account!</MenuItem>
-                <MenuItem onClick={handleGenerateJobs}>Generate Jobs (dev only)</MenuItem>
+                {/* <MenuItem onClick={handleGenerateJobs}>Generate Jobs (dev only)</MenuItem> */}
             </Menu>
             <aside
                 className="min-w-[15rem]"

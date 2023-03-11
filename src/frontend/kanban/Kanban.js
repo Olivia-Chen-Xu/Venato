@@ -118,10 +118,6 @@ const Kanban = () => {
         setModalOpen(true);
     };
 
-    const handleDelete = (job, idx) => {
-        console.error('not implmented')
-    }
-
     async function onDragEnd(result) {
         const { source, destination } = result;
 
@@ -200,7 +196,7 @@ const Kanban = () => {
                 />
             )}
             <div
-                className='overflow-auto'                
+                className='overflow-auto'
                 style={{
                     display: 'grid',
                     gridAutoFlow: 'column',
@@ -211,7 +207,7 @@ const Kanban = () => {
             >
                 <DragDropContext onDragEnd={onDragEnd}>
                     {kanbanState.map((el, ind) => (
-                        <div 
+                        <div
                             className='flex flex-col items-center gap-3'
                         >
                             <KanbanHeader
@@ -234,7 +230,13 @@ const Kanban = () => {
                                     >
                                         {el.map((job, index) => (
                                             <div onClick={() => handleJobView(job, ind)}>
-                                                <KanbanJob job={job} index={index} ind={ind} edit={handleJobView} delete={handleDelete} />
+                                                <KanbanJob
+                                                    job={job}
+                                                    index={index}
+                                                    ind={ind}
+                                                    edit={handleJobView}
+                                                    delete={() => console.warn('Not Implmented')}
+                                                />
                                             </div>
                                         ))}
                                         {provided.placeholder}

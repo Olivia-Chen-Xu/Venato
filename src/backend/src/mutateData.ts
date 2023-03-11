@@ -126,8 +126,10 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
         deadlineId: '',
         deadline: {
             date: 0,
+            isInterview: false,
             link: '',
             location: '',
+            priority: '',
             title: '',
         }
     };

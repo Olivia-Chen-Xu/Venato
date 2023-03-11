@@ -4,11 +4,11 @@ import "../../App.css";
 import "./job.css";
 import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { TextField, InputAdornment } from "@mui/material";
+import { TextField, InputAdornment, Button } from "@mui/material";
 import bar from "../../images/bar.png";
 import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
-import { AlternateEmail, PlaceOutlined, WorkOutline } from "@mui/icons-material";
+import { AlternateEmail, PlaceOutlined, WorkOutline, OutboundOutlined } from "@mui/icons-material";
 
 const JobSearch = () => {
     const [query, setQuery] = useState({ company: "", position: "", location: "" });
@@ -20,7 +20,11 @@ const JobSearch = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        if (query.company.trim() === "" && query.position.trim() === "" && query.location.trim() === "") {
+        if (
+            query.company.trim() === "" &&
+            query.position.trim() === "" &&
+            query.location.trim() === ""
+        ) {
             setMessage("Please enter a search query");
             setLoading(false);
             return;
@@ -37,16 +41,13 @@ const JobSearch = () => {
     };
 
     const displayJobs = () => {
-        if (!hasSearched) {
-            return <p align="center">Select or enter a search category to search</p>;
-        }
-        if (jobs.length === 0) {
-            return <p align="center">⚠️No jobs found; please try another search.</p>;
+        if (hasSearched && jobs.length === 0) {
+            return <p align="center">⚠️No jobs found; please try another search</p>;
         }
 
         return (
-            <div className="w-full flex flex-1">
-                <div id="res">
+            <div className="flex flex-1 mx-10">
+                <div style={{ width: 400 }}>
                     {jobs.map((job, index) => {
                         if (!job.position || !job.company || !job.location) {
                             return;
@@ -55,64 +56,69 @@ const JobSearch = () => {
                             <div
                                 id="job"
                                 onClick={() => setcurrJob(job)}
-                                className="my-10 rounded-2xl text-white"
+                                className="pt-3 pl-5 pr-5 text-black flex flex-col"
+                                style={{
+                                    height: 94,
+                                    backgroundColor: "white",
+                                    borderRadius: 8,
+                                    justifyContent: "space-around",
+                                    padding: 10,
+                                    paddingInline: 20,
+                                    borderColor: "#E0E0E0",
+                                    borderWidth: 1,
+                                }}
                             >
-                                <div id="title">
-                                    <h1>
-                                        <span className="font-bold text-xl">
-                                            {" "}
-                                            {`${job.position}`}
-                                        </span>
-                                    </h1>
-                                </div>
-                                <img src={bar} alt="" className="w-full" />
-
-                                <div className="mt-3">
-                                    <h1 className="text-lg align-middle">
-                                        <span className="material-icons-outlined">
-                                            alternate_email
-                                        </span>{" "}
-                                        {`${job.company}`}
-                                    </h1>
-                                </div>
-                                <div className="mt-1">
-                                    <h1 className="text-lg align-middle">
-                                        <span className="material-icons-outlined">location_on</span>{" "}
-                                        {`${job.location}`}
-                                    </h1>
+                                <div style={{ fontSize: 15 }}>{job.company}</div>
+                                <div style={{ fontSize: 16, fontWeight: 500 }}>{job.position}</div>
+                                <div className="flex w-full items-center" style={{ fontSize: 13 }}>
+                                    {" "}
+                                    <span
+                                        className="material-icons-outlined"
+                                        style={{ fontSize: 15 }}
+                                    >
+                                        location_on
+                                    </span>{" "}
+                                    {job.location}
                                 </div>
                             </div>
                         );
                     })}
                 </div>
                 {currJob && (
-                    <div id="top" className="w-full h-fit">
-                        <div className="mt-3 ml-5 mr-5 text-white">
-                            <h1 className="text-2xl font-bold mb-1">{currJob.position}</h1>
-                            <img src={bar} alt="" className="w-full" />
-                            <div className="flex mb-2">
-                                <div className="w-full text-xl">
-                                    <h3>
-                                        <span className="mt-1 material-icons-outlined">
-                                            alternate_email
-                                        </span>{" "}
-                                        {currJob.company}
-                                    </h3>
-                                    <h3>
-                                        {" "}
-                                        <span className="material-icons-outlined">
-                                            location_on
-                                        </span>{" "}
-                                        {currJob.location}
-                                    </h3>
-                                </div>
-                                <div className="w-full mt-2">
-                                    <button id="apply" className="px-5 text-xl">
-                                        Apply Now
-                                    </button>
-                                </div>
+                    <div className="w-full">
+                        <div
+                            className="pt-3 pl-5 pr-5 text-white flex flex-col search-bg"
+                            style={{
+                                height: 94,
+                                backgroundColor: "#7F5BEB",
+                                borderRadius: 8,
+                                justifyContent: "space-around",
+                                padding: 10,
+                                paddingInline: 20,
+                            }}
+                        >
+                            <div style={{ fontSize: 15 }}>{currJob.company}</div>
+                            <div style={{ fontSize: 16, fontWeight: 500 }}>{currJob.position}</div>
+                            <div className="flex w-full items-center" style={{ fontSize: 13 }}>
+                                {" "}
+                                <span className="material-icons-outlined" style={{ fontSize: 15 }}>
+                                    location_on
+                                </span>{" "}
+                                {currJob.location}
                             </div>
+                            <Button
+                                variant="outlined"
+                                endIcon={<OutboundOutlined></OutboundOutlined>}
+                                style={{
+                                    position: "absolute",
+                                    backgroundColor: "white",
+                                    right: 60,
+                                }}
+                            >
+                                Apply now
+                            </Button>
                         </div>
+
                         <div id="bottom" className="mt-2 h-fit">
                             <div className="mt-5">
                                 <h1 className="ml-5 mr-5">Job Details</h1>
@@ -129,13 +135,14 @@ const JobSearch = () => {
     };
 
     return (
-        <AppScreen title="Job Search">
+        <AppScreen title="Find your next job">
             <div
+                className="mx-10"
                 style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                 }}
             >
                 <TextField
@@ -150,9 +157,11 @@ const JobSearch = () => {
                     onChange={(e) => {
                         setQuery({ ...query, position: e.target.value });
                     }}
+                    style={{ width: "50%" }}
                 ></TextField>
                 <TextField
                     label="Company"
+                    style={{ width: "20%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -166,6 +175,7 @@ const JobSearch = () => {
                 ></TextField>
                 <TextField
                     label="Location"
+                    style={{ width: "20%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -183,7 +193,8 @@ const JobSearch = () => {
                     variant="contained"
                     loading={loading}
                     disableElevation
-                    endIcon={<Search />}
+                    startIcon={<Search />}
+                    style={{ height: 56 }}
                 >
                     {" "}
                     Search

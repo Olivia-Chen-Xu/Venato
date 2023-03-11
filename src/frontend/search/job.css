@@ -18,17 +18,17 @@
 
 #bottom {
     background-color: #fdfdfd;
-    border-radius: 16px;
-    border-color: #c7c7e2;
+    border-radius: 8px;
+    border-color: #e0e0e0;
     border-width: 1px;
+    height: 30%;
 }
 
 #job {
-    margin-top: 1.25rem;
-    margin-right: 5rem;
+    margin-bottom: 1.25rem;
+    height: 94px;
+    margin-right: 2rem;
     background-color: #8080ae;
-    margin-left: 5rem;
-    padding: 1.25rem;
     cursor: pointer;
 }
 
@@ -76,4 +76,8 @@
 
 #searchBtn {
     margin-left: 1.25rem;
+}
+
+.search-bg {
+    background: url("./search-bg.svg") no-repeat left top;
 }
