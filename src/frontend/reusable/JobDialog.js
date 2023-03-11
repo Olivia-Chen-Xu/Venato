@@ -645,6 +645,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             description: newQuestion.description,
             name: newQuestion.name,
         };
+        console.log();
         await httpsCallable(
             getFunctions(),
             "updateInterviewQuestion"
@@ -771,7 +772,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
             >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
-                        <h1 className="text-xl w-full">Create Interview Question</h1>
+                        <h1 className="text-xl w-full">
+                            {isEditing ? 'Edit Interview Question' : 'Create Interview Question'}
+                        </h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
