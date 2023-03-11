@@ -135,7 +135,7 @@ const JobSearch = () => {
     };
 
     return (
-        <AppScreen title="Job Search">
+        <AppScreen title="Find your next job">
             <div
                 className="mx-10"
                 style={{
