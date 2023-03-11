@@ -503,7 +503,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
-                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <h1 className="text-xl w-full">Create Deadline</h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
