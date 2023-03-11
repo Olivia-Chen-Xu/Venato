@@ -1,15 +1,15 @@
-import { useNavigate } from 'react-router-dom';
-import './auth.css';
-import { useState } from 'react';
-import { Button } from '@mui/material';
-import { signin } from './auth-functions';
-import { btnStyle } from './authStyles';
-import logo from '../../images/logo.png';
+import { useNavigate } from "react-router-dom";
+import "./auth.css";
+import { useState } from "react";
+import { Button } from "@mui/material";
+import { signin } from "./auth-functions";
+import { btnStyle } from "./authStyles";
+import logo from "../../images/venato-purple.png";
 // import generateJobs from '../search/GenerateJobs';
 
 const Welcome = () => {
     const navigate = useNavigate();
-    const [errMsg, setErrMsg] = useState('');
+    const [errMsg, setErrMsg] = useState("");
 
     // const bypassSignIn = () => {
     //     const signInResult = signin('18rem8@queensu.ca', 'Username12345');
@@ -34,7 +34,7 @@ const Welcome = () => {
                 variant="contained"
                 color="neutral"
                 style={btnStyle}
-                onClick={() => navigate('/sign-in')}
+                onClick={() => navigate("/sign-in")}
             >
                 Log In
             </Button>
@@ -43,7 +43,7 @@ const Welcome = () => {
                 variant="contained"
                 style={btnStyle}
                 color="neutral"
-                onClick={() => navigate('/sign-up')}
+                onClick={() => navigate("/sign-up")}
             >
                 Sign Up
             </Button>
@@ -53,7 +53,7 @@ const Welcome = () => {
             {/*</Button>*/}
             {/*<br />*/}
             <br />
-            <text style={{ color: 'red' }}>{errMsg}</text>
+            <text style={{ color: "red" }}>{errMsg}</text>
         </div>
     );
 };

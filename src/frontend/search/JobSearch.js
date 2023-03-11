@@ -41,11 +41,8 @@ const JobSearch = () => {
     };
 
     const displayJobs = () => {
-        if (!hasSearched) {
-            return <p align="center">Select or enter a search category to search</p>;
-        }
-        if (jobs.length === 0) {
-            return <p align="center">⚠️No jobs found; please try another search.</p>;
+        if (hasSearched && jobs.length === 0) {
+            return <p align="center">⚠️No jobs found; please try another search</p>;
         }
 
         return (
@@ -98,6 +95,7 @@ const JobSearch = () => {
                                 justifyContent: "space-around",
                                 padding: 10,
                                 paddingInline: 20,
+                                position: "relative",
                             }}
                         >
                             <div style={{ fontSize: 15 }}>{currJob.company}</div>
@@ -115,7 +113,8 @@ const JobSearch = () => {
                                 style={{
                                     position: "absolute",
                                     backgroundColor: "white",
-                                    right: 60,
+                                    right: 20,
+                                    borderRadius: 8,
                                 }}
                             >
                                 Apply now
@@ -138,7 +137,7 @@ const JobSearch = () => {
     };
 
     return (
-        <AppScreen title="Job Search">
+        <AppScreen title="Find your next job">
             <div
                 className="mx-10"
                 style={{
@@ -203,10 +202,8 @@ const JobSearch = () => {
                     Search
                 </LoadingButton>
             </div>
-
             <br />
             <div className="grid place-content-center">{message}</div>
-            <br />
 
             {displayJobs()}
         </AppScreen>

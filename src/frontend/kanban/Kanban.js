@@ -1,33 +1,33 @@
-import { useEffect, useState } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import JobDialog from '../reusable/JobDialog';
-import { useLocation } from 'react-router-dom';
-import { StrictModeDroppable } from '../reusable/StrictModeDroppable';
-import { ReactComponent as NoJobs } from '../../images/no-jobs.svg'
-import AppScreen from '../reusable/AppScreen';
-import KanbanJob from './components/KanbanJob';
-import KanbanHeader from './components/KanbanHeader';
+import { useEffect, useState } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import JobDialog from "../reusable/JobDialog";
+import { useLocation } from "react-router-dom";
+import { StrictModeDroppable } from "../reusable/StrictModeDroppable";
+import { ReactComponent as NoJobs } from "../../images/no-jobs.svg";
+import AppScreen from "../reusable/AppScreen";
+import KanbanJob from "./components/KanbanJob";
+import KanbanHeader from "./components/KanbanHeader";
 
 const cols = [
-    { name: 'APPLICATIONS', color: '#926EFE' },
-    { name: 'INTERVIEWS', color: '#FF8900' },
-    { name: 'OFFERS', color: '#84FF9F' },
-    { name: 'REJECTIONS', color: '#00819B' },
-]
+    { name: "APPLICATIONS", color: "#926EFE" },
+    { name: "INTERVIEWS", color: "#FF8900" },
+    { name: "OFFERS", color: "#84FF9F" },
+    { name: "REJECTIONS", color: "#00819B" },
+];
 
 const newJob = (idx) => {
     return {
         details: {
-            position: '',
-            company: '',
-            description: '',
-            salary: '',
-            location: '',
-            link: ''
+            position: "",
+            company: "",
+            description: "",
+            salary: "",
+            location: "",
+            link: "",
         },
 
-        notes: '',
+        notes: "",
         deadlines: [],
         interviewQuestions: [],
         contacts: [],
@@ -35,8 +35,8 @@ const newJob = (idx) => {
         status: {
             stage: idx,
             awaitingResponse: false,
-            priority: ''
-        }
+            priority: "",
+        },
     };
 };
 
@@ -67,13 +67,15 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 };
 
 const getListStyle = (isDraggingOver) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    margin: '1rem',
-    borderRadius: '14px',
-    backgroundColor: isDraggingOver ? 'rgb(233 213 255 / var(--tw-bg-opacity))' : 'rgb(248 250 252 / var(--tw-bg-opacity))',
-    alignSelf: 'stretch'
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    margin: "1rem",
+    borderRadius: "14px",
+    backgroundColor: isDraggingOver
+        ? "rgb(233 213 255 / var(--tw-bg-opacity))"
+        : "rgb(248 250 252 / var(--tw-bg-opacity))",
+    alignSelf: "stretch",
 });
 
 const Kanban = () => {
@@ -83,7 +85,7 @@ const Kanban = () => {
     const [index, setIndex] = useState(0);
     const [currentJob, setCurrentJob] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [boardName, setBoardName] = useState('');
+    const [boardName, setBoardName] = useState("");
     const [boardID, setBoardID] = useState(null);
     const [empty, setEmpty] = useState(true);
 
@@ -94,7 +96,7 @@ const Kanban = () => {
         const job = newJob(index);
         await httpsCallable(
             getFunctions(),
-            'addJob'
+            "addJob"
         )({ boardId: boardID, stage: index }).then((res) => {
             newState[index] = [{ ...job, id: res.data.id }, ...kanbanState[index]];
             setKanbanState(newState);
@@ -118,10 +120,6 @@ const Kanban = () => {
         setModalOpen(true);
     };
 
-    const handleDelete = (job, idx) => {
-        console.error('not implmented')
-    }
-
     async function onDragEnd(result) {
         const { source, destination } = result;
 
@@ -138,7 +136,12 @@ const Kanban = () => {
             newState[sInd] = jobs;
             setKanbanState(newState);
         } else {
-            const [result, removed] = move(kanbanState[sInd], kanbanState[dInd], source, destination);
+            const [result, removed] = move(
+                kanbanState[sInd],
+                kanbanState[dInd],
+                source,
+                destination
+            );
             const newState = [...kanbanState];
             newState[sInd] = result[sInd];
             newState[dInd] = result[dInd];
@@ -153,10 +156,10 @@ const Kanban = () => {
             // });
             await httpsCallable(
                 getFunctions(),
-                'dragKanbanJob'
+                "dragKanbanJob"
             )({
                 id: removed.id,
-                newStage: dInd
+                newStage: dInd,
             });
         }
     }
@@ -165,12 +168,15 @@ const Kanban = () => {
         const fetchJobs = async () => {
             setLoading(true);
             const newState = [[], [], [], []];
-            await httpsCallable(getFunctions(), 'getKanbanBoard')(boardId).then((res) => {
+            await httpsCallable(
+                getFunctions(),
+                "getKanbanBoard"
+            )(boardId).then((res) => {
                 res.data.jobs.forEach((job) => newState[job.stage].push(job));
                 setKanbanState(newState);
                 setBoardName(res.data.name);
                 setBoardID(res.data.id);
-                setEmpty(newState.every(arr => arr.length === 0));
+                setEmpty(newState.every((arr) => arr.length === 0));
                 setLoading(false);
             });
 
@@ -181,12 +187,7 @@ const Kanban = () => {
     }, []);
 
     return (
-        <AppScreen
-            isLoading={loading}
-            isEmpty={empty}
-            empty={<NoJobs />}
-            title={boardName}
-        >
+        <AppScreen isLoading={loading} isEmpty={empty} empty={<NoJobs />} title={boardName}>
             {modalOpen && (
                 <JobDialog
                     setCurrentJob={setCurrentJob}
@@ -200,41 +201,52 @@ const Kanban = () => {
                 />
             )}
             <div
-                className='overflow-auto'                
+                className="overflow-auto"
                 style={{
-                    display: 'grid',
-                    gridAutoFlow: 'column',
-                    gridAutoColumns: '24rem',
-                    height: empty ? 'fit-content' : '100%',                         // Set height so that scrollbar will show
-                    padding: '0 1.5rem'
+                    display: "grid",
+                    gridAutoFlow: "column",
+                    gridAutoColumns: "24rem",
+                    height: empty ? "fit-content" : "100%", // Set height so that scrollbar will show
+                    padding: "0 1.5rem",
                 }}
             >
                 <DragDropContext onDragEnd={onDragEnd}>
                     {kanbanState.map((el, ind) => (
-                        <div 
-                            className='flex flex-col items-center gap-3'
-                        >
+                        <div className="flex flex-col items-center gap-3">
                             <KanbanHeader
                                 name={cols[ind].name}
                                 color={cols[ind].color}
                                 amount={kanbanState[ind].length}
                                 ind={ind}
                                 handleAddClick={handleAddClick}
-                                handleEditClick={() => console.warn('Not Implmented')}
-                                handleDeleteClick={() => console.warn('Not Implmented')}
+                                handleEditClick={() => console.warn("Not Implmented")}
+                                handleDeleteClick={() => console.warn("Not Implmented")}
                             />
-                            <StrictModeDroppable key={`${cols[ind].name}-${ind}`} droppableId={`${ind}`}>
+                            <StrictModeDroppable
+                                key={`${cols[ind].name}-${ind}`}
+                                droppableId={`${ind}`}
+                            >
                                 {(provided, snapshot) => (
                                     <div
                                         // If no jobs, collapse to make room for graphic
-                                        className={`flex-1 p-1 ${empty && 'empty:min-w-0 empty:flex-[0_1_0]'}`}
+                                        className={`flex-1 p-1 ${
+                                            empty && "empty:min-w-0 empty:flex-[0_1_0]"
+                                        }`}
                                         ref={provided.innerRef}
                                         style={getListStyle(snapshot.isDraggingOver)}
                                         {...provided.droppableProps}
                                     >
                                         {el.map((job, index) => (
                                             <div onClick={() => handleJobView(job, ind)}>
-                                                <KanbanJob job={job} index={index} ind={ind} edit={handleJobView} delete={handleDelete} />
+                                                <KanbanJob
+                                                    job={job}
+                                                    index={ind}
+                                                    ind={ind}
+                                                    edit={handleJobView}
+                                                    delete={() => console.warn("Not Implmented")}
+                                                    kanbanState={kanbanState}
+                                                    setKanbanState={setKanbanState}
+                                                />
                                             </div>
                                         ))}
                                         {provided.placeholder}
@@ -247,6 +259,6 @@ const Kanban = () => {
             </div>
         </AppScreen>
     );
-}
+};
 
 export default Kanban;
