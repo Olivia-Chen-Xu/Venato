@@ -76,3 +76,12 @@ body,
   stroke: white;
   stroke-width: 0.75px;
 }
+
+.blob-header {
+  background-image: url('./images/landing/blob.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 75%;
+  padding: 10rem 5rem;
+}
