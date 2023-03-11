@@ -1,32 +1,40 @@
-import React from 'react';
-import dayjs from 'dayjs';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import React from "react";
+import dayjs from "dayjs";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
-const Day = ({ viewApplications, viewInterviews, month, day, rowIdx, setOpen, setJob, setIsEdit, deadlines }) => {
+const Day = ({
+    viewApplications,
+    viewInterviews,
+    month,
+    day,
+    rowIdx,
+    setOpen,
+    setJob,
+    setIsEdit,
+    deadlines,
+}) => {
     const getCurrentDayClass = () => {
-        return day.format('YY-MM-DD') === dayjs().format('YY-MM-DD')
-            ? 'bg-[#7F5BEB] text-white rounded-full w-8'
-            : '';
+        return day.format("YY-MM-DD") === dayjs().format("YY-MM-DD")
+            ? "bg-[#7F5BEB] text-white rounded-full w-8"
+            : "";
     };
 
     const getCurrMonth = () => {
-        return month === day.format('MM') ? '' : 'grayscale';
-    }
+        return month === day.format("MM") ? "" : "grayscale";
+    };
 
     const getPriorityColor = (deadline) => {
-        switch(deadline.priority){
-            case 'High':
-                return 'bg-[#FFE7E7] text-[#9B0909]';
-            case 'Medium':
-                return 'bg-[#FFF4E7] text-[#A4641B]';
-            case 'Low':
-                return 'bg-[#DEFFE5] text-[#166528]';
+        switch (deadline.priority) {
+            case "High":
+                return "bg-[#FFE7E7] text-[#9B0909]";
+            case "Medium":
+                return "bg-[#FFF4E7] text-[#A4641B]";
+            case "Low":
+                return "bg-[#DEFFE5] text-[#166528]";
             default:
-                return 'bg-slate-100';
+                return "bg-slate-100";
         }
-    }
-
-   
+    };
 
     const getDayEvents = () => {
         if (!deadlines) {
@@ -39,36 +47,44 @@ const Day = ({ viewApplications, viewInterviews, month, day, rowIdx, setOpen, se
             deadlines.splice(2);
             overLimit = true;
         }
-        
+
         // if(deadlines.length > 0){
         //     deadlines.forEach((day, idx) => {
         //         console.log(day, day.isInterview);
-                
+
         //     });
         // }
 
         const getVisibility = (deadline) => {
             // If view applications and is an application, view interview and is an interview, or unlabeled, show the event
-            return (viewApplications && !deadline.isInterview) || (viewInterviews && deadline.isInterview) || deadline.isInterview === null ? '' : 'hidden';
-        }
+            return (viewApplications && !deadline.isInterview) ||
+                (viewInterviews && deadline.isInterview) ||
+                deadline.isInterview === null
+                ? ""
+                : "hidden";
+        };
 
         const jsx = deadlines.map((deadline, idx) => (
             <div
                 key={idx}
                 onClick={async (event) => {
                     event.stopPropagation(); // So the day div onClick won't be triggered also
-                    setJob(await httpsCallable(getFunctions(), 'getJobData')(deadline.jobId)
-                        .then((result) => result.data));
+                    setJob(
+                        await httpsCallable(
+                            getFunctions(),
+                            "getJobData"
+                        )(deadline.jobId).then((result) => result.data)
+                    );
                     setIsEdit(true);
                     setOpen(true);
-
-
                 }}
-                className={`bg-200 ${getPriorityColor(deadline)} ${getCurrMonth()} ${getVisibility(deadline)} mr-2 ml-2 text-gray-600 text-sm rounded mb-1 truncate`}
+                className={`bg-200 ${getPriorityColor(deadline)} ${getCurrMonth()} ${getVisibility(
+                    deadline
+                )} mr-2 ml-2 pl-2 text-gray-600 text-sm rounded mb-1 truncate`}
             >
                 {deadline.title}
             </div>
-            ));
+        ));
         if (overLimit) {
             jsx.push(
                 <div
@@ -90,17 +106,15 @@ const Day = ({ viewApplications, viewInterviews, month, day, rowIdx, setOpen, se
             <div className="border border-gray-300 flex flex-col">
                 <header className="flex flex-col items-right">
                     {rowIdx === 0 && (
-                        <p className="text-base -mt-7 text-center">{day.format('ddd')}</p>
+                        <p className="text-base -mt-7 text-center">{day.format("ddd")}</p>
                     )}
-                    <p className={`p-1 my-1 text-center font-bold text-base ml-auto ${getCurrentDayClass()}`}>
-                        {day.format('D')}
+                    <p
+                        className={`p-1 my-1 text-center font-bold text-base ml-auto ${getCurrentDayClass()}`}
+                    >
+                        {day.format("D")}
                     </p>
                 </header>
-                <div
-                    className="flex-1 cursor-pointer"
-                >
-                    {getDayEvents()}
-                </div>
+                <div className="flex-1 cursor-pointer">{getDayEvents()}</div>
             </div>
         </>
     );
@@ -113,9 +127,9 @@ const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines 
                 <React.Fragment key={i}>
                     {row.map((day, idx) => (
                         <Day
-                            viewApplications = {viewApp}
-                            viewInterviews = {viewInt}
-                            month={month[2][2].format('MM')}
+                            viewApplications={viewApp}
+                            viewInterviews={viewInt}
+                            month={month[2][2].format("MM")}
                             day={day}
                             key={idx}
                             rowIdx={i}
@@ -124,9 +138,9 @@ const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines 
                             setIsEdit={setIsEdit}
                             deadlines={deadlines.filter((deadline) => {
                                 let dayString = JSON.stringify(day);
-                                dayString.replaceAll('"', '');
+                                dayString.replaceAll('"', "");
                                 return (
-                                    parseInt(dayString.split('-')[2].slice(0, 2), 10) ===
+                                    parseInt(dayString.split("-")[2].slice(0, 2), 10) ===
                                     deadline.date.day
                                 );
                             })}
@@ -135,6 +149,7 @@ const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines 
                 </React.Fragment>
             ))}
         </div>
-    )};
+    );
+};
 
 export default Month;
