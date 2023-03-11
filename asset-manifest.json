@@ -1,19 +1,20 @@
 {
   "files": {
-    "main.css": "/Venato/static/css/main.d3cbb2dc.css",
-    "main.js": "/Venato/static/js/main.0621d62b.js",
-    "static/media/no-boards.svg": "/Venato/static/media/no-boards.af764e7f01e3c6c29760722dc5b2a1b9.svg",
-    "static/media/logo.png": "/Venato/static/media/logo.c43b24e5b267859d22f1.png",
-    "static/media/no-jobs.svg": "/Venato/static/media/no-jobs.dd14f4342138895cda53d0a8c3154930.svg",
-    "static/media/logo.svg": "/Venato/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/Venato/index.html",
-    "static/media/wave.svg": "/Venato/static/media/wave.7e8268fbd67a7c71cf74.svg",
-    "static/media/blob.svg": "/Venato/static/media/blob.b8c1b38cf0142543ea26.svg",
-    "main.d3cbb2dc.css.map": "/Venato/static/css/main.d3cbb2dc.css.map",
-    "main.0621d62b.js.map": "/Venato/static/js/main.0621d62b.js.map"
+    "main.css": "/static/css/main.5db84c2b.css",
+    "main.js": "/static/js/main.0a2b7d7f.js",
+    "static/media/no-boards.svg": "/static/media/no-boards.af764e7f01e3c6c29760722dc5b2a1b9.svg",
+    "static/media/logo.png": "/static/media/logo.c43b24e5b267859d22f1.png",
+    "static/media/no-jobs.svg": "/static/media/no-jobs.dd14f4342138895cda53d0a8c3154930.svg",
+    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/index.html",
+    "static/media/wave.svg": "/static/media/wave.7e8268fbd67a7c71cf74.svg",
+    "static/media/blob.svg": "/static/media/blob.b8c1b38cf0142543ea26.svg",
+    "static/media/search-bg.svg": "/static/media/search-bg.5ae8dc18909c717ad9ae.svg",
+    "main.5db84c2b.css.map": "/static/css/main.5db84c2b.css.map",
+    "main.0a2b7d7f.js.map": "/static/js/main.0a2b7d7f.js.map"
   },
   "entrypoints": [
-    "static/css/main.d3cbb2dc.css",
-    "static/js/main.0621d62b.js"
+    "static/css/main.5db84c2b.css",
+    "static/js/main.0a2b7d7f.js"
   ]
 }
