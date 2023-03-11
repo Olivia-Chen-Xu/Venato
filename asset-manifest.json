@@ -1,12 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.18df4b27.css",
-    "main.js": "/static/js/main.83be95ca.js",
+    "main.css": "/static/css/main.c52970fe.css",
+    "main.js": "/static/js/main.f3b9a2c5.js",
     "static/media/track.png": "/static/media/track.b54ce422d711890c7eef.png",
     "static/media/prepare.png": "/static/media/prepare.1c77a4d6024860d9f5b8.png",
     "static/media/discover.png": "/static/media/discover.ebab57222656fedc4459.png",
+    "static/media/logo_white.png": "/static/media/logo_white.2d234af385d452c4101d.png",
     "static/media/no-boards.svg": "/static/media/no-boards.af764e7f01e3c6c29760722dc5b2a1b9.svg",
-    "static/media/logo-white.png": "/static/media/logo-white.225ab27aa0e9f4999064.png",
+    "static/media/venato-purple.png": "/static/media/venato-purple.c6fd7812a1721b46b7ba.png",
     "static/media/logo.png": "/static/media/logo.c43b24e5b267859d22f1.png",
     "static/media/no-jobs.svg": "/static/media/no-jobs.dd14f4342138895cda53d0a8c3154930.svg",
     "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
@@ -14,11 +15,11 @@
     "index.html": "/index.html",
     "static/media/wave.svg": "/static/media/wave.7e8268fbd67a7c71cf74.svg",
     "static/media/search-bg.svg": "/static/media/search-bg.5ae8dc18909c717ad9ae.svg",
-    "main.18df4b27.css.map": "/static/css/main.18df4b27.css.map",
-    "main.83be95ca.js.map": "/static/js/main.83be95ca.js.map"
+    "main.c52970fe.css.map": "/static/css/main.c52970fe.css.map",
+    "main.f3b9a2c5.js.map": "/static/js/main.f3b9a2c5.js.map"
   },
   "entrypoints": [
-    "static/css/main.18df4b27.css",
-    "static/js/main.83be95ca.js"
+    "static/css/main.c52970fe.css",
+    "static/js/main.f3b9a2c5.js"
   ]
 }
