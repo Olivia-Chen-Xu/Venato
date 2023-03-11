@@ -83,23 +83,6 @@ export default function KanbanHeader(props) {
             >
                 <Add />
             </IconButton>
-            <IconButton
-                onClick={handleMenuOpen}
-                sx={{
-                    flexShrink: 1,
-                    padding: 0
-                }}
-            >
-                <MoreHoriz />
-            </IconButton>
-            <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleMenuClose}
-            >
-                <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                <MenuItem onCclick={handleDelete}>Delete</MenuItem>
-            </Menu>
         </div>
     )
 }

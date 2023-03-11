@@ -2,6 +2,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Flag, MoreHoriz } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react'
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const getJobStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
@@ -121,12 +122,18 @@ export default function KanbanJob(props) {
                         </div>
                     </div>
                     <Menu
-                      anchorEl={anchorEl}  
+                      anchorEl={anchorEl}
                       open={open}
                       onClose={handleMenuClose}
                     >
                         <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                        <MenuItem onCclick={handleDelete}>Delete</MenuItem>
+                        <MenuItem
+                            onClick={async (event) => {
+                                event.stopPropagation();
+                                await httpsCallable(getFunctions(), "deleteJob")({ id: props.job.id });
+                        }}>
+                            Delete
+                        </MenuItem>
                     </Menu>
                 </div>
             )}
