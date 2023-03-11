@@ -37,7 +37,7 @@ const Calendar = () => {
 
     if (getDeadlines.loading) {
         return (
-            <div>
+            <div style={{ padding: 20 }}>
                 <CircularProgress />
             </div>
         );

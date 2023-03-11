@@ -8,16 +8,19 @@ import discover from '../../images/landing/discover.png';
 import prepare from '../../images/landing/prepare.png';
 
 export default function LandingPage() {
-
     const navigate = useNavigate();
 
     return (
         <div id="flex flex-col w-full gap-3">
             <header className="flex w-full shadow-xl p-4">
-                <div className='flex w-full'>
-                    <img src={logo} className="object-contain object-left h-[5vh]"/>
-                    <span className='ml-auto flex justify-center align-items-center'>
-                        <Button onClick={() => navigate('/welcome')} color="neutral" variant='contained'>
+                <div className="flex w-full">
+                    <img src={logo} className="object-contain object-left h-[5vh]" />
+                    <span className="ml-auto flex justify-center align-items-center">
+                        <Button
+                            onClick={() => navigate("/welcome")}
+                            color="neutral"
+                            variant="contained"
+                        >
                             Sign In
                         </Button>
                     </span>
@@ -25,7 +28,6 @@ export default function LandingPage() {
             </header>
 
             <Box className="w-full flex flex-col gap-20 mt-20">
-
                 <Box className='flex justify-center w-full'>
                     <div className="blob-header flex flex-col text-white bg-purple p-10 md:[w-75%]">
                         <img src={whiteLogo} className="flex md:h-[15vh] md:object-cover self-center"/>
@@ -49,5 +51,5 @@ export default function LandingPage() {
                 </Box>
             </Box>
         </div>
-    )
+    );
 }

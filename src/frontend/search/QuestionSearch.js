@@ -195,8 +195,8 @@ const QuestionSearch = () => {
             >
                 Clear search
             </button> */}
+                <br></br>
                 <div className="grid place-content-center">{message}</div>
-                <br />
                 {displayQuestions()}
                 {dialogOpen && (
                     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
