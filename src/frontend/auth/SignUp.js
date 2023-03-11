@@ -20,6 +20,7 @@ const SignUp = () => {
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
 
     const handleSignup = async () => {
         if (password !== confirmPassword) {
@@ -27,10 +28,19 @@ const SignUp = () => {
             return;
         }
 
-        const signupResult = await signup(email, password);
-        if (typeof signupResult === 'string') {
-            setErrMsg(signupResult);
-        }
+        const signupResult = await signup(email, password)
+            .then((res) => {
+                setErrMsg('');
+                setSuccessMsg('Sign up success! Check your email for a verification link');
+            })
+            .catch((err) => {
+                setSuccessMsg('');
+                if (err.code === 'functions/already-exists') {
+                    setErrMsg('Email in use, please try another email');
+                } else {
+                    setErrMsg('Error creating account, please try again later');
+                }
+            });
     };
 
     return (
@@ -43,9 +53,9 @@ const SignUp = () => {
                 </p>{' '} */}
 
                 {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
-                <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
+                <text className="WelcomeText" style={errMsg === '' ? (successMsg === '' ? {} : { color: 'green' }) : { color: 'red' }}>
                     {' '}
-                    {errMsg === '' ? 'Welcome!' : errMsg}
+                    {errMsg === '' ? (successMsg === '' ? 'Welcome!' : successMsg) : errMsg}
                 </text>
             </div>
             <InputLabel>Email</InputLabel>
@@ -115,7 +125,7 @@ const SignUp = () => {
                     ),
                 }}
             ></TextField>
-           
+
             <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
                 Sign Up
             </Button>
