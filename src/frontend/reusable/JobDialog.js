@@ -418,6 +418,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                             >
                                                                 <MenuItem
                                                                     onClick={() => {
+                                                                        setIsAdding(false);
                                                                         setOpen(true);
                                                                     }}
                                                                 >
@@ -503,7 +504,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
             >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
-                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <h1 className="text-xl w-full">Create Deadline</h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
@@ -525,13 +526,14 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={async () =>
-                                    isAdding ? await addNewDdl() : await updateDdl()
-                                }
+                                onClick={async () => {
+                                    isAdding ? await addNewDdl() : await updateDdl();
+                                    setLoading(false);
+                                }}
                                 loading={loading}
                                 disableElevation
                             >
-                                Save
+                                {isAdding ? 'Add' : 'Save'}
                             </LoadingButton>
                         </div>
                     </div>
@@ -1024,7 +1026,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         </div>
                         <div className="flex flex-1 w-full">
                             <div className="flex flex-col w-full">
-                                <h1>LinkedIn Profile</h1>
+                                <h1>LinkedIn Profile Link</h1>
                                 <TextField
                                     className="w-full"
                                     value={newContact.linkedin}

@@ -35,10 +35,7 @@ const QuestionSearch = () => {
     };
 
     const displayQuestions = () => {
-        if (!hasSearched) {
-            return <p align="center">Select or enter a search category to search</p>;
-        }
-        if (questions.length === 0) {
+        if (hasSearched && questions.length === 0) {
             return <p align="center">⚠️No jobs found; please try another search.</p>;
         }
 
