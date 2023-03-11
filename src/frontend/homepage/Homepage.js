@@ -110,18 +110,18 @@ const Homepage = () => {
         const getStarted = [
             {
                 title: 'Track',
-                content: 'Lorem ipsum dolor sit amet, Lorem sit ipsum dolor sit amet',
-                link: '#'
+                content: 'Track all of your applications in one place!',
+                link: '/chooseKanban'
             },
             {
                 title: 'Discover',
-                content: 'Lorem ipsum dolor sit amet, Lorem sit ipsum dolor sit amet',
-                link: '#'
+                content: 'Find your next dream job with our search functionality',
+                link: '/job'
             },
             {
                 title: 'Prepare',
-                content: 'Lorem ipsum dolor sit amet, Lorem sit ipsum dolor sit amet',
-                link: '#'
+                content: 'Check out what sort of interview questions you might get',
+                link: '/questions'
             }
         ]
 
@@ -139,7 +139,7 @@ const Homepage = () => {
                             borderRadius: '8px',
                             padding: '1rem 1.5rem'
                         }}
-                        onClick={() => { nav(link) }}
+                        onClick={() => nav(link)}
                     >
                         <h1 className='self-start text-neutral-800 text-l mb-4'>{title}</h1>
                         <Box className="flex items-center gap-3">
@@ -190,7 +190,7 @@ const Homepage = () => {
                                             }}
                                             endIcon={<KeyboardDoubleArrowRight />}
                                         >
-                                            View calendar                                            
+                                            View calendar
                                         </Button>
                                     }
                                 />
