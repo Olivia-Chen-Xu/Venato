@@ -640,16 +640,16 @@ const Questions = ({ value, index, jobData, setJob }) => {
         setLoading(false);
     };
 
-    const updateQuesiton = async () => {
+    const updateQuesiton = async (questionId) => {
         const questionUpdate = {
             description: newQuestion.description,
             name: newQuestion.name,
         };
-        console.log();
+
         await httpsCallable(
             getFunctions(),
             "updateInterviewQuestion"
-        )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+        )({ questionId: questionId, question: questionUpdate }).then(() => {
             const questionIndex = jobData.interviewQuestions.findIndex(
                 (question) => question.id === newQuestion.id
             );
@@ -796,7 +796,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 color="neutral"
                                 style={{ width: 100 }}
                                 onClick={async () => {
-                                    isEditing ? await updateQuesiton() : await addNewQuestion();
+                                    isEditing ? await updateQuesiton(newQuestion.id) : await addNewQuestion();
                                 }}
                                 loading={loading}
                                 disableElevation
