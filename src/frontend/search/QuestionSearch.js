@@ -28,6 +28,7 @@ const QuestionSearch = () => {
         const result = await httpsCallable(getFunctions(), "interviewQuestionSearch")(query);
 
         setQuestions(result.data);
+        console.log(questions);
         setLoading(false);
         setMessage("");
         setHasSearched(true);
@@ -42,75 +43,66 @@ const QuestionSearch = () => {
         }
 
         return questions.map((question) => (
-            <div className="ml-20">
-                <li>
-                    <text
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                            setDialogOpen(true);
-                            setCurrentQuestion(question);
+            <div
+                style={{
+                    backgroundColor: "white",
+                    marginBottom: 20,
+                    padding: 40,
+                    borderRadius: 8,
+                }}
+            >
+                <div style={{ fontWeight: 500, fontSize: 18 }}>{question.name}</div>
+                <div style={{ display: "flex", flexDirection: "row", marginBlock: 20 }}>
+                    <Button
+                        style={{
+                            backgroundColor: "#F2F9FA",
+                            borderRadius: 8,
+                            fontSize: 13,
+                            paddingInline: 15,
+                            color: "#003F4B",
+                            fontWeight: 400,
+                            height: 30,
                         }}
+                        startIcon={<WorkOutline></WorkOutline>}
                     >
-                        {question.name}
-                    </text>
-                </li>
+                        {question.position}
+                    </Button>
+                    <Button
+                        style={{
+                            backgroundColor: "#D8CFF3",
+                            borderRadius: 8,
+                            fontSize: 13,
+                            paddingInline: 15,
+                            color: "#3F15BB",
+                            fontWeight: 400,
+                            marginInlineStart: 10,
+                            height: 30,
+                        }}
+                        startIcon={<AlternateEmail></AlternateEmail>}
+                    >
+                        {question.company}
+                    </Button>
+                </div>
+                <div>{question.description}</div>
             </div>
-            // <div style={{ marginTop: '20px' }}>
-            //     <h4>{`Job #${index + 1}:`}</h4>
-            //     {`Company: ${job.company}`}
-            //     <br />
-            //     {`Position: ${job.position}`}
-            //     <br />
-            //     {`Description: ${job.details.description}`}
-            //     <br />
-            //     URL: <a href={job.details.url}>{job.details.url}</a>
-            //     <br />
-            //     <div style={{ width: '100%', float: 'left', marginTop: '10px' }}>
-            //         <div style={{ float: 'left' }}>
-            //             Interview questions:{' '}
-            //             {job.interviewQuestions.map((question: string) => {
-            //                 const link = `https://www.google.com/search?q=${question.replaceAll(
-            //                     ' ',
-            //                     '+'
-            //                 )}`;
-
-            //                 return (
-            //                     <li>
-            //                         <a href={link}>{question}</a>
-            //                     </li>
-            //                 );
-            //             })}
-            //         </div>
-            //         <div style={{ float: 'left', marginLeft: '5%' }}>
-            //             Contacts:{' '}
-            //             {job.contacts.map((contact) => (
-            //                 <div>
-            //                     <li>
-            //                         <a href={contact}>{contact}</a>
-            //                     </li>
-            //                 </div>
-            //             ))}
-            //         </div>
-            //     </div>
-            //     <br />
-            //     <text style={{ color: 'white' }}>.</text>
-            // </div>
         ));
     };
 
     const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
-        <AppScreen title="Interview Question Search">
+        <AppScreen title="Find interview questions">
             <div
+                className="mx-10"
                 style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "space-around",
                 }}
             >
                 <TextField
                     label="Search job title or keyword"
+                    style={{ width: "60%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -124,6 +116,7 @@ const QuestionSearch = () => {
                 ></TextField>
                 <TextField
                     label="company"
+                    style={{ width: "30%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -142,14 +135,14 @@ const QuestionSearch = () => {
                     loading={loading}
                     disableElevation
                     endIcon={<Search />}
+                    style={{ height: 56 }}
                 >
                     {" "}
                     Search
                 </LoadingButton>
             </div>
-            <br />
 
-            <div>
+            <div className="mx-10">
                 {/*
 
             <br />
@@ -205,7 +198,6 @@ const QuestionSearch = () => {
             >
                 Clear search
             </button> */}
-                <br />
                 <div className="grid place-content-center">{message}</div>
                 <br />
                 {displayQuestions()}
