@@ -190,6 +190,7 @@ const updateInterviewQuestion = functions.https.onCall(async (data: { questionId
     await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
     return getDoc(`interviewQuestions/${data.questionId}`)
+        // @ts-expect-error
         .update(data.question)
         .then(() => `Question '${data.questionId}' updated successfully`)
         .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
@@ -244,6 +245,7 @@ const updateContact = functions.https.onCall(async (data: { contactId: string, c
     await verifyDocPermission(context, `contacts/${data.contactId}`);
 
     return getDoc(`contacts/${data.contactId}`)
+        // @ts-expect-error
         .update(data.contact)
         .then(() => `Contact '${data.contactId}' updated successfully`)
         .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);

@@ -9,6 +9,7 @@ import SignIn from './frontend/auth/SignIn';
 import SignUp from './frontend/auth/SignUp';
 import PasswordReset from './frontend/auth/PasswordReset';
 import Overlay from './frontend/reusable/Overlay';
+import LandingPage from './frontend/landing/LandingPage';
 
 const theme = createTheme({
     palette: {
@@ -39,7 +40,8 @@ function App() {
         <ThemeProvider theme={theme}>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Welcome />} />
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/welcome" element={<Welcome />} />
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
                     <Route path="/password-reset" element={<PasswordReset />} />
