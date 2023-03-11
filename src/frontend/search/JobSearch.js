@@ -41,11 +41,8 @@ const JobSearch = () => {
     };
 
     const displayJobs = () => {
-        if (!hasSearched) {
-            return <p align="center">Select or enter a search category to search</p>;
-        }
         if (jobs.length === 0) {
-            return <p align="center">⚠️No jobs found; please try another search.</p>;
+            return <p align="center">⚠️No jobs found; please try another search</p>;
         }
 
         return (
