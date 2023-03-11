@@ -202,9 +202,8 @@ const JobSearch = () => {
                     Search
                 </LoadingButton>
             </div>
-
-            <div className="grid place-content-center">{message}</div>
             <br />
+            <div className="grid place-content-center">{message}</div>
 
             {displayJobs()}
         </AppScreen>
