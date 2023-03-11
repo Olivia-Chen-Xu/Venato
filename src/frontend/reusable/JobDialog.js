@@ -640,15 +640,16 @@ const Questions = ({ value, index, jobData, setJob }) => {
         setLoading(false);
     };
 
-    const updateQuesiton = async () => {
+    const updateQuesiton = async (questionId) => {
         const questionUpdate = {
             description: newQuestion.description,
             name: newQuestion.name,
         };
+
         await httpsCallable(
             getFunctions(),
             "updateInterviewQuestion"
-        )({ questionId: newQuestion.id, question: questionUpdate }).then(() => {
+        )({ questionId: questionId, question: questionUpdate }).then(() => {
             const questionIndex = jobData.interviewQuestions.findIndex(
                 (question) => question.id === newQuestion.id
             );
@@ -771,7 +772,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
             >
                 <DialogContent style={{ width: "50vw" }}>
                     <div className="flex flex-row justify-between mb-4">
-                        <h1 className="text-xl w-full">Create Interview Question</h1>
+                        <h1 className="text-xl w-full">
+                            {isEditing ? 'Edit Interview Question' : 'Create Interview Question'}
+                        </h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
@@ -793,7 +796,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 color="neutral"
                                 style={{ width: 100 }}
                                 onClick={async () => {
-                                    isEditing ? await updateQuesiton() : await addNewQuestion();
+                                    isEditing ? await updateQuesiton(newQuestion.id) : await addNewQuestion();
                                 }}
                                 loading={loading}
                                 disableElevation
@@ -863,11 +866,12 @@ const Contacts = ({ value, index, jobData, setJob }) => {
         linkedin: "",
         notes: "",
     });
+    const [isEditing, setIsEditing] = useState(false);
 
     const addNewContact = async () => {
         setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
-        setOpen(false);
         await httpsCallable(getFunctions(), "addContact")({ jobId: jobData.id, ...newContact });
+        setOpen(false);
         setNewContact({
             name: "",
             title: "",
@@ -878,6 +882,22 @@ const Contacts = ({ value, index, jobData, setJob }) => {
             notes: "",
         });
     };
+
+    const editContact = async () => {
+        const updateContact = {
+            company: newContact.company,
+            email: newContact.email,
+            linkedin: newContact.linkedin,
+            name: newContact.name,
+            notes: newContact.notes,
+            phone: newContact.phone,
+            title: newContact.title,
+        };
+        await httpsCallable(getFunctions(), "updateContact")({ contactId: newContact.id, contact: updateContact });
+        const newJob = jobData.contacts.map((c) => (c.id === newContact.id ? newContact : c));
+        setJob({ ...jobData, contacts: newJob });
+        setOpen(false);
+    }
 
     return (
         <div
@@ -899,7 +919,10 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                         }}
                         sx={{ borderRadius: 2 }}
                         variant="outlined"
-                        onClick={() => setOpen(true)}
+                        onClick={() => {
+                            setIsEditing(false);
+                            setOpen(true);
+                        }}
                         startIcon={<Add />}
                     >
                         Add Contact
@@ -958,9 +981,11 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={addNewContact}
+                                onClick={async () => {
+                                    isEditing ? await editContact() : await addNewContact();
+                                }}
                             >
-                                Save
+                                {isEditing ? "Save" : "Add"}
                             </Button>
                         </div>
                     </div>
@@ -1070,6 +1095,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                     >
                                         <MenuItem
                                             onClick={() => {
+                                                setIsEditing(true);
                                                 setOpen(true);
                                             }}
                                         >
