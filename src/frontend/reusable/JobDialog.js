@@ -418,6 +418,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                             >
                                                                 <MenuItem
                                                                     onClick={() => {
+                                                                        setIsAdding(false);
                                                                         setOpen(true);
                                                                     }}
                                                                 >
@@ -525,13 +526,14 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 variant="contained"
                                 color="neutral"
                                 style={{ width: 100 }}
-                                onClick={async () =>
-                                    isAdding ? await addNewDdl() : await updateDdl()
-                                }
+                                onClick={async () => {
+                                    isAdding ? await addNewDdl() : await updateDdl();
+                                    setLoading(false);
+                                }}
                                 loading={loading}
                                 disableElevation
                             >
-                                Save
+                                {isAdding ? 'Add' : 'Save'}
                             </LoadingButton>
                         </div>
                     </div>
