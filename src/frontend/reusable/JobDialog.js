@@ -633,7 +633,6 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
 const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
     const [loading, setLoading] = useState(false);

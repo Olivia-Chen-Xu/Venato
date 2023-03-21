@@ -1,6 +1,4 @@
-
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { MemoryRouter as Router } from 'react-router';
 import { Route, Routes } from 'react-router-dom';

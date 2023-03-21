@@ -3,7 +3,7 @@ import './auth.css';
 import { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { signin } from './auth-functions';
-import { auth } from '../../config/firebase';
+import { auth } from '../../firebase';
 import { InputLabel, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { btnStyle, inputStyle, iconStyle } from './authStyles';
 import { VisibilityOffOutlined, VisibilityOutlined, WarningAmberRounded } from '@mui/icons-material';

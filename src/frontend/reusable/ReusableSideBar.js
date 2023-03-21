@@ -3,7 +3,7 @@ import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, Expa
 import { useState, useEffect } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { deleteAccount, signout } from "../auth/auth-functions";
-import { auth } from "../../config/firebase";
+import { auth } from "../../firebase";
 import generateJobs from "../search/GenerateJobs";
 
 const sidebarButtonOverrides = {
