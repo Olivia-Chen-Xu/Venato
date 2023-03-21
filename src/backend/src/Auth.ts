@@ -85,7 +85,7 @@ const onUserSignup = functions.auth.user().onCreate(async (user) => {
 });
 
 /**
- * When a user tries to sign in, verify that their email is verified
+ * Blocks users from signing in if their email is not verified
  */
 const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
     if (!user.emailVerified) {
@@ -97,7 +97,7 @@ const beforeSignIn = functions.auth.user().beforeSignIn((user) => {
 });
 
 /**
- * Sends a password reset email
+ * Sends a password reset email to a user
  */
 const passwordReset = functions.https.onCall(async (email: string, context) => {
     const link = await auth
@@ -130,12 +130,12 @@ const passwordReset = functions.https.onCall(async (email: string, context) => {
 const onUserDeleted = functions.auth.user().onDelete((user) => {
     const promises = [];
 
-    // Delete user's jobs
-    getCollection('jobs')
+    // Delete user's data (deleting board will trigger job delete)
+    getCollection('boards')
         .where('userId', '==', user.uid)
         .get()
-        .then((jobs) => {
-            jobs.forEach((job) => promises.push(job.ref.delete()));
+        .then((boards) => {
+            boards.forEach((board) => promises.push(board.ref.delete()));
             return null;
         })
         .catch((err) => functions.logger.log(`Error deleting user's jobs: ${err}`));
