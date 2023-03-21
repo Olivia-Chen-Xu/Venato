@@ -5,7 +5,7 @@ import {
     getRelativeTimestamp,
     verifyDocPermission,
     verifyIsAuthenticated
-} from './helpers';
+} from './Helpers';
 import algoliaSearch from 'algoliasearch';
 import { IJob } from './DataInterfaces';
 

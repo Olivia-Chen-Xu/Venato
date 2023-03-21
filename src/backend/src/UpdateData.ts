@@ -7,7 +7,7 @@ import {
     isValidObjectStructure,
     verifyDocPermission,
     verifyIsAuthenticated
-} from './helpers';
+} from './Helpers';
 import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces';
 
 /**

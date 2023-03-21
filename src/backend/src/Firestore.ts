@@ -3,7 +3,7 @@ import {
     firestoreHelper,
     getCollection, getDoc,
     getFirestoreTimestamp
-} from './helpers';
+} from './Helpers';
 import { IContact, IDeadline, IInterviewQuestion } from './DataInterfaces';
 
 /**

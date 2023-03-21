@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getDoc, auth, isValidObjectStructure } from './helpers';
+import { getCollection, getDoc, auth, isValidObjectStructure } from './Helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
