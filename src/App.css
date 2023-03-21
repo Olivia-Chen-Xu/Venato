@@ -63,11 +63,11 @@ body,
 
 .blob-bg {
 
-  background-image: url('./images/blob.svg');
+  background-image: url('graphics/blob.svg');
 }
 
 .wave-bg {
-  background-image: url('./images/wave.svg');
+  background-image: url('graphics/wave.svg');
   background-size: cover
 }
 
@@ -78,7 +78,7 @@ body,
 }
 
 .blob-header {
-  background-image: url('./images/landing/blob.svg');
+  background-image: url('graphics/landing/blob.svg');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

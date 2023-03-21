@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import { signin } from "./auth-functions";
 import { btnStyle } from "./authStyles";
-import logo from "../../images/venato-purple.png";
+import logo from "../../graphics/venato-purple.png";
 // import generateJobs from '../search/GenerateJobs';
 
 const Welcome = () => {

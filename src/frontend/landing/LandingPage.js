@@ -1,11 +1,11 @@
 import { Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/system';
-import track from '../../images/landing/track.png';
-import logo from '../../images/logo.png'
-import whiteLogo from '../../images/logo_white.png'
-import discover from '../../images/landing/discover.png';
-import prepare from '../../images/landing/prepare.png';
+import track from '../../graphics/landing/track.png';
+import logo from '../../graphics/logo.png'
+import whiteLogo from '../../graphics/logo_white.png'
+import discover from '../../graphics/landing/discover.png';
+import prepare from '../../graphics/landing/prepare.png';
 
 export default function LandingPage() {
     const navigate = useNavigate();

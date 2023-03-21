@@ -5,7 +5,7 @@ import "./job.css";
 import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { TextField, InputAdornment, Button } from "@mui/material";
-import bar from "../../images/bar.png";
+import bar from "../../graphics/bar.png";
 import PageTitle from "../reusable/PageTitle";
 import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, PlaceOutlined, WorkOutline, OutboundOutlined } from "@mui/icons-material";
