@@ -11,6 +11,11 @@ if [ "$#" -ne 0 ]; then
   exit 1
 fi
 
+if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
+    echo " 🔴 You must be on the main branch to deploy"
+    exit 1
+fi
+
 if [ "$(git rev-parse --git-dir)" != '.git' ]; then
     echo " 🔴 You must be in the root directory of the project to deploy"
     exit 1

@@ -31,7 +31,9 @@ const ChooseKanban = () => {
     }
 
     const addNewBoard = async () => {
-        const boardData = await httpsCallable(getFunctions(), "addBoard")(boardName);
+        if (boardName === '') return;
+
+        const boardData = await httpsCallable(getFunctions(), 'addBoard')(boardName);
         boards.result.data.push(boardData.data);
         setDialogOpen(false);
     };

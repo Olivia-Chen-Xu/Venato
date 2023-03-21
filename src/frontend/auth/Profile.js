@@ -83,7 +83,6 @@ const Profile = () => {
             {/*        generateJobs(40);*/}
             {/*    }}*/}
             {/*>*/}
-            {/*    Generate jobs (dev only)*/}
             {/*</Button>*/}
             <text style={{ color: "red" }}>{errMsg}</text>
         </div>

@@ -638,6 +638,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
     const menuOpen = Boolean(anchorEl);
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [newQuestion, setNewQuestion] = useState({ name: '', description: '', company: '' });
 
     const addNewQuestion = async () => {
         setLoading(true);
@@ -647,7 +648,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
             getFunctions(),
             "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
-        setNewQuestion({ name: "", description: "" });
+        setNewQuestion({ name: '', description: '', company: '' });
         setLoading(false);
     };
 
@@ -1239,11 +1240,6 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
             getFunctions(),
             "updateJobData"
         )({ jobId: jobData.id, jobData: newJobData });
-
-        // if (isKanban) {
-        //     newState[index] = state[index].map((j) => (j.id === jobData.id ? jobData : j));
-        //     setState(newState);
-        // }
     };
 
     // const addNewJob = async () => {
@@ -1366,6 +1362,38 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                 <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob} />
                 <Questions value={tabValue} index={3} jobData={job} setJob={setJob} />
                 <Contacts value={tabValue} index={4} jobData={job} setJob={setJob} />
+                {loading ? (
+                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
+                ) : (
+                    <div style={{ position: 'absolute', right: '2vw', top: '4vh' }}>
+                        <Button
+                            variant="outlined"
+                            style={{
+                                padding: '14px 12px 14px 14px',
+                                gap: '10px',
+                                height: '25px',
+                                borderRadius: '4px',
+                                marginInlineEnd: 5,
+                            }}
+                            onClick={() => deleteJob(job)}
+                        >
+                            <Delete />
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={updateJob}
+                            style={{
+                                padding: '15px 12px 15px 14px',
+                                gap: '10px',
+                                width: '25px',
+                                height: '25px',
+                                borderRadius: '4px',
+                            }}
+                        >
+                            {isEdit ? 'Save' : 'Add'}
+                        </Button>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );
