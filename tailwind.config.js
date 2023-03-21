@@ -5,6 +5,8 @@ module.exports = {
         './src/frontend/calendar/**/*.{html,js,jsx,tsx,ts}',
         './src/frontend/job/**/*.{html,js,jsx,tsx,ts}',
         './src/frontend/kanban/**/*.{html,js,jsx,tsx,ts}',
+        './src/frontend/auth/**/*.{html,js,jsx,tsx,ts}',
+        './src/frontend/landing/**/*.{html,js,jsx,tsx,ts}'
     ],
     darkMode: false, // or 'media' or 'class'
     theme: {

@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "venato-ae74d"
+    "dev": "venato-ae74d",
+    "prod": "venato-production-e2ae0"
   }
 }

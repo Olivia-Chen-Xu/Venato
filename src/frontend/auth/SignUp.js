@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputLabel, TextField, Button } from '@mui/material';
+import { InputLabel, TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { signup } from './auth-functions';
-import { btnStyle, inputStyle } from './authStyles';
+import { btnStyle, inputStyle, iconStyle } from './authStyles';
 import './auth.css';
+import {
+    VisibilityOffOutlined,
+    VisibilityOutlined,
+    WarningAmberRounded,
+} from '@mui/icons-material';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -11,8 +16,11 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
 
     const handleSignup = async () => {
         if (password !== confirmPassword) {
@@ -20,18 +28,36 @@ const SignUp = () => {
             return;
         }
 
-        const signupResult = await signup(email, password);
-        if (typeof signupResult === 'string') {
-            setErrMsg(signupResult);
-        }
+        const signupResult = await signup(email, password)
+            .then((res) => {
+                setErrMsg('');
+                setSuccessMsg('Sign up success! Check your email for a verification link');
+            })
+            .catch((err) => {
+                setSuccessMsg('');
+                if (err.code === 'functions/already-exists') {
+                    setErrMsg('Email in use, please try another email');
+                } else {
+                    setErrMsg('Error creating account, please try again later');
+                }
+            });
     };
 
     return (
-        <div className="AuthMainDiv" style={{ alignItems: 'flex-start ' }}>
-            <text className="TopText">Sign up</text>
-            <br />
-            <text className="WelcomeText">Welcome!</text>
-            <br />
+        <div className="h-screen grid place-content-center">
+        <div style={{ alignItems: 'flex-start ' }}>
+            <text className="TopText">Sign Up</text>
+            <div className="flex flex-1 my-5">
+                {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
+                    {errMsg === '' ? '' : '}
+                </p>{' '} */}
+
+                {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
+                <text className="WelcomeText" style={errMsg === '' ? (successMsg === '' ? {} : { color: 'green' }) : { color: 'red' }}>
+                    {' '}
+                    {errMsg === '' ? (successMsg === '' ? 'Welcome!' : successMsg) : errMsg}
+                </text>
+            </div>
             <InputLabel>Email</InputLabel>
             <TextField
                 variant="outlined"
@@ -42,12 +68,12 @@ const SignUp = () => {
                 onChange={(e) => {
                     setEmail(e.target.value);
                 }}
-            />
-            <div style={{ height: 20 }} />
+            ></TextField>
+            <div style={{ height: 20 }}></div>
             <InputLabel>Password</InputLabel>
             <TextField
                 variant="outlined"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -55,12 +81,27 @@ const SignUp = () => {
                 onChange={(e) => {
                     setPassword(e.target.value);
                 }}
-            />
-            <div style={{ height: 20 }} />
-            <InputLabel>Confirm password</InputLabel>
+                InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                    setShowPassword(!showPassword);
+                                }}
+                            >
+                                {showPassword ? <VisibilityOutlined style={iconStyle} /> : <VisibilityOffOutlined />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+            ></TextField>
+            <div style={{ height: 20 }}></div>
+            <InputLabel>Confirm Password</InputLabel>
             <TextField
                 variant="outlined"
-                type="password"
+                type={showPasswordConfirm ? 'text' : 'password'}
                 placeholder="••••••••••"
                 style={inputStyle}
                 required
@@ -68,27 +109,37 @@ const SignUp = () => {
                 onChange={(e) => {
                     setConfirmPassword(e.target.value);
                 }}
-            />
-            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
-                Sign up
-            </Button>
-            <br />
-            <div
-                style={{
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    display: 'flex',
-                    width: '100%',
+                InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                    setShowPasswordConfirm(!showPasswordConfirm);
+                                }}
+                            >
+                                {showPasswordConfirm ? <VisibilityOutlined style={iconStyle} /> : <VisibilityOffOutlined />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
                 }}
-            >
-                <p className="SwapAuthText">Already have an account?</p>
-                <text className="SwapAuthTextLink" onClick={() => navigate('/sign-in')}>
-                    Log in
-                </text>
-            </div>
+            ></TextField>
 
-            <br />
-            <text style={{ color: 'red' }}>{errMsg}</text>
+            <Button color="neutral" variant="contained" style={btnStyle} onClick={handleSignup}>
+                Sign Up
+            </Button>
+            <div className="my-2 w-full">
+                <Button
+                    color="neutral"
+                    variant="outlined"
+                    style={btnStyle}
+                    onClick={() => navigate('/sign-in')}
+                >
+                    Log In
+                </Button>
+            </div>
+        </div>
         </div>
     );
 };

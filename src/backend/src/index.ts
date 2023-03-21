@@ -13,13 +13,20 @@ import {
 import {
     addBoard,
     addContact,
+    updateContact,
     addDeadline,
+    deleteContact,
+    updateDeadline,
+    deleteDeadline,
     addInterviewQuestion,
+    updateInterviewQuestion,
+    deleteInterviewQuestion,
     addJob,
     addJobs,
     deleteJob,
     dragKanbanJob,
-    updateJob
+    updateJobData,
+    deleteBoard,
 } from './mutateData';
 
 /**
@@ -73,10 +80,17 @@ export {
     addJobs,
     addJob,
     addDeadline,
+    updateDeadline,
+    deleteContact,
     addInterviewQuestion,
+    updateInterviewQuestion,
+    deleteDeadline,
+    deleteInterviewQuestion,
     addContact,
-    updateJob,
+    updateContact,
+    updateJobData,
     dragKanbanJob,
     deleteJob,
-    addBoard
+    addBoard,
+    deleteBoard,
 };

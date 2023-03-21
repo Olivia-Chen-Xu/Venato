@@ -66,20 +66,15 @@ const Profile = () => {
                 Sign out
             </Button>
 
-            {/* <button type="submit" className="auth-button" onClick={handleDeleteAccount}>
-                    Delete account
-                </button> */}
-
-            {/* TEMPORARY */}
             <br />
-            <Button
-                color="neutral"
-                variant="contained"
-                style={{ width: 200 }}
-                onClick={handleSignOut}
-            >
-                Delete account!
-            </Button>
+            {/*<Button*/}
+            {/*    color="neutral"*/}
+            {/*    variant="contained"*/}
+            {/*    style={{ width: 200 }}*/}
+            {/*    onClick={handleSignOut}*/}
+            {/*>*/}
+            {/*    Delete account!*/}
+            {/*</Button>*/}
             {/*<Button*/}
             {/*    variant="contained"*/}
             {/*    color="neutral"*/}
@@ -88,7 +83,6 @@ const Profile = () => {
             {/*        generateJobs(40);*/}
             {/*    }}*/}
             {/*>*/}
-            {/*    Generate jobs*/}
             {/*</Button>*/}
             <text style={{ color: "red" }}>{errMsg}</text>
         </div>

@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import {
+    auth,
     db,
     getCollection,
     getDoc, getFirestoreTimestamp,
@@ -17,8 +18,31 @@ import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces'
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall(
     async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
+        // Verify admin account is requesting this
         verifyIsAuthenticated(context);
 
+        const userEmail = await auth.getUser(context.auth.token.uid)
+            .then((user) => user.email);
+        if (!userEmail || userEmail !== '18rem8@queensu.ca') {
+            throw new functions.https.HttpsError(
+                'permission-denied',
+                'Only the admin account can add jobs; contact Reid for details'
+            );
+        }
+
+        // Verify params are valid
+        const structure = {
+            jobs: [],
+            boards: [],
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only an array of jobs and boards as arguments'
+            );
+        }
+
+        // Add boards and jobs to db
         for (const board of data.boards) {
             await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
                 data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
@@ -27,12 +51,9 @@ const addJobs = functions.https.onCall(
             });
         }
 
-        // @ts-ignore
-        data.jobs.forEach((job) => job.userId = context.auth.uid);
-
-        // Add all the jobs to the db
         const jobsBatch = db.batch();
         data.jobs.forEach((job: any) => {
+            job.userId = context.auth.uid;
             jobsBatch.set(db.collection('jobs').doc(), job);
         });
         return jobsBatch
@@ -122,6 +143,50 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
         .catch((err) => `Failed to add deadline: ${err}`);
 });
 
+const updateDeadline = functions.https.onCall(async (data: { deadlineId: string, deadline: IDeadline }, context: any) => {
+    // Verify params
+    const structure = {
+        deadlineId: '',
+        deadline: {
+            date: 0,
+            isInterview: false,
+            link: '',
+            location: '',
+            priority: '',
+            title: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a deadlines id (string) and deadline (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
+
+    return getDoc(`deadlines/${data.deadlineId}`)
+        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .then(() => `Deadline '${data.deadlineId}' updated successfully`)
+        .catch((err) => `Failed to update deadline '${data.deadlineId}': ${err}`);
+});
+
+const deleteDeadline = functions.https.onCall(async (deadlineId: string, context: any) => {
+    // Verify params
+    if (!deadlineId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a deadline id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `deadlines/${deadlineId}`);
+
+    return getDoc(`deadlines/${deadlineId}`)
+        .delete()
+        .then(() => `Deadline '${deadlineId}' deleted successfully`)
+        .catch((err) => `Failed to delete deadline '${deadlineId}': ${err}`);
+});
+
 const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: IInterviewQuestion, context: any) => {
     const structure = {
         name: '',
@@ -142,6 +207,46 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
         .add({ ...interviewQuestion, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add interview question: ${err}`);
+});
+
+const updateInterviewQuestion = functions.https.onCall(async (data: { questionId: string, question: IInterviewQuestion }, context: any) => {
+    // Verify params
+    const structure = {
+        questionId: '',
+        question: {
+            description: '',
+            name: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a question id (string) and question (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
+
+    return getDoc(`interviewQuestions/${data.questionId}`)
+        .update(data.question)
+        .then(() => `Question '${data.questionId}' updated successfully`)
+        .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
+});
+
+const deleteInterviewQuestion = functions.https.onCall(async (questionId: string, context: any) => {
+    // Verify params
+    if (!questionId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a question id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `interviewQuestions/${questionId}`);
+
+    return getDoc(`interviewQuestions/${questionId}`)
+        .delete()
+        .then(() => `Question '${questionId}' deleted successfully`)
+        .catch((err) => `Failed to delete question '${questionId}': ${err}`);
 });
 
 const addContact = functions.https.onCall(async (contact: IContact, context: any) => {
@@ -170,69 +275,85 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
         .catch((err) => `Failed to add contact: ${err}`);
 });
 
-// Updates a job in firestore with the given data (fields not present in the header aren't overwritten)
-const updateJob = functions.https.onCall(
-    async (data: { id: string; tab: number; newFields: object }, context: any) => {
+const updateContact = functions.https.onCall(async (data: { contactId: string, contact: IContact }, context: any) => {
+    // Verify params
+    const structure = {
+        contactId: '',
+        contact: {
+            company: '',
+            email: '',
+            linkedin: '',
+            name: '',
+            notes: '',
+            phone: '',
+            title: '',
+        }
+    };
+    if (!isValidObjectStructure(data, structure)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+        );
+    }
+
+    await verifyDocPermission(context, `contacts/${data.contactId}`);
+
+    return getDoc(`contacts/${data.contactId}`)
+        .update(data.contact)
+        .then(() => `Contact '${data.contactId}' updated successfully`)
+        .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
+});
+
+const deleteContact = functions.https.onCall(async (contactId: string, context: any) => {
+    // Verify params
+    if (!contactId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Must provide only a contact id (string) as an argument'
+        );
+    }
+    await verifyDocPermission(context, `contacts/${contactId}`);
+
+    return getDoc(`contacts/${contactId}`)
+        .delete()
+        .then(() => `Contact '${contactId}' deleted successfully`)
+        .catch((err) => `Failed to delete contact '${contactId}': ${err}`);
+});
+
+// Updates job data (excluding deadlines, interview questions and contacts)
+const updateJobData = functions.https.onCall(
+    async (data: { jobId: string; jobData: object }, context: any) => {
         // Verify params
-        let errMSg = '';
-        if (!data) {
-            errMSg = 'No data provided';
-        } else if (!data.id) {
-            errMSg = 'No job id provided';
-        } else if (!data.tab) {
-            errMSg = 'No tab number provided';
-        } else if (!data.newFields) {
-            errMSg = 'No new field(s) provided';
-        }
-        if (errMSg !== '') {
-            throw new functions.https.HttpsError('invalid-argument', errMSg);
-        }
-        await verifyDocPermission(context, `jobs/${data.id}`);
-
-        const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
-        switch (data.tab) {
-            case 1:
-                updatePromises.push(getDoc(`jobs/${data.id}`).update(data.newFields));
-                break;
-            case 2:
-                updatePromises.push(getDoc(`jobs/${data.id}`).update({ notes: data.newFields }));
-                break;
-            case 3:
-                // @ts-ignore
-                data.newFields.forEach((deadline: { edited: boolean; id: string }) => {
-                    if (deadline.edited) {
-                        updatePromises.push(getDoc(`deadlines/${deadline.id}`).update(deadline));
-                    }
-                });
-                break;
-            case 4:
-                // @ts-ignore
-                data.newFields.forEach((question: { edited: boolean; id: string }) => {
-                    if (question.edited) {
-                        updatePromises.push(
-                            getDoc(`interviewQuestions/${question.id}`).update(question)
-                        );
-                    }
-                });
-                break;
-            case 5:
-                // @ts-ignore
-                data.newFields.forEach((contact: { edited: boolean; id: string }) => {
-                    if (contact.edited) {
-                        updatePromises.push(getDoc(`contacts/${contact.id}`).update(contact));
-                    }
-                });
-                break;
-            default:
-                throw new functions.https.HttpsError(
-                    'invalid-argument',
-                    'Tab number must an integer between 1 and 5 inclusive'
-                );
+        const structure = {
+            jobId : '',
+            jobData: {
+                awaitingResponse: false,
+                boardId: '',
+                company: '',
+                description: '',
+                link: '',
+                location: '',
+                notes: '',
+                position: '',
+                priority: '',
+                salary: '',
+                stage: 0,
+                userId: '',
+            }
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only a job id (string) and job data (see db for structure) as arguments'
+            );
         }
 
-        return Promise.all(updatePromises)
-            .then(() => `Successfully updated job '${data.id}`)
-            .catch((e) => `Failed to update job '${data.id}': ${JSON.stringify(e)}`);
+        await verifyDocPermission(context, `jobs/${data.jobId}`);
+
+        return getDoc(`jobs/${data.jobId}`)
+            .set(data.jobData)
+            .then(() => `job '${data.jobId}' updated successfully`)
+            .catch((err) => `Failed to update contact '${data.jobId}': ${err}`);
     }
 );
 
@@ -291,14 +412,37 @@ const addBoard = functions.https.onCall(async (boardName: string, context: any) 
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 
+const deleteBoard = functions.https.onCall(async (boardId: string, context: any) => {
+    // Verify params
+    if (!boardId) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'No board id provided'
+        );
+    }
+    await verifyDocPermission(context, `boards/${boardId}`);
+
+    return getDoc(`boards/${boardId}`)
+        .delete()
+        .then(() => `Successfully deleted board '${boardId}'`)
+        .catch((err) => `Error deleting board '${boardId}': ${err}`);
+});
+
 export {
     addJobs,
     addJob,
     addDeadline,
+    updateDeadline,
+    deleteDeadline,
     addInterviewQuestion,
+    updateInterviewQuestion,
+    deleteInterviewQuestion,
     addContact,
-    updateJob,
+    updateContact,
+    deleteContact,
+    updateJobData,
     dragKanbanJob,
     deleteJob,
     addBoard,
+    deleteBoard,
 };

@@ -26,11 +26,11 @@ const createAccount = functions.https.onCall(async (credentials: { email: string
             })
             .catch((error) => {
                 if (error.code === 'auth/email-already-exists') {
-                    return `Email ${credentials.email} in use`;
+                    throw new functions.https.HttpsError('already-exists', `Email ${credentials.email} in use`);
                 }
 
                 functions.logger.log(`Error creating new user (not including email in use): ${JSON.stringify(error)}`);
-                return `Error creating account - please try again later`;
+                throw new functions.https.HttpsError('internal', `Error creating account - please try again later`);
             });
     }
 );

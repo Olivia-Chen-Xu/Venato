@@ -1,3 +1,4 @@
+
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -9,16 +10,28 @@ import SignIn from './frontend/auth/SignIn';
 import SignUp from './frontend/auth/SignUp';
 import PasswordReset from './frontend/auth/PasswordReset';
 import Overlay from './frontend/reusable/Overlay';
+import LandingPage from './frontend/landing/LandingPage';
+
 
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#633175',
+            main: "#7F5BEB",
         },
         neutral: {
-            main: '#C7ADD8',
-            contrastText: '#fff',
+            main: "#7F5BEB",
+            contrastText: "#fff",
         },
+        info: {
+            main: "#367CFF",
+        },
+        white: {
+            main: "#fff",
+            contrastText: "#333",
+        },
+    },
+    typography: {
+        fontFamily: ["Poppins"].join(","),
     },
 });
 
@@ -27,16 +40,17 @@ function App() {
         <ThemeProvider theme={theme}>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Welcome />} />
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/welcome" element={<Welcome />} />
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
                     <Route path="/password-reset" element={<PasswordReset />} />
-                    <Route path="/home" element={<Overlay page={'home'} />} />
-                    <Route path="/job" element={<Overlay page={'jobs'} />} />
-                    <Route path="/questions" element={<Overlay page={'questions'} />} />
-                    <Route path="/chooseKanban" element={<Overlay page={'chooseKanban'} />} />
-                    <Route path="/kanban" element={<Overlay page={'kanban'} />} />
-                    <Route path="/calendar" element={<Overlay page={'cal'} />} />
+                    <Route path="/home" element={<Overlay page={"home"} />} />
+                    <Route path="/chooseKanban" element={<Overlay page={"chooseKanban"} />} />
+                    <Route path="/job" element={<Overlay page={"jobs"} />} />
+                    <Route path="/questions" element={<Overlay page={"questions"} />} />
+                    <Route path="/kanban" element={<Overlay page={"kanban"} />} />
+                    <Route path="/calendar" element={<Overlay page={"cal"} />} />
                 </Routes>
             </Router>
         </ThemeProvider>

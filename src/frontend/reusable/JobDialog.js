@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
     DialogContent,
+    DialogTitle,
     Tabs,
     Tab,
     TextField,
@@ -10,9 +11,11 @@ import {
     Dialog,
     CircularProgress,
     MenuItem,
-} from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+    Menu,
+    IconButton,
+} from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
     DescriptionOutlined,
     DriveFileRenameOutlineOutlined,
@@ -23,14 +26,36 @@ import {
     LocationOnOutlined,
     Delete,
     AddCircleOutline,
-} from '@mui/icons-material';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { DateTimePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+    Flag,
+    Add,
+    MoreVert,
+    RoomOutlined,
+    AccessTimeOutlined,
+} from "@mui/icons-material";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { btnStyle } from "../auth/authStyles";
+import { AccountCircleOutlined } from "@mui/icons-material";
+import { MoreHoriz } from "@mui/icons-material";
+const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
+const priorities = ["High", "Medium", "Low"];
+import { SocialIcon } from "react-social-icons";
+import Checkbox from "@mui/material/Checkbox";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-const colTitles = ['Applications', 'Interviews', 'Offers', 'Rejections'];
-const priorities = ['High', 'Medium', 'Low'];
+const priorityColor = (p) => {
+    switch (p) {
+        case "High":
+            return "text-[#E56464]";
+        case "Medium":
+            return "text-[#FF8900]";
+        case "Low":
+            return "text-[#0CBC8B]";
+    }
+};
 
+import Search from "@mui/icons-material/Search";
 const Headings = ({ jobData, setJob }) => {
     const handleChange = (e) => {
         setJob({
@@ -38,58 +63,59 @@ const Headings = ({ jobData, setJob }) => {
             stage: colTitles.indexOf(e.target.value),
         });
     };
+
+    const priorityBg = (p) => {
+        switch (p) {
+            case "High":
+                return "bg-[#FFE7E7]";
+            case "Medium":
+                return "bg-[#FFF4E7]";
+            case "Low":
+                return "bg-[#DEFFE5]";
+        }
+    };
+
     return (
         <>
-            <Input
-                className="focus-only "
-                placeholder="Job Title"
-                value={jobData.position}
-                onChange={(e) => {
-                    setJob({
-                        ...jobData,
-                        position: e.target.value,
-                    });
-                }}
-                style={styles.jobTitle}
-            />
-            {/* <h1
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: "20px",
-                    margin: '0 1vw',
-                }}>
-                    @
-                </h1> */}
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Input
-                    placeholder="Company"
-                    style={styles.Company}
-                    value={jobData.company}
-                    disableUnderline
-                    onChange={(e) => {
-                        setJob({ ...jobData, company: e.target.value });
-                    }}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <AlternateEmailOutlined style={{ fontSize: 20 }} />
-                        </InputAdornment>
-                    }
-                />
-                <Input
-                    placeholder="Location"
-                    value={jobData.location}
-                    disableUnderline
-                    onChange={(e) => {
-                        setJob({ ...jobData, location: e.target.value });
-                    }}
-                    style={styles.Location}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <LocationOnOutlined style={{ fontSize: 20 }} />
-                        </InputAdornment>
-                    }
-                />
+            <div className="w-full">
+                <div className="flex flex-row justify-center  align-center w-full">
+                    <div className="grid grid-col-1 w-full pl-6 ">
+                        <h1 className="text-3xl">{jobData.position}</h1>
+                        <div className="flex flex-1 mt-4">
+                            <h1
+                                className="text-xl mr-6 flex flex-row justify-center items-center"
+                                style={{ fontWeight: 400 }}
+                            >
+                                {" "}
+                                <AlternateEmailOutlined className="" />{" "}
+                                <div className="">{jobData.company}</div>
+                            </h1>
+                            <TextField
+                                select
+                                value={colTitles[jobData.stage]}
+                                onChange={handleChange}
+                                size="small"
+                                sx={{ padding: 0 }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "8px",
+                                    },
+                                }}
+                            >
+                                {colTitles.map((title) => (
+                                    <MenuItem value={title}>{title}</MenuItem>
+                                ))}
+                            </TextField>
+                            <div
+                                className={`ml-5 ${priorityBg(jobData.priority)} ${priorityColor(
+                                    jobData.priority
+                                )}  rounded-lg flex flex-row py-1 px-2 items-center`}
+                            >
+                                <Flag /> <p className="text-base">{jobData.priority}</p>
+                            </div>
+                        </div>
+                    </div>{" "}
+                </div>
             </div>
             {/* <h1>{jobData.position}</h1>
             <h3>{jobData.company}</h3> */}
@@ -102,64 +128,140 @@ const Details = ({ value, index, jobData, setJob }) => {
         setJob({ ...jobData, priority: e.target.value });
     };
 
+    const priorityColor = (p) => {
+        switch (p) {
+            case "High":
+                return "text-[#E56464]";
+            case "Medium":
+                return "text-[#FF8900]";
+            case "Low":
+                return "text-[#0CBC8B]";
+        }
+    };
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
             <>{/* </div> */}</>
-            <TextField
-                select
-                label="Column"
-                value={colTitles[jobData.stage]}
-                onChange={handleChange}
-                style={{ marginTop: '2vh' }}
-            >
-                {colTitles.map((title) => (
-                    <MenuItem value={title}>{title}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                select
-                value={jobData.priority}
-                label="Priority"
-                onChange={handleChange}
-                style={{ marginTop: '2vh' }}
-            >
-                {priorities.map((p) => (
-                    <MenuItem value={p}>{p}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                label="Posting Link"
-                value={jobData.link}
-                style={styles.applicationLink}
-                onChange={(e) => {
-                    setJob({ ...jobData, link: e.target.value });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
-            <TextField
-                label="Job details"
-                style={styles.jobDescription}
-                multiline
-                rows={10}
-                value={jobData.description}
-                onChange={(e) => {
-                    setJob({
-                        ...jobData,
-                        description: e.target.value,
-                    });
-                }}
-                InputProps={{
-                    disableUnderline: true, // <== added this
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center h-full w-full">
+                <div className="w-3/4">
+                    <div className="flex flex-1 w-full mb-5">
+                        <div className="flex flex-col w-full mr-8">
+                            <h1>Job Title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                className="w-full"
+                                value={jobData.position}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, position: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <h1>Priority</h1>
+                            <TextField
+                                select
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.priority}
+                                onChange={handleChange}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                            >
+                                {priorities.map((p) => (
+                                    <MenuItem value={p}>
+                                        <Flag className={priorityColor(p)} />
+                                    </MenuItem>
+                                ))}
+                            </TextField>{" "}
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-5">
+                        <div className="flex flex-col w-full mr-4">
+                            <h1>Company</h1>
+                            <TextField
+                                value={jobData.company}
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, company: e.target.value });
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col w-full ml-4">
+                            <h1>Location</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                value={jobData.location}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, location: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-5">
+                        <div className="flex flex-col w-full">
+                            <h1>Posting Link</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={jobData.link}
+                                style={{ marginTop: "1vh" }}
+                                // style={styles.applicationLink}
+                                onChange={(e) => {
+                                    setJob({ ...jobData, link: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-5">
+                        <div className="flex flex-col w-full">
+                            <h1>Job Details</h1>
+                            <TextField
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                // style={styles.jobDescription}
+                                style={{ marginTop: "1vh" }}
+                                multiline
+                                rows={5}
+                                value={jobData.description}
+                                onChange={(e) => {
+                                    setJob({
+                                        ...jobData,
+                                        description: e.target.value,
+                                    });
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
@@ -168,122 +270,361 @@ const Notes = ({ value, index, jobData, setJob }) => {
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
-            <TextField
-                style={{ marginTop: '2vh' }}
-                label="Notes"
-                multiline
-                rows={10}
-                value={jobData.notes}
-                onChange={(e) => {
-                    setJob({ ...jobData, notes: e.target.value });
-                }}
-            />
+            <div className="mt-8 flex flex-row justify-center align-center w-full">
+                <div className="w-3/4">
+                    <h1>Notes</h1>
+                    <TextField
+                        InputProps={{
+                            style: {
+                                borderRadius: "8px",
+                            },
+                        }}
+                        style={{ marginTop: "2vh", height: "100%", width: "100%" }}
+                        multiline
+                        rows={15}
+                        size="small"
+                        value={jobData.notes}
+                        onChange={(e) => {
+                            setJob({ ...jobData, notes: e.target.value });
+                        }}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
 
 const Deadlines = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
+    const menuOpen = Boolean(anchorEl);
     const [newDdl, setNewDdl] = useState({
-        title: '',
+        title: "",
         date: dayjs().unix(),
-        location: '',
-        link: '',
+        location: "",
+        link: "",
     });
+    const [loading, setLoading] = useState(false);
+
     const addNewDdl = async () => {
-        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
-        setOpen(false);
+        setLoading(true);
         await httpsCallable(
             getFunctions(),
-            'addDeadline'
-        )({ ...newDdl, jobId: jobData.id, company: jobData.company });
-        setNewDdl({ title: '', date: dayjs().unix(), location: '', link: '' });
+            "addDeadline"
+        )({ ...newDdl, jobId: jobData.id, company: jobData.company }).then((res) =>
+            setNewDdl({ ...newDdl, id: res.result })
+        );
+        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
+        setOpen(false);
     };
+
+    const updateDdl = async () => {
+        const deadlineUpdate = {
+            date: newDdl.date,
+            isInterview: newDdl.isInterview,
+            link: newDdl.link,
+            location: newDdl.location,
+            priority: newDdl.priority,
+            title: newDdl.title,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateDeadline"
+        )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+            const deadlineIndex = jobData.deadlines.findIndex(
+                (deadline) => deadline.id === newDdl.id
+            );
+            jobData.deadlines[deadlineIndex] = newDdl;
+        });
+        setLoading(false);
+        setOpen(false);
+    };
+
+    const uniqueDates = jobData.deadlines
+        ? [
+              ...new Set(
+                  jobData.deadlines.map((deadline) =>
+                      dayjs.unix(deadline.date).format("MMMM D, YYYY")
+                  )
+              ),
+          ]
+        : [];
 
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-4/5 place-content-end">
+                    <LoadingButton
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => {
+                            setIsAdding(true);
+                            setOpen(true);
+                        }}
+                        startIcon={<Add />}
+                    >
+                        Add Deadline
+                    </LoadingButton>
+                </div>
+            </div>
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-4/5">
+                    {uniqueDates &&
+                        uniqueDates
+                            .sort((a, b) => a - b)
+                            .map((date) => (
+                                <div key={date}>
+                                    <h1 className="mb-4">{date}</h1>
+                                    {jobData.deadlines &&
+                                        jobData.deadlines
+                                            .filter(
+                                                (deadline) =>
+                                                    dayjs
+                                                        .unix(deadline.date)
+                                                        .format("MMMM D, YYYY") === date
+                                            )
+                                            .sort((a, b) => a.date - b.date)
+                                            .map((deadline) => (
+                                                <div className="mb-2">
+                                                    <div className="border rounded-lg mb-4">
+                                                        <div className="flex flex-row-reverse w-full mr-5">
+                                                            <MoreHoriz
+                                                                className="mr-4 cursor-pointer"
+                                                                onClick={(e) => {
+                                                                    setAnchorEl(e.currentTarget);
+                                                                    setNewDdl(deadline);
+                                                                }}
+                                                            ></MoreHoriz>
+                                                            <Menu
+                                                                open={menuOpen}
+                                                                onClose={() => setAnchorEl(null)}
+                                                                anchorEl={anchorEl}
+                                                                transformOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "top",
+                                                                }}
+                                                                anchorOrigin={{
+                                                                    horizontal: "right",
+                                                                    vertical: "bottom",
+                                                                }}
+                                                            >
+                                                                <MenuItem
+                                                                    onClick={() => {
+                                                                        setIsAdding(false);
+                                                                        setOpen(true);
+                                                                    }}
+                                                                >
+                                                                    Edit
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    onClick={async () => {
+                                                                        await httpsCallable(
+                                                                            getFunctions(),
+                                                                            "deleteDeadline"
+                                                                        )(deadline.id).then(
+                                                                            () =>
+                                                                                (jobData.deadlines =
+                                                                                    jobData.deadlines.filter(
+                                                                                        (c) =>
+                                                                                            c.id !==
+                                                                                            deadline.id
+                                                                                    ))
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Delete
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </div>{" "}
+                                                        <div className="flex flex-1 justify-between mb-3 -mt-2">
+                                                            <div className="flex flex-1">
+                                                                <Checkbox
+                                                                    className="mr-5"
+                                                                    style={{ padding: "0 1vw" }}
+                                                                />
+                                                                <h1 className="mt-1 font-medium">
+                                                                    {deadline.title}
+                                                                </h1>
+                                                            </div>
+                                                            <div className="flex flex-1 justify-end">
+                                                                <div className="border rounded-lg bg-[#F2F9FA] py-1 px-2">
+                                                                    <div className="flex flex-1 text-[#003F4B]">
+                                                                        <AccessTimeOutlined />
+                                                                        {/* {console.log(dayjs.unix(deadline.date).format('HH:mm'))} */}
+                                                                        <h1 className="pl-1">
+                                                                            {dayjs
+                                                                                .unix(deadline.date)
+                                                                                .format("h:mm A")}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="border rounded-lg bg-[#D8CFF3] py-1 ml-4 mr-12 px-2">
+                                                                    <div className="flex flex-1 text-[#3F15BB]">
+                                                                        <RoomOutlined />
+                                                                        <h1 className="pl-1">
+                                                                            {deadline.location}
+                                                                        </h1>
+                                                                    </div>
+                                                                </div>
+                                                                {/* <h1>{deadline.link}</h1> */}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                </div>
+                            ))}
+                </div>{" "}
+            </div>
+
+            <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                    setNewDdl({
+                        title: "",
+                        date: dayjs().unix(),
+                        location: "",
+                        link: "",
+                    });
+                }}
             >
-                Add Deadline
-            </Button>
-            {jobData.deadlines &&
-                jobData.deadlines.map((deadline) => (
-                    <div style={{ marginBottom: '2vh' }}>
-                        {' '}
-                        <h2>{deadline.title}</h2>
-                        <p>{dayjs.unix(deadline.date).toString()}</p>
-                        <p>{deadline.location}</p>
-                        <p>{deadline.link}</p>
-                        <hr />
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Deadline</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        setLoading(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <LoadingButton
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={async () => {
+                                    isAdding ? await addNewDdl() : await updateDdl();
+                                    setLoading(false);
+                                }}
+                                loading={loading}
+                                disableElevation
+                            >
+                                {isAdding ? "Add" : "Save"}
+                            </LoadingButton>
+                        </div>
                     </div>
-                ))}
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: 600,
-                        alignItems: 'center',
-                    }}
-                >
-                    <p>Task title</p>
-                    <TextField
-                        label="Task title"
-                        value={newDdl.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, title: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <p>Date and time</p>
-                        <br />
-                        <DateTimePicker
-                            label="Date and time"
-                            value={dayjs.unix(newDdl.date)}
-                            onChange={(val) => setNewDdl({ ...newDdl, date: val.unix() })}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                    <br />
-                    <p>Location</p>
-                    <TextField
-                        label="Location"
-                        value={newDdl.location}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, location: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to meeting (if applicable)</p>
-                    <TextField
-                        label="Link"
-                        value={newDdl.link}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewDdl({ ...newDdl, link: e.target.value });
-                        }}
-                    />
-                    <Button variant="contained" onClick={addNewDdl} style={{ width: 100 }}>
-                        Add
-                    </Button>
+                    <div className="w-full mb-4">
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Task Title</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.title}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({ ...newDdl, title: e.target.value });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Date & Time</h1>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker
+                                        value={dayjs.unix(newDdl.date)}
+                                        InputProps={{
+                                            style: {
+                                                borderRadius: "16px",
+                                            },
+                                        }}
+                                        onChange={(val) =>
+                                            setNewDdl({ ...newDdl, date: val.unix() })
+                                        }
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Location</h1>
+                                <TextField
+                                    value={newDdl.location}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            location: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Link (If Applicable)</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newDdl.link}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewDdl({
+                                            ...newDdl,
+                                            link: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
@@ -292,72 +633,48 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
 const Questions = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
+    const [newQuestion, setNewQuestion] = useState({ name: "", description: "" });
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuOpen = Boolean(anchorEl);
+    const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [newQuestion, setNewQuestion] = useState({ name: '', description: '', company: '' });
 
     const addNewQuestion = async () => {
+        setLoading(true);
         setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
         setOpen(false);
         await httpsCallable(
             getFunctions(),
-            'addInterviewQuestion'
+            "addInterviewQuestion"
         )({ jobId: jobData.id, ...newQuestion });
         setNewQuestion({ name: '', description: '', company: '' });
+        setLoading(false);
     };
 
-    return (
-        <div
-            style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
-            }}
-        >
-            <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add a question
-            </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: 600,
-                        alignItems: 'center',
-                    }}
-                >
-                    <p>Enter question title</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, name: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Enter question description</p>
-                    <TextField
-                        label="Interview Question"
-                        value={newQuestion.description}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewQuestion({ ...newQuestion, description: e.target.value });
-                        }}
-                    />
-                    <br />
+    const updateQuesiton = async (questionId) => {
+        const questionUpdate = {
+            description: newQuestion.description,
+            name: newQuestion.name,
+        };
 
-                    <Button variant="contained" onClick={addNewQuestion} style={{ width: 100 }}>
-                        Add
-                    </Button>
-                </DialogContent>
-            </Dialog>
+        await httpsCallable(
+            getFunctions(),
+            "updateInterviewQuestion"
+        )({ questionId: questionId, question: questionUpdate }).then(() => {
+            const questionIndex = jobData.interviewQuestions.findIndex(
+                (question) => question.id === newQuestion.id
+            );
+            jobData.interviewQuestions[questionIndex] = newQuestion;
+        });
+        setOpen(false);
+    };
 
-            {jobData.interviewQuestions &&
-                /* job.interviewQuestions.map((question: string) => (
+    const renderQuestions = () => {
+        if (!jobData.interviewQuestions) {
+            return;
+        }
+        /* job.interviewQuestions.map((question: string) => (
                     <li>
                         <a
                             href={`https://www.google.com/search?q=${question.replaceAll(
@@ -368,140 +685,509 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             {question}
                         </a>
                     </li> */
-                jobData.interviewQuestions.map((question) => (
-                    <div style={{ marginBottom: '2vh' }}>
-                        <h2>{question.name}</h2>
-                        <p>{question.description}</p>
-                        <hr />
+
+        return jobData.interviewQuestions.map((question) => (
+            <div className="border rounded-xl mb-8">
+                <div className="flex flex-col">
+                    <div className="flex flex-row justify-between ml-8 mt-4">
+                        <h1 className="font-medium font-lg">{question.name}</h1>
+
+                        <MoreHoriz
+                            className="cursor-pointer mr-4"
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+                                setNewQuestion(question);
+                            }}
+                        ></MoreHoriz>
                     </div>
-                ))}
+                    <div className="mx-8 mt-2 mb-4">
+                        <h1>{question.description}</h1>
+                    </div>
+                    <Menu
+                        open={menuOpen}
+                        onClose={() => setAnchorEl(null)}
+                        anchorEl={anchorEl}
+                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    >
+                        <MenuItem
+                            onClick={() => {
+                                setIsEditing(true);
+
+                                setOpen(true);
+                            }}
+                        >
+                            Edit
+                        </MenuItem>
+                        <MenuItem
+                            onClick={async () => {
+                                await httpsCallable(
+                                    getFunctions(),
+                                    "deleteInterviewQuestion"
+                                )(question.id).then(
+                                    () =>
+                                        (jobData.interviewQuestions =
+                                            jobData.interviewQuestions.filter(
+                                                (c) => c.id !== question.id
+                                            ))
+                                );
+                            }}
+                        >
+                            Delete
+                        </MenuItem>
+                    </Menu>
+                </div>
+            </div>
+        ));
+    };
+
+    return (
+        <div
+            style={{
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
+            }}
+        >
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-4/5 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
+                            borderRadius: "16px",
+                        }}
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => {
+                            setIsEditing(false);
+                            setOpen(true);
+                        }}
+                        startIcon={<Add />}
+                    >
+                        Add Interview Question
+                    </Button>
+                </div>
+            </div>
+            <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                }}
+            >
+                <DialogContent style={{ borderRadius: 16, width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">
+                            {isEditing ? "Edit Interview Question" : "Create Interview Question"}
+                        </h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        setLoading(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <LoadingButton
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={async () => {
+                                    isEditing
+                                        ? await updateQuesiton(newQuestion.id)
+                                        : await addNewQuestion();
+                                }}
+                                loading={loading}
+                                disableElevation
+                            >
+                                {isEditing ? "Save" : "Add"}
+                            </LoadingButton>
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full mb-8">
+                        <div className="flex flex-col w-full">
+                            <h1>Question title</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                value={newQuestion.name}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, name: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-1 w-full">
+                        <div className="flex flex-col w-full">
+                            <h1>Question description</h1>
+                            <TextField
+                                style={{ marginTop: "1vh" }}
+                                InputProps={{
+                                    style: {
+                                        borderRadius: "16px",
+                                    },
+                                }}
+                                multiline
+                                rows={10}
+                                value={newQuestion.description}
+                                fullWidth
+                                onChange={(e) => {
+                                    setNewQuestion({ ...newQuestion, description: e.target.value });
+                                }}
+                            />
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="w-4/5">{renderQuestions()}</div>
+            </div>
         </div>
     );
 };
 
 const Contacts = ({ value, index, jobData, setJob }) => {
     const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuOpen = Boolean(anchorEl);
     const [newContact, setNewContact] = useState({
-        name: '',
-        title: '',
-        company: '',
-        email: '',
-        phone: '',
-        linkedin: '',
-        notes: '',
+        name: "",
+        title: "",
+        company: "",
+        email: "",
+        phone: "",
+        linkedin: "",
+        notes: "",
     });
+    const [isEditing, setIsEditing] = useState(false);
 
     const addNewContact = async () => {
         setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
+        await httpsCallable(getFunctions(), "addContact")({ jobId: jobData.id, ...newContact });
         setOpen(false);
-        await httpsCallable(getFunctions(), 'addContact')({ jobId: jobData.id, ...newContact });
         setNewContact({
-            name: '',
-            title: '',
-            company: '',
-            email: '',
-            phone: '',
-            linkedin: '',
-            notes: '',
+            name: "",
+            title: "",
+            company: "",
+            email: "",
+            phone: "",
+            linkedin: "",
+            notes: "",
         });
+    };
+
+    const editContact = async () => {
+        const updateContact = {
+            company: newContact.company,
+            email: newContact.email,
+            linkedin: newContact.linkedin,
+            name: newContact.name,
+            notes: newContact.notes,
+            phone: newContact.phone,
+            title: newContact.title,
+        };
+        await httpsCallable(
+            getFunctions(),
+            "updateContact"
+        )({ contactId: newContact.id, contact: updateContact });
+        const newJob = jobData.contacts.map((c) => (c.id === newContact.id ? newContact : c));
+        setJob({ ...jobData, contacts: newJob });
+        setOpen(false);
     };
 
     return (
         <div
             style={{
-                flexDirection: 'column',
-                display: value === index ? 'flex' : 'none',
-                height: '100%',
+                flexDirection: "column",
+                display: value === index ? "flex" : "none",
+                height: "100%",
             }}
         >
-            <Button
-                style={{ marginTop: '2vh', marginBottom: '2vh' }}
-                variant="contained"
-                onClick={() => setOpen(true)}
-                startIcon={<AddCircleOutline />}
-            >
-                Add Contact
-            </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogContent
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: 600,
-                        alignItems: 'center',
-                    }}
-                >
-                    <p>Contact name</p>
-                    <TextField
-                        label="Name"
-                        value={newContact.name}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, name: e.target.value });
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-col-1 w-4/5 place-content-end">
+                    <Button
+                        style={{
+                            width: "fit-content",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                            padding: "1vh 1vw",
+                            border: "2px solid #7F5BEB",
                         }}
-                    />
-                    <br />
-                    <p>Job title</p>
-                    <TextField
-                        label="Job title"
-                        value={newContact.title}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, title: e.target.value });
+                        sx={{ borderRadius: 2 }}
+                        variant="outlined"
+                        onClick={() => {
+                            setIsEditing(false);
+                            setOpen(true);
                         }}
-                    />
-                    <br />
-                    <p>Company</p>
-                    <TextField
-                        label="Company"
-                        value={newContact.company}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, company: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <p>Link to LinkedIn</p>
-                    <TextField
-                        label="Link to LinkedIn"
-                        value={newContact.linkedin}
-                        fullWidth
-                        onChange={(e) => {
-                            setNewContact({ ...newContact, linkedin: e.target.value });
-                        }}
-                    />
-                    <br />
-                    <Button variant="contained" style={{ width: 100 }} onClick={addNewContact}>
-                        Add
+                        startIcon={<Add />}
+                    >
+                        Add Contact
                     </Button>
+                </div>
+            </div>
+            <Dialog
+                fulLWidth
+                maxWidth="xl"
+                PaperProps={{
+                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                }}
+                open={open}
+                onClose={async () => {
+                    // const contactUpdate = {
+                    //     name: newContact.name,
+                    //     title: newContact.title,
+                    //     company: newContact.company,
+                    //     email: newContact.email,
+                    //     phone: newContact.phone,
+                    //     linkedin: newContact.linkedin,
+                    //     notes: newContact.notes,
+                    // };
+                    // await httpsCallable(
+                    //     getFunctions(),
+                    //     "updateContact"
+                    // )({ contactId: newContact.id, contact: contactUpdate }).then(() => {
+                    //     const contactIndex = jobData.contacts.findIndex(
+                    //         (contact) => contact.id === newContact.id
+                    //     );
+                    //     jobData.contacts[contactIndex] = newContact;
+                    // });
+                    setOpen(false);
+                }}
+            >
+                <DialogContent style={{ width: "50vw" }}>
+                    <div className="flex flex-row justify-between mb-4">
+                        <h1 className="text-xl w-full">Create Contact</h1>
+                        <div className="flex flex-row-reverse w-full">
+                            <div className="ml-3">
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2 }}
+                                    color="neutral"
+                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                            </div>
+                            <Button
+                                type="submit"
+                                sx={{ borderRadius: 2 }}
+                                variant="contained"
+                                color="neutral"
+                                style={{ width: 100 }}
+                                onClick={async () => {
+                                    isEditing ? await editContact() : await addNewContact();
+                                }}
+                            >
+                                {isEditing ? "Save" : "Add"}
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="w-full mb-4">
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full">
+                                <h1>Contact Name</h1>
+                                <TextField
+                                    className="w-full"
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.name}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            name: e.target.value,
+                                        });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full mb-8">
+                            <div className="flex flex-col w-full mr-4">
+                                <h1>Job Title</h1>
+                                <TextField
+                                    value={newContact.title}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            title: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col w-full ml-4">
+                                <h1>Company</h1>
+                                <TextField
+                                    style={{ marginTop: "1vh" }}
+                                    value={newContact.company}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            company: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-1 w-full">
+                            <div className="flex flex-col w-full">
+                                <h1>LinkedIn Profile Link</h1>
+                                <TextField
+                                    className="w-full"
+                                    value={newContact.linkedin}
+                                    style={{ marginTop: "1vh" }}
+                                    InputProps={{
+                                        style: {
+                                            borderRadius: "16px",
+                                        },
+                                    }}
+                                    onChange={(e) => {
+                                        setNewContact({
+                                            ...newContact,
+                                            linkedin: e.target.value,
+                                        });
+                                    }}
+                                />{" "}
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
-            {jobData.contacts &&
-                jobData.contacts.map((contact) => (
-                    <div style={{ marginBottom: '2vh' }}>
-                        <h2>{contact.name}</h2>
-                        <p>{contact.title}</p>
-                        <p>{contact.company}</p>
-                        <p>{contact.linkedin}</p>
-                        <hr />
-                    </div>
-                ))}
+            <div className="flex flex-row justify-center align-center w-full">
+                <div className="grid grid-cols-3 gap-14 w-4/5">
+                    {jobData.contacts &&
+                        jobData.contacts.map((contact) => (
+                            <div className="border rounded-xl">
+                                <div className="flex flex-row-reverse w-full mr-5">
+                                    <MoreHoriz
+                                        className="mr-4 cursor-pointer"
+                                        onClick={(e) => {
+                                            setAnchorEl(e.currentTarget);
+                                            setNewContact(contact);
+                                        }}
+                                    ></MoreHoriz>
+                                    <Menu
+                                        open={menuOpen}
+                                        onClose={() => setAnchorEl(null)}
+                                        anchorEl={anchorEl}
+                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                    >
+                                        <MenuItem
+                                            onClick={() => {
+                                                setIsEditing(true);
+                                                setOpen(true);
+                                            }}
+                                        >
+                                            Edit
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={async () => {
+                                                await httpsCallable(
+                                                    getFunctions(),
+                                                    "deleteContact"
+                                                )(contact.id).then(
+                                                    () =>
+                                                        (jobData.contacts = jobData.contacts.filter(
+                                                            (c) => c.id !== contact.id
+                                                        ))
+                                                );
+                                            }}
+                                        >
+                                            Delete
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                                <div className="mx-4 mb-4 -mt-2">
+                                    <div className="flex flex-1 w-full mb-2">
+                                        <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
+                                            <AccountCircleOutlined
+                                                className="scale-[2.25]"
+                                                sx={{ stroke: "#ffffff", strokeWidth: 1 }}
+                                            />
+                                        </div>
+                                        <div className="w-full">
+                                            <h2 className="text-lg font-medium">{contact.name}</h2>
+                                            <p className="mt-1">{contact.title}</p>
+                                            <p className="mb-1">@ {contact.company}</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        className="w-full border-2 border-[#367CFF]"
+                                        color="info"
+                                        style={{ border: "2px solid #367CFF" }}
+                                        variant="outlined"
+                                        sx={{ borderRadius: 2 }}
+                                        onClick={() => {
+                                            window.open(contact.linkedin, "_blank");
+                                        }}
+                                    >
+                                        <SocialIcon
+                                            className="w-1/2 mr-2"
+                                            url="https://www.linkedin.com/in/"
+                                            style={{ height: 20, width: 20 }}
+                                        />
+                                        Contact
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                </div>
+            </div>
         </div>
     );
 };
 
 const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
     const [job, setJob] = useState({
-        position: '',
-        company: '',
-        description: '',
-        salary: '',
-        location: '',
-        link: '',
-        notes: '',
+        position: "",
+        company: "",
+        description: "",
+        salary: "",
+        location: "",
+        link: "",
+        notes: "",
         stage: jobData.stage,
         awaitingResponse: false,
-        priority: '',
+        priority: "",
 
         deadlines: [],
         interviewQuestions: [],
@@ -521,56 +1207,39 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
         await updateJob(job);
     };
 
-    const deleteJob = async () => {
+    const addNewJob = async () => {
+        await httpsCallable(getFunctions(), "addJob")();
+    };
+
+    const deleteJob = async (jobData) => {
         const newState = [...state];
-        newState[index] = state[index].filter((j) => j.id !== job.id);
-        await httpsCallable(getFunctions(), 'deleteJob')({ id: job.id });
+        newState[index] = state[index].filter((j) => j.id !== jobData.id);
+        await httpsCallable(getFunctions(), "deleteJob")({ id: jobData.id });
         setState(newState);
         setOpen(false);
     };
 
-    const updateJob = async () => {
-        const newState = [...state];
-        let jobDataNew;
-        switch (tabValue) {
-            case 0:
-                jobDataNew = structuredClone(job);
-                delete jobDataNew.deadlines;
-                delete jobDataNew.interviewQuestions;
-                delete jobDataNew.contacts;
-                delete jobDataNew.notes;
-                delete jobDataNew.id;
-                delete jobDataNew.boardId;
-                delete jobDataNew.userId;
+    const updateJob = async (jobData) => {
+        //const newState = [...state];
 
-                break;
-            case 1:
-                jobDataNew = job.notes;
-                break;
-            case 2:
-                jobDataNew = [];
-                break;
-            case 3:
-                jobDataNew = [];
-                break;
-            case 4:
-                jobDataNew = [];
-                break;
-            default:
-                throw new Error(
-                    `Invalid tab value: '${tabValue}' (must be an integer between 0 and 4 inclusive)`
-                );
-        }
-
+        const newJobData = {
+            awaitingResponse: jobData.awaitingResponse,
+            boardId: jobData.boardId,
+            company: jobData.company,
+            description: jobData.description,
+            link: jobData.link,
+            location: jobData.location,
+            notes: jobData.notes,
+            position: jobData.position,
+            priority: jobData.priority,
+            salary: jobData.salary,
+            stage: jobData.stage,
+            userId: jobData.userId,
+        };
         await httpsCallable(
             getFunctions(),
-            'updateJob'
-        )({ id: job.id, tab: tabValue + 1, newFields: jobDataNew });
-
-        if (isKanban) {
-            newState[index] = state[index].map((j) => (j.id === job.id ? job : j));
-            setState(newState);
-        }
+            "updateJobData"
+        )({ jobId: jobData.id, jobData: newJobData });
     };
 
     // const addNewJob = async () => {
@@ -613,7 +1282,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
             if (jobData) {
                 await httpsCallable(
                     getFunctions(),
-                    'getJobData'
+                    "getJobData"
                 )(jobData.id).then((res) => setJob(res.data));
             }
         };
@@ -622,32 +1291,72 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     }, [jobData]);
 
     return (
-        <Dialog fullWidth maxWidth="xl" onClose={async () => await handleClose()} open={true}>
+        <Dialog
+            fullWidth
+            scroll="paper"
+            className="overflow-hidden"
+            maxWidth="xl"
+            onClose={async () => await handleClose()}
+            open={true}
+        >
             <DialogContent
+                className=""
                 style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    height: 800,
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    height: "90vh",
+                    background: "linear-gradient(180deg, #FFF 25%, #F6F6F6  0%)",
+                    paddingBlock: 40,
                 }}
             >
-                <Headings jobData={job} setJob={setJob} />
-                <Tabs
-                    variant="scrollable"
-                    value={tabValue}
-                    onChange={handleChange}
-                    aria-label="Vertical tabs example"
-                >
-                    <Tab icon={<DescriptionOutlined />} iconPosition="end" label="Job Details" />
-                    <Tab
-                        icon={<DriveFileRenameOutlineOutlined />}
-                        iconPosition="end"
-                        label="Notes"
-                    />
-                    <Tab icon={<CalendarMonthOutlined />} iconPosition="end" label="Deadlines" />
-                    <Tab icon={<QuizOutlined />} iconPosition="end" label="Interview Questions" />
-                    <Tab icon={<ContactPageOutlined />} iconPosition="end" label="Contacts" />
-                </Tabs>
+                <DialogTitle style={{ paddingInline: 0 }}>
+                    <div className="bg-white -mt-5 overflow-hidden">
+                        <Headings jobData={job} setJob={setJob} />
+                    </div>
+                    <div className="flex flex-row bg-white px-20 justify-center align-center w-full pt-5">
+                        <div className="grid grid-col-1 w-full  place-content-evenly">
+                            <Tabs
+                                centered
+                                className="w-full"
+                                variant="fullWidth"
+                                value={tabValue}
+                                onChange={handleChange}
+                                aria-label="Vertical tabs example"
+                            >
+                                <Tab
+                                    icon={<DescriptionOutlined />}
+                                    sx={{ marginRight: "3vw" }}
+                                    iconPosition="start"
+                                    label="Job Details"
+                                />
+                                <Tab
+                                    sx={{ marginRight: "3vw" }}
+                                    icon={<DriveFileRenameOutlineOutlined />}
+                                    iconPosition="start"
+                                    label="Notes"
+                                />
+                                <Tab
+                                    icon={<CalendarMonthOutlined />}
+                                    sx={{ marginRight: "3vw" }}
+                                    iconPosition="start"
+                                    label="Deadlines"
+                                />
+                                <Tab
+                                    icon={<QuizOutlined />}
+                                    sx={{ marginRight: "3vw" }}
+                                    iconPosition="start"
+                                    label="Interview Questions"
+                                />
+                                <Tab
+                                    icon={<ContactPageOutlined />}
+                                    iconPosition="start"
+                                    label="Contacts"
+                                />
+                            </Tabs>{" "}
+                        </div>{" "}
+                    </div>
+                </DialogTitle>
                 <Details value={tabValue} index={0} jobData={job} setJob={setJob} />
                 <Notes value={tabValue} index={1} jobData={job} setJob={setJob} />
                 <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob} />
@@ -694,95 +1403,95 @@ export default JobDialog;
 
 const styles = {
     jobTitle: {
-        fontStyle: 'normal',
-        fontWeight: '200',
-        fontSize: '36px',
-        lineHeight: '44px',
-        color: '#676767',
-        margin: '.5vh 0',
+        fontStyle: "normal",
+        fontWeight: "200",
+        fontSize: "36px",
+        lineHeight: "44px",
+        color: "#676767",
+        margin: ".5vh 0",
     },
 
     jobDescription: {
-        boxSizing: 'border-box',
-        border: 'none',
-        outline: 'none',
+        boxSizing: "border-box",
+        border: "none",
+        outline: "none",
     },
     applicationLink: {
-        border: 'none',
-        outline: 'none',
-        margin: '2vh 0px',
+        border: "none",
+        outline: "none",
+        margin: "2vh 0px",
     },
 
     Company: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '20px',
-        marginBottom: '.5vh',
-        color: '#676767',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "20px",
+        marginBottom: ".5vh",
+        color: "#676767",
     },
     Location: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '20px',
-        color: '#676767',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "20px",
+        color: "#676767",
     },
 
     interviewIcons: {
-        width: '740px',
-        gap: '42px',
+        width: "740px",
+        gap: "42px",
     },
 
     deadlineButton: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '16px 12px 16px 16px',
-        gap: '10px',
-        width: '145px',
-        height: '51px',
-        whiteSpace: 'nowrap',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "16px 12px 16px 16px",
+        gap: "10px",
+        width: "145px",
+        height: "51px",
+        whiteSpace: "nowrap",
 
-        background: '#633175',
-        borderRadius: '8px',
+        background: "#633175",
+        borderRadius: "8px",
     },
 
     interviewQuestions: {
-        color: '#676767',
-        width: '100%',
+        color: "#676767",
+        width: "100%",
     },
 
     contactsBox: {
-        color: '#676767',
-        width: '100%',
+        color: "#676767",
+        width: "100%",
     },
 
     deadlineTitle: {
-        fontStyle: 'normal',
-        fontWeight: '200',
-        fontSize: '36px',
-        lineHeight: '44px',
-        color: '#676767',
+        fontStyle: "normal",
+        fontWeight: "200",
+        fontSize: "36px",
+        lineHeight: "44px",
+        color: "#676767",
     },
 
     deadlineLocation: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '12px',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "12px",
 
-        color: '#676767',
+        color: "#676767",
     },
 
     deadlineCompany: {
-        outline: 'none',
-        fontStyle: 'normal',
-        fontWeight: '400',
-        fontSize: '12px',
-        lineHeight: '19px',
+        outline: "none",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "12px",
+        lineHeight: "19px",
 
-        color: '#676767',
+        color: "#676767",
     },
 };
