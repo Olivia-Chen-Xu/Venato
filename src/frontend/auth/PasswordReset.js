@@ -5,6 +5,7 @@ import { passwordResetEmail } from './auth-functions';
 import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
 import { WarningAmberRounded } from '@mui/icons-material';
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const PasswordReset = () => {
     const navigate = useNavigate();
@@ -16,13 +17,7 @@ const PasswordReset = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handlePassReset = () => {
-        const passResetResult = passwordResetEmail(email);
-        if (typeof passResetResult === 'string') {
-            setErrMsg(passResetResult);
-            return;
-        }
-
-        passResetResult
+        const x = httpsCallable(getFunctions(), 'passwordReset')(email)
             .then(() => {
                 console.log(`Password reset email sent to ${email}`);
 
@@ -30,13 +25,13 @@ const PasswordReset = () => {
                 setIsSubmitted(true);
                 setErrMsg(`Password reset email sent!`);
             })
-            .catch((e) => {
-                if (e.code === 'auth/user-not-found') {
-                    // When signing up, we have to tell the user if the email is in use
-                    // so there is no point in hiding it here (also makes it harder)
+            .catch((err) => {
+                if (err.code === 'auth/user-not-found') {
+                    // We have to let the user know if the email is in use when signing up anyway
+                    // So this just makes it easier for the user
                     setErrMsg(`No email found, make sure you typed it in correctly`);
                 } else {
-                    console.log(`Error sending password reset email to ${email}: ${e}`);
+                    console.log(`Error sending password reset email to ${email}: ${err}`);
                     setErrMsg(`Error sending password reset email to ${email}`);
                 }
             });

@@ -58,7 +58,7 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
         });
 };
 
-// Returns true if the object has the same structure as the structure object
+// Throws an error if the request object and expected structure are not the same
 // Conditions:
 //  - Both the original object and structure are of type object
 //  - Both objects have the same number of keys

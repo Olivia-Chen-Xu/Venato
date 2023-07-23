@@ -13,7 +13,7 @@ const createAccount = functions.https.onCall(async (credentials: {
             email: '',
             password: ''
         };
-        isValidObjectStructure(credentials, structure)
+        isValidObjectStructure(credentials, structure);
 
         // Create user (will throw an error if the email is already in use)
         return auth
@@ -23,9 +23,7 @@ const createAccount = functions.https.onCall(async (credentials: {
                 password: credentials.password,
                 disabled: false,
             })
-            .then(() => {
-                return `Successfully created new user`;
-            })
+            .then(() => `Successfully created new user`)
             .catch((error) => {
                 if (error.code === 'auth/email-already-exists') {
                     throw new functions.https.HttpsError('already-exists', `Email ${credentials.email} in use`);
@@ -112,8 +110,11 @@ const passwordReset = functions.https.onCall(async (email: string, context) => {
             to: email,
             message: {
                 subject: 'Reset your Venato password',
-                html: `<p style="font-size: 16px;">Reset your password with this link: ${link}</p>
-                       <p style="font-size: 12px;">If you didn't request this, please disregard this email</p>
+                html: `<p style="font-size: 14px;">A password reset has been requested for you account (<strong>${email}</strong>)</p>
+                       <br>
+                       <p style="font-size: 16px;">Reset your password with this link: ${link}</p>
+                       <br>
+                       <p style="font-size: 12px;">If you didn't request this, you can safely disregard this email</p>
                        <p style="font-size: 12px;">Best Regards,</p>
                        <p style="font-size: 12px;">-The Venato Team</p>`,
             }
