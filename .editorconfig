@@ -14,7 +14,8 @@ ij_javascript_spaces_within_imports = true
 ij_typescript_spaces_within_imports = true
 ij_javascript_spaces_within_object_literal_braces = true
 ij_javascript_spaces_within_object_type_braces = true
-
+ij_typescript_spaces_within_object_literal_braces = true
+ij_typescript_spaces_within_object_type_braces = true
 
 [*.md]
 trim_trailing_whitespace = false

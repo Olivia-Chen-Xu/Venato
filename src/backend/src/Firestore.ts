@@ -13,7 +13,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
 
     // Move the deadlines to its own collection
     const deadlines = job.deadlines;
-    promises.push(snap.ref.update({ deadlines: firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({deadlines: firestoreHelper.FieldValue.delete()}));
 
     deadlines.forEach(
         (deadline: IDeadline) => {
@@ -31,7 +31,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
 
     // Move the interview questions to their own collection (with search params for easy querying)
     const interviewQuestions = job.interviewQuestions;
-    promises.push(snap.ref.update({ interviewQuestions: firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({interviewQuestions: firestoreHelper.FieldValue.delete()}));
 
     interviewQuestions.forEach((question: IInterviewQuestion) => {
         const newQuestion = {
@@ -45,7 +45,7 @@ const onJobCreate = functions.firestore.document('jobs/{jobId}').onCreate(async 
 
     // Move the contacts to their own collection
     const contacts = job.contacts;
-    promises.push(snap.ref.update({ contacts: firestoreHelper.FieldValue.delete() }));
+    promises.push(snap.ref.update({contacts: firestoreHelper.FieldValue.delete()}));
 
     contacts.forEach(
         (contact: IContact) => {
@@ -106,7 +106,7 @@ const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(a
             }
 
             if (userDoc.data()?.kanbanBoard === boardId) {
-                promises.push(userDoc.ref.update({ kanbanBoard: firestoreHelper.FieldValue.delete() }));
+                promises.push(userDoc.ref.update({kanbanBoard: firestoreHelper.FieldValue.delete()}));
             }
             return null;
         })

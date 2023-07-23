@@ -9,7 +9,7 @@ const createAccount = functions.https.onCall(async (credentials: {
         password: string
     }, context) => {
         // Verify input data
-        if (!isValidObjectStructure(credentials, { email: '', password: '' })) {
+        if (!isValidObjectStructure(credentials, {email: '', password: ''})) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Signup data must be provided: { email: string, password: string }'
