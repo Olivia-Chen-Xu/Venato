@@ -14,6 +14,10 @@ if [ "$1" == "STG" ]; then
     echo "  🟢 Deploying to STG environment..."
     firebase deploy --only functions --project venato-ae74d
 elif [ "$1" == "PROD" ]; then
+    if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
+        echo " 🔴 You must be on the main branch to deploy to PROD"
+        exit 1
+    fi
     echo "  🟢 Deploying to PROD environment..."
     firebase deploy --only functions --project venato-production-e2ae0
 else
