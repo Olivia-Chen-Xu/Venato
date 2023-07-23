@@ -125,7 +125,7 @@ export default function KanbanJob(props) {
                                 await httpsCallable(
                                     getFunctions(),
                                     "deleteJob"
-                                )({id: props.job.id});
+                                )({ id: props.job.id });
                                 props.setKanbanState(newState);
                                 setAnchorEl(null);
                                 // const deleteJob = async (jobData) => {

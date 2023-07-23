@@ -10,10 +10,10 @@ import KanbanJob from "./components/KanbanJob";
 import KanbanHeader from "./components/KanbanHeader";
 
 const cols = [
-    {name: "APPLICATIONS", color: "#926EFE"},
-    {name: "INTERVIEWS", color: "#FF8900"},
-    {name: "OFFERS", color: "#84FF9F"},
-    {name: "REJECTIONS", color: "#00819B"},
+    { name: "APPLICATIONS", color: "#926EFE" },
+    { name: "INTERVIEWS", color: "#FF8900" },
+    { name: "OFFERS", color: "#84FF9F" },
+    { name: "REJECTIONS", color: "#00819B" },
 ];
 
 const newJob = (index) => {
@@ -93,11 +93,11 @@ const Kanban = () => {
         await httpsCallable(
             getFunctions(),
             "addJob"
-        )({boardId: boardID, stage: index}).then((res) => {
+        )({ boardId: boardID, stage: index }).then((res) => {
             const job = newJob(index);
-            newState[index] = [{...job, id: res.data}, ...kanbanState[index]];
+            newState[index] = [{ ...job, id: res.data }, ...kanbanState[index]];
             setKanbanState(newState);
-            setCurrentJob({...job, id: res.data});
+            setCurrentJob({ ...job, id: res.data });
             // console.log(currentJob);
         });
     };
@@ -118,7 +118,7 @@ const Kanban = () => {
     };
 
     async function onDragEnd(result) {
-        const {source, destination} = result;
+        const { source, destination } = result;
 
         // dropped outside the list
         if (!destination) {

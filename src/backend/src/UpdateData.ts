@@ -183,7 +183,7 @@ const updateDeadline = functions.https.onCall(async (data: {
     await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
 
     return getDoc(`deadlines/${data.deadlineId}`)
-        .update({...data.deadline, date: getFirestoreTimestamp(data.deadline.date)})
+        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
         .then(() => `Deadline '${data.deadlineId}' updated successfully`)
         .catch((err) => `Failed to update deadline '${data.deadlineId}': ${err}`);
 });
@@ -221,7 +221,7 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
     return getCollection(`interviewQuestions`)
-        .add({...interviewQuestion, userId: context.auth.uid})
+        .add({ ...interviewQuestion, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add interview question: ${err}`);
 });
@@ -288,7 +288,7 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
     return getCollection(`contacts`)
-        .add({...contact, userId: context.auth.uid})
+        .add({ ...contact, userId: context.auth.uid })
         .then((result) => result.id)
         .catch((err) => `Failed to add contact: ${err}`);
 });
@@ -394,7 +394,7 @@ const dragKanbanJob = functions.https.onCall(
         await verifyDocPermission(context, `jobs/${data.id}`);
 
         return getDoc(`jobs/${data.id}`)
-            .update({stage: data.newStage})
+            .update({ stage: data.newStage })
             .then(() => `Successfully updated job stage`)
             .catch((err) => `Error updating job stage: ${err}`);
     }
@@ -424,10 +424,10 @@ const addBoard = functions.https.onCall(async (boardName: string, context: any) 
 
     verifyIsAuthenticated(context);
 
-    const newBoard = {name: boardName, userId: context.auth.uid};
+    const newBoard = { name: boardName, userId: context.auth.uid };
     return getCollection('boards')
-        .add({name: boardName, userId: context.auth.uid})
-        .then((result) => ({id: result.id, name: newBoard.name}))
+        .add({ name: boardName, userId: context.auth.uid })
+        .then((result) => ({ id: result.id, name: newBoard.name }))
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 

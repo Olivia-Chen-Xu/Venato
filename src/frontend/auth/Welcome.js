@@ -52,7 +52,7 @@ const Welcome = () => {
             {/*</Button>*/}
             {/*<br />*/}
             <br/>
-            <text style={{color: "red"}}>{errMsg}</text>
+            <text style={{ color: "red" }}>{errMsg}</text>
         </div>
     );
 };

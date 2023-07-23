@@ -37,7 +37,7 @@ export const signup = (email, password) => {
         );
     }
 
-    return httpsCallable(getFunctions(), 'createAccount')({email, password});
+    return httpsCallable(getFunctions(), 'createAccount')({ email, password });
 };
 
 export const signin = (email, password) => {

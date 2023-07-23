@@ -3,7 +3,7 @@ import { CircularProgress, Skeleton } from "@mui/material"
 export default function AppScreen(props) {
 
     // className only effects the second div
-    const {isLoading, isEmpty, empty, title, children, margin, className, style, ...rest} = props
+    const { isLoading, isEmpty, empty, title, children, margin, className, style, ...rest } = props
 
     const classes = `flex-1 overflow-auto py-3 pt-5 app-screen ${margin} ${className ? className : ''}`
     const styles = {

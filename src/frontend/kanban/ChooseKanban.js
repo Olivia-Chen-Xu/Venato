@@ -55,7 +55,7 @@ const ChooseKanban = () => {
                     className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
                         className="py-8 flex grow"
-                        onClick={() => nav("/kanban", {state: {boardId: board.id}})}
+                        onClick={() => nav("/kanban", { state: { boardId: board.id } })}
                     >
                         <div className="flex px-8 gap-3 grow items-center">
                             <SkateboardingOutlined color="primary" fontSize="large"/>
@@ -121,7 +121,7 @@ const ChooseKanban = () => {
 
                     <br/>
 
-                    <Button variant="contained" onClick={addNewBoard} style={{width: 100}}>
+                    <Button variant="contained" onClick={addNewBoard} style={{ width: 100 }}>
                         Add
                     </Button>
                 </DialogContent>
@@ -144,7 +144,7 @@ const ChooseKanban = () => {
                         </strong>
                         <br/>
 
-                        <Button variant="contained" style={{width: 100}}>
+                        <Button variant="contained" style={{ width: 100 }}>
                             No
                         </Button>
                         <Button
@@ -161,7 +161,7 @@ const ChooseKanban = () => {
                                 );
                                 setDeleteDialogOpen("");
                             }}
-                            style={{width: 100}}
+                            style={{ width: 100 }}
                         >
                             Yes
                         </Button>

@@ -8,7 +8,7 @@ import ReusableSideBar from './ReusableSideBar';
 import ChooseKanban from '../kanban/ChooseKanban';
 
 const Overlay = (props) => {
-    const {page} = props;
+    const { page } = props;
     let elem;
 
     if (page === 'home') {

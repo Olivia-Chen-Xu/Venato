@@ -64,27 +64,34 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
 //  - Both objects have the same number of keys
 //  - Each key in the structure object exists in the original object and has the same type
 //    (if the value is an object, recursively check the structure of that object too)
-const isValidObjectStructure = (obj: any, structure: any) => {
-    if (typeof obj !== 'object' || typeof structure !== 'object') {
-        return false;
-    }
-
-    if (Object.keys(obj).length !== Object.keys(structure).length) {
-        return false;
-    }
-
-    for (const key in structure) {
-        if (typeof obj[key] !== typeof structure[key]) {
+const isValidObjectStructure = (obj: object, structure: object) => {
+    const isValid = (obj: any, structure: any) => {
+        if (typeof obj !== 'object' || typeof structure !== 'object') {
             return false;
         }
-        if (typeof obj[key] === 'object') {
-            if (!isValidObjectStructure(obj[key], structure[key])) {
+
+        if (Object.keys(obj).length !== Object.keys(structure).length) {
+            return false;
+        }
+
+        for (const key in structure) {
+            if (typeof obj[key] !== typeof structure[key]) {
                 return false;
             }
+            if (typeof obj[key] === 'object') {
+                if (!isValid(obj[key], structure[key])) {
+                    return false;
+                }
+            }
         }
+
+        return true;
     }
 
-    return true;
+    if (isValid(obj, structure)) {
+        return null;
+    }
+    return "";
 }
 
 // Gets a firebase timestamp for x days ago (0 for current date)

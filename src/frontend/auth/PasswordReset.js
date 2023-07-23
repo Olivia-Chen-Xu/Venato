@@ -70,7 +70,7 @@ const PasswordReset = () => {
                     <br/>
                     <div className="flex flex-1">
                         {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5"/>}
-                        <text className="WelcomeText" style={errMsg === '' ? {} : {color: 'red'}}>
+                        <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
                             {errMsg === '' ? '' : errMsg}
                         </text>
                     </div>

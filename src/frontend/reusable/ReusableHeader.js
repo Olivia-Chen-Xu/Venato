@@ -10,7 +10,7 @@ export default function ReusableHeader() {
 
     return (
         <header className='p-8 bg-white'
-                style={{minHeight: '7rem', maxHeight: '20rem', background: 'white'}}>
+                style={{ minHeight: '7rem', maxHeight: '20rem', background: 'white' }}>
             <nav className='flex flex-[1_0_100%]'>
                 <Button
                     startIcon={<KeyboardArrowLeft fontSize='large'/>}

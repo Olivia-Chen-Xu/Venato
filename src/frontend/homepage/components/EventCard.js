@@ -2,7 +2,7 @@ import { Box } from "@mui/material"
 
 export default function EventCard(props) {
 
-    const {title, bgColor, accentColor, textColor, background, footer, handleClick} = props
+    const { title, bgColor, accentColor, textColor, background, footer, handleClick } = props
 
     return (
         <div

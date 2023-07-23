@@ -47,7 +47,7 @@ const Homepage = () => {
             <Button
                 color="white"
                 variant="contained"
-                onClick={() => nav("/kanban", {state: {boardId: board.id}})}
+                onClick={() => nav("/kanban", { state: { boardId: board.id } })}
                 className="flex-1 space-between"
                 fullWidth
                 disableElevation
@@ -137,7 +137,7 @@ const Homepage = () => {
 
         return (
             <Box className="p-3 grid grid-flow-row md:grid-flow-col md:flex-row gap-3">
-                {getStarted.map(({title, content, link}) => (
+                {getStarted.map(({ title, content, link }) => (
                     <Button
                         color="white"
                         variant="contained"
@@ -263,7 +263,7 @@ const Homepage = () => {
 
                     <br/>
 
-                    <Button variant="contained" onClick={addNewBoard} style={{width: 100}}>
+                    <Button variant="contained" onClick={addNewBoard} style={{ width: 100 }}>
                         Add
                     </Button>
                 </DialogContent>

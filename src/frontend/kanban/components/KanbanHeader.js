@@ -74,7 +74,7 @@ export default function KanbanHeader(props) {
             </div>
             <IconButton
                 onClick={handleAdd}
-                style={{marginLeft: "auto"}}
+                style={{ marginLeft: "auto" }}
                 sx={{
                     flexShrink: 1,
                     padding: 0,

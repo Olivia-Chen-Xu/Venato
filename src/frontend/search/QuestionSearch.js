@@ -7,7 +7,7 @@ import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, WorkOutline } from "@mui/icons-material";
 
 const QuestionSearch = () => {
-    const [query, setQuery] = useState({company: "", position: ""});
+    const [query, setQuery] = useState({ company: "", position: "" });
     const [questions, setQuestions] = useState([]);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -48,8 +48,8 @@ const QuestionSearch = () => {
                     borderRadius: 8,
                 }}
             >
-                <div style={{fontWeight: 500, fontSize: 18}}>{question.name}</div>
-                <div style={{display: "flex", flexDirection: "row", marginBlock: 20}}>
+                <div style={{ fontWeight: 500, fontSize: 18 }}>{question.name}</div>
+                <div style={{ display: "flex", flexDirection: "row", marginBlock: 20 }}>
                     <Button
                         style={{
                             backgroundColor: "#F2F9FA",
@@ -85,7 +85,7 @@ const QuestionSearch = () => {
         ));
     };
 
-    const inputBoxStyle = {outline: "1px solid black", width: "30%"};
+    const inputBoxStyle = { outline: "1px solid black", width: "30%" };
     return (
         <AppScreen title="Find interview questions">
             <div
@@ -99,7 +99,7 @@ const QuestionSearch = () => {
             >
                 <TextField
                     label="Search job title or keyword"
-                    style={{width: "60%"}}
+                    style={{ width: "60%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -108,12 +108,12 @@ const QuestionSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({...query, position: e.target.value});
+                        setQuery({ ...query, position: e.target.value });
                     }}
                 ></TextField>
                 <TextField
                     label="company"
-                    style={{width: "30%"}}
+                    style={{ width: "30%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -122,7 +122,7 @@ const QuestionSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({...query, company: e.target.value});
+                        setQuery({ ...query, company: e.target.value });
                     }}
                 ></TextField>
                 <LoadingButton
@@ -132,7 +132,7 @@ const QuestionSearch = () => {
                     loading={loading}
                     disableElevation
                     endIcon={<Search/>}
-                    style={{height: 56}}
+                    style={{ height: 56 }}
                 >
                     {" "}
                     Search

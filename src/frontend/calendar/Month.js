@@ -120,7 +120,7 @@ const Day = ({
     );
 };
 
-const Month = ({viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines}) => {
+const Month = ({ viewApp, viewInt, month, setOpen, setJob, setIsEdit, deadlines }) => {
     return (
         <div className="h-full grid grid-cols-7 grid-rows-5">
             {month.map((row, i) => (

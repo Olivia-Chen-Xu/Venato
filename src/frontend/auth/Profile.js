@@ -53,12 +53,12 @@ const Profile = () => {
                 padding: 20,
             }}
         >
-            <text style={{fontSize: 32, fontWeight: "regular"}}>Venato profile</text>
+            <text style={{ fontSize: 32, fontWeight: "regular" }}>Venato profile</text>
             <br/>
             <Button
                 color="neutral"
                 variant="contained"
-                style={{width: 200}}
+                style={{ width: 200 }}
                 onClick={handleSignOut}
             >
                 Sign out
@@ -82,7 +82,7 @@ const Profile = () => {
             {/*    }}*/}
             {/*>*/}
             {/*</Button>*/}
-            <text style={{color: "red"}}>{errMsg}</text>
+            <text style={{ color: "red" }}>{errMsg}</text>
         </div>
     );
 };

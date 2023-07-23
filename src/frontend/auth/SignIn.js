@@ -55,7 +55,7 @@ const SignIn = () => {
 
     return (
         <div className="h-screen grid place-content-center">
-            <div style={{alignItems: 'flex-start '}}>
+            <div style={{ alignItems: 'flex-start ' }}>
                 <text className="TopText">Log in</text>
                 <div className="flex flex-1 my-5">
                     {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
@@ -63,7 +63,7 @@ const SignIn = () => {
                 </p>{' '} */}
 
                     {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
-                    <text className="WelcomeText" style={errMsg === '' ? {} : {color: 'red'}}>
+                    <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
                         {' '}
                         {errMsg === '' ? 'Welcome back!' : errMsg}
                     </text>
@@ -79,7 +79,7 @@ const SignIn = () => {
                         setEmail(e.target.value);
                     }}
                 ></TextField>
-                <div style={{height: 20}}></div>
+                <div style={{ height: 20 }}></div>
                 <InputLabel>Password</InputLabel>
                 <TextField
                     variant="outlined"
@@ -121,7 +121,7 @@ const SignIn = () => {
                         alignSelf: 'flex-end',
                     }}
                 >
-                    <text style={{cursor: "pointer"}} onClick={() => navigate("/password-reset")}>
+                    <text style={{ cursor: "pointer" }} onClick={() => navigate("/password-reset")}>
                         Forgot your password?
                     </text>
                 </p>

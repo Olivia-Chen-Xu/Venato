@@ -45,7 +45,7 @@ const SignUp = () => {
 
     return (
         <div className="h-screen grid place-content-center">
-            <div style={{alignItems: 'flex-start '}}>
+            <div style={{ alignItems: 'flex-start ' }}>
                 <text className="TopText">Sign Up</text>
                 <div className="flex flex-1 my-5">
                     {/* <p className="WelcomeText material-icons-outlined mr-5" style={{ color: 'red', fontSize: '32px'}}>
@@ -54,7 +54,7 @@ const SignUp = () => {
 
                     {errMsg === '' ? '' : <WarningAmberRounded color='error' className='mr-5'/>}
                     <text className="WelcomeText"
-                          style={errMsg === '' ? (successMsg === '' ? {} : {color: 'green'}) : {color: 'red'}}>
+                          style={errMsg === '' ? (successMsg === '' ? {} : { color: 'green' }) : { color: 'red' }}>
                         {' '}
                         {errMsg === '' ? (successMsg === '' ? 'Welcome!' : successMsg) : errMsg}
                     </text>
@@ -70,7 +70,7 @@ const SignUp = () => {
                         setEmail(e.target.value);
                     }}
                 ></TextField>
-                <div style={{height: 20}}></div>
+                <div style={{ height: 20 }}></div>
                 <InputLabel>Password</InputLabel>
                 <TextField
                     variant="outlined"
@@ -99,7 +99,7 @@ const SignUp = () => {
                         ),
                     }}
                 ></TextField>
-                <div style={{height: 20}}></div>
+                <div style={{ height: 20 }}></div>
                 <InputLabel>Confirm Password</InputLabel>
                 <TextField
                     variant="outlined"

@@ -9,7 +9,7 @@ import AppScreen from "../reusable/AppScreen";
 import { AlternateEmail, OutboundOutlined, PlaceOutlined, WorkOutline } from "@mui/icons-material";
 
 const JobSearch = () => {
-    const [query, setQuery] = useState({company: "", position: "", location: ""});
+    const [query, setQuery] = useState({ company: "", position: "", location: "" });
     const [jobs, setJobs] = useState([]);
     const [message, setMessage] = useState("");
     const [currJob, setcurrJob] = useState(null);
@@ -45,7 +45,7 @@ const JobSearch = () => {
 
         return (
             <div className="flex flex-1 mx-10">
-                <div style={{width: 400}}>
+                <div style={{ width: 400 }}>
                     {jobs.map((job, index) => {
                         if (!job.position || !job.company || !job.location) {
                             return;
@@ -66,13 +66,13 @@ const JobSearch = () => {
                                     borderWidth: 1,
                                 }}
                             >
-                                <div style={{fontSize: 15}}>{job.company}</div>
-                                <div style={{fontSize: 16, fontWeight: 500}}>{job.position}</div>
-                                <div className="flex w-full items-center" style={{fontSize: 13}}>
+                                <div style={{ fontSize: 15 }}>{job.company}</div>
+                                <div style={{ fontSize: 16, fontWeight: 500 }}>{job.position}</div>
+                                <div className="flex w-full items-center" style={{ fontSize: 13 }}>
                                     {" "}
                                     <span
                                         className="material-icons-outlined"
-                                        style={{fontSize: 15}}
+                                        style={{ fontSize: 15 }}
                                     >
                                         location_on
                                     </span>{" "}
@@ -96,11 +96,11 @@ const JobSearch = () => {
                                 position: "relative",
                             }}
                         >
-                            <div style={{fontSize: 15}}>{currJob.company}</div>
-                            <div style={{fontSize: 16, fontWeight: 500}}>{currJob.position}</div>
-                            <div className="flex w-full items-center" style={{fontSize: 13}}>
+                            <div style={{ fontSize: 15 }}>{currJob.company}</div>
+                            <div style={{ fontSize: 16, fontWeight: 500 }}>{currJob.position}</div>
+                            <div className="flex w-full items-center" style={{ fontSize: 13 }}>
                                 {" "}
-                                <span className="material-icons-outlined" style={{fontSize: 15}}>
+                                <span className="material-icons-outlined" style={{ fontSize: 15 }}>
                                     location_on
                                 </span>{" "}
                                 {currJob.location}
@@ -155,13 +155,13 @@ const JobSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({...query, position: e.target.value});
+                        setQuery({ ...query, position: e.target.value });
                     }}
-                    style={{width: "50%"}}
+                    style={{ width: "50%" }}
                 ></TextField>
                 <TextField
                     label="Company"
-                    style={{width: "20%"}}
+                    style={{ width: "20%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -170,12 +170,12 @@ const JobSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({...query, company: e.target.value});
+                        setQuery({ ...query, company: e.target.value });
                     }}
                 ></TextField>
                 <TextField
                     label="Location"
-                    style={{width: "20%"}}
+                    style={{ width: "20%" }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -184,7 +184,7 @@ const JobSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({...query, location: e.target.value});
+                        setQuery({ ...query, location: e.target.value });
                     }}
                 ></TextField>
                 <LoadingButton
@@ -194,7 +194,7 @@ const JobSearch = () => {
                     loading={loading}
                     disableElevation
                     startIcon={<Search/>}
-                    style={{height: 56}}
+                    style={{ height: 56 }}
                 >
                     {" "}
                     Search

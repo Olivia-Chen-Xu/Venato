@@ -285,7 +285,7 @@ const generateDeadlines = () => {
             .map(() => Math.floor(Math.random() * 10))
             .join(``)}`;
 
-        deadlines.push({title, date, location, link, isInterview});
+        deadlines.push({ title, date, location, link, isInterview });
     };
 
     const numDeadlines = Math.floor(Math.random() * 3) + 1;
@@ -472,14 +472,14 @@ const generateJobs = async (num) => {
             contacts: generateContacts()
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 3) + 1)
-                .map((contact) => ({...contact, company: companies[companyNumber]})),
+                .map((contact) => ({ ...contact, company: companies[companyNumber] })),
         };
         jobs.push(job);
     }
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs({jobs, boards})
+    addJobs({ jobs, boards })
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };
