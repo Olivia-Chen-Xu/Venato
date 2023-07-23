@@ -64,7 +64,7 @@ const verifyDocPermission = async (context: functions.https.CallableContext, pat
 //  - Both objects have the same number of keys
 //  - Each key in the structure object exists in the original object and has the same type
 //    (if the value is an object, recursively check the structure of that object too)
-const isValidObjectStructure = (obj: object, structure: object) => {
+const isValidObjectStructure = (requestObject: object, structure: object) => {
     const isValid = (obj: any, structure: any) => {
         if (typeof obj !== 'object' || typeof structure !== 'object') {
             return false;
@@ -88,10 +88,33 @@ const isValidObjectStructure = (obj: object, structure: object) => {
         return true;
     }
 
-    if (isValid(obj, structure)) {
-        return null;
+    if (isValid(requestObject, structure)) {
+        return;
     }
-    return "";
+
+    // Turn the actual data in an object to the type
+    // Ex: { "BoardName": "Test board" } -> { "BoardName": "string" }
+    const transformFields = (obj: any) => {
+        for (const key in obj) {
+            // Skip loop if the property is from prototype
+            if (!obj.hasOwnProperty(key)) continue;
+
+            const value = obj[key];
+            if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+                transformFields(value);
+            } else {
+                obj[key] = typeof value;
+            }
+        }
+    };
+    transformFields(requestObject);
+    transformFields(structure);
+
+    const errorMessage = `Invalid API request structure. `
+        + `Expected:\n${JSON.stringify(structure, null, 4)}\n`
+        + `Actual:\n${JSON.stringify(requestObject, null, 4)}`;
+
+    throw new functions.https.HttpsError('invalid-argument', errorMessage);
 }
 
 // Gets a firebase timestamp for x days ago (0 for current date)

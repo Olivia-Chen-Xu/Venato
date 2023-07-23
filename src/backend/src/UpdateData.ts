@@ -39,12 +39,7 @@ const addJobs = functions.https.onCall(
             jobs: [],
             boards: [],
         };
-        if (!isValidObjectStructure(data, structure)) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Must provide only an array of jobs and boards as arguments'
-            );
-        }
+        isValidObjectStructure(data, structure);
 
         // Add boards and jobs to db
         for (const board of data.boards) {
@@ -80,12 +75,7 @@ const addJob = functions.https.onCall(async (jobData: {
         boardId: '',
         stage: 0
     };
-    if (!isValidObjectStructure(jobData, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Must provide only a board id (string) and stage (number) as arguments'
-        );
-    }
+    isValidObjectStructure(jobData, structure);
 
     if (![0, 1, 2, 3].includes(jobData.stage)) {
         throw new functions.https.HttpsError(
@@ -132,12 +122,7 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
         link: '',
         jobId: '',
     };
-    if (!isValidObjectStructure(deadline, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Invalid deadline object structure'
-        );
-    }
+    isValidObjectStructure(deadline, structure);
     if (!Number.isInteger(deadline.date) || deadline.date < 0) {
         throw new functions.https.HttpsError(
             'invalid-argument',
@@ -173,12 +158,7 @@ const updateDeadline = functions.https.onCall(async (data: {
             title: '',
         }
     };
-    if (!isValidObjectStructure(data, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Must provide only a deadlines id (string) and deadline (see db for structure) as arguments'
-        );
-    }
+    isValidObjectStructure(data, structure);
 
     await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
 
@@ -211,12 +191,7 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
         company: '',
         jobId: '',
     }
-    if (!isValidObjectStructure(interviewQuestion, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Invalid interview question object structure'
-        );
-    }
+    isValidObjectStructure(interviewQuestion, structure);
 
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
@@ -236,12 +211,7 @@ const updateInterviewQuestion = functions.https.onCall(
                 name: '',
             }
         };
-        if (!isValidObjectStructure(data, structure)) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Must provide only a question id (string) and question (see db for structure) as arguments'
-            );
-        }
+        isValidObjectStructure(data, structure);
 
         await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
@@ -278,12 +248,7 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
         notes: '',
         jobId: '',
     }
-    if (!isValidObjectStructure(contact, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Invalid contact object structure'
-        );
-    }
+    isValidObjectStructure(contact, structure);
 
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
@@ -308,12 +273,7 @@ const updateContact = functions.https.onCall(
                 title: '',
             }
         };
-        if (!isValidObjectStructure(data, structure)) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Must provide only a contact id (string) and contact (see db for structure) as arguments'
-            );
-        }
+        isValidObjectStructure(data, structure)
 
         await verifyDocPermission(context, `contacts/${data.contactId}`);
 
@@ -360,12 +320,7 @@ const updateJobData = functions.https.onCall(
                 userId: '',
             }
         };
-        if (!isValidObjectStructure(data, structure)) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Must provide only a job id (string) and job data (see db for structure) as arguments'
-            );
-        }
+        isValidObjectStructure(data, structure);
 
         await verifyDocPermission(context, `jobs/${data.jobId}`);
 
