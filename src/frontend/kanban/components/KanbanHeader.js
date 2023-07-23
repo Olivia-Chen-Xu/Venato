@@ -1,7 +1,6 @@
-import { MoreHoriz, Add } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
-import { useState } from "react";
-import { Menu, MenuItem } from "@mui/material";
+import {Add} from "@mui/icons-material";
+import {IconButton} from "@mui/material";
+import {useState} from "react";
 
 export default function KanbanHeader(props) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -75,13 +74,13 @@ export default function KanbanHeader(props) {
             </div>
             <IconButton
                 onClick={handleAdd}
-                style={{ marginLeft: "auto" }}
+                style={{marginLeft: "auto"}}
                 sx={{
                     flexShrink: 1,
                     padding: 0,
                 }}
             >
-                <Add />
+                <Add/>
             </IconButton>
         </div>
     )

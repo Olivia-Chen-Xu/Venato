@@ -1,12 +1,12 @@
-import { useAsync } from "react-async-hook";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { Button, CircularProgress, Dialog, DialogContent, TextField } from "@mui/material";
-import { Add, MoreVert, SkateboardingOutlined } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useAsync} from "react-async-hook";
+import {getFunctions, httpsCallable} from "firebase/functions";
+import {Button, Dialog, DialogContent, TextField} from "@mui/material";
+import {Add, MoreVert, SkateboardingOutlined} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 import IconButton from "@mui/material/IconButton";
 import AppScreen from "../reusable/AppScreen";
-import { ReactComponent as NoBoards } from "../../graphics/empty/no-boards.svg";
+import {ReactComponent as NoBoards} from "../../graphics/empty/no-boards.svg";
 
 const ChooseKanban = () => {
     const nav = useNavigate();
@@ -51,13 +51,14 @@ const ChooseKanban = () => {
         const boardsHtml = [];
         boards.result.data.forEach((board) => {
             boardsHtml.push(
-                <div className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
+                <div
+                    className="rounded-2xl bg-white text-neutral-600 border-2 border-neutral-300 flex">
                     <button
                         className="py-8 flex grow"
-                        onClick={() => nav("/kanban", { state: { boardId: board.id } })}
+                        onClick={() => nav("/kanban", {state: {boardId: board.id}})}
                     >
                         <div className="flex px-8 gap-3 grow items-center">
-                            <SkateboardingOutlined color="primary" fontSize="large" />
+                            <SkateboardingOutlined color="primary" fontSize="large"/>
                             <span>{board.name}</span>
                             <IconButton
                                 sx={{
@@ -83,14 +84,14 @@ const ChooseKanban = () => {
         <AppScreen
             isLoading={loading}
             isEmpty={empty}
-            empty={<NoBoards />}
+            empty={<NoBoards/>}
             title="Job Boards"
             margin="mx-20"
         >
             <Button
                 color="white"
                 variant="contained"
-                startIcon={<Add />}
+                startIcon={<Add/>}
                 onClick={() => setDialogOpen(true)}
                 sx={{
                     border: "2px solid #7F5BEB",
@@ -110,7 +111,7 @@ const ChooseKanban = () => {
                     }}
                 >
                     <p>Enter board name</p>
-                    <br />
+                    <br/>
                     <TextField
                         label="Board name"
                         value={boardName}
@@ -118,9 +119,9 @@ const ChooseKanban = () => {
                         onChange={(e) => setBoardName(e.target.value)}
                     />
 
-                    <br />
+                    <br/>
 
-                    <Button variant="contained" onClick={addNewBoard} style={{ width: 100 }}>
+                    <Button variant="contained" onClick={addNewBoard} style={{width: 100}}>
                         Add
                     </Button>
                 </DialogContent>
@@ -137,13 +138,13 @@ const ChooseKanban = () => {
                         }}
                     >
                         <p>Delete job board '{getBoardName()}'?</p>
-                        <br />
+                        <br/>
                         <strong>
                             ⚠️ WARNING: This board and ALL of its jobs will be deleted ⚠️
                         </strong>
-                        <br />
+                        <br/>
 
-                        <Button variant="contained" style={{ width: 100 }}>
+                        <Button variant="contained" style={{width: 100}}>
                             No
                         </Button>
                         <Button
@@ -160,7 +161,7 @@ const ChooseKanban = () => {
                                 );
                                 setDeleteDialogOpen("");
                             }}
-                            style={{ width: 100 }}
+                            style={{width: 100}}
                         >
                             Yes
                         </Button>

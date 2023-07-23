@@ -1,9 +1,19 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { AccountCircleOutlined, AutoAwesomeOutlined, CalendarMonthOutlined, ExpandMore, FolderZipOutlined, HomeOutlined, NotificationsOutlined, QuizOutlined, SearchOutlined } from '@mui/icons-material';
-import { useState, useEffect } from 'react';
-import { Button, Menu, MenuItem } from '@mui/material';
-import { deleteAccount, signout } from "../auth/auth-functions";
-import { auth } from "../../firebase";
+import {useLocation, useNavigate} from 'react-router-dom';
+import {
+    AccountCircleOutlined,
+    AutoAwesomeOutlined,
+    CalendarMonthOutlined,
+    ExpandMore,
+    FolderZipOutlined,
+    HomeOutlined,
+    NotificationsOutlined,
+    QuizOutlined,
+    SearchOutlined
+} from '@mui/icons-material';
+import {useEffect, useState} from 'react';
+import {Button, Menu, MenuItem} from '@mui/material';
+import {deleteAccount, signout} from "../auth/auth-functions";
+import {auth} from "../../firebase";
 import generateJobs from "../search/GenerateJobs";
 
 const sidebarButtonOverrides = {
@@ -24,7 +34,7 @@ export default function ReusableSideBar() {
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
 
-    const [currentPage, setCurrentPage ] = useState('');
+    const [currentPage, setCurrentPage] = useState('');
     let navigate = useNavigate();
     let location = useLocation();
 
@@ -108,7 +118,7 @@ export default function ReusableSideBar() {
                 <div className='flex px-3 py-6 thin-icons'>
                     <span>
                         <button onClick={handleMenuOpen}>
-                            <AccountCircleOutlined />
+                            <AccountCircleOutlined/>
                             <ExpandMore fontSize="small"></ExpandMore>
                         </button>
                     </span>
@@ -120,21 +130,30 @@ export default function ReusableSideBar() {
                 </div>
                 <div className="mt-10 px-3 py-6 grid grid-rows-5 bg-white">
 
-                    <Button className={areHere('/home')} onClick={() => navigate('/home')} sx={sidebarButtonOverrides} startIcon={<HomeOutlined />}>
+                    <Button className={areHere('/home')} onClick={() => navigate('/home')}
+                            sx={sidebarButtonOverrides} startIcon={<HomeOutlined/>}>
                         Home
                     </Button>
 
-                    <Button className={areHere(['/kanban', '/chooseKanban'])} onClick={() => { navigate('/chooseKanban') }} sx={sidebarButtonOverrides} startIcon={<FolderZipOutlined/>}>
+                    <Button className={areHere(['/kanban', '/chooseKanban'])} onClick={() => {
+                        navigate('/chooseKanban')
+                    }} sx={sidebarButtonOverrides} startIcon={<FolderZipOutlined/>}>
                         Job Boards
                     </Button>
 
-                    <Button className={areHere('/calendar')} onClick={() => { navigate('/calendar') }} sx={sidebarButtonOverrides} startIcon={<CalendarMonthOutlined />}>
+                    <Button className={areHere('/calendar')} onClick={() => {
+                        navigate('/calendar')
+                    }} sx={sidebarButtonOverrides} startIcon={<CalendarMonthOutlined/>}>
                         Calendar
                     </Button>
-                    <Button className={areHere('/job')} onClick={() => { navigate('/job') }} sx={sidebarButtonOverrides} startIcon={<SearchOutlined />}>
+                    <Button className={areHere('/job')} onClick={() => {
+                        navigate('/job')
+                    }} sx={sidebarButtonOverrides} startIcon={<SearchOutlined/>}>
                         Job Search
                     </Button>
-                    <Button className={areHere('/questions')} onClick={() => { navigate('/questions') }} sx={sidebarButtonOverrides} startIcon={<QuizOutlined />}>
+                    <Button className={areHere('/questions')} onClick={() => {
+                        navigate('/questions')
+                    }} sx={sidebarButtonOverrides} startIcon={<QuizOutlined/>}>
                         Interview Questions
                     </Button>
                     <Button
@@ -148,7 +167,7 @@ export default function ReusableSideBar() {
                             ...sidebarButtonOverrides,
                             justifyContent: 'center'
                         }}
-                        startIcon={<AutoAwesomeOutlined />}
+                        startIcon={<AutoAwesomeOutlined/>}
                     >
                         Upgrade
                     </Button>

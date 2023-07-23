@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useAsync } from "react-async-hook";
+import {useEffect, useState} from "react";
+import {useAsync} from "react-async-hook";
 import dayjs from "dayjs";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { Checkbox, CircularProgress, FormControlLabel, FormGroup } from "@mui/material";
+import {getFunctions, httpsCallable} from "firebase/functions";
+import {Checkbox, CircularProgress, FormControlLabel, FormGroup} from "@mui/material";
 import Month from "./Month";
 import JobDialog from "../reusable/JobDialog";
 
@@ -37,8 +37,8 @@ const Calendar = () => {
 
     if (getDeadlines.loading) {
         return (
-            <div style={{ padding: 20 }}>
-                <CircularProgress />
+            <div style={{padding: 20}}>
+                <CircularProgress/>
             </div>
         );
     }
@@ -66,7 +66,8 @@ const Calendar = () => {
             <div className="h-5/6 mr-8 ml-6">
                 <div className="flex mb-10">
                     <button type="button" onClick={() => setMonthIndex(monthIndex - 1)}>
-                        <span className="material-icons-outlined cursor-pointer text-lg text-gray-600 mx-2 border-2 rounded-md">
+                        <span
+                            className="material-icons-outlined cursor-pointer text-lg text-gray-600 mx-2 border-2 rounded-md">
                             chevron_left
                         </span>
                     </button>
@@ -79,7 +80,8 @@ const Calendar = () => {
                         </h2>
                     </div>
                     <button type="button" onClick={() => setMonthIndex(monthIndex + 1)}>
-                        <span className="material-icons-outlined cursor-pointer text-lg text-gray-600 mx-2 border-2 rounded-md">
+                        <span
+                            className="material-icons-outlined cursor-pointer text-lg text-gray-600 mx-2 border-2 rounded-md">
                             chevron_right
                         </span>
                     </button>

@@ -1,4 +1,4 @@
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import {getFunctions, httpsCallable} from 'firebase/functions';
 
 // interface Job {
 //     // Core job data
@@ -285,7 +285,7 @@ const generateDeadlines = () => {
             .map(() => Math.floor(Math.random() * 10))
             .join(``)}`;
 
-        deadlines.push({ title, date, location, link, isInterview });
+        deadlines.push({title, date, location, link, isInterview});
     };
 
     const numDeadlines = Math.floor(Math.random() * 3) + 1;
@@ -456,22 +456,30 @@ const generateJobs = async (num) => {
             boardId: boards.filter((board) => board.userId === userId)[~~(Math.random() * 3)].id.toString(),
 
             deadlines: generateDeadlines()
-                .map((deadline) => ({ ...deadline, company: companies[companyNumber], position: position })),
+                .map((deadline) => ({
+                    ...deadline,
+                    company: companies[companyNumber],
+                    position: position
+                })),
             interviewQuestions: [...questions]
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 5) + 1)
-                .map((question) => ({ ...question, company: companies[companyNumber], position: position })),
+                .map((question) => ({
+                    ...question,
+                    company: companies[companyNumber],
+                    position: position
+                })),
             contacts: generateContacts()
                 .sort(() => 0.5 - Math.random())
                 .slice(0, Math.floor(Math.random() * 3) + 1)
-                .map((contact) => ({ ...contact, company: companies[companyNumber] })),
+                .map((contact) => ({...contact, company: companies[companyNumber]})),
         };
         jobs.push(job);
     }
 
     // Commit jobs to db
     const addJobs = httpsCallable(getFunctions(), 'addJobs');
-    addJobs({ jobs, boards })
+    addJobs({jobs, boards})
         .then(() => console.log('Successfully added jobs'))
         .catch((e) => console.log(`Failed to add jobs: ${JSON.stringify(e)}`));
 };

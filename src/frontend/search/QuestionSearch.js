@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import {useState} from "react";
+import {getFunctions, httpsCallable} from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
-import { Button, Dialog, DialogContent, TextField, InputAdornment } from "@mui/material";
+import {Button, Dialog, DialogContent, InputAdornment, TextField} from "@mui/material";
 import AppScreen from "../reusable/AppScreen";
-import { AlternateEmail, WorkOutline } from "@mui/icons-material";
+import {AlternateEmail, WorkOutline} from "@mui/icons-material";
 
 const QuestionSearch = () => {
-    const [query, setQuery] = useState({ company: "", position: "" });
+    const [query, setQuery] = useState({company: "", position: ""});
     const [questions, setQuestions] = useState([]);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -48,8 +48,8 @@ const QuestionSearch = () => {
                     borderRadius: 8,
                 }}
             >
-                <div style={{ fontWeight: 500, fontSize: 18 }}>{question.name}</div>
-                <div style={{ display: "flex", flexDirection: "row", marginBlock: 20 }}>
+                <div style={{fontWeight: 500, fontSize: 18}}>{question.name}</div>
+                <div style={{display: "flex", flexDirection: "row", marginBlock: 20}}>
                     <Button
                         style={{
                             backgroundColor: "#F2F9FA",
@@ -85,7 +85,7 @@ const QuestionSearch = () => {
         ));
     };
 
-    const inputBoxStyle = { outline: "1px solid black", width: "30%" };
+    const inputBoxStyle = {outline: "1px solid black", width: "30%"};
     return (
         <AppScreen title="Find interview questions">
             <div
@@ -99,21 +99,21 @@ const QuestionSearch = () => {
             >
                 <TextField
                     label="Search job title or keyword"
-                    style={{ width: "60%" }}
+                    style={{width: "60%"}}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <WorkOutline />
+                                <WorkOutline/>
                             </InputAdornment>
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({ ...query, position: e.target.value });
+                        setQuery({...query, position: e.target.value});
                     }}
                 ></TextField>
                 <TextField
                     label="company"
-                    style={{ width: "30%" }}
+                    style={{width: "30%"}}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -122,7 +122,7 @@ const QuestionSearch = () => {
                         ),
                     }}
                     onChange={(e) => {
-                        setQuery({ ...query, company: e.target.value });
+                        setQuery({...query, company: e.target.value});
                     }}
                 ></TextField>
                 <LoadingButton
@@ -131,8 +131,8 @@ const QuestionSearch = () => {
                     variant="contained"
                     loading={loading}
                     disableElevation
-                    endIcon={<Search />}
-                    style={{ height: 56 }}
+                    endIcon={<Search/>}
+                    style={{height: 56}}
                 >
                     {" "}
                     Search
@@ -213,11 +213,11 @@ const QuestionSearch = () => {
                                     <u>{currentQuestion.name}</u>
                                 </strong>
                             </p>
-                            <br />
+                            <br/>
 
                             {currentQuestion.description}
-                            <br />
-                            <br />
+                            <br/>
+                            <br/>
 
                             <Button
                                 variant="contained"

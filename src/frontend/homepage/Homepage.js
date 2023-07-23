@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useAsync } from "react-async-hook";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { Button, Dialog, DialogContent, TextField, Box } from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import {useAsync} from "react-async-hook";
+import {getFunctions, httpsCallable} from "firebase/functions";
+import {Box, Button, Dialog, DialogContent, TextField} from "@mui/material";
 import {
     Add,
     East,
@@ -9,7 +9,7 @@ import {
     QueryBuilder,
     SkateboardingOutlined,
 } from "@mui/icons-material";
-import { useState } from "react";
+import {useState} from "react";
 import JobDialog from "../reusable/JobDialog";
 import AppScreen from "../reusable/AppScreen";
 import EventCard from "./components/EventCard";
@@ -47,7 +47,7 @@ const Homepage = () => {
             <Button
                 color="white"
                 variant="contained"
-                onClick={() => nav("/kanban", { state: { boardId: board.id } })}
+                onClick={() => nav("/kanban", {state: {boardId: board.id}})}
                 className="flex-1 space-between"
                 fullWidth
                 disableElevation
@@ -59,7 +59,7 @@ const Homepage = () => {
                 }}
             >
                 <Box>
-                    <SkateboardingOutlined color="primary" fontSize="medium" className="mr-4" />
+                    <SkateboardingOutlined color="primary" fontSize="medium" className="mr-4"/>
                     {board.name}
                 </Box>
             </Button>
@@ -102,7 +102,7 @@ const Homepage = () => {
                             })}
                         </h1>
                         <h1 className="text-md flex items-center flex-wrap">
-                            <QueryBuilder />
+                            <QueryBuilder/>
                             <span className="ml-1 font-medium">
                                 {new Date(event.date * 1000).toLocaleTimeString("en-US", {
                                     hour: "2-digit",
@@ -137,7 +137,7 @@ const Homepage = () => {
 
         return (
             <Box className="p-3 grid grid-flow-row md:grid-flow-col md:flex-row gap-3">
-                {getStarted.map(({ title, content, link }) => (
+                {getStarted.map(({title, content, link}) => (
                     <Button
                         color="white"
                         variant="contained"
@@ -153,7 +153,7 @@ const Homepage = () => {
                     >
                         <h1 className="self-start text-neutral-800 text-l mb-4">{title}</h1>
                         <Box className="flex items-center gap-3">
-                            <East color="neutral" />
+                            <East color="neutral"/>
                             <div className="text-left max-w-[75%]">{content}</div>
                         </Box>
                     </Button>
@@ -168,7 +168,8 @@ const Homepage = () => {
                 <Box className="mx-10">
                     <Box>
                         <h1 className="text-neutral-800 text-2xl mt-2">Upcoming deadlines</h1>
-                        <div className="grid grid-flow-row md:grid-flow-col md:auto-cols-fr md:gap-20 gap-3 my-5">
+                        <div
+                            className="grid grid-flow-row md:grid-flow-col md:auto-cols-fr md:gap-20 gap-3 my-5">
                             {renderEvents(4)}
                             {userData.result && userData.result.data.events.length < 3 && (
                                 <EventCard
@@ -192,7 +193,7 @@ const Homepage = () => {
                                                 borderRadius: "8px",
                                                 padding: "1rem 1.5rem",
                                             }}
-                                            endIcon={<KeyboardDoubleArrowRight />}
+                                            endIcon={<KeyboardDoubleArrowRight/>}
                                         >
                                             View calendar
                                         </Button>
@@ -208,7 +209,8 @@ const Homepage = () => {
                     </Box>
                     <Box className="mt-10">
                         <h1 className="text-neutral-800 text-2xl">Job Boards</h1>
-                        <Box className="grid grid-flow-row md:grid-flow-col md:grid-cols-[15rem_1fr] md:flex-row gap-3 gap-3 mt-5">
+                        <Box
+                            className="grid grid-flow-row md:grid-flow-col md:grid-cols-[15rem_1fr] md:flex-row gap-3 gap-3 mt-5">
                             <Button
                                 color="white"
                                 sx={{
@@ -216,7 +218,7 @@ const Homepage = () => {
                                     borderRadius: "8px",
                                 }}
                                 variant="contained"
-                                startIcon={<Add />}
+                                startIcon={<Add/>}
                                 onClick={() => setDialogOpen(true)}
                             >
                                 Create new board
@@ -251,7 +253,7 @@ const Homepage = () => {
                     }}
                 >
                     <p>Enter board name</p>
-                    <br />
+                    <br/>
                     <TextField
                         label="Board name"
                         value={boardName}
@@ -259,9 +261,9 @@ const Homepage = () => {
                         onChange={(e) => setBoardName(e.target.value)}
                     />
 
-                    <br />
+                    <br/>
 
-                    <Button variant="contained" onClick={addNewBoard} style={{ width: 100 }}>
+                    <Button variant="contained" onClick={addNewBoard} style={{width: 100}}>
                         Add
                     </Button>
                 </DialogContent>

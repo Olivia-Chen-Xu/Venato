@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { deleteAccount, signout } from "./auth-functions";
-import { auth } from "../../config/firebase";
-import { InputLabel, TextField, Button } from "@mui/material";
-import { btnStyle, inputStyle } from "./authStyles";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {deleteAccount, signout} from "./auth-functions";
+import {auth} from "../../config/firebase";
+import {Button} from "@mui/material";
 import "./auth.css";
-import generateJobs from "../search/GenerateJobs";
 
 // Not in use yet
 const Profile = () => {
@@ -55,18 +53,18 @@ const Profile = () => {
                 padding: 20,
             }}
         >
-            <text style={{ fontSize: 32, fontWeight: "regular" }}>Venato profile</text>
-            <br />
+            <text style={{fontSize: 32, fontWeight: "regular"}}>Venato profile</text>
+            <br/>
             <Button
                 color="neutral"
                 variant="contained"
-                style={{ width: 200 }}
+                style={{width: 200}}
                 onClick={handleSignOut}
             >
                 Sign out
             </Button>
 
-            <br />
+            <br/>
             {/*<Button*/}
             {/*    color="neutral"*/}
             {/*    variant="contained"*/}
@@ -84,7 +82,7 @@ const Profile = () => {
             {/*    }}*/}
             {/*>*/}
             {/*</Button>*/}
-            <text style={{ color: "red" }}>{errMsg}</text>
+            <text style={{color: "red"}}>{errMsg}</text>
         </div>
     );
 };

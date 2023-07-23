@@ -3,12 +3,13 @@ import {
     auth,
     db,
     getCollection,
-    getDoc, getFirestoreTimestamp,
+    getDoc,
+    getFirestoreTimestamp,
     isValidObjectStructure,
     verifyDocPermission,
     verifyIsAuthenticated
 } from './Helpers';
-import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces';
+import {IContact, IDeadline, IInterviewQuestion, IJob} from './DataInterfaces';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)
@@ -17,7 +18,10 @@ import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces'
 // Adds a list of jobs to firestore
 // This is only used for generating jobs in development
 const addJobs = functions.https.onCall(
-    async (data: { jobs: IJob[]; boards: { userId: string, name: string, id: string }[] }, context: any) => {
+    async (data: {
+        jobs: IJob[];
+        boards: { userId: string, name: string, id: string }[]
+    }, context: any) => {
         // Verify admin account is requesting this
         verifyIsAuthenticated(context);
 
@@ -44,7 +48,10 @@ const addJobs = functions.https.onCall(
 
         // Add boards and jobs to db
         for (const board of data.boards) {
-            await getCollection('boards').add({ userId: board.userId, name: board.name }).then((doc) => {
+            await getCollection('boards').add({
+                userId: board.userId,
+                name: board.name
+            }).then((doc) => {
                 data.jobs.filter((job) => job.boardId === board.id).forEach((job) => {
                     job.boardId = doc.id;
                 });
@@ -64,7 +71,10 @@ const addJobs = functions.https.onCall(
 );
 
 // Adds a job to firestore (structuring and back-end stuff is done with a trigger)
-const addJob = functions.https.onCall(async (jobData: { boardId: string, stage: number }, context: any) => {
+const addJob = functions.https.onCall(async (jobData: {
+    boardId: string,
+    stage: number
+}, context: any) => {
     // Verify params
     const structure = {
         boardId: '',
@@ -138,12 +148,19 @@ const addDeadline = functions.https.onCall(async (deadline: IDeadline, context: 
     await verifyDocPermission(context, `jobs/${deadline.jobId}`);
 
     return getCollection(`deadlines`)
-        .add({ ...deadline, userId: context.auth.uid, date: getFirestoreTimestamp(deadline.date * 1000) })
+        .add({
+            ...deadline,
+            userId: context.auth.uid,
+            date: getFirestoreTimestamp(deadline.date * 1000)
+        })
         .then((result) => result.id)
         .catch((err) => `Failed to add deadline: ${err}`);
 });
 
-const updateDeadline = functions.https.onCall(async (data: { deadlineId: string, deadline: IDeadline }, context: any) => {
+const updateDeadline = functions.https.onCall(async (data: {
+    deadlineId: string,
+    deadline: IDeadline
+}, context: any) => {
     // Verify params
     const structure = {
         deadlineId: '',
@@ -166,7 +183,7 @@ const updateDeadline = functions.https.onCall(async (data: { deadlineId: string,
     await verifyDocPermission(context, `deadlines/${data.deadlineId}`);
 
     return getDoc(`deadlines/${data.deadlineId}`)
-        .update({ ...data.deadline, date: getFirestoreTimestamp(data.deadline.date) })
+        .update({...data.deadline, date: getFirestoreTimestamp(data.deadline.date)})
         .then(() => `Deadline '${data.deadlineId}' updated successfully`)
         .catch((err) => `Failed to update deadline '${data.deadlineId}': ${err}`);
 });
@@ -204,34 +221,35 @@ const addInterviewQuestion = functions.https.onCall(async (interviewQuestion: II
     await verifyDocPermission(context, `jobs/${interviewQuestion.jobId}`);
 
     return getCollection(`interviewQuestions`)
-        .add({ ...interviewQuestion, userId: context.auth.uid })
+        .add({...interviewQuestion, userId: context.auth.uid})
         .then((result) => result.id)
         .catch((err) => `Failed to add interview question: ${err}`);
 });
 
-const updateInterviewQuestion = functions.https.onCall(async (data: { questionId: string, question: IInterviewQuestion }, context: any) => {
-    // Verify params
-    const structure = {
-        questionId: '',
-        question: {
-            description: '',
-            name: '',
+const updateInterviewQuestion = functions.https.onCall(
+    async (data: { questionId: string, question: object }, context: any) => {
+        // Verify params
+        const structure = {
+            questionId: '',
+            question: {
+                description: '',
+                name: '',
+            }
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only a question id (string) and question (see db for structure) as arguments'
+            );
         }
-    };
-    if (!isValidObjectStructure(data, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Must provide only a question id (string) and question (see db for structure) as arguments'
-        );
-    }
 
-    await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
+        await verifyDocPermission(context, `interviewQuestions/${data.questionId}`);
 
-    return getDoc(`interviewQuestions/${data.questionId}`)
-        .update(data.question)
-        .then(() => `Question '${data.questionId}' updated successfully`)
-        .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
-});
+        return getDoc(`interviewQuestions/${data.questionId}`)
+            .update(data.question)
+            .then(() => `Question '${data.questionId}' updated successfully`)
+            .catch((err) => `Failed to update interview question '${data.questionId}': ${err}`);
+    });
 
 const deleteInterviewQuestion = functions.https.onCall(async (questionId: string, context: any) => {
     // Verify params
@@ -270,39 +288,40 @@ const addContact = functions.https.onCall(async (contact: IContact, context: any
     await verifyDocPermission(context, `jobs/${contact.jobId}`);
 
     return getCollection(`contacts`)
-        .add({ ...contact, userId: context.auth.uid })
+        .add({...contact, userId: context.auth.uid})
         .then((result) => result.id)
         .catch((err) => `Failed to add contact: ${err}`);
 });
 
-const updateContact = functions.https.onCall(async (data: { contactId: string, contact: IContact }, context: any) => {
-    // Verify params
-    const structure = {
-        contactId: '',
-        contact: {
-            company: '',
-            email: '',
-            linkedin: '',
-            name: '',
-            notes: '',
-            phone: '',
-            title: '',
+const updateContact = functions.https.onCall(
+    async (data: { contactId: string, contact: object }, context: any) => {
+        // Verify params
+        const structure = {
+            contactId: '',
+            contact: {
+                company: '',
+                email: '',
+                linkedin: '',
+                name: '',
+                notes: '',
+                phone: '',
+                title: '',
+            }
+        };
+        if (!isValidObjectStructure(data, structure)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Must provide only a contact id (string) and contact (see db for structure) as arguments'
+            );
         }
-    };
-    if (!isValidObjectStructure(data, structure)) {
-        throw new functions.https.HttpsError(
-            'invalid-argument',
-            'Must provide only a contact id (string) and contact (see db for structure) as arguments'
-        );
-    }
 
-    await verifyDocPermission(context, `contacts/${data.contactId}`);
+        await verifyDocPermission(context, `contacts/${data.contactId}`);
 
-    return getDoc(`contacts/${data.contactId}`)
-        .update(data.contact)
-        .then(() => `Contact '${data.contactId}' updated successfully`)
-        .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
-});
+        return getDoc(`contacts/${data.contactId}`)
+            .update(data.contact)
+            .then(() => `Contact '${data.contactId}' updated successfully`)
+            .catch((err) => `Failed to update contact '${data.contactId}': ${err}`);
+    });
 
 const deleteContact = functions.https.onCall(async (contactId: string, context: any) => {
     // Verify params
@@ -325,7 +344,7 @@ const updateJobData = functions.https.onCall(
     async (data: { jobId: string; jobData: object }, context: any) => {
         // Verify params
         const structure = {
-            jobId : '',
+            jobId: '',
             jobData: {
                 awaitingResponse: false,
                 boardId: '',
@@ -375,7 +394,7 @@ const dragKanbanJob = functions.https.onCall(
         await verifyDocPermission(context, `jobs/${data.id}`);
 
         return getDoc(`jobs/${data.id}`)
-            .update({ stage: data.newStage })
+            .update({stage: data.newStage})
             .then(() => `Successfully updated job stage`)
             .catch((err) => `Error updating job stage: ${err}`);
     }
@@ -405,10 +424,10 @@ const addBoard = functions.https.onCall(async (boardName: string, context: any) 
 
     verifyIsAuthenticated(context);
 
-    const newBoard = { name: boardName, userId: context.auth.uid };
+    const newBoard = {name: boardName, userId: context.auth.uid};
     return getCollection('boards')
-        .add({ name: boardName, userId: context.auth.uid })
-        .then((result) => ({ id: result.id, name: newBoard.name }))
+        .add({name: boardName, userId: context.auth.uid})
+        .then((result) => ({id: result.id, name: newBoard.name}))
         .catch((e) => `Failed to create a board for user '${context.auth.uid}': ${JSON.stringify(e)}`);
 });
 

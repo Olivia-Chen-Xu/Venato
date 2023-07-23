@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { InputLabel, TextField, Button } from '@mui/material';
-import { passwordResetEmail } from './auth-functions';
-import { btnStyle, inputStyle } from './authStyles';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Button, InputLabel, TextField} from '@mui/material';
+import {passwordResetEmail} from './auth-functions';
+import {btnStyle, inputStyle} from './authStyles';
 import './auth.css';
-import { WarningAmberRounded } from '@mui/icons-material';
+import {WarningAmberRounded} from '@mui/icons-material';
 
 const PasswordReset = () => {
     const navigate = useNavigate();
@@ -57,94 +57,96 @@ const PasswordReset = () => {
                 }}
             >
                 {/* The LRM is an invisible character to get the spacing right */}
-                <img width="20" src={checkMark} alt="Green check mark" />‎ Email verification sent!
+                <img width="20" src={checkMark} alt="Green check mark"/>‎ Email verification sent!
             </div>
         );
     };
 
     return (
         <>
-        {!isSubmitted && (
-        <div className="AuthMainDiv">
-            <text className="TopText">Password reset</text>
-            <br />
-            <div className="flex flex-1">
-                {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5" />}
-                <text className="WelcomeText" style={errMsg === '' ? {} : { color: 'red' }}>
-                    {errMsg === '' ? '' : errMsg}
-                </text>
-            </div>
-            <br />
-            <InputLabel>Email</InputLabel>
-            <TextField
-                variant="outlined"
-                placeholder="john.smith@gmail.com"
-                style={inputStyle}
-                required
-                value={email}
-                onChange={(e) => {
-                    setEmail(e.target.value);
-                }}
-            ></TextField>
+            {!isSubmitted && (
+                <div className="AuthMainDiv">
+                    <text className="TopText">Password reset</text>
+                    <br/>
+                    <div className="flex flex-1">
+                        {errMsg === '' ? '' : <WarningAmberRounded color="error" className="mr-5"/>}
+                        <text className="WelcomeText" style={errMsg === '' ? {} : {color: 'red'}}>
+                            {errMsg === '' ? '' : errMsg}
+                        </text>
+                    </div>
+                    <br/>
+                    <InputLabel>Email</InputLabel>
+                    <TextField
+                        variant="outlined"
+                        placeholder="john.smith@gmail.com"
+                        style={inputStyle}
+                        required
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
+                    ></TextField>
 
-            <br />
-            <div className="my-2 w-full">
-                <Button
-                    color="neutral"
-                    variant="contained"
-                    style={btnStyle}
-                    onClick={handlePassReset}
-                >
-                    Reset password
-                </Button>
-            </div>
-            <div className="my-2 w-full">
-                <Button
-                    color="neutral"
-                    variant="outlined"
-                    style={btnStyle}
-                    onClick={() => navigate('/sign-in')}
-                >
-                    Return to Log In
-                </Button>
-            </div>
-            <br />
-        </div>
-)}
-{
-    isSubmitted && (
-        <div className='h-screen grid place-content-center'>
-        <div>
-        <h1 className='text-xl'>We’ve sent the verification to your email</h1>
-        <div className="mt-10 w-full">
-                <Button
-                    color="neutral"
-                    variant="contained"
-                    style={btnStyle}
-                    onClick={() => {setIsSubmitted(false); setErrMsg('')}}
-                >
-                    Resend
-                </Button>
-                <div className="my-2 w-full">
-                <Button
-                    color="neutral"
-                    variant="outlined"
-                    style={btnStyle}
-                    onClick={() => navigate('/sign-in')}
-                >
-                    Return to Log In
-                </Button>
-            </div>
-            </div>
-            <br />
-            </div>
-        </div>
-    )
-}
+                    <br/>
+                    <div className="my-2 w-full">
+                        <Button
+                            color="neutral"
+                            variant="contained"
+                            style={btnStyle}
+                            onClick={handlePassReset}
+                        >
+                            Reset password
+                        </Button>
+                    </div>
+                    <div className="my-2 w-full">
+                        <Button
+                            color="neutral"
+                            variant="outlined"
+                            style={btnStyle}
+                            onClick={() => navigate('/sign-in')}
+                        >
+                            Return to Log In
+                        </Button>
+                    </div>
+                    <br/>
+                </div>
+            )}
+            {
+                isSubmitted && (
+                    <div className='h-screen grid place-content-center'>
+                        <div>
+                            <h1 className='text-xl'>We’ve sent the verification to your email</h1>
+                            <div className="mt-10 w-full">
+                                <Button
+                                    color="neutral"
+                                    variant="contained"
+                                    style={btnStyle}
+                                    onClick={() => {
+                                        setIsSubmitted(false);
+                                        setErrMsg('')
+                                    }}
+                                >
+                                    Resend
+                                </Button>
+                                <div className="my-2 w-full">
+                                    <Button
+                                        color="neutral"
+                                        variant="outlined"
+                                        style={btnStyle}
+                                        onClick={() => navigate('/sign-in')}
+                                    >
+                                        Return to Log In
+                                    </Button>
+                                </div>
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                )
+            }
 
 
-
-</>
+        </>
     );
 };
 

@@ -8,21 +8,21 @@ import ReusableSideBar from './ReusableSideBar';
 import ChooseKanban from '../kanban/ChooseKanban';
 
 const Overlay = (props) => {
-    const { page } = props;
+    const {page} = props;
     let elem;
 
     if (page === 'home') {
-        elem = <Homepage />;
+        elem = <Homepage/>;
     } else if (page === 'chooseKanban') {
-        elem = <ChooseKanban />;
+        elem = <ChooseKanban/>;
     } else if (page === 'kanban') {
-        elem = <Kanban />;
+        elem = <Kanban/>;
     } else if (page === 'cal') {
-        elem = <Calendar />;
+        elem = <Calendar/>;
     } else if (page === 'jobs') {
-        elem = <JobSearch />;
+        elem = <JobSearch/>;
     } else if (page === 'questions') {
-        elem = <QuestionSearch />;
+        elem = <QuestionSearch/>;
     } else {
         throw new Error(`Invalid page for Overlay: ${page}.`);
     }
@@ -30,8 +30,8 @@ const Overlay = (props) => {
     return (
         <>
             <div id='app'>
-                <ReusableSideBar />
-                <ReusableHeader />
+                <ReusableSideBar/>
+                <ReusableHeader/>
                 <main className='bg-slate-50 h-full overflow-hidden flex flex-col'>{elem}</main>
             </div>
         </>

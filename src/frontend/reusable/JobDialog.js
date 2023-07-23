@@ -1,48 +1,42 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
+    Button,
+    CircularProgress,
+    Dialog,
     DialogContent,
     DialogTitle,
-    Tabs,
-    Tab,
-    TextField,
-    Input,
-    InputAdornment,
-    Button,
-    Dialog,
-    CircularProgress,
-    MenuItem,
     Menu,
-    IconButton,
+    MenuItem,
+    Tab,
+    Tabs,
+    TextField,
 } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {
+    AccessTimeOutlined,
+    AccountCircleOutlined,
+    Add,
+    AlternateEmailOutlined,
+    CalendarMonthOutlined,
+    ContactPageOutlined,
+    Delete,
     DescriptionOutlined,
     DriveFileRenameOutlineOutlined,
-    CalendarMonthOutlined,
-    QuizOutlined,
-    ContactPageOutlined,
-    AlternateEmailOutlined,
-    LocationOnOutlined,
-    Delete,
-    AddCircleOutline,
     Flag,
-    Add,
-    MoreVert,
+    MoreHoriz,
+    QuizOutlined,
     RoomOutlined,
-    AccessTimeOutlined,
 } from "@mui/icons-material";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { DateTimePicker } from "@mui/x-date-pickers";
+import {getFunctions, httpsCallable} from "firebase/functions";
+import {DateTimePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { btnStyle } from "../auth/authStyles";
-import { AccountCircleOutlined } from "@mui/icons-material";
-import { MoreHoriz } from "@mui/icons-material";
-const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
-const priorities = ["High", "Medium", "Low"];
-import { SocialIcon } from "react-social-icons";
+import {SocialIcon} from "react-social-icons";
 import Checkbox from "@mui/material/Checkbox";
 import LoadingButton from "@mui/lab/LoadingButton";
+
+const colTitles = ["Applications", "Interviews", "Offers", "Rejections"];
+const priorities = ["High", "Medium", "Low"];
 
 const priorityColor = (p) => {
     switch (p) {
@@ -55,8 +49,7 @@ const priorityColor = (p) => {
     }
 };
 
-import Search from "@mui/icons-material/Search";
-const Headings = ({ jobData, setJob }) => {
+const Headings = ({jobData, setJob}) => {
     const handleChange = (e) => {
         setJob({
             ...jobData,
@@ -84,10 +77,10 @@ const Headings = ({ jobData, setJob }) => {
                         <div className="flex flex-1 mt-4">
                             <h1
                                 className="text-xl mr-6 flex flex-row justify-center items-center"
-                                style={{ fontWeight: 400 }}
+                                style={{fontWeight: 400}}
                             >
                                 {" "}
-                                <AlternateEmailOutlined className="" />{" "}
+                                <AlternateEmailOutlined className=""/>{" "}
                                 <div className="">{jobData.company}</div>
                             </h1>
                             <TextField
@@ -95,7 +88,7 @@ const Headings = ({ jobData, setJob }) => {
                                 value={colTitles[jobData.stage]}
                                 onChange={handleChange}
                                 size="small"
-                                sx={{ padding: 0 }}
+                                sx={{padding: 0}}
                                 InputProps={{
                                     style: {
                                         borderRadius: "8px",
@@ -111,10 +104,11 @@ const Headings = ({ jobData, setJob }) => {
                                     jobData.priority
                                 )}  rounded-lg flex flex-row py-1 px-2 items-center`}
                             >
-                                <Flag /> <p className="text-base">{jobData.priority}</p>
+                                <Flag/> <p className="text-base">{jobData.priority}</p>
                             </div>
                         </div>
-                    </div>{" "}
+                    </div>
+                    {" "}
                 </div>
             </div>
             {/* <h1>{jobData.position}</h1>
@@ -123,9 +117,9 @@ const Headings = ({ jobData, setJob }) => {
     );
 };
 
-const Details = ({ value, index, jobData, setJob }) => {
+const Details = ({value, index, jobData, setJob}) => {
     const handleChange = (e) => {
-        setJob({ ...jobData, priority: e.target.value });
+        setJob({...jobData, priority: e.target.value});
     };
 
     const priorityColor = (p) => {
@@ -153,7 +147,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                         <div className="flex flex-col w-full mr-8">
                             <h1>Job Title</h1>
                             <TextField
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 InputProps={{
                                     style: {
                                         borderRadius: "16px",
@@ -162,7 +156,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                                 className="w-full"
                                 value={jobData.position}
                                 onChange={(e) => {
-                                    setJob({ ...jobData, position: e.target.value });
+                                    setJob({...jobData, position: e.target.value});
                                 }}
                             />
                         </div>
@@ -170,7 +164,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                             <h1>Priority</h1>
                             <TextField
                                 select
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 value={jobData.priority}
                                 onChange={handleChange}
                                 InputProps={{
@@ -181,7 +175,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                             >
                                 {priorities.map((p) => (
                                     <MenuItem value={p}>
-                                        <Flag className={priorityColor(p)} />
+                                        <Flag className={priorityColor(p)}/>
                                     </MenuItem>
                                 ))}
                             </TextField>{" "}
@@ -192,21 +186,21 @@ const Details = ({ value, index, jobData, setJob }) => {
                             <h1>Company</h1>
                             <TextField
                                 value={jobData.company}
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 InputProps={{
                                     style: {
                                         borderRadius: "16px",
                                     },
                                 }}
                                 onChange={(e) => {
-                                    setJob({ ...jobData, company: e.target.value });
+                                    setJob({...jobData, company: e.target.value});
                                 }}
                             />
                         </div>
                         <div className="flex flex-col w-full ml-4">
                             <h1>Location</h1>
                             <TextField
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 value={jobData.location}
                                 InputProps={{
                                     style: {
@@ -214,7 +208,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                                     },
                                 }}
                                 onChange={(e) => {
-                                    setJob({ ...jobData, location: e.target.value });
+                                    setJob({...jobData, location: e.target.value});
                                 }}
                             />
                         </div>
@@ -229,10 +223,10 @@ const Details = ({ value, index, jobData, setJob }) => {
                                     },
                                 }}
                                 value={jobData.link}
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 // style={styles.applicationLink}
                                 onChange={(e) => {
-                                    setJob({ ...jobData, link: e.target.value });
+                                    setJob({...jobData, link: e.target.value});
                                 }}
                             />
                         </div>
@@ -247,7 +241,7 @@ const Details = ({ value, index, jobData, setJob }) => {
                                     },
                                 }}
                                 // style={styles.jobDescription}
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 multiline
                                 rows={5}
                                 value={jobData.description}
@@ -266,7 +260,7 @@ const Details = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const Notes = ({ value, index, jobData, setJob }) => {
+const Notes = ({value, index, jobData, setJob}) => {
     return (
         <div
             style={{
@@ -284,13 +278,13 @@ const Notes = ({ value, index, jobData, setJob }) => {
                                 borderRadius: "8px",
                             },
                         }}
-                        style={{ marginTop: "2vh", height: "100%", width: "100%" }}
+                        style={{marginTop: "2vh", height: "100%", width: "100%"}}
                         multiline
                         rows={15}
                         size="small"
                         value={jobData.notes}
                         onChange={(e) => {
-                            setJob({ ...jobData, notes: e.target.value });
+                            setJob({...jobData, notes: e.target.value});
                         }}
                     />
                 </div>
@@ -299,7 +293,7 @@ const Notes = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const Deadlines = ({ value, index, jobData, setJob }) => {
+const Deadlines = ({value, index, jobData, setJob}) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [isAdding, setIsAdding] = useState(false);
@@ -317,10 +311,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         await httpsCallable(
             getFunctions(),
             "addDeadline"
-        )({ ...newDdl, jobId: jobData.id, company: jobData.company }).then((res) =>
-            setNewDdl({ ...newDdl, id: res.result })
+        )({...newDdl, jobId: jobData.id, company: jobData.company}).then((res) =>
+            setNewDdl({...newDdl, id: res.result})
         );
-        setJob({ ...jobData, deadlines: [newDdl, ...jobData.deadlines] });
+        setJob({...jobData, deadlines: [newDdl, ...jobData.deadlines]});
         setOpen(false);
     };
 
@@ -336,7 +330,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
         await httpsCallable(
             getFunctions(),
             "updateDeadline"
-        )({ deadlineId: newDdl.id, deadline: deadlineUpdate }).then(() => {
+        )({deadlineId: newDdl.id, deadline: deadlineUpdate}).then(() => {
             const deadlineIndex = jobData.deadlines.findIndex(
                 (deadline) => deadline.id === newDdl.id
             );
@@ -348,12 +342,12 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
 
     const uniqueDates = jobData.deadlines
         ? [
-              ...new Set(
-                  jobData.deadlines.map((deadline) =>
-                      dayjs.unix(deadline.date).format("MMMM D, YYYY")
-                  )
-              ),
-          ]
+            ...new Set(
+                jobData.deadlines.map((deadline) =>
+                    dayjs.unix(deadline.date).format("MMMM D, YYYY")
+                )
+            ),
+        ]
         : [];
 
     return (
@@ -374,13 +368,13 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             padding: "1vh 1vw",
                             border: "2px solid #7F5BEB",
                         }}
-                        sx={{ borderRadius: 2 }}
+                        sx={{borderRadius: 2}}
                         variant="outlined"
                         onClick={() => {
                             setIsAdding(true);
                             setOpen(true);
                         }}
-                        startIcon={<Add />}
+                        startIcon={<Add/>}
                     >
                         Add Deadline
                     </LoadingButton>
@@ -406,7 +400,8 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                             .map((deadline) => (
                                                 <div className="mb-2">
                                                     <div className="border rounded-lg mb-4">
-                                                        <div className="flex flex-row-reverse w-full mr-5">
+                                                        <div
+                                                            className="flex flex-row-reverse w-full mr-5">
                                                             <MoreHoriz
                                                                 className="mr-4 cursor-pointer"
                                                                 onClick={(e) => {
@@ -454,21 +449,26 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                                     Delete
                                                                 </MenuItem>
                                                             </Menu>
-                                                        </div>{" "}
-                                                        <div className="flex flex-1 justify-between mb-3 -mt-2">
+                                                        </div>
+                                                        {" "}
+                                                        <div
+                                                            className="flex flex-1 justify-between mb-3 -mt-2">
                                                             <div className="flex flex-1">
                                                                 <Checkbox
                                                                     className="mr-5"
-                                                                    style={{ padding: "0 1vw" }}
+                                                                    style={{padding: "0 1vw"}}
                                                                 />
                                                                 <h1 className="mt-1 font-medium">
                                                                     {deadline.title}
                                                                 </h1>
                                                             </div>
-                                                            <div className="flex flex-1 justify-end">
-                                                                <div className="border rounded-lg bg-[#F2F9FA] py-1 px-2">
-                                                                    <div className="flex flex-1 text-[#003F4B]">
-                                                                        <AccessTimeOutlined />
+                                                            <div
+                                                                className="flex flex-1 justify-end">
+                                                                <div
+                                                                    className="border rounded-lg bg-[#F2F9FA] py-1 px-2">
+                                                                    <div
+                                                                        className="flex flex-1 text-[#003F4B]">
+                                                                        <AccessTimeOutlined/>
                                                                         {/* {console.log(dayjs.unix(deadline.date).format('HH:mm'))} */}
                                                                         <h1 className="pl-1">
                                                                             {dayjs
@@ -477,9 +477,11 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                                                         </h1>
                                                                     </div>
                                                                 </div>
-                                                                <div className="border rounded-lg bg-[#D8CFF3] py-1 ml-4 mr-12 px-2">
-                                                                    <div className="flex flex-1 text-[#3F15BB]">
-                                                                        <RoomOutlined />
+                                                                <div
+                                                                    className="border rounded-lg bg-[#D8CFF3] py-1 ml-4 mr-12 px-2">
+                                                                    <div
+                                                                        className="flex flex-1 text-[#3F15BB]">
+                                                                        <RoomOutlined/>
                                                                         <h1 className="pl-1">
                                                                             {deadline.location}
                                                                         </h1>
@@ -493,14 +495,15 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                             ))}
                                 </div>
                             ))}
-                </div>{" "}
+                </div>
+                {" "}
             </div>
 
             <Dialog
                 fulLWidth
                 maxWidth="xl"
                 PaperProps={{
-                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                    style: {borderRadius: 16, padding: "5vh 5vw"},
                 }}
                 open={open}
                 onClose={() => {
@@ -513,16 +516,16 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                     });
                 }}
             >
-                <DialogContent style={{ width: "50vw" }}>
+                <DialogContent style={{width: "50vw"}}>
                     <div className="flex flex-row justify-between mb-4">
                         <h1 className="text-xl w-full">Create Deadline</h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderRadius: 2 }}
+                                    sx={{borderRadius: 2}}
                                     color="neutral"
-                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    style={{width: 100, border: "2px solid #7F5BEB"}}
                                     onClick={() => {
                                         setOpen(false);
                                         setLoading(false);
@@ -533,10 +536,10 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             </div>
                             <LoadingButton
                                 type="submit"
-                                sx={{ borderRadius: 2 }}
+                                sx={{borderRadius: 2}}
                                 variant="contained"
                                 color="neutral"
-                                style={{ width: 100 }}
+                                style={{width: 100}}
                                 onClick={async () => {
                                     isAdding ? await addNewDdl() : await updateDdl();
                                     setLoading(false);
@@ -554,7 +557,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 <h1>Task Title</h1>
                                 <TextField
                                     className="w-full"
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     value={newDdl.title}
                                     InputProps={{
                                         style: {
@@ -562,7 +565,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                         },
                                     }}
                                     onChange={(e) => {
-                                        setNewDdl({ ...newDdl, title: e.target.value });
+                                        setNewDdl({...newDdl, title: e.target.value});
                                     }}
                                 />{" "}
                             </div>
@@ -579,7 +582,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                             },
                                         }}
                                         onChange={(val) =>
-                                            setNewDdl({ ...newDdl, date: val.unix() })
+                                            setNewDdl({...newDdl, date: val.unix()})
                                         }
                                         renderInput={(params) => <TextField {...params} />}
                                     />
@@ -591,7 +594,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                                 <h1>Location</h1>
                                 <TextField
                                     value={newDdl.location}
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     InputProps={{
                                         style: {
                                             borderRadius: "16px",
@@ -608,7 +611,7 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
                             <div className="flex flex-col w-full ml-4">
                                 <h1>Link (If Applicable)</h1>
                                 <TextField
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     value={newDdl.link}
                                     InputProps={{
                                         style: {
@@ -631,23 +634,23 @@ const Deadlines = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const Questions = ({ value, index, jobData, setJob }) => {
+const Questions = ({value, index, jobData, setJob}) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [newQuestion, setNewQuestion] = useState({ name: '', description: '', company: '' });
+    const [newQuestion, setNewQuestion] = useState({name: '', description: '', company: ''});
 
     const addNewQuestion = async () => {
         setLoading(true);
-        setJob({ ...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions] });
+        setJob({...jobData, interviewQuestions: [newQuestion, ...jobData.interviewQuestions]});
         setOpen(false);
         await httpsCallable(
             getFunctions(),
             "addInterviewQuestion"
-        )({ jobId: jobData.id, ...newQuestion });
-        setNewQuestion({ name: '', description: '', company: '' });
+        )({jobId: jobData.id, ...newQuestion});
+        setNewQuestion({name: '', description: '', company: ''});
         setLoading(false);
     };
 
@@ -660,7 +663,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
         await httpsCallable(
             getFunctions(),
             "updateInterviewQuestion"
-        )({ questionId: questionId, question: questionUpdate }).then(() => {
+        )({questionId: questionId, question: questionUpdate}).then(() => {
             const questionIndex = jobData.interviewQuestions.findIndex(
                 (question) => question.id === newQuestion.id
             );
@@ -706,8 +709,8 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         open={menuOpen}
                         onClose={() => setAnchorEl(null)}
                         anchorEl={anchorEl}
-                        transformOrigin={{ horizontal: "right", vertical: "top" }}
-                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                        transformOrigin={{horizontal: "right", vertical: "top"}}
+                        anchorOrigin={{horizontal: "right", vertical: "bottom"}}
                     >
                         <MenuItem
                             onClick={() => {
@@ -759,13 +762,13 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             border: "2px solid #7F5BEB",
                             borderRadius: "16px",
                         }}
-                        sx={{ borderRadius: 2 }}
+                        sx={{borderRadius: 2}}
                         variant="outlined"
                         onClick={() => {
                             setIsEditing(false);
                             setOpen(true);
                         }}
-                        startIcon={<Add />}
+                        startIcon={<Add/>}
                     >
                         Add Interview Question
                     </Button>
@@ -775,14 +778,14 @@ const Questions = ({ value, index, jobData, setJob }) => {
                 fulLWidth
                 maxWidth="xl"
                 PaperProps={{
-                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                    style: {borderRadius: 16, padding: "5vh 5vw"},
                 }}
                 open={open}
                 onClose={() => {
                     setOpen(false);
                 }}
             >
-                <DialogContent style={{ borderRadius: 16, width: "50vw" }}>
+                <DialogContent style={{borderRadius: 16, width: "50vw"}}>
                     <div className="flex flex-row justify-between mb-4">
                         <h1 className="text-xl w-full">
                             {isEditing ? "Edit Interview Question" : "Create Interview Question"}
@@ -791,9 +794,9 @@ const Questions = ({ value, index, jobData, setJob }) => {
                             <div className="ml-3">
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderRadius: 2 }}
+                                    sx={{borderRadius: 2}}
                                     color="neutral"
-                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    style={{width: 100, border: "2px solid #7F5BEB"}}
                                     onClick={() => {
                                         setOpen(false);
                                         setLoading(false);
@@ -803,10 +806,10 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 </Button>
                             </div>
                             <LoadingButton
-                                sx={{ borderRadius: 2 }}
+                                sx={{borderRadius: 2}}
                                 variant="contained"
                                 color="neutral"
-                                style={{ width: 100 }}
+                                style={{width: 100}}
                                 onClick={async () => {
                                     isEditing
                                         ? await updateQuesiton(newQuestion.id)
@@ -823,7 +826,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         <div className="flex flex-col w-full">
                             <h1>Question title</h1>
                             <TextField
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 InputProps={{
                                     style: {
                                         borderRadius: "16px",
@@ -832,7 +835,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 value={newQuestion.name}
                                 fullWidth
                                 onChange={(e) => {
-                                    setNewQuestion({ ...newQuestion, name: e.target.value });
+                                    setNewQuestion({...newQuestion, name: e.target.value});
                                 }}
                             />
                         </div>
@@ -841,7 +844,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                         <div className="flex flex-col w-full">
                             <h1>Question description</h1>
                             <TextField
-                                style={{ marginTop: "1vh" }}
+                                style={{marginTop: "1vh"}}
                                 InputProps={{
                                     style: {
                                         borderRadius: "16px",
@@ -852,7 +855,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
                                 value={newQuestion.description}
                                 fullWidth
                                 onChange={(e) => {
-                                    setNewQuestion({ ...newQuestion, description: e.target.value });
+                                    setNewQuestion({...newQuestion, description: e.target.value});
                                 }}
                             />
                         </div>
@@ -867,7 +870,7 @@ const Questions = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const Contacts = ({ value, index, jobData, setJob }) => {
+const Contacts = ({value, index, jobData, setJob}) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
@@ -883,8 +886,8 @@ const Contacts = ({ value, index, jobData, setJob }) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const addNewContact = async () => {
-        setJob({ ...jobData, contacts: [newContact, ...jobData.contacts] });
-        await httpsCallable(getFunctions(), "addContact")({ jobId: jobData.id, ...newContact });
+        setJob({...jobData, contacts: [newContact, ...jobData.contacts]});
+        await httpsCallable(getFunctions(), "addContact")({jobId: jobData.id, ...newContact});
         setOpen(false);
         setNewContact({
             name: "",
@@ -910,9 +913,9 @@ const Contacts = ({ value, index, jobData, setJob }) => {
         await httpsCallable(
             getFunctions(),
             "updateContact"
-        )({ contactId: newContact.id, contact: updateContact });
+        )({contactId: newContact.id, contact: updateContact});
         const newJob = jobData.contacts.map((c) => (c.id === newContact.id ? newContact : c));
-        setJob({ ...jobData, contacts: newJob });
+        setJob({...jobData, contacts: newJob});
         setOpen(false);
     };
 
@@ -934,13 +937,13 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             padding: "1vh 1vw",
                             border: "2px solid #7F5BEB",
                         }}
-                        sx={{ borderRadius: 2 }}
+                        sx={{borderRadius: 2}}
                         variant="outlined"
                         onClick={() => {
                             setIsEditing(false);
                             setOpen(true);
                         }}
-                        startIcon={<Add />}
+                        startIcon={<Add/>}
                     >
                         Add Contact
                     </Button>
@@ -950,7 +953,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                 fulLWidth
                 maxWidth="xl"
                 PaperProps={{
-                    style: { borderRadius: 16, padding: "5vh 5vw" },
+                    style: {borderRadius: 16, padding: "5vh 5vw"},
                 }}
                 open={open}
                 onClose={async () => {
@@ -975,16 +978,16 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                     setOpen(false);
                 }}
             >
-                <DialogContent style={{ width: "50vw" }}>
+                <DialogContent style={{width: "50vw"}}>
                     <div className="flex flex-row justify-between mb-4">
                         <h1 className="text-xl w-full">Create Contact</h1>
                         <div className="flex flex-row-reverse w-full">
                             <div className="ml-3">
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderRadius: 2 }}
+                                    sx={{borderRadius: 2}}
                                     color="neutral"
-                                    style={{ width: 100, border: "2px solid #7F5BEB" }}
+                                    style={{width: 100, border: "2px solid #7F5BEB"}}
                                     onClick={() => {
                                         setOpen(false);
                                     }}
@@ -994,10 +997,10 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             </div>
                             <Button
                                 type="submit"
-                                sx={{ borderRadius: 2 }}
+                                sx={{borderRadius: 2}}
                                 variant="contained"
                                 color="neutral"
-                                style={{ width: 100 }}
+                                style={{width: 100}}
                                 onClick={async () => {
                                     isEditing ? await editContact() : await addNewContact();
                                 }}
@@ -1012,7 +1015,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 <h1>Contact Name</h1>
                                 <TextField
                                     className="w-full"
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     value={newContact.name}
                                     InputProps={{
                                         style: {
@@ -1033,7 +1036,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 <h1>Job Title</h1>
                                 <TextField
                                     value={newContact.title}
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     InputProps={{
                                         style: {
                                             borderRadius: "16px",
@@ -1050,7 +1053,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                             <div className="flex flex-col w-full ml-4">
                                 <h1>Company</h1>
                                 <TextField
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     value={newContact.company}
                                     InputProps={{
                                         style: {
@@ -1072,7 +1075,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 <TextField
                                     className="w-full"
                                     value={newContact.linkedin}
-                                    style={{ marginTop: "1vh" }}
+                                    style={{marginTop: "1vh"}}
                                     InputProps={{
                                         style: {
                                             borderRadius: "16px",
@@ -1107,8 +1110,8 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         open={menuOpen}
                                         onClose={() => setAnchorEl(null)}
                                         anchorEl={anchorEl}
-                                        transformOrigin={{ horizontal: "right", vertical: "top" }}
-                                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                                        transformOrigin={{horizontal: "right", vertical: "top"}}
+                                        anchorOrigin={{horizontal: "right", vertical: "bottom"}}
                                     >
                                         <MenuItem
                                             onClick={() => {
@@ -1137,10 +1140,11 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                 </div>
                                 <div className="mx-4 mb-4 -mt-2">
                                     <div className="flex flex-1 w-full mb-2">
-                                        <div className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
+                                        <div
+                                            className="flex flex-row justify-center font-light align-center mr-2 mt-4 px-4">
                                             <AccountCircleOutlined
                                                 className="scale-[2.25]"
-                                                sx={{ stroke: "#ffffff", strokeWidth: 1 }}
+                                                sx={{stroke: "#ffffff", strokeWidth: 1}}
                                             />
                                         </div>
                                         <div className="w-full">
@@ -1152,9 +1156,9 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                     <Button
                                         className="w-full border-2 border-[#367CFF]"
                                         color="info"
-                                        style={{ border: "2px solid #367CFF" }}
+                                        style={{border: "2px solid #367CFF"}}
                                         variant="outlined"
-                                        sx={{ borderRadius: 2 }}
+                                        sx={{borderRadius: 2}}
                                         onClick={() => {
                                             window.open(contact.linkedin, "_blank");
                                         }}
@@ -1162,7 +1166,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
                                         <SocialIcon
                                             className="w-1/2 mr-2"
                                             url="https://www.linkedin.com/in/"
-                                            style={{ height: 20, width: 20 }}
+                                            style={{height: 20, width: 20}}
                                         />
                                         Contact
                                     </Button>
@@ -1175,7 +1179,7 @@ const Contacts = ({ value, index, jobData, setJob }) => {
     );
 };
 
-const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban }) => {
+const JobDialog = ({jobData, isEdit, setOpen, state, setState, index, isKanban}) => {
     const [job, setJob] = useState({
         position: "",
         company: "",
@@ -1213,7 +1217,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     const deleteJob = async (jobData) => {
         const newState = [...state];
         newState[index] = state[index].filter((j) => j.id !== jobData.id);
-        await httpsCallable(getFunctions(), "deleteJob")({ id: jobData.id });
+        await httpsCallable(getFunctions(), "deleteJob")({id: jobData.id});
         setState(newState);
         setOpen(false);
     };
@@ -1238,7 +1242,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
         await httpsCallable(
             getFunctions(),
             "updateJobData"
-        )({ jobId: jobData.id, jobData: newJobData });
+        )({jobId: jobData.id, jobData: newJobData});
     };
 
     // const addNewJob = async () => {
@@ -1277,7 +1281,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
     useEffect(() => {
         const fetchJob = async () => {
             console.log(jobData, index);
-            setJob(jobData || { ...job, stage: index });
+            setJob(jobData || {...job, stage: index});
             if (jobData) {
                 await httpsCallable(
                     getFunctions(),
@@ -1309,11 +1313,12 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                     paddingBlock: 40,
                 }}
             >
-                <DialogTitle style={{ paddingInline: 0 }}>
+                <DialogTitle style={{paddingInline: 0}}>
                     <div className="bg-white -mt-5 overflow-hidden">
-                        <Headings jobData={job} setJob={setJob} />
+                        <Headings jobData={job} setJob={setJob}/>
                     </div>
-                    <div className="flex flex-row bg-white px-20 justify-center align-center w-full pt-5">
+                    <div
+                        className="flex flex-row bg-white px-20 justify-center align-center w-full pt-5">
                         <div className="grid grid-col-1 w-full  place-content-evenly">
                             <Tabs
                                 centered
@@ -1324,47 +1329,48 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                                 aria-label="Vertical tabs example"
                             >
                                 <Tab
-                                    icon={<DescriptionOutlined />}
-                                    sx={{ marginRight: "3vw" }}
+                                    icon={<DescriptionOutlined/>}
+                                    sx={{marginRight: "3vw"}}
                                     iconPosition="start"
                                     label="Job Details"
                                 />
                                 <Tab
-                                    sx={{ marginRight: "3vw" }}
-                                    icon={<DriveFileRenameOutlineOutlined />}
+                                    sx={{marginRight: "3vw"}}
+                                    icon={<DriveFileRenameOutlineOutlined/>}
                                     iconPosition="start"
                                     label="Notes"
                                 />
                                 <Tab
-                                    icon={<CalendarMonthOutlined />}
-                                    sx={{ marginRight: "3vw" }}
+                                    icon={<CalendarMonthOutlined/>}
+                                    sx={{marginRight: "3vw"}}
                                     iconPosition="start"
                                     label="Deadlines"
                                 />
                                 <Tab
-                                    icon={<QuizOutlined />}
-                                    sx={{ marginRight: "3vw" }}
+                                    icon={<QuizOutlined/>}
+                                    sx={{marginRight: "3vw"}}
                                     iconPosition="start"
                                     label="Interview Questions"
                                 />
                                 <Tab
-                                    icon={<ContactPageOutlined />}
+                                    icon={<ContactPageOutlined/>}
                                     iconPosition="start"
                                     label="Contacts"
                                 />
                             </Tabs>{" "}
-                        </div>{" "}
+                        </div>
+                        {" "}
                     </div>
                 </DialogTitle>
-                <Details value={tabValue} index={0} jobData={job} setJob={setJob} />
-                <Notes value={tabValue} index={1} jobData={job} setJob={setJob} />
-                <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob} />
-                <Questions value={tabValue} index={3} jobData={job} setJob={setJob} />
-                <Contacts value={tabValue} index={4} jobData={job} setJob={setJob} />
+                <Details value={tabValue} index={0} jobData={job} setJob={setJob}/>
+                <Notes value={tabValue} index={1} jobData={job} setJob={setJob}/>
+                <Deadlines value={tabValue} index={2} jobData={job} setJob={setJob}/>
+                <Questions value={tabValue} index={3} jobData={job} setJob={setJob}/>
+                <Contacts value={tabValue} index={4} jobData={job} setJob={setJob}/>
                 {loading ? (
-                    <CircularProgress style={{ position: 'absolute', right: 30 }} />
+                    <CircularProgress style={{position: 'absolute', right: 30}}/>
                 ) : (
-                    <div style={{ position: 'absolute', right: '2vw', top: '4vh' }}>
+                    <div style={{position: 'absolute', right: '2vw', top: '4vh'}}>
                         <Button
                             variant="outlined"
                             style={{
@@ -1376,7 +1382,7 @@ const JobDialog = ({ jobData, isEdit, setOpen, state, setState, index, isKanban 
                             }}
                             onClick={() => deleteJob(job)}
                         >
-                            <Delete />
+                            <Delete/>
                         </Button>
                         <Button
                             variant="contained"

@@ -1,9 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import "./auth.css";
-import { useState } from "react";
-import { Button } from "@mui/material";
-import { signin } from "./auth-functions";
-import { btnStyle } from "./authStyles";
+import {useState} from "react";
+import {Button} from "@mui/material";
+import {btnStyle} from "./authStyles";
 import logo from "../../graphics/venato-purple.png";
 // import generateJobs from '../search/GenerateJobs';
 
@@ -29,7 +28,7 @@ const Welcome = () => {
 
     return (
         <div className="AuthMainDiv w-50">
-            <img src={logo} alt="" width={200} />
+            <img src={logo} alt="" width={200}/>
             <Button
                 variant="contained"
                 color="neutral"
@@ -52,8 +51,8 @@ const Welcome = () => {
             {/*    {'Bypass sign-in (dev only)'}*/}
             {/*</Button>*/}
             {/*<br />*/}
-            <br />
-            <text style={{ color: "red" }}>{errMsg}</text>
+            <br/>
+            <text style={{color: "red"}}>{errMsg}</text>
         </div>
     );
 };

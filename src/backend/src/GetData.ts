@@ -7,7 +7,7 @@ import {
     verifyIsAuthenticated
 } from './Helpers';
 import algoliaSearch from 'algoliasearch';
-import { IJob } from './DataInterfaces';
+import {IJob} from './DataInterfaces';
 
 /**
  * Callable functions for getting data from firestore
@@ -26,7 +26,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
     // @ts-ignore
     const job: IJob = await getDoc(`jobs/${jobId}`)
         .get()
-        .then((doc) => ({ ...doc.data(), id: doc.id }));
+        .then((doc) => ({...doc.data(), id: doc.id}));
 
     const promises = [];
     promises.push(
@@ -36,7 +36,7 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .then((deadlines) => {
                 // @ts-ignore
                 job.deadlines = deadlines.empty ? [] : deadlines.docs.map((doc) => {
-                    return { ...doc.data(), date: doc.data().date._seconds, id: doc.id };
+                    return {...doc.data(), date: doc.data().date._seconds, id: doc.id};
                 });
                 return null;
             })
@@ -48,7 +48,10 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .get()
             .then((questions) => {
                 // @ts-ignore
-                job.interviewQuestions = questions.empty ? [] : questions.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                job.interviewQuestions = questions.empty ? [] : questions.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.id
+                }));
                 return null;
             })
     );
@@ -59,7 +62,10 @@ const getJobData = functions.https.onCall(async (jobId: string, context: any) =>
             .get()
             .then((contacts) => {
                 // @ts-ignore
-                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                job.contacts = contacts.empty ? [] : contacts.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.id
+                }));
                 return null;
             })
     );
@@ -102,12 +108,15 @@ const getHomepageData = functions.https.onCall((data: null, context: any) => {
         getCollection(`boards`)
             .where('userId', '==', context.auth.uid)
             .get()
-            .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
+            .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({
+                id: doc.id,
+                name: doc.data().name
+            })))
             .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`))
     );
 
     return Promise.all(promises)
-        .then((userData) => ({ events: userData[0], boards: userData[1] }))
+        .then((userData) => ({events: userData[0], boards: userData[1]}))
         .catch((err) => `Error fetching homepage data: ${err}`);
 });
 
@@ -124,7 +133,10 @@ const getJobBoards = functions.https.onCall((data: null, context: any) => {
     return getCollection(`boards`)
         .where('userId', '==', context.auth.uid)
         .get()
-        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({ id: doc.id, name: doc.data().name })))
+        .then((boards) => boards.empty ? [] : boards.docs.map((doc) => ({
+            id: doc.id,
+            name: doc.data().name
+        })))
         .catch((err) => functions.logger.log(`Error fetching user job boards: ${err}`));
 });
 
@@ -157,9 +169,9 @@ const getKanbanBoard = functions.https.onCall(async (boardId: string, context: a
         .where('boardId', '==', boardId)
         .get()
         .then(async (query) => {
-            const jobs = query.empty? [] : query.docs.map((job) => ({ ...job.data(), id: job.id }));
+            const jobs = query.empty ? [] : query.docs.map((job) => ({...job.data(), id: job.id}));
 
-            return { name: board.name, id: boardId, jobs };
+            return {name: board.name, id: boardId, jobs};
         })
         .catch((err) => `Error getting kanban board with id ${boardId}: ${err}`);
 });
@@ -184,15 +196,20 @@ const getCalendarDeadlines = functions.https.onCall((data: object, context: any)
                     day: deadlineDate.getDate()
                 };
 
-                return { ...deadline.data(), date: newDate };
+                return {...deadline.data(), date: newDate};
             });
         })
         .catch((err) => `Error getting calendar events: ${err}`);
 });
 
 // Search for a job by position, company, or location
-const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
-    (queryData: { searchAll: string; company: string; position: string; location: string; }, context: any) => {
+const jobSearch = functions.runWith({secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID']}).https.onCall(
+    (queryData: {
+        searchAll: string;
+        company: string;
+        position: string;
+        location: string;
+    }, context: any) => {
         verifyIsAuthenticated(context);
 
         const AlgoliaApiKey = process.env.ALGOLIA_API_KEY;
@@ -210,10 +227,13 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
             );
         }
 
-        const searchAll = { query: queryData.searchAll, valid: !nullOrWhitespace(queryData.searchAll) };
-        const company = { query: queryData.company, valid: !nullOrWhitespace(queryData.company) };
-        const position = { query: queryData.position, valid: !nullOrWhitespace(queryData.position) };
-        const location = { query: queryData.location, valid: !nullOrWhitespace(queryData.location) };
+        const searchAll = {
+            query: queryData.searchAll,
+            valid: !nullOrWhitespace(queryData.searchAll)
+        };
+        const company = {query: queryData.company, valid: !nullOrWhitespace(queryData.company)};
+        const position = {query: queryData.position, valid: !nullOrWhitespace(queryData.position)};
+        const location = {query: queryData.location, valid: !nullOrWhitespace(queryData.location)};
 
         if (searchAll.valid) {
             if (company.valid || position.valid || location.valid) {
@@ -227,7 +247,7 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('jobs')
                 .search(queryData.searchAll)
-                .then(({ hits }) => hits.map((hit) => ({
+                .then(({hits}) => hits.map((hit) => ({
                     id: hit.objectID,
                     // @ts-ignore
                     company: hit.company,
@@ -256,13 +276,13 @@ const jobSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_
         return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
             .initIndex('jobs')
             .search(queryData.searchAll)
-            .then(({ hits }) => hits)
+            .then(({hits}) => hits)
             .catch(err => `Error querying interview questions: ${err}`);
     }
 );
 
 // Search for interview questions based on a company and/or position
-const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID'] }).https.onCall(
+const interviewQuestionSearch = functions.runWith({secrets: ['ALGOLIA_API_KEY', 'ALGOLIA_APP_ID']}).https.onCall(
     (queryData: { searchAll: string; company: string; position: string; }, context: any) => {
         verifyIsAuthenticated(context);
 
@@ -281,9 +301,12 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             );
         }
 
-        const searchAll = { query: queryData.searchAll, valid: !nullOrWhitespace(queryData.searchAll) };
-        const company = { query: queryData.company, valid: !nullOrWhitespace(queryData.company) };
-        const position = { query: queryData.position, valid: !nullOrWhitespace(queryData.position) };
+        const searchAll = {
+            query: queryData.searchAll,
+            valid: !nullOrWhitespace(queryData.searchAll)
+        };
+        const company = {query: queryData.company, valid: !nullOrWhitespace(queryData.company)};
+        const position = {query: queryData.position, valid: !nullOrWhitespace(queryData.position)};
 
         if (searchAll.valid) {
             if (company.valid || position.valid) {
@@ -297,17 +320,17 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
             return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
                 .initIndex('interviewQuestions')
                 .search(queryData.searchAll)
-                .then(({ hits }) => hits.map((hit) => ({
-                        id: hit.objectID,
-                        // @ts-ignore
-                        name: hit.name,
-                        // @ts-ignore
-                        description: hit.description,
-                        // @ts-ignore
-                        company: hit.company,
-                        // @ts-ignore
-                        position: hit.position,
-                    })))
+                .then(({hits}) => hits.map((hit) => ({
+                    id: hit.objectID,
+                    // @ts-ignore
+                    name: hit.name,
+                    // @ts-ignore
+                    description: hit.description,
+                    // @ts-ignore
+                    company: hit.company,
+                    // @ts-ignore
+                    position: hit.position,
+                })))
                 .catch(err => `Error querying interview questions: ${err}`);
         }
 
@@ -322,7 +345,7 @@ const interviewQuestionSearch = functions.runWith({ secrets: ['ALGOLIA_API_KEY',
         return algoliaSearch(AlgoliaAppId, AlgoliaApiKey)
             .initIndex('interviewQuestions')
             .search(queryData.searchAll)
-            .then(({ hits }) => hits)
+            .then(({hits}) => hits)
             .catch(err => `Error querying interview questions: ${err}`);
     }
 );

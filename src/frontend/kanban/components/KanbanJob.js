@@ -1,8 +1,8 @@
-import { Draggable } from "react-beautiful-dnd";
-import { Flag, MoreHoriz } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { useState } from "react";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import {Draggable} from "react-beautiful-dnd";
+import {Flag, MoreHoriz} from "@mui/icons-material";
+import {IconButton, Menu, MenuItem} from "@mui/material";
+import {useState} from "react";
+import {getFunctions, httpsCallable} from "firebase/functions";
 
 const getJobStyle = (isDragging, draggableStyle) => ({
     userSelect: "none",
@@ -72,7 +72,7 @@ export default function KanbanJob(props) {
                             }}
                             onClick={handleMenuOpen}
                         >
-                            <MoreHoriz />
+                            <MoreHoriz/>
                         </IconButton>
                         <div
                             className="flex flex-row"
@@ -125,7 +125,7 @@ export default function KanbanJob(props) {
                                 await httpsCallable(
                                     getFunctions(),
                                     "deleteJob"
-                                )({ id: props.job.id });
+                                )({id: props.job.id});
                                 props.setKanbanState(newState);
                                 setAnchorEl(null);
                                 // const deleteJob = async (jobData) => {

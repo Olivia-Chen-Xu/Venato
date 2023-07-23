@@ -1,12 +1,15 @@
 import * as functions from 'firebase-functions';
-import { getCollection, getDoc, auth, isValidObjectStructure } from './Helpers';
+import {auth, getCollection, getDoc, isValidObjectStructure} from './Helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
  */
-const createAccount = functions.https.onCall(async (credentials: { email: string; password: string }, context) => {
+const createAccount = functions.https.onCall(async (credentials: {
+        email: string;
+        password: string
+    }, context) => {
         // Verify input data
-        if (!isValidObjectStructure(credentials, { email: '', password: '' })) {
+        if (!isValidObjectStructure(credentials, {email: '', password: ''})) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 'Signup data must be provided: { email: string, password: string }'
@@ -146,4 +149,4 @@ const onUserDeleted = functions.auth.user().onDelete((user) => {
     return Promise.all(promises);
 });
 
-export { createAccount, onUserSignup, beforeSignIn, passwordReset, onUserDeleted };
+export {createAccount, onUserSignup, beforeSignIn, passwordReset, onUserDeleted};

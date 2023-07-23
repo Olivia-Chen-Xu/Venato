@@ -1,6 +1,6 @@
-import { Button } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { Box } from '@mui/system';
+import {Button} from '@mui/material'
+import {useNavigate} from 'react-router-dom'
+import {Box} from '@mui/system';
 import track from '../../graphics/landing/track.png';
 import logo from '../../graphics/logo.png'
 import whiteLogo from '../../graphics/logo_white.png'
@@ -14,7 +14,7 @@ export default function LandingPage() {
         <div id="flex flex-col w-full gap-3">
             <header className="flex w-full shadow-xl p-4">
                 <div className="flex w-full">
-                    <img src={logo} className="object-contain object-left h-[5vh]" />
+                    <img src={logo} className="object-contain object-left h-[5vh]"/>
                     <span className="ml-auto flex justify-center align-items-center">
                         <Button
                             onClick={() => navigate("/welcome")}
@@ -30,7 +30,8 @@ export default function LandingPage() {
             <Box className="w-full flex flex-col gap-20 mt-20">
                 <Box className='flex justify-center w-full'>
                     <div className="blob-header flex flex-col text-white bg-purple p-10 md:[w-75%]">
-                        <img src={whiteLogo} className="flex md:h-[15vh] md:object-cover self-center"/>
+                        <img src={whiteLogo}
+                             className="flex md:h-[15vh] md:object-cover self-center"/>
                         <span className='flex self-center text-center'>Everything you need to secure a job.</span>
                     </div>
                 </Box>
@@ -42,12 +43,13 @@ export default function LandingPage() {
                     <img src={track} className="self-center"/>
                 </Box>
                 <Box className='flex md:flex-row flex-col justify-center w-full gap-3'>
-                    <span className='flex self-center mx-10 md:mx-40 font-extrabold text-4xl md:order-2'>Discover new jobs.</span>
-                    <img src={discover} className="flex self-center md:order-1" />
+                    <span
+                        className='flex self-center mx-10 md:mx-40 font-extrabold text-4xl md:order-2'>Discover new jobs.</span>
+                    <img src={discover} className="flex self-center md:order-1"/>
                 </Box>
                 <Box className='flex md:flex-row flex-col justify-center w-full gap-3'>
                     <span className='self-center mx-10 md:mx-40 font-extrabold text-4xl'>Prepare for your interviews.</span>
-                    <img src={prepare} className="self-center" />
+                    <img src={prepare} className="self-center"/>
                 </Box>
             </Box>
         </div>

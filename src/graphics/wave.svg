@@ -1,1 +1,21 @@
-<svg width="330" height="148" viewBox="14 0 300 131" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#a)"><path d="M230.659 34.5C192 49.5 60.001 135.463 15.915 61.326 14.497 59.47 14 59.296 14 61.631V127c0 6.627 5.373 12 12 12h276.216c6.627 0 12-5.373 12-12V19.5l.668 4.456c1.105 7.369 1.078 7.43.225.027-.297-2.581-.595-4.48-.893-4.483-24.308-.302-53.24 3.237-83.557 15Z" fill="#FEF9E4" fill-opacity=".1" shape-rendering="crispEdges"/></g><defs><filter id="a" x="0" y=".482" width="329.732" height="147.518" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="-5"/><feGaussianBlur stdDeviation="7"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1354_2804"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_1354_2804" result="shape"/></filter></defs></svg>
+<svg width="330" height="148" viewBox="14 0 300 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g filter="url(#a)">
+        <path
+            d="M230.659 34.5C192 49.5 60.001 135.463 15.915 61.326 14.497 59.47 14 59.296 14 61.631V127c0 6.627 5.373 12 12 12h276.216c6.627 0 12-5.373 12-12V19.5l.668 4.456c1.105 7.369 1.078 7.43.225.027-.297-2.581-.595-4.48-.893-4.483-24.308-.302-53.24 3.237-83.557 15Z"
+            fill="#FEF9E4" fill-opacity=".1" shape-rendering="crispEdges"/>
+    </g>
+    <defs>
+        <filter id="a" x="0" y=".482" width="329.732" height="147.518" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
+            <feOffset dy="-5"/>
+            <feGaussianBlur stdDeviation="7"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+            <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1354_2804"/>
+            <feBlend in="SourceGraphic" in2="effect1_dropShadow_1354_2804" result="shape"/>
+        </filter>
+    </defs>
+</svg>
