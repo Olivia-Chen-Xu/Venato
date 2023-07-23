@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #
-# Deploys all your local firebase functions the specified environment (test/staging or production)
+# Deploys all your local firebase functions the specified environment
+# STG: when running locally, PROD: on the deployed site
 #
 
 if [ "$#" -ne 1 ]; then

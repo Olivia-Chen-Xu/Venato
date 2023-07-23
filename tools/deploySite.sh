@@ -2,7 +2,7 @@
 
 #
 # This file deploys the app to GitHub Pages
-# Note: You must be on the main branch, have no local changes, then run this (./tools/deploy.sh)
+# Note: You must be on the main branch, have no local changes, then run this
 #
 
 # Verify params and state
