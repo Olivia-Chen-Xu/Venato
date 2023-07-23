@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import {MemoryRouter as Router} from 'react-router';
-import {Route, Routes} from 'react-router-dom';
+import { MemoryRouter as Router } from 'react-router';
+import { Route, Routes } from 'react-router-dom';
 import Welcome from './frontend/auth/Welcome';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import SignIn from './frontend/auth/SignIn';
 import SignUp from './frontend/auth/SignUp';
 import PasswordReset from './frontend/auth/PasswordReset';

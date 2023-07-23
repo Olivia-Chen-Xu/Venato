@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
     Button,
     CircularProgress,
@@ -11,8 +11,8 @@ import {
     Tabs,
     TextField,
 } from "@mui/material";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
     AccessTimeOutlined,
     AccountCircleOutlined,
@@ -28,10 +28,10 @@ import {
     QuizOutlined,
     RoomOutlined,
 } from "@mui/icons-material";
-import {getFunctions, httpsCallable} from "firebase/functions";
-import {DateTimePicker} from "@mui/x-date-pickers";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {SocialIcon} from "react-social-icons";
+import { SocialIcon } from "react-social-icons";
 import Checkbox from "@mui/material/Checkbox";
 import LoadingButton from "@mui/lab/LoadingButton";
 

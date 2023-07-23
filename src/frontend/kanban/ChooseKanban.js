@@ -1,12 +1,12 @@
-import {useAsync} from "react-async-hook";
-import {getFunctions, httpsCallable} from "firebase/functions";
-import {Button, Dialog, DialogContent, TextField} from "@mui/material";
-import {Add, MoreVert, SkateboardingOutlined} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useAsync } from "react-async-hook";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { Button, Dialog, DialogContent, TextField } from "@mui/material";
+import { Add, MoreVert, SkateboardingOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import AppScreen from "../reusable/AppScreen";
-import {ReactComponent as NoBoards} from "../../graphics/empty/no-boards.svg";
+import { ReactComponent as NoBoards } from "../../graphics/empty/no-boards.svg";
 
 const ChooseKanban = () => {
     const nav = useNavigate();

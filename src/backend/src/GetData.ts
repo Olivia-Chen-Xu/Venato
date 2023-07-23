@@ -7,7 +7,7 @@ import {
     verifyIsAuthenticated
 } from './Helpers';
 import algoliaSearch from 'algoliasearch';
-import {IJob} from './DataInterfaces';
+import { IJob } from './DataInterfaces';
 
 /**
  * Callable functions for getting data from firestore

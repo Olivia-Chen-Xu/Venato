@@ -1,7 +1,7 @@
-import {useNavigate} from "react-router-dom";
-import {useAsync} from "react-async-hook";
-import {getFunctions, httpsCallable} from "firebase/functions";
-import {Box, Button, Dialog, DialogContent, TextField} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAsync } from "react-async-hook";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { Box, Button, Dialog, DialogContent, TextField } from "@mui/material";
 import {
     Add,
     East,
@@ -9,7 +9,7 @@ import {
     QueryBuilder,
     SkateboardingOutlined,
 } from "@mui/icons-material";
-import {useState} from "react";
+import { useState } from "react";
 import JobDialog from "../reusable/JobDialog";
 import AppScreen from "../reusable/AppScreen";
 import EventCard from "./components/EventCard";

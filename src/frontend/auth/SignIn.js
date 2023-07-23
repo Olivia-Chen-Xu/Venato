@@ -1,12 +1,16 @@
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './auth.css';
-import {useState} from 'react';
-import {signOut} from 'firebase/auth';
-import {signin} from './auth-functions';
-import {auth} from '../../firebase';
-import {Button, IconButton, InputAdornment, InputLabel, TextField} from '@mui/material';
-import {btnStyle, iconStyle, inputStyle} from './authStyles';
-import {VisibilityOffOutlined, VisibilityOutlined, WarningAmberRounded} from '@mui/icons-material';
+import { useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { signin } from './auth-functions';
+import { auth } from '../../firebase';
+import { Button, IconButton, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { btnStyle, iconStyle, inputStyle } from './authStyles';
+import {
+    VisibilityOffOutlined,
+    VisibilityOutlined,
+    WarningAmberRounded
+} from '@mui/icons-material';
 
 const SignIn = () => {
     const navigate = useNavigate();

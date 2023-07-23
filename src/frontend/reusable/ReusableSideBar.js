@@ -1,4 +1,4 @@
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
     AccountCircleOutlined,
     AutoAwesomeOutlined,
@@ -10,10 +10,10 @@ import {
     QuizOutlined,
     SearchOutlined
 } from '@mui/icons-material';
-import {useEffect, useState} from 'react';
-import {Button, Menu, MenuItem} from '@mui/material';
-import {deleteAccount, signout} from "../auth/auth-functions";
-import {auth} from "../../firebase";
+import { useEffect, useState } from 'react';
+import { Button, Menu, MenuItem } from '@mui/material';
+import { deleteAccount, signout } from "../auth/auth-functions";
+import { auth } from "../../firebase";
 import generateJobs from "../search/GenerateJobs";
 
 const sidebarButtonOverrides = {

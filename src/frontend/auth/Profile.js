@@ -1,8 +1,8 @@
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
-import {deleteAccount, signout} from "./auth-functions";
-import {auth} from "../../config/firebase";
-import {Button} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { deleteAccount, signout } from "./auth-functions";
+import { auth } from "../../config/firebase";
+import { Button } from "@mui/material";
 import "./auth.css";
 
 // Not in use yet

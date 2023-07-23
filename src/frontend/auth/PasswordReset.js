@@ -1,10 +1,10 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Button, InputLabel, TextField} from '@mui/material';
-import {passwordResetEmail} from './auth-functions';
-import {btnStyle, inputStyle} from './authStyles';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, InputLabel, TextField } from '@mui/material';
+import { passwordResetEmail } from './auth-functions';
+import { btnStyle, inputStyle } from './authStyles';
 import './auth.css';
-import {WarningAmberRounded} from '@mui/icons-material';
+import { WarningAmberRounded } from '@mui/icons-material';
 
 const PasswordReset = () => {
     const navigate = useNavigate();

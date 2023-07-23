@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
-import {firestoreHelper, getCollection, getDoc, getFirestoreTimestamp} from './Helpers';
-import {IContact, IDeadline, IInterviewQuestion} from './DataInterfaces';
+import { firestoreHelper, getCollection, getDoc, getFirestoreTimestamp } from './Helpers';
+import { IContact, IDeadline, IInterviewQuestion } from './DataInterfaces';
 
 /**
  * On job create, move deadlines, interview questions and contacts to their own collections
@@ -121,4 +121,4 @@ const onBoardPurge = functions.firestore.document('boards/{boardId}').onDelete(a
     return Promise.all(promises);
 });
 
-export {onJobCreate, onJobPurge, onBoardPurge};
+export { onJobCreate, onJobPurge, onBoardPurge };

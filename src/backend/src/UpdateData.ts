@@ -9,7 +9,7 @@ import {
     verifyDocPermission,
     verifyIsAuthenticated
 } from './Helpers';
-import {IContact, IDeadline, IInterviewQuestion, IJob} from './DataInterfaces';
+import { IContact, IDeadline, IInterviewQuestion, IJob } from './DataInterfaces';
 
 /**
  * Callable functions for mutating data in firestore (creating, updating or deleting)

@@ -1,6 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
-import {getFunctions, httpsCallable} from "firebase/functions";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const Day = ({
                  viewApplications,

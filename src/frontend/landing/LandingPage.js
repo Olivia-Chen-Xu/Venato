@@ -1,6 +1,6 @@
-import {Button} from '@mui/material'
-import {useNavigate} from 'react-router-dom'
-import {Box} from '@mui/system';
+import { Button } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { Box } from '@mui/system';
 import track from '../../graphics/landing/track.png';
 import logo from '../../graphics/logo.png'
 import whiteLogo from '../../graphics/logo_white.png'

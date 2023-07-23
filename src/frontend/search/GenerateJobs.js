@@ -1,4 +1,4 @@
-import {getFunctions, httpsCallable} from 'firebase/functions';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // interface Job {
 //     // Core job data

@@ -1,10 +1,10 @@
-import {useState} from "react";
-import {getFunctions, httpsCallable} from "firebase/functions";
+import { useState } from "react";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Search from "@mui/icons-material/Search";
-import {Button, Dialog, DialogContent, InputAdornment, TextField} from "@mui/material";
+import { Button, Dialog, DialogContent, InputAdornment, TextField } from "@mui/material";
 import AppScreen from "../reusable/AppScreen";
-import {AlternateEmail, WorkOutline} from "@mui/icons-material";
+import { AlternateEmail, WorkOutline } from "@mui/icons-material";
 
 const QuestionSearch = () => {
     const [query, setQuery] = useState({company: "", position: ""});

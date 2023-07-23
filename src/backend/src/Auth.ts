@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import {auth, getCollection, getDoc, isValidObjectStructure} from './Helpers';
+import { auth, getCollection, getDoc, isValidObjectStructure } from './Helpers';
 
 /**
  * Creates a new user (client-side registration is blocked)
@@ -149,4 +149,4 @@ const onUserDeleted = functions.auth.user().onDelete((user) => {
     return Promise.all(promises);
 });
 
-export {createAccount, onUserSignup, beforeSignIn, passwordReset, onUserDeleted};
+export { createAccount, onUserSignup, beforeSignIn, passwordReset, onUserDeleted };

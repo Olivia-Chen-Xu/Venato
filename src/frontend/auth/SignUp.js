@@ -1,10 +1,14 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Button, IconButton, InputAdornment, InputLabel, TextField} from '@mui/material';
-import {signup} from './auth-functions';
-import {btnStyle, iconStyle, inputStyle} from './authStyles';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, IconButton, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { signup } from './auth-functions';
+import { btnStyle, iconStyle, inputStyle } from './authStyles';
 import './auth.css';
-import {VisibilityOffOutlined, VisibilityOutlined, WarningAmberRounded,} from '@mui/icons-material';
+import {
+    VisibilityOffOutlined,
+    VisibilityOutlined,
+    WarningAmberRounded,
+} from '@mui/icons-material';
 
 const SignUp = () => {
     const navigate = useNavigate();

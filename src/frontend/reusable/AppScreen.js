@@ -1,4 +1,4 @@
-import {CircularProgress, Skeleton} from "@mui/material"
+import { CircularProgress, Skeleton } from "@mui/material"
 
 export default function AppScreen(props) {
 

@@ -25,4 +25,4 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth(); // Some non-sensitive auth operations are done client-side (like signing out)
 
-export {app, auth};
+export { app, auth };

@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
-import {DragDropContext} from "react-beautiful-dnd";
-import {getFunctions, httpsCallable} from "firebase/functions";
+import { useEffect, useState } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import JobDialog from "../reusable/JobDialog";
-import {useLocation} from "react-router-dom";
-import {StrictModeDroppable} from "../reusable/StrictModeDroppable";
-import {ReactComponent as NoJobs} from "../../graphics/no-jobs.svg";
+import { useLocation } from "react-router-dom";
+import { StrictModeDroppable } from "../reusable/StrictModeDroppable";
+import { ReactComponent as NoJobs } from "../../graphics/no-jobs.svg";
 import AppScreen from "../reusable/AppScreen";
 import KanbanJob from "./components/KanbanJob";
 import KanbanHeader from "./components/KanbanHeader";

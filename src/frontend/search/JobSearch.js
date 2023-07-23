@@ -1,12 +1,12 @@
-import {useState} from "react";
-import {getFunctions, httpsCallable} from "firebase/functions";
+import { useState } from "react";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import "../../App.css";
 import "./job.css";
 import Search from "@mui/icons-material/Search";
 import LoadingButton from "@mui/lab/LoadingButton";
-import {Button, InputAdornment, TextField} from "@mui/material";
+import { Button, InputAdornment, TextField } from "@mui/material";
 import AppScreen from "../reusable/AppScreen";
-import {AlternateEmail, OutboundOutlined, PlaceOutlined, WorkOutline} from "@mui/icons-material";
+import { AlternateEmail, OutboundOutlined, PlaceOutlined, WorkOutline } from "@mui/icons-material";
 
 const JobSearch = () => {
     const [query, setQuery] = useState({company: "", position: "", location: ""});

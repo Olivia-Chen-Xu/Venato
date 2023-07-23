@@ -4,8 +4,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
 } from 'firebase/auth';
-import {getFunctions, httpsCallable} from 'firebase/functions';
-import {auth} from '../../firebase';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { auth } from '../../firebase';
 
 export const signup = (email, password) => {
     // Validate email is entered and valid

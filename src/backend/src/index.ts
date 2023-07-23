@@ -1,6 +1,6 @@
-import {purgeExpiredData, purgeUnverifiedUsers} from './Cron';
-import {beforeSignIn, createAccount, onUserDeleted, onUserSignup, passwordReset} from './Auth';
-import {onBoardPurge, onJobCreate, onJobPurge} from './Firestore';
+import { purgeExpiredData, purgeUnverifiedUsers } from './Cron';
+import { beforeSignIn, createAccount, onUserDeleted, onUserSignup, passwordReset } from './Auth';
+import { onBoardPurge, onJobCreate, onJobPurge } from './Firestore';
 import {
     getCalendarDeadlines,
     getHomepageData,

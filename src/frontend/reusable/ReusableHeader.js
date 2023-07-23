@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import {KeyboardArrowLeft, SearchOutlined} from '@mui/icons-material';
-import {useNavigate} from 'react-router-dom';
+import { KeyboardArrowLeft, SearchOutlined } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 export default function ReusableHeader() {
 

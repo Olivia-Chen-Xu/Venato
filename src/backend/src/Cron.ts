@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import {auth, getCollection, getRelativeTimestamp} from './Helpers';
+import { auth, getCollection, getRelativeTimestamp } from './Helpers';
 
 /**
  * CRON jobs - automatically triggered on a set schedule
@@ -76,4 +76,4 @@ const purgeExpiredData = functions.pubsub.schedule('every day 00:00').onRun(asyn
         .catch((err) => functions.logger.log(`Error purging deleted jobs: ${err}`));
 });
 
-export {purgeUnverifiedUsers, purgeExpiredData};
+export { purgeUnverifiedUsers, purgeExpiredData };

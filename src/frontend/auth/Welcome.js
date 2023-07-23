@@ -1,8 +1,8 @@
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./auth.css";
-import {useState} from "react";
-import {Button} from "@mui/material";
-import {btnStyle} from "./authStyles";
+import { useState } from "react";
+import { Button } from "@mui/material";
+import { btnStyle } from "./authStyles";
 import logo from "../../graphics/venato-purple.png";
 // import generateJobs from '../search/GenerateJobs';
 
